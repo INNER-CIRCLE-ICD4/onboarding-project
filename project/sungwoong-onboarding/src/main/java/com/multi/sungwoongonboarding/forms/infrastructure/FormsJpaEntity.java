@@ -2,6 +2,8 @@ package com.multi.sungwoongonboarding.forms.infrastructure;
 
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
+import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaEntity;
+import com.multi.sungwoongonboarding.questions.infrastructure.QuestionJpaEntity;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,12 +21,26 @@ public class FormsJpaEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    public static FormsJpaEntity from(Forms forms) {
+    public static FormsJpaEntity fromDomain(Forms forms) {
 
         FormsJpaEntity formsJpaEntity = new FormsJpaEntity();
         formsJpaEntity.id = forms.getId();
         formsJpaEntity.title = forms.getTitle();
         formsJpaEntity.description = forms.getDescription();
+
+        forms.getQuestions().forEach(question -> {
+
+            QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
+            questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
+
+            question.getOptions().forEach(options -> {
+
+                OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
+                optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
+
+            });
+        });
+
         return formsJpaEntity;
     }
 

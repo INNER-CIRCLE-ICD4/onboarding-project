@@ -16,7 +16,7 @@ public class FormRepositoryImpl implements FormRepository {
     @Override
     public Forms save(Forms forms) {
 
-        FormsJpaEntity formsJpaEntity = FormsJpaEntity.from(forms);
+        FormsJpaEntity formsJpaEntity = FormsJpaEntity.fromDomain(forms);
         formJpaRepository.save(formsJpaEntity);
 
         return formsJpaEntity.toDomain();
