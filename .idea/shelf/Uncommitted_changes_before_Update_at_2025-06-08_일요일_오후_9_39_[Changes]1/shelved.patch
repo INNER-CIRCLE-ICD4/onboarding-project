@@ -1,0 +1,16 @@
+Index: project/taeyang-onboarding/README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Empty README.md
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/project/taeyang-onboarding/README.md b/project/taeyang-onboarding/README.md
+--- a/project/taeyang-onboarding/README.md	(revision a1776937cae7049de1cfe4860e3c6c960cd4441e)
++++ b/project/taeyang-onboarding/README.md	(date 1749384746737)
+@@ -1,1 +1,0 @@
+-Empty README.md
+\ No newline at end of file
+diff --git a/project/byeongjin-onboarding/src/main/java/com/example/byeongjin_onboarding/byeongjin_onboarding/ByeongjinOnboardingApplication.java b/project/byeongjin-onboarding/src/main/java/com/example/byeongjin-onboarding/ByeongjinOnboardingApplication.java
+rename from project/byeongjin-onboarding/src/main/java/com/example/byeongjin_onboarding/byeongjin_onboarding/ByeongjinOnboardingApplication.java
+rename to project/byeongjin-onboarding/src/main/java/com/example/byeongjin-onboarding/ByeongjinOnboardingApplication.java
