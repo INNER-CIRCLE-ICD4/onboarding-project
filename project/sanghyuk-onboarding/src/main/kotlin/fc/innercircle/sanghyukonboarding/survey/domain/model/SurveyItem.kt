@@ -1,6 +1,6 @@
 package fc.innercircle.sanghyukonboarding.survey.domain.model
 
-import fc.innercircle.sanghyukonboarding.survey.common.domain.model.BaseEntity
+import fc.innercircle.sanghyukonboarding.common.domain.model.BaseEntity
 import fc.innercircle.sanghyukonboarding.survey.domain.validator.SurveyItemValidator
 import jakarta.persistence.Column
 import jakarta.persistence.ConstraintMode

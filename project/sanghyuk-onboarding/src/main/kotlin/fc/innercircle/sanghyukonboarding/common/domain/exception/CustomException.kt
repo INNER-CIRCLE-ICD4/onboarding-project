@@ -1,4 +1,4 @@
-package fc.innercircle.sanghyukonboarding.survey.common.domain.exception
+package fc.innercircle.sanghyukonboarding.common.domain.exception
 
 class CustomException(
     val formattedErrorCode: ErrorCode.FormattedErrorCode,

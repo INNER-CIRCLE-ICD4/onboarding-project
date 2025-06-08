@@ -60,23 +60,24 @@
 ## 패키지 구조
 ```
 fc.innercircle.sanghyukonboarding
+├── common
+│   └── domain
+│       ├── exception
+│       └── model
 ├── survey
-│   ├── common
-│   │   └── domain
-│   │       ├── exception
-│   │       └── model
 │   └── domain
 │       ├── model
 │       ├── validator
 │       └── value
+└── surveyreply
 ```
 
 - **common/domain/exception**: 공통 예외 처리 관련 클래스
   - 도메인 규칙 위반 시 발생하는 예외 정의
-  - 일관된 오류 코드 및 메시지 관리 ([ErrorCode](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/common/domain/exception/ErrorCode.kt))
+  - 일관된 오류 코드 및 메시지 관리 ([ErrorCode](src/main/kotlin/fc/innercircle/sanghyukonboarding/common/domain/exception/ErrorCode.kt))
 
 - **common/domain/model**: 공통 도메인 모델
-  - [BaseEntity](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/common/domain/model/BaseEntity.kt): 모든 엔티티의 기본 클래스로 생성/수정 정보 관리
+  - [BaseEntity](src/main/kotlin/fc/innercircle/sanghyukonboarding/common/domain/model/BaseEntity.kt): 모든 엔티티의 기본 클래스로 생성/수정 정보 관리
 
 - **domain/model**: 설문조사 관련 도메인 모델
   - [Survey](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/model/Survey.kt): 설문조사 정보
@@ -92,7 +93,7 @@ fc.innercircle.sanghyukonboarding
 
 ## 엔티티 설계
 
-### [BaseEntity](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/common/domain/model/BaseEntity.kt)
+### [BaseEntity](src/main/kotlin/fc/innercircle/sanghyukonboarding/common/domain/model/BaseEntity.kt)
 모든 엔티티의 기본이 되는 추상 클래스입니다.
 - **createdBy**: 생성자 (최대 50자)
 - **createdAt**: 생성 시간

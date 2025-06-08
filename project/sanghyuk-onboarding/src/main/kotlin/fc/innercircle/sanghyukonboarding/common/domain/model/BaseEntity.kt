@@ -1,4 +1,4 @@
-package fc.innercircle.sanghyukonboarding.survey.common.domain.model
+package fc.innercircle.sanghyukonboarding.common.domain.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.MappedSuperclass

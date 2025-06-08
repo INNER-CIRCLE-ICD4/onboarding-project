@@ -1,7 +1,7 @@
 package fc.innercircle.sanghyukonboarding.survey.domain.validator
 
-import fc.innercircle.sanghyukonboarding.survey.common.domain.exception.CustomException
-import fc.innercircle.sanghyukonboarding.survey.common.domain.exception.ErrorCode
+import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
+import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
 
 /**
  * [설문 항목 옵션 입력값 유효성 검증]
@@ -11,7 +11,6 @@ import fc.innercircle.sanghyukonboarding.survey.common.domain.exception.ErrorCod
  * - displayOrder: 0 이상의 정수여야 하며, 기본값은 0
  */
 object ItemOptionsValidator {
-
     // 설문 항목 옵션 텍스트는 빈 문자열이 아니어야 하며, 최대 50자 이내여야 한다.
     fun validateOptionText(optionText: String) {
         if (optionText.isBlank() || optionText.length > 50) {

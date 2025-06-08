@@ -1,7 +1,7 @@
 package fc.innercircle.sanghyukonboarding.survey.domain.validator
 
-import fc.innercircle.sanghyukonboarding.survey.common.domain.exception.CustomException
-import fc.innercircle.sanghyukonboarding.survey.common.domain.exception.ErrorCode
+import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
+import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
 
 /**
  * [설문 항목 입력값 유효성 검증]
