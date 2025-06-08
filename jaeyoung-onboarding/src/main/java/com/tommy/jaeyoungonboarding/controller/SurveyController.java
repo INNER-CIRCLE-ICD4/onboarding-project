@@ -1,7 +1,6 @@
 package com.tommy.jaeyoungonboarding.controller;
 
 import com.tommy.jaeyoungonboarding.entity.Survey;
-import com.tommy.jaeyoungonboarding.service.SurveyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
