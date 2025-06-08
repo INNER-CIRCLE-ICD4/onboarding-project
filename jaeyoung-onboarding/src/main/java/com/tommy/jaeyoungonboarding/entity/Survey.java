@@ -1,11 +1,19 @@
 package com.tommy.jaeyoungonboarding.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "survey_master")
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Survey {
 
     // 고유값
