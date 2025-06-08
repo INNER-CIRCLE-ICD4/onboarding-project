@@ -1,8 +1,10 @@
 package com.multi.sungwoongonboarding.forms.domain;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @Builder
 @RequiredArgsConstructor
 public class Forms {

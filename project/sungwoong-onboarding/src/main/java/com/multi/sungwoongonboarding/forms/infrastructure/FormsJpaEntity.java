@@ -1,6 +1,7 @@
 package com.multi.sungwoongonboarding.forms.infrastructure;
 
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
+import com.multi.sungwoongonboarding.forms.domain.Forms;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,5 +19,20 @@ public class FormsJpaEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    public static FormsJpaEntity from(Forms forms) {
 
+        FormsJpaEntity formsJpaEntity = new FormsJpaEntity();
+        formsJpaEntity.id = forms.getId();
+        formsJpaEntity.title = forms.getTitle();
+        formsJpaEntity.description = forms.getDescription();
+        return formsJpaEntity;
+    }
+
+    public Forms toDomain() {
+        return Forms.builder()
+                .id(this.id)
+                .title(this.title)
+                .description(this.description)
+                .build();
+    }
 }
