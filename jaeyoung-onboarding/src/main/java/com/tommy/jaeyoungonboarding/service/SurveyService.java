@@ -20,7 +20,7 @@ public class SurveyService {
     * */
     public List<Survey> selectAllSurvey(){
 
-        List<Survey> selectAllSurvey = surveyRepository.selectAllSurvey();
+        List<Survey> selectAllSurvey = surveyRepository.findAll();
 
         if(selectAllSurvey.isEmpty()){
             throw new ResourceNotFoundException("생성한 설문조사가 없습니다.");
