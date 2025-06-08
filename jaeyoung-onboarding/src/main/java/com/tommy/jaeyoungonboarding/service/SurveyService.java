@@ -2,6 +2,7 @@ package com.tommy.jaeyoungonboarding.service;
 
 import com.tommy.jaeyoungonboarding.entity.Survey;
 import com.tommy.jaeyoungonboarding.exception.ResourceNotFoundException;
+import com.tommy.jaeyoungonboarding.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SurveyService {
 
+    private final SurveyRepository surveyRepository;
 
     /*
     * 모든 Survey 조회
