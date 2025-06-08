@@ -1,5 +1,6 @@
 package com.tommy.jaeyoungonboarding.controller;
 
+import com.tommy.jaeyoungonboarding.dto.CreateSurveyDTO;
 import com.tommy.jaeyoungonboarding.entity.Survey;
 import com.tommy.jaeyoungonboarding.service.SurveyService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class SurveyController {
     * @return 생성 완료 메시지
     * */
     @PostMapping
-    public ResponseEntity<?> createSurvey(@RequestBody HashMap<String, Object> requestData){
+    public ResponseEntity<?> createSurvey(@RequestBody CreateSurveyDTO createSurveyDTO){
         return null;
     }
 

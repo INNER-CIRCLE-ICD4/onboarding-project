@@ -1,6 +1,6 @@
 package com.tommy.jaeyoungonboarding.entity;
 
-public enum ItemSurveyForm {
+public enum SurveyItemForm {
     SHORT_SENTENCE("단답형"),
     LONG_SENTENCE("장문형"),
     SINGLE_SELECTION("단일 선택 리스트"),
@@ -8,7 +8,7 @@ public enum ItemSurveyForm {
 
     private String itemSurveyForm;
 
-    ItemSurveyForm(String itemSurveyForm) {
+    SurveyItemForm(String itemSurveyForm) {
         this.itemSurveyForm = itemSurveyForm;
     }
 
