@@ -18,7 +18,7 @@ public class OptionsJpaEntity {
     @Column(name = "option_text", nullable = false)
     private String optionText;
 
-    @Column(name = "order", nullable = false)
+    @Column(name = "option_order")
     private int order;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,6 +36,9 @@ public class OptionsJpaEntity {
 
     public void mappingQuestionJpaEntity(QuestionJpaEntity questionJpaEntity) {
         this.questionJpaEntity = questionJpaEntity;
+        if (!questionJpaEntity.getOptions().contains(this)) {
+            questionJpaEntity.getOptions().add(this);
+        }
     }
 
 }
