@@ -18,7 +18,7 @@ public class SurveyController {
     private final SurveyService surveyService;
 
     /*
-    * 설문조사 전체 조회 API - GET
+    * 설문조사 전체 조회 - GET
     * @return 설문조사 리스트
     * */
     @GetMapping
@@ -26,4 +26,9 @@ public class SurveyController {
         List<Survey> selectAllSurvey = surveyService.selectAllSurvey();
         return ResponseEntity.ok(selectAllSurvey);
     }
+
+    /*
+    * 설문조사 생성 - POST
+    * @return 생성 완료 메시지
+    * */
 }

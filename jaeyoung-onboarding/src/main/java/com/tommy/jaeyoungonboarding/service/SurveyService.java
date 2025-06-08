@@ -17,6 +17,7 @@ public class SurveyService {
     /*
     * 모든 Survey 조회
     * @return Survey 리스트
+    * @exception selectAllSurvey.isEmpty 시 ResourceNotFoundException 발생
     * */
     public List<Survey> selectAllSurvey(){
 
