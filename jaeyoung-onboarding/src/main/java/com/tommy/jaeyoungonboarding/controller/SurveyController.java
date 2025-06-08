@@ -4,10 +4,9 @@ import com.tommy.jaeyoungonboarding.entity.Survey;
 import com.tommy.jaeyoungonboarding.service.SurveyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -31,4 +30,9 @@ public class SurveyController {
     * 설문조사 생성 - POST
     * @return 생성 완료 메시지
     * */
+    @PostMapping
+    public ResponseEntity<?> createSurvey(@RequestBody HashMap<String, Object> requestData){
+        return null;
+    }
+
 }
