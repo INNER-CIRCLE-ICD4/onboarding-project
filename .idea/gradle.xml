@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/project/inung-onboarding/SurveyProject" />
+        <option name="gradleJvm" value="openjdk-24" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/project/sanghyuk-onboarding" />
+        <option name="gradleJvm" value="openjdk-24" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/project/taeyang-onboarding" />
+        <option name="gradleJvm" value="openjdk-24" />
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
