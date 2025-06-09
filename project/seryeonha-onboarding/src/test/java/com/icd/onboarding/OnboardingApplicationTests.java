@@ -1,10 +1,10 @@
-package com.pathfinder.survey;
+package com.icd.onboarding;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SurveyApplicationTests {
+class OnboardingApplicationTests {
 
     @Test
     void contextLoads() {
