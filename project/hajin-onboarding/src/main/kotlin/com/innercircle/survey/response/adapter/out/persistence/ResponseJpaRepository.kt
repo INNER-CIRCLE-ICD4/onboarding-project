@@ -8,13 +8,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.util.UUID
 
-/**
- * Spring Data JPA 응답 리포지토리
- */
 interface ResponseJpaRepository : JpaRepository<Response, UUID> {
-    /**
-     * 설문조사 ID로 응답 목록 조회 (페이징)
-     */
     @Query(
         """
         SELECT DISTINCT r FROM Response r
@@ -28,9 +22,6 @@ interface ResponseJpaRepository : JpaRepository<Response, UUID> {
         pageable: Pageable,
     ): Page<Response>
 
-    /**
-     * 설문조사 ID로 모든 응답 조회
-     */
     @Query(
         """
         SELECT DISTINCT r FROM Response r
@@ -43,8 +34,5 @@ interface ResponseJpaRepository : JpaRepository<Response, UUID> {
         @Param("surveyId") surveyId: UUID,
     ): List<Response>
 
-    /**
-     * 설문조사 ID로 응답 수 조회
-     */
     fun countBySurveyId(surveyId: UUID): Long
 }
