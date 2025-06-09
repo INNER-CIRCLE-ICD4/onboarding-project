@@ -1,1 +1,1 @@
-rootProject.name = "youngwonng-onboarding-backend"
+rootProject.name = "youngwoong-onboarding"
