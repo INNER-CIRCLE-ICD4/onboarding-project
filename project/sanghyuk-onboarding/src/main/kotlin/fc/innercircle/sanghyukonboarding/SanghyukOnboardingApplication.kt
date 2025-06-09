@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class SanghyukOnboardingApplication
 
 fun main(args: Array<String>) {
-	runApplication<SanghyukOnboardingApplication>(*args)
+    runApplication<SanghyukOnboardingApplication>(*args)
 }
