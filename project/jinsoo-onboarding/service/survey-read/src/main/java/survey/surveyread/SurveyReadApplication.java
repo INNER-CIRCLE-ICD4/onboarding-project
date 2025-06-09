@@ -1,13 +1,11 @@
-package com.icd.jinsooonboarding;
+package survey.surveyread;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JinsooOnboardingApplication {
-
+public class SurveyReadApplication {
     public static void main(String[] args) {
-        SpringApplication.run(JinsooOnboardingApplication.class, args);
+        SpringApplication.run(SurveyReadApplication.class, args);
     }
-
 }
