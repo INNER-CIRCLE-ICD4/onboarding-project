@@ -39,85 +39,92 @@ class FormControllerTest {
                   "questionCreateRequests": [
                     {
                       "questionText": "귀하의 연령대는 어떻게 되십니까?",
-                      "questionType": "RADIO",
-                      "order": 1,
+                      "questionType": "SINGLE_CHOICE",
+                      "questionOrder": 1,
                       "isRequired": true,
                       "optionCreateRequests": [
                         {
                           "optionText": "10대",
-                          "order": 1
+                          "optionOrder": 1
                         },
                         {
                           "optionText": "20대",
-                          "order": 2
+                          "optionOrder": 2
                         },
                         {
                           "optionText": "30대",
-                          "order": 3
+                          "optionOrder": 3
                         },
                         {
                           "optionText": "40대 이상",
-                          "order": 4
+                          "optionOrder": 4
                         }
                       ]
                     },
                     {
                       "questionText": "저희 서비스를 얼마나 자주 이용하십니까?",
-                      "questionType": "RADIO",
-                      "order": 2,
+                      "questionType": "MULTIPLE_CHOICE",
+                      "questionOrder": 2,
                       "isRequired": true,
                       "optionCreateRequests": [
                         {
                           "optionText": "매일",
-                          "order": 1
+                          "optionOrder": 1
                         },
                         {
                           "optionText": "주 2-3회",
-                          "order": 2
+                          "optionOrder": 2
                         },
                         {
                           "optionText": "월 1-2회",
-                          "order": 3
+                          "optionOrder": 3
                         },
                         {
                           "optionText": "거의 이용하지 않음",
-                          "order": 4
+                          "optionOrder": 4
                         }
                       ]
                     },
                     {
                       "questionText": "가장 만족스러운 기능은 무엇입니까? (복수 선택 가능)",
-                      "questionType": "CHECKBOX",
-                      "order": 3,
+                      "questionType": "SINGLE_CHOICE",
+                      "questionOrder": 3,
                       "isRequired": false,
                       "optionCreateRequests": [
                         {
                           "optionText": "사용자 인터페이스",
-                          "order": 1
+                          "optionOrder": 1
                         },
                         {
                           "optionText": "검색 기능",
-                          "order": 2
+                          "optionOrder": 2
                         },
                         {
                           "optionText": "고객 지원",
-                          "order": 3
+                          "optionOrder": 3
                         },
                         {
                           "optionText": "콘텐츠 품질",
-                          "order": 4
+                          "optionOrder": 4
                         },
                         {
                           "optionText": "기타",
-                          "order": 5
+                          "optionOrder": 5
                         }
                       ]
                     },
                     {
                       "questionText": "서비스 개선을 위한 제안사항이 있으시면 자유롭게 작성해주세요.",
-                      "questionType": "TEXT",
-                      "order": 4,
+                      "questionType": "SHORT_ANSWER",
+                      "questionOrder": 4,
                       "isRequired": false,
+                      "optionCreateRequests": []
+                    },
+                    {
+                      "questionText": "서비스 개선을 위한 제안사항이 있으시면 자유롭게 작성해주세요.(500자 이내)",
+                      "questionType": "LONG_ANSWER",
+                      "questionOrder": 5,
+                      "isRequired": true,
                       "optionCreateRequests": []
                     }
                   ]
@@ -126,7 +133,7 @@ class FormControllerTest {
 
         // When
         // FormController를 사용하여 설문 조사서 등록 요청
-        mockMvc.perform(post("/api/v1/forms/create")
+        mockMvc.perform(post("/api/v1/forms")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestData))
                 .andExpect(status().isOk());

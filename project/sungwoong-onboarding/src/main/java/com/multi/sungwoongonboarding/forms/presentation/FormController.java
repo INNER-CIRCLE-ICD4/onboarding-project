@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/forms")
+@RequestMapping("/api/v1/forms")
 public class FormController {
 
     private final FormService formService;
