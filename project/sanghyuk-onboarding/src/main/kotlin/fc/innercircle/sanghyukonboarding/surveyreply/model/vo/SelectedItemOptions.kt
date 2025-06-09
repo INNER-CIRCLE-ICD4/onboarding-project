@@ -11,7 +11,7 @@ class SelectedItemOptions(
     @Column(
         name = "selected_item_option_text",
         nullable = false,
-        columnDefinition = "TEXT not null comment '선택된 항목 옵션 텍스트'(단일/다중 선택 리스트)",
+        columnDefinition = "TEXT not null comment '선택된 항목 옵션 텍스트'(단일/다중 선택 리스트)"
     )
     @Convert(converter = SelectedItemOptionsConverter::class)
     val texts: List<String> = emptyList(),

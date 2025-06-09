@@ -55,7 +55,7 @@ open class SurveyItem(
         name = "survey_id",
         nullable = false,
         columnDefinition = "bigint not null comment '설문 ID'",
-        foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT),
+        foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT)
     )
     var survey: Survey = survey
         protected set

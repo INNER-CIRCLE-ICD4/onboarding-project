@@ -37,7 +37,7 @@ open class SurveyItemAnswer(
         name = "survey_reply_id",
         nullable = false,
         foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT),
-        columnDefinition = "bigint not null comment '설문 응답 ID'",
+        columnDefinition = "bigint not null comment '설문 응답 ID'"
     )
     var surveyReply: SurveyReply = surveyReply
         protected set

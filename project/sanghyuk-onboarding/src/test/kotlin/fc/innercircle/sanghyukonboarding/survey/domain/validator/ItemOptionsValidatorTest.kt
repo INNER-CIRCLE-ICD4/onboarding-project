@@ -63,7 +63,9 @@ class ItemOptionsValidatorTest : DescribeSpec({
                 }
 
                 // then
-                exception.message shouldBe ErrorCode.INVALID_ITEM_OPTION_DISPLAY_ORDER.withArgs(negativeDisplayOrder.toString()).message
+                exception.message shouldBe ErrorCode.INVALID_ITEM_OPTION_DISPLAY_ORDER.withArgs(
+                    negativeDisplayOrder.toString()
+                ).message
             }
         }
     }

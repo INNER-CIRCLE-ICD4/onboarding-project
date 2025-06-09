@@ -17,7 +17,7 @@ class ItemOptionsTest :
                         Survey(
                             title = "테스트 설문",
                             description = "테스트 설문 설명",
-                            createdBy = "테스트 사용자",
+                            createdBy = "테스트 사용자"
                         )
                     val surveyItem =
                         SurveyItem(
@@ -27,7 +27,7 @@ class ItemOptionsTest :
                             required = true,
                             displayOrder = 1,
                             survey = survey,
-                            createdBy = "테스트 사용자",
+                            createdBy = "테스트 사용자"
                         )
                     val optionText = "옵션 텍스트"
                     val displayOrder = 1
@@ -37,7 +37,7 @@ class ItemOptionsTest :
                         ItemOptions(
                             optionText = optionText,
                             displayOrder = displayOrder,
-                            surveyItem = surveyItem,
+                            surveyItem = surveyItem
                         )
 
                     // then
@@ -53,7 +53,7 @@ class ItemOptionsTest :
                         Survey(
                             title = "테스트 설문",
                             description = "테스트 설문 설명",
-                            createdBy = "테스트 사용자",
+                            createdBy = "테스트 사용자"
                         )
                     val surveyItem =
                         SurveyItem(
@@ -63,7 +63,7 @@ class ItemOptionsTest :
                             required = true,
                             displayOrder = 1,
                             survey = survey,
-                            createdBy = "테스트 사용자",
+                            createdBy = "테스트 사용자"
                         )
                     val emptyOptionText = ""
 
@@ -73,7 +73,7 @@ class ItemOptionsTest :
                             ItemOptions(
                                 optionText = emptyOptionText,
                                 displayOrder = 1,
-                                surveyItem = surveyItem,
+                                surveyItem = surveyItem
                             )
                         }
 
@@ -87,7 +87,7 @@ class ItemOptionsTest :
                         Survey(
                             title = "테스트 설문",
                             description = "테스트 설문 설명",
-                            createdBy = "테스트 사용자",
+                            createdBy = "테스트 사용자"
                         )
                     val surveyItem =
                         SurveyItem(
@@ -97,7 +97,7 @@ class ItemOptionsTest :
                             required = true,
                             displayOrder = 1,
                             survey = survey,
-                            createdBy = "테스트 사용자",
+                            createdBy = "테스트 사용자"
                         )
                     val longOptionText = "a".repeat(51)
 
@@ -107,7 +107,7 @@ class ItemOptionsTest :
                             ItemOptions(
                                 optionText = longOptionText,
                                 displayOrder = 1,
-                                surveyItem = surveyItem,
+                                surveyItem = surveyItem
                             )
                         }
 
@@ -121,7 +121,7 @@ class ItemOptionsTest :
                         Survey(
                             title = "테스트 설문",
                             description = "테스트 설문 설명",
-                            createdBy = "테스트 사용자",
+                            createdBy = "테스트 사용자"
                         )
                     val surveyItem =
                         SurveyItem(
@@ -131,7 +131,7 @@ class ItemOptionsTest :
                             required = true,
                             displayOrder = 1,
                             survey = survey,
-                            createdBy = "테스트 사용자",
+                            createdBy = "테스트 사용자"
                         )
                     val negativeDisplayOrder = -1
 
@@ -141,7 +141,7 @@ class ItemOptionsTest :
                             ItemOptions(
                                 optionText = "옵션 텍스트",
                                 displayOrder = negativeDisplayOrder,
-                                surveyItem = surveyItem,
+                                surveyItem = surveyItem
                             )
                         }
 
