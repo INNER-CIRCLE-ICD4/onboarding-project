@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: baul-onboarding
+
+server:
+  port: 8888
