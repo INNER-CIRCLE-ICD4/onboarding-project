@@ -19,12 +19,14 @@ public class Forms {
     private final List<Questions> questions;
 
     public static Forms form(FormCreateRequest formCreateRequest) {
-        return Forms.builder()
+        FormsBuilder formBuilder = Forms.builder()
                 .title(formCreateRequest.getTitle())
-                .description(formCreateRequest.getDescription())
-                .questions(
-                        formCreateRequest.getQuestionCreateRequests().stream().map(Questions::from).toList()
-                )
-                .build();
+                .description(formCreateRequest.getDescription());
+
+        if (formCreateRequest.getQuestionCreateRequests() != null) {
+            formBuilder.questions(formCreateRequest.getQuestionCreateRequests().stream().map(Questions::from).toList());
+        }
+
+        return formBuilder.build();
     }
 }

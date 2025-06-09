@@ -26,14 +26,17 @@ public class Questions {
     private final List<Options> options;
 
     public static Questions from(QuestionCreateRequest questionCreateRequest) {
-        return Questions.builder()
+
+        QuestionsBuilder questionBuilder = Questions.builder()
                 .questionText(questionCreateRequest.getQuestionText())
                 .questionType(QuestionType.valueOf(questionCreateRequest.getQuestionType().toUpperCase()))
                 .order(questionCreateRequest.getOrder())
-                .isRequired(questionCreateRequest.isRequired())
-                .options(
-                        questionCreateRequest.getOptionCreateRequests().stream().map(Options::from).collect(Collectors.toList())
-                )
-                .build();
+                .isRequired(questionCreateRequest.isRequired());
+
+        if (questionCreateRequest.getOptionCreateRequests() != null) {
+            questionBuilder.options(questionCreateRequest.getOptionCreateRequests().stream().map(Options::from).collect(Collectors.toList()));
+        }
+
+        return questionBuilder.build();
     }
 }
