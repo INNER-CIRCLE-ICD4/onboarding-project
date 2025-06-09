@@ -28,6 +28,7 @@ class FormControllerTest {
     @Test
     @DisplayName("설문 조사서 등록 요청 테스트 - RequestBody 테스트")
     public void testCreateForm() throws Exception {
+
         // Given
         // 설문 조사서 등록에 필요한 데이터 준비
         String requestData = """
@@ -122,16 +123,16 @@ class FormControllerTest {
                 }
                 """;
 
+        // When
         // FormController를 사용하여 설문 조사서 등록 요청
-        // When & Then
         mockMvc.perform(post("/api/v1/forms/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestData))
                 .andExpect(status().isOk());
 
+        //Then
         // FormService의 createForms 메소드가 호출되었는지 검증
         verify(formService, times(1)).createForms(any(FormCreateRequest.class));
-
 
     }
 

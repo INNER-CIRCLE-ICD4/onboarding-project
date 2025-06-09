@@ -27,7 +27,7 @@ public class FormRepositoryTest {
 
     @Test
     @DisplayName("Forms 엔티티가 저장되고 조회되는지 테스트")
-    public void test1() {
+    public void formSave() {
 
         // Given
         Forms formsDomain = Forms.builder()
