@@ -1,6 +1,7 @@
 package fc.innercircle.sanghyukonboarding.survey.domain.model
 
 import fc.innercircle.sanghyukonboarding.common.domain.model.BaseEntity
+import fc.innercircle.sanghyukonboarding.survey.domain.model.vo.InputType
 import fc.innercircle.sanghyukonboarding.survey.domain.validator.SurveyItemValidator
 import jakarta.persistence.Column
 import jakarta.persistence.ConstraintMode
@@ -17,7 +18,7 @@ import jakarta.persistence.ManyToOne
 open class SurveyItem(
     question: String,
     description: String = "",
-    type: ItemType,
+    type: InputType,
     required: Boolean = false,
     displayOrder: Int = 0,
     survey: Survey,
@@ -37,7 +38,7 @@ open class SurveyItem(
     var description: String = description
         protected set
 
-    @Column(nullable = false, columnDefinition = "varchar(20) comment '설문 항목 타입'")
+    @Column(nullable = false, columnDefinition = "varchar(20) comment '설문 항목 입력 타입'")
     var type: String = type.name
         protected set
 
@@ -49,11 +50,11 @@ open class SurveyItem(
     var displayOrder: Int = displayOrder
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(
         name = "survey_id",
         nullable = false,
-        columnDefinition = "bigint",
+        columnDefinition = "bigint not null comment '설문 ID'",
         foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT),
     )
     var survey: Survey = survey
@@ -68,19 +69,5 @@ open class SurveyItem(
         SurveyItemValidator.validateDescription(description)
         SurveyItemValidator.validateRequired(required)
         SurveyItemValidator.validateDisplayOrder(displayOrder)
-    }
-
-    enum class ItemType {
-        TEXT, // 단답형
-        LONG_TEXT, // 장문형
-        RADIO, // 라디오 버튼
-        CHECKBOX, // 체크박스
-        SELECT, // 드롭다운,
-
-        ;
-
-        companion object {
-            fun fromString(type: String): ItemType = valueOf(type.uppercase())
-        }
     }
 }

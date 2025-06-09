@@ -31,8 +31,13 @@ open class ItemOptions(
     var displayOrder: Int = displayOrder
         protected set
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "survey_item_id", nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+        name = "survey_item_id",
+        nullable = false,
+        foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT),
+        columnDefinition = "bigint not null comment '설문 항목 ID'"
+    )
     var surveyItem: SurveyItem = surveyItem
         protected set
 

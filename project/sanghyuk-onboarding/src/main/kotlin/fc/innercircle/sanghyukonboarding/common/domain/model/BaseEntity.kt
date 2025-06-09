@@ -21,9 +21,4 @@ abstract class BaseEntity(
     @Column(name = "updated_at", nullable = true, columnDefinition = "datetime comment '수정 일시'")
     var updatedAt: LocalDateTime? = null
         protected set
-
-    fun update(updatedBy: String) {
-        this.updatedBy = updatedBy
-        this.updatedAt = LocalDateTime.now()
-    }
 }
