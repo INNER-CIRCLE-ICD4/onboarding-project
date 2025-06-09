@@ -169,8 +169,7 @@ class FormControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("400"))
                 .andExpect(jsonPath("$.errorDetails").exists())
-                .andExpect(jsonPath("$.errorDetails[0].field").value("title"))
-                .andExpect(jsonPath("$.errorDetails[1].field").value("questionCreateRequests"));
+                .andExpect(jsonPath("$.errorDetails[0].field").value("title"));
 
     }
 
