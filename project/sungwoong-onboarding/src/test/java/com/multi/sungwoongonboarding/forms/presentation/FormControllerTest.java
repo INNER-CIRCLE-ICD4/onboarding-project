@@ -14,6 +14,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -143,5 +145,34 @@ class FormControllerTest {
         verify(formService, times(1)).createForms(any(FormCreateRequest.class));
 
     }
+
+    @Test
+    @DisplayName("설문 조사서 등록 요청 - 잘못된 RequestBody 테스트")
+    public void testCreateFormWithInvalidRequest() throws Exception {
+
+        // Given
+        // 잘못된 설문 조사서 등록 데이터 준비
+        String invalidRequestData = """
+                {
+                  "title": "",
+                  "description": "",
+                  "questionCreateRequests": []
+                }
+                """;
+
+        // When & Then
+        // 잘못된 요청에 대해 400 Bad Request 응답을 기대
+        mockMvc.perform(post("/api/v1/forms")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequestData))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("400"))
+                .andExpect(jsonPath("$.errorDetails").exists())
+                .andExpect(jsonPath("$.errorDetails[0].field").value("title"))
+                .andExpect(jsonPath("$.errorDetails[1].field").value("questionCreateRequests"));
+
+    }
+
 
 }
