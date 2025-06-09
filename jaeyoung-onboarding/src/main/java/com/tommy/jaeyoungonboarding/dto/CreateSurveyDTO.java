@@ -3,7 +3,6 @@ package com.tommy.jaeyoungonboarding.dto;
 import com.tommy.jaeyoungonboarding.entity.SurveyItemForm;
 import lombok.Data;
 
-import java.util.UUID;
 
 @Data
 public class CreateSurveyDTO {
@@ -14,8 +13,7 @@ public class CreateSurveyDTO {
 
     // SurveyItem
     private String surveyItemTitle;
-    private String surveyItemEDescription;
+    private String surveyItemDescription;
     private SurveyItemForm surveyItemForm;
-    private boolean itemEssential;
-    private UUID surveyId;
+    private boolean surveyItemEssential;
 }

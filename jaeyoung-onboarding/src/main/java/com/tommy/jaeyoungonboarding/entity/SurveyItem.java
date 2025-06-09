@@ -32,9 +32,14 @@ public class SurveyItem {
 
     // 항목 필수 여부
     @Column(name = "item_essential")
-    private boolean itemEssential;
+    private boolean surveyItemEssential;
 
-    // surveyId
-    @Column(name = "survey_id")
-    private UUID surveyId;
+    /*
+    * 다대일 관계 설정을 통해
+    * Survey 객체를 입력
+    * */
+    // Survey 객체
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "survey_id")
+    private Survey survey;
 }

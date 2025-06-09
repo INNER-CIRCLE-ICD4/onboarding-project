@@ -4,6 +4,7 @@ import com.tommy.jaeyoungonboarding.dto.CreateSurveyDTO;
 import com.tommy.jaeyoungonboarding.entity.Survey;
 import com.tommy.jaeyoungonboarding.service.SurveyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/survey")
+@Slf4j
 public class SurveyController {
 
     private final SurveyService surveyService;
@@ -23,6 +25,7 @@ public class SurveyController {
     * */
     @GetMapping
     public ResponseEntity<?> selectAllSurvey(){
+
         List<Survey> selectAllSurvey = surveyService.selectAllSurvey();
         return ResponseEntity.ok(selectAllSurvey);
     }
@@ -33,7 +36,8 @@ public class SurveyController {
     * */
     @PostMapping
     public ResponseEntity<?> createSurvey(@RequestBody CreateSurveyDTO createSurveyDTO){
-        return null;
-    }
 
+        String surveyCreate = surveyService.createSurvey(createSurveyDTO);
+        return ResponseEntity.ok("Create success survey: "  + surveyCreate);
+    }
 }
