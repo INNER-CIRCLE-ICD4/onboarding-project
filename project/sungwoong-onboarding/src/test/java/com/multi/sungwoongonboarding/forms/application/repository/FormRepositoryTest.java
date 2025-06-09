@@ -1,5 +1,6 @@
 package com.multi.sungwoongonboarding.forms.application.repository;
 
+import com.multi.sungwoongonboarding.common.config.JpaAuditingConfig;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import org.assertj.core.api.Assertions;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -20,6 +22,7 @@ import java.util.List;
 @Import({FormRepositoryImpl.class})
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@EnableJpaAuditing
 public class FormRepositoryTest {
 
     @Autowired

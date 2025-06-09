@@ -29,25 +29,30 @@ public class FormsJpaEntity extends BaseEntity {
     @OneToMany(mappedBy = "formsJpaEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionJpaEntity> questions = new ArrayList<>();
 
-    public static FormsJpaEntity fromDomain(Forms forms) {
+    public static FormsJpaEntity fromDomain(Forms form) {
 
         FormsJpaEntity formsJpaEntity = new FormsJpaEntity();
-        formsJpaEntity.id = forms.getId();
-        formsJpaEntity.title = forms.getTitle();
-        formsJpaEntity.description = forms.getDescription();
+        formsJpaEntity.id = form.getId();
+        formsJpaEntity.title = form.getTitle();
+        formsJpaEntity.description = form.getDescription();
 
-        forms.getQuestions().forEach(question -> {
+        if (form.getQuestions() != null && !form.getQuestions().isEmpty()) {
+            form.getQuestions().forEach(question -> {
 
-            QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
-            questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
+                QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
+                questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
 
-            question.getOptions().forEach(options -> {
+                if (question.getOptions() != null && !question.getOptions().isEmpty()) {
+                    question.getOptions().forEach(options -> {
 
-                OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
-                optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
+                        OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
+                        optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
 
+                    });
+                }
             });
-        });
+        }
+
 
         return formsJpaEntity;
     }

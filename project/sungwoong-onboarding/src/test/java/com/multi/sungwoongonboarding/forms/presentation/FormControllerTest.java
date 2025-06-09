@@ -22,6 +22,7 @@ class FormControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
     @MockBean
     private FormService formService;
 
