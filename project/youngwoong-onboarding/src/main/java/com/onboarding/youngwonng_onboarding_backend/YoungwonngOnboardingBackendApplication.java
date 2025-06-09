@@ -9,5 +9,4 @@ public class YoungwonngOnboardingBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(YoungwonngOnboardingBackendApplication.class, args);
 	}
-
 }
