@@ -1,11 +1,11 @@
-package fc.innercircle.sanghyukonboarding
+package fc.innercircle.jinhoonboarding
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class SanghyukOnboardingApplication
+class JinhoOnboardingApplication
 
 fun main(args: Array<String>) {
-    runApplication<SanghyukOnboardingApplication>(*args)
+	runApplication<JinhoOnboardingApplication>(*args)
 }
