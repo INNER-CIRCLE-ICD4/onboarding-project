@@ -311,6 +311,48 @@ Spring Boot, JPA, H2 기반으로 설문조사 생성부터 응답 조회까지�
 
 ---
 
+### 5. 설문조사 조회 API (추가)
+
+- **URL**: `GET /api/surveys/{survey_id}`
+- **설명**: 설명: 설문 정보를 조회하고, 최신 질문 목록(QuestionGroup 포함)을 반환함
+- **성공 응답 코드**: `200 OK`
+
+#### 응답 예시
+
+```json
+{
+	"survey_id": 1,
+	"title": "설문조사 제목",
+	"description": "설문조사 설명",
+	"question_group_id": "uuid-qg3",
+	"questions": [
+		{
+			"question_id": "uuid-q1",
+			"type": "SINGLE_SELECT",
+			"title": "설문조사 질문 예시 1",
+			"description": null,
+			"is_required": true,
+			"position": 0,
+			"options": [
+				{ "option_id": "uuid-opt-a", "value": "답1", "position": 0 },
+				{ "option_id": "uuid-opt-b", "value": "답2", "position": 1 }
+			]
+		},
+		{
+			"question_id": "uuid-q2",
+			"type": "LONG_TEXT",
+			"title": "설문조사 질문 예시 2",
+			"description": null,
+			"is_required": false,
+			"position": 1,
+			"options": []
+		}
+	]
+}
+```
+
+---
+
 ### 에러 응답 형식 (공통)
 
 ```json
@@ -389,7 +431,7 @@ Spring Boot, JPA, H2 기반으로 설문조사 생성부터 응답 조회까지�
 
 ---
 
-### 3. 설문 응답 조회 API (`GET /api/surveys/{id}/responses`)
+### 3. 설문 응답 조회 API (`GET /api/surveys/{survey_id}/responses`)
 
 #### 404 Not Found
 
@@ -399,7 +441,17 @@ Spring Boot, JPA, H2 기반으로 설문조사 생성부터 응답 조회까지�
 
 ---
 
-### 4. 공통 서버 오류
+### 4. 설문조사 조회 API (`GET /api/surveys/{survey_id}`)
+
+#### 404 Not Found
+
+| 세부 코드 (`code`) | 설명                           |
+| ------------------ | ------------------------------ |
+| `SURVEY_NOT_FOUND` | 해당 설문이 존재하지 않습니다. |
+
+---
+
+### 5. 공통 서버 오류
 
 #### 500 Internal Server Error
 
