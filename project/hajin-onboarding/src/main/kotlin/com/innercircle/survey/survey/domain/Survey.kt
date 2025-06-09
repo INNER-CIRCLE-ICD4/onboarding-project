@@ -16,11 +16,13 @@ class Survey private constructor(
     var title: String,
     @Column(name = "description", nullable = false, length = 1000)
     var description: String,
+    @Column(name = "version", nullable = false)
+    var version: Int = 1,
 ) : BaseEntity() {
     @OneToMany(
         mappedBy = "survey",
         cascade = [CascadeType.ALL],
-        orphanRemoval = true,
+        orphanRemoval = false,
         fetch = FetchType.LAZY,
     )
     @OrderColumn(name = "question_order")
@@ -48,6 +50,7 @@ class Survey private constructor(
     ) {
         this.title = title
         this.description = description
+        this.version++
     }
 
     companion object {

@@ -25,6 +25,8 @@ class Question private constructor(
     var type: QuestionType,
     @Column(name = "required", nullable = false)
     var required: Boolean = false,
+    @Column(name = "is_deleted", nullable = false)
+    var isDeleted: Boolean = false, // Soft delete를 위한 플래그
 ) : BaseEntity() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_id")
@@ -34,7 +36,7 @@ class Question private constructor(
     @OneToMany(
         mappedBy = "question",
         cascade = [CascadeType.ALL],
-        orphanRemoval = true,
+        orphanRemoval = false, // 기존 응답 보존을 위해 false로 변경
         fetch = FetchType.LAZY,
     )
     @OrderColumn(name = "choice_order")

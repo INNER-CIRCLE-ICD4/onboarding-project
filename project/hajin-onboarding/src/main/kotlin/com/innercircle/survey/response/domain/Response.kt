@@ -3,6 +3,7 @@ package com.innercircle.survey.response.domain
 import com.innercircle.survey.common.domain.BaseEntity
 import com.innercircle.survey.survey.domain.Survey
 import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
@@ -17,6 +18,8 @@ class Response private constructor(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_id", nullable = false)
     val survey: Survey,
+    @Column(name = "survey_snapshot", columnDefinition = "TEXT")
+    val surveySnapshot: String,
 ) : BaseEntity() {
     @OneToMany(
         mappedBy = "response",
@@ -28,6 +31,17 @@ class Response private constructor(
 
     val answers: List<Answer>
         get() = _answers.toList()
+
+    fun getOriginalSurveyTitle(): String {
+        // 간단한 파싱 (실제로는 JSON 파서 사용)
+        return surveySnapshot.substringAfter("\"title\": \"")
+            .substringBefore("\"")
+    }
+
+    fun getOriginalSurveyVersion(): Int {
+        return surveySnapshot.substringAfter("\"version\": ")
+            .substringBefore(",").toInt()
+    }
 
     fun addAnswer(answer: Answer) {
         validateAnswer(answer)
@@ -69,7 +83,9 @@ class Response private constructor(
             survey: Survey,
             answers: List<Answer> = emptyList(),
         ): Response {
-            val response = Response(survey)
+            val snapshot = createSurveySnapshot(survey)
+
+            val response = Response(survey, snapshot)
             answers.forEach { response.addAnswer(it) }
 
             require(response.hasAnsweredAllRequiredQuestions()) {
@@ -77,6 +93,24 @@ class Response private constructor(
             }
 
             return response
+        }
+
+        private fun createSurveySnapshot(survey: Survey): String {
+            val questions =
+                survey.questions.joinToString(";") { question ->
+                    val choices = question.choices.joinToString(",") { it.text }
+                    "${question.id}|${question.title}|${question.type}|${question.required}|$choices"
+                }
+
+            return """
+                {
+                  "surveyId": "${survey.id}",
+                  "title": "${survey.title}",
+                  "description": "${survey.description}",
+                  "version": ${survey.version},
+                  "questions": "$questions"
+                }
+                """.trimIndent()
         }
     }
 }
