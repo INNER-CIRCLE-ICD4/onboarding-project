@@ -1,0 +1,4 @@
+### 설문조사 생성 API
+POST http://localhost:8080/survey
+
+### 설문조사 수정 API
