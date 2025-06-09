@@ -2,6 +2,7 @@ package com.multi.sungwoongonboarding.forms.presentation;
 
 import com.multi.sungwoongonboarding.forms.application.FormService;
 import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,7 @@ public class FormController {
     private final FormService formService;
 
     @PostMapping
-    public void createForm(@RequestBody FormCreateRequest formCreateRequest) {
+    public void createForm(@RequestBody @Valid FormCreateRequest formCreateRequest) {
 
         formService.createForms(formCreateRequest);
 

@@ -28,9 +28,9 @@ class FormCreateRequestTest {
     public void testFormCreateRequestValidation() {
         // Given
         List<QuestionCreateRequest> questionCreateRequests =
-            IntStream.range(1, 12).mapToObj(i ->
-                new QuestionCreateRequest(String.format("q_%d", i) + i, Questions.QuestionType.LONG_ANSWER.name(), i, true, null)
-            ).toList();
+                IntStream.range(1, 12).mapToObj(i ->
+                        new QuestionCreateRequest(String.format("q_%d", i) + i, Questions.QuestionType.LONG_ANSWER.name(), i, true, null)
+                ).toList();
 
         FormCreateRequest formCreateRequest = new FormCreateRequest("설문 제목", "설문 설명", questionCreateRequests);
 
@@ -41,11 +41,12 @@ class FormCreateRequestTest {
         Assertions.assertThat(violations).hasSize(1);
     }
 
+
     @Test
     @DisplayName("custom validation 테스트 - 질문 유형이 잘못 넘어온 경우")
     public void testQuestionCreateRequestValidation() {
         // Given
-        QuestionCreateRequest questionCreateRequest = new QuestionCreateRequest("question1", "옳지 않은 유형", 1, true,null);
+        QuestionCreateRequest questionCreateRequest = new QuestionCreateRequest("question1", "옳지 않은 유형", 1, true, null);
 
         // When
         Set<ConstraintViolation<QuestionCreateRequest>> validate = validator.validate(questionCreateRequest);
@@ -54,4 +55,6 @@ class FormCreateRequestTest {
         Assertions.assertThat(validate.size()).isEqualTo(1);
 
     }
+
+
 }
