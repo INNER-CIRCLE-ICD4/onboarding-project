@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/forms")
+@RequestMapping("/forms")
 public class FormController {
 
     private final FormService formService;
 
-    @PostMapping("/create")
+    @PostMapping
     public void createForm(@RequestBody FormCreateRequest formCreateRequest) {
 
         formService.createForms(formCreateRequest);
