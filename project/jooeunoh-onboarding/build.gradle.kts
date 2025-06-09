@@ -24,12 +24,13 @@ repositories {
 }
 
 dependencies {
-	// implementation("org.springframework.boot:spring-boot-starter-data-jpa") // 주석 처리된 부분 유지
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("org.postgresql:postgresql:42.7.3")
 }
 
 tasks.test {
