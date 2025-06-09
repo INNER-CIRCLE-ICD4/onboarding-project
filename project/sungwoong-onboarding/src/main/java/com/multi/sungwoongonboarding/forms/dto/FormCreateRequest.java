@@ -21,8 +21,7 @@ public class FormCreateRequest {
 
     private final String description;
 
-    @Min(value = 1, message = "최소 1개 이상의 질문이 필요합니다.")
-    @Max(value = 10, message = "최대 10개 이하의 질문을 작성할 수 있습니다.")
+    @Size(min = 1, max = 10, message = "질문은 최소 1개에서 최대 10개까지 입력할 수 있습니다.")
     private final List<QuestionCreateRequest> questionCreateRequests;
 
 }
