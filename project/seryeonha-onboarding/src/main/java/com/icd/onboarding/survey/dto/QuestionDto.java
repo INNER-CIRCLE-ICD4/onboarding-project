@@ -36,6 +36,29 @@ public class QuestionDto {
     @NoArgsConstructor
     @Getter
     @Setter
+    public static class Update {
+        private String name;
+        private String description;
+        private QuestionType type;
+        private boolean required;
+        private List<OptionDto.Update> options;
+
+        public Question toEntity() {
+            return Question.builder()
+                    .name(name)
+                    .description(description)
+                    .type(type)
+                    .required(required)
+                    .options(ObjectUtils.isEmpty(options)
+                            ? Collections.emptyList()
+                            : options.stream().map(OptionDto.Update::toEntity).toList())
+                    .build();
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
     @AllArgsConstructor
     @Builder
     public static class Read {

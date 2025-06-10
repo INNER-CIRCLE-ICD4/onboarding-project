@@ -22,4 +22,9 @@ public class SurveyService {
         Survey survey = surveyRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Survey not found"));
         return SurveyDto.Read.fromEntity(survey);
     }
+
+    public void updateSurvey(Long id, SurveyDto.Update req) {
+        Survey survey = surveyRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Survey not found"));
+
+    }
 }

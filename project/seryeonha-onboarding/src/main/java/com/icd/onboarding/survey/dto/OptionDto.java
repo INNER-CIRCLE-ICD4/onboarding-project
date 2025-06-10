@@ -21,6 +21,20 @@ public class OptionDto {
     @NoArgsConstructor
     @Getter
     @Setter
+    public static class Update {
+        private Long id;
+        private String content;
+
+        public Option toEntity() {
+            return Option.builder()
+                    .content(content)
+                    .build();
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
     @AllArgsConstructor
     @Builder
     public static class Read {

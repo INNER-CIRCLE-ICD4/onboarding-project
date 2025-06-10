@@ -25,6 +25,13 @@ public class Option {
         this.content = content;
     }
 
+    @Builder
+    public Option(Long id, Question question, String content) {
+        this.id = id;
+        this.question = question;
+        this.content = content;
+    }
+
     public void linkToQuestion(Question question) {
         this.question = question;
     }

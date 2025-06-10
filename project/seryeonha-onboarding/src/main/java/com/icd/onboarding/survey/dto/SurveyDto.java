@@ -31,6 +31,25 @@ public class SurveyDto {
     @NoArgsConstructor
     @Getter
     @Setter
+    public static class Update {
+        private String name;
+        private String description;
+        private List<QuestionDto.Update> questions;
+
+        public Survey toEntity() {
+            return Survey.builder()
+                    .name(name)
+                    .description(description)
+                    .questions(ObjectUtils.isEmpty(questions)
+                            ? Collections.emptyList()
+                            : questions.stream().map(QuestionDto.Update::toEntity).toList())
+                    .build();
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
     @Builder
     @AllArgsConstructor
     public static class Read {

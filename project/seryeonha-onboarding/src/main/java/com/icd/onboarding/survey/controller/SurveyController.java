@@ -16,6 +16,11 @@ public class SurveyController {
         surveyService.createSurvey(req);
     }
 
+    @PutMapping("/{id}")
+    public void updateSurvey(@PathVariable Long id, @RequestBody SurveyDto.Update req) {
+        surveyService.updateSurvey(id, req);
+    }
+
     @GetMapping("/{id}")
     public SurveyDto.Read getSurvey(@PathVariable Long id) {
         return surveyService.getSurvey(id);
