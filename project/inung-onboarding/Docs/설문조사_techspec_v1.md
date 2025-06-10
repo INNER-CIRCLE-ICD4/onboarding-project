@@ -83,8 +83,8 @@ flowchart LR
 ## 데이터 모델링
 
 ### ERD
+<img width="800" alt="스크린샷 2025-06-10 오후 9 07 43" src="https://github.com/user-attachments/assets/e8607e82-03ec-4294-8839-189b6c85e4ab" />
 
-![[ERD_v1.png|500]]
 
 ### 스키마
 
