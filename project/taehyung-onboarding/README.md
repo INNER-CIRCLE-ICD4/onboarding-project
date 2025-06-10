@@ -41,3 +41,12 @@
 
 - SurveyFormQuestionOption: 단일 리스트, 다중 리스트용 옵션값
   - value: 선택해야될 값
+
+
+- Answer: 설문지 응답
+  - 유저 이메일
+  - 제출 일자
+  - 응답값 목록
+ 
+- QuestionAnswer
+  - 응답값
