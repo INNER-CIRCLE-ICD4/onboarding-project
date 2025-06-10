@@ -1,10 +1,9 @@
 package com.multi.sungwoongonboarding.questions.dto;
 
-import com.multi.sungwoongonboarding.common.valid.OptionCheck;
+import com.multi.sungwoongonboarding.common.valid.OptionValid;
 import com.multi.sungwoongonboarding.common.valid.ValidEnum;
 import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +14,7 @@ import java.util.List;
 @Getter
 @Builder
 @RequiredArgsConstructor
-@OptionCheck
+@OptionValid
 public class QuestionCreateRequest {
 
 

@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = OptionValidator.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface OptionCheck {
+public @interface OptionValid {
     String message() default "SINGLE_CHOICE 또는 MULTIPLE_CHOICE일 경우 옵션은 최소 1개 이상이어야 합니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

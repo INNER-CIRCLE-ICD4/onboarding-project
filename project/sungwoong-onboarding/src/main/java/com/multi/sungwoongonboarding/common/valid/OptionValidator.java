@@ -9,11 +9,10 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.*;
 
-public class OptionValidator implements ConstraintValidator<OptionCheck, QuestionCreateRequest> {
+public class OptionValidator implements ConstraintValidator<OptionValid, QuestionCreateRequest> {
 
     private final Validator validator;
 
@@ -22,7 +21,7 @@ public class OptionValidator implements ConstraintValidator<OptionCheck, Questio
     }
 
     @Override
-    public void initialize(OptionCheck constraintAnnotation) {
+    public void initialize(OptionValid constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
