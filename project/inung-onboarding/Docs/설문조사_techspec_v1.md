@@ -59,5 +59,6 @@ flowchart LR
 - JUnit 5.12.2
 - Mockito 5.17.0
 ---
-## ERD
+## 데이터 모델링
+### ERD
 ![[ERD_v1.png|500]]
