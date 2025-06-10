@@ -1,5 +1,6 @@
 package fc.innercircle.jinhoonboarding.entity
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -13,9 +14,8 @@ import jakarta.persistence.OneToMany
 class Survey(
     val title: String,
     val description: String,
-    @OneToMany
-    @JoinColumn(name = "survey_id", nullable = false)
-    val questions: List<Question>
+    @OneToMany(mappedBy = "survey", cascade = [CascadeType.ALL])
+    val questions: MutableList<Question>
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
