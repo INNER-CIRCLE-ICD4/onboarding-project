@@ -42,9 +42,15 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-aop")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	runtimeOnly("com.h2database:h2")
+	implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.9.11") // Json 타입 사용
+	implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
+	kapt("com.querydsl:querydsl-apt:5.1.0:jakarta")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
