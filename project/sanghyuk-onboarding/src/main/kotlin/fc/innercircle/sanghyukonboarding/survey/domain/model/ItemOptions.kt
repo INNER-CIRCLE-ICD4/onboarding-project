@@ -1,14 +1,12 @@
 package fc.innercircle.sanghyukonboarding.survey.domain.model
 
+import fc.innercircle.sanghyukonboarding.common.domain.model.BaseEntity
 import fc.innercircle.sanghyukonboarding.survey.domain.validator.ItemOptionsValidator
 import jakarta.persistence.Column
 import jakarta.persistence.ConstraintMode
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.ForeignKey
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
@@ -17,11 +15,8 @@ open class ItemOptions(
     optionText: String,
     displayOrder: Int = 0,
     surveyItem: SurveyItem,
-) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = 0L
-        protected set
+    createdBy: String = "system",
+) : BaseEntity(createdBy) {
 
     @Column(nullable = false, length = 50, columnDefinition = "varchar(50) not null comment '설문 선택 옵션'")
     var optionText: String = optionText

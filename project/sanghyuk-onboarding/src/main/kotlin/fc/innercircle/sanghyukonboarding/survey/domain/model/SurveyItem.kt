@@ -8,9 +8,6 @@ import jakarta.persistence.ConstraintMode
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.ForeignKey
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
@@ -24,11 +21,6 @@ open class SurveyItem(
     survey: Survey,
     createdBy: String,
 ) : BaseEntity(createdBy) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    var id: Long = 0L
-        protected set
 
     @Column(nullable = false, length = 500, columnDefinition = "varchar(500) comment '설문 항목 제목'")
     var question: String = question
