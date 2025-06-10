@@ -9,13 +9,14 @@ import java.util.UUID
 interface SurveyJpaRepository : JpaRepository<Survey, UUID> {
     @Query(
         """
-        SELECT DISTINCT s FROM Survey s
-        LEFT JOIN FETCH s._questions q
-        LEFT JOIN FETCH q._choices
+        SELECT DISTINCT s 
+        FROM Survey s 
+        LEFT JOIN FETCH s._questions q 
+        LEFT JOIN FETCH q._choices 
         WHERE s.id = :id
-    """,
+        """,
     )
-    fun findByIdWithQuestions(
+    fun findByIdWithQuestionsAndChoices(
         @Param("id") id: UUID,
     ): Survey?
 }
