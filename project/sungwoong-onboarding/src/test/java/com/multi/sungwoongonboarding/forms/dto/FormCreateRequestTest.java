@@ -82,7 +82,35 @@ class FormCreateRequestTest {
     }
 
 
+    @Test
+    @DisplayName("OptionCheck 검증 어노테이션 테스트 - 선택 형식의 질문에 옵션 데이터가 없는 경우")
+    public void testOptionCreateRequestValidationWithEmptyOption() {
+        // Given
+        QuestionCreateRequest questionRequest_optionText_null = new QuestionCreateRequest("question1", Questions.QuestionType.MULTIPLE_CHOICE.name(), 1, true, List.of(new OptionCreateRequest("" , 1)));
+        QuestionCreateRequest questionRequests_optionText_null = new QuestionCreateRequest(
+                "question1",
+                Questions.QuestionType.MULTIPLE_CHOICE.name(),
+                1,
+                true,
+                List.of(new OptionCreateRequest("" , 1),
+                        new OptionCreateRequest("" , 2),
+                        new OptionCreateRequest("" , 3),
+                        new OptionCreateRequest("" , 4),
+                        new OptionCreateRequest("" , 5),
+                        new OptionCreateRequest("" , 6),
+                        new OptionCreateRequest("" , 7),
+                        new OptionCreateRequest("" , 8),
+                        new OptionCreateRequest("" , 9),
+                        new OptionCreateRequest("" , 10)
+                )
+        );
 
+        // When
+        var violations_option_size_1 = validator.validate(questionRequest_optionText_null);
+        var violations_option_size_10 = validator.validate(questionRequests_optionText_null);
 
-
+        // Then
+        Assertions.assertThat(violations_option_size_1).hasSize(1);
+        Assertions.assertThat(violations_option_size_10).hasSize(10);
+    }
 }
