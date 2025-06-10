@@ -5,12 +5,21 @@ import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.*;
 
 public class OptionValidator implements ConstraintValidator<OptionCheck, QuestionCreateRequest> {
+
+    private final Validator validator;
+
+    public OptionValidator(Validator validator) {
+        this.validator = validator;
+    }
 
     @Override
     public void initialize(OptionCheck constraintAnnotation) {
@@ -39,7 +48,35 @@ public class OptionValidator implements ConstraintValidator<OptionCheck, Questio
                 if (options == null || options.isEmpty()) {
                     return false;
                 }
+
+
+                // 모든 OptionCreateRequest 검증
+                boolean isValid = true;
+                for (int i = 0; i < options.size(); i++) {
+
+                    OptionCreateRequest optionCreateRequest = options.get(i);
+                    var violations = validator.validate(optionCreateRequest);
+
+                    if(!violations.isEmpty()) {
+                        isValid = false;
+                        // 옵션이 유효하지 않으면 false 반환
+
+                        for (ConstraintViolation<OptionCreateRequest> violation : violations) {
+                            constraintValidatorContext.disableDefaultConstraintViolation();
+                            constraintValidatorContext.buildConstraintViolationWithTemplate(violation.getMessage())
+                                    .addPropertyNode("optionCreateRequests[" + i + "]")
+                                    .addPropertyNode("optionText")
+                                    .addConstraintViolation();
+                        }
+                    }
+                }
+
+                return isValid;
+
             }
+
+
+
             return true;
         } catch (IllegalArgumentException e) {
             return true;

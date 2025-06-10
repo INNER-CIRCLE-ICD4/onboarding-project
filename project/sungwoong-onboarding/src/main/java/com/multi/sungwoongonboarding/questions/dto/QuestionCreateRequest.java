@@ -4,6 +4,7 @@ import com.multi.sungwoongonboarding.common.valid.OptionCheck;
 import com.multi.sungwoongonboarding.common.valid.ValidEnum;
 import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +27,5 @@ public class QuestionCreateRequest {
     private final int order;
     private final boolean isRequired;
 
-
     private final List<OptionCreateRequest> optionCreateRequests;
-
 }
