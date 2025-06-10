@@ -1,10 +1,10 @@
-package com.song.onboarding.SeongBeen;
+package com.group.surveyapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SeongBeenOnboardingApplicationTests {
+class SurveyApplicationTests {
 
 	@Test
 	void contextLoads() {

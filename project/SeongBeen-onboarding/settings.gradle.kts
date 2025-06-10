@@ -1,1 +1,1 @@
-rootProject.name = "SeongBeen"
+rootProject.name = "onboarding-project"
