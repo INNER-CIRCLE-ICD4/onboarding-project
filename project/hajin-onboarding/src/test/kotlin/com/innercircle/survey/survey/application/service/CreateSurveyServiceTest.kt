@@ -7,6 +7,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.instanceOf
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -72,11 +73,14 @@ class CreateSurveyServiceTest : DescribeSpec({
                     )
 
                 it("InvalidQuestionTypeException이 발생해야 한다") {
+                    val newSaveSurveyPort = mockk<SaveSurveyPort>()
+                    val newService = CreateSurveyService(newSaveSurveyPort)
+                    
                     shouldThrow<InvalidQuestionTypeException> {
-                        service.createSurvey(command)
+                        newService.createSurvey(command)
                     }
 
-                    verify(exactly = 0) { saveSurveyPort.save(any()) }
+                    verify(exactly = 0) { newSaveSurveyPort.save(any()) }
                 }
             }
 

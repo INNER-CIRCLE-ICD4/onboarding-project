@@ -70,6 +70,15 @@ class CreateSurveyControllerTest(
                                 ),
                         )
 
+                    // JPA 필드 초기화를 위한 리플렉션 사용
+                    val createdAtField = survey.javaClass.superclass.getDeclaredField("createdAt")
+                    createdAtField.isAccessible = true
+                    createdAtField.set(survey, java.time.LocalDateTime.now())
+                    
+                    val updatedAtField = survey.javaClass.superclass.getDeclaredField("updatedAt")
+                    updatedAtField.isAccessible = true
+                    updatedAtField.set(survey, java.time.LocalDateTime.now())
+
                     every { createSurveyUseCase.createSurvey(any()) } returns survey
 
                     mockMvc.perform(
