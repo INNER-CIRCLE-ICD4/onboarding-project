@@ -227,4 +227,138 @@ class SurveyControllerTest(
                 }
             }
         }
+
+        describe("PUT /api/v1/surveys/{surveyId}") {
+            context("유효한 설문조사 수정 요청") {
+                it("200 OK와 함께 수정된 설문조사를 반환해야 한다") {
+                    // given
+                    val surveyId = UUID.randomUUID()
+                    val mockSurvey =
+                        Survey.create(
+                            title = "수정된 설문조사",
+                            description = "수정된 설명",
+                            questions =
+                                listOf(
+                                    Question.create(
+                                        title = "새로운 질문",
+                                        description = "새로운 질문 설명",
+                                        type = QuestionType.MULTIPLE_CHOICE,
+                                        required = true,
+                                        choices = listOf("옵션1", "옵션2", "옵션3"),
+                                    ),
+                                ),
+                        ).apply {
+                            val baseClass = this::class.java.superclass
+
+                            val idField = baseClass.getDeclaredField("id")
+                            idField.isAccessible = true
+                            idField.set(this, surveyId)
+
+                            val createdAtField = baseClass.getDeclaredField("createdAt")
+                            createdAtField.isAccessible = true
+                            createdAtField.set(this, LocalDateTime.now())
+
+                            val updatedAtField = baseClass.getDeclaredField("updatedAt")
+                            updatedAtField.isAccessible = true
+                            updatedAtField.set(this, LocalDateTime.now())
+
+                            // 버전을 2로 설정 (수정되었음을 나타냄)
+                            val versionField = this::class.java.getDeclaredField("version")
+                            versionField.isAccessible = true
+                            versionField.set(this, 2)
+                        }
+
+                    every { surveyUseCase.updateSurvey(any()) } returns mockSurvey
+
+                    val requestBody =
+                        """
+                        {
+                            "title": "수정된 설문조사",
+                            "description": "수정된 설명",
+                            "questions": [
+                                {
+                                    "title": "새로운 질문",
+                                    "description": "새로운 질문 설명",
+                                    "type": "MULTIPLE_CHOICE",
+                                    "required": true,
+                                    "choices": ["옵션1", "옵션2", "옵션3"]
+                                }
+                            ]
+                        }
+                        """.trimIndent()
+
+                    // when & then
+                    RestAssured.given()
+                        .contentType(ContentType.JSON)
+                        .body(requestBody)
+                        .`when`()
+                        .put("/api/v1/surveys/$surveyId")
+                        .then()
+                        .statusCode(200)
+                        .body("success", equalTo(true))
+                        .body("message", equalTo("설문조사가 성공적으로 수정되었습니다."))
+                        .body("data.title", equalTo("수정된 설문조사"))
+                        .body("data.version", equalTo(2))
+                        .body("data.questions", hasSize<Any>(1))
+
+                    verify { surveyUseCase.updateSurvey(any()) }
+                }
+            }
+
+            context("존재하지 않는 설문조사 ID로 수정 요청") {
+                it("404 Not Found를 반환해야 한다") {
+                    // given
+                    val surveyId = UUID.randomUUID()
+                    every { surveyUseCase.updateSurvey(any()) } throws SurveyNotFoundException(surveyId)
+
+                    val requestBody =
+                        """
+                        {
+                            "title": "수정할 설문조사",
+                            "description": "수정할 설명",
+                            "questions": [
+                                {
+                                    "title": "질문",
+                                    "description": "설명",
+                                    "type": "SHORT_TEXT",
+                                    "required": false
+                                }
+                            ]
+                        }
+                        """.trimIndent()
+
+                    // when & then
+                    RestAssured.given()
+                        .contentType(ContentType.JSON)
+                        .body(requestBody)
+                        .`when`()
+                        .put("/api/v1/surveys/$surveyId")
+                        .then()
+                        .statusCode(404)
+                }
+            }
+
+            context("잘못된 요청 데이터로 수정 요청") {
+                it("400 Bad Request를 반환해야 한다") {
+                    val surveyId = UUID.randomUUID()
+                    val invalidRequestBody =
+                        """
+                        {
+                            "title": "",
+                            "description": "설명",
+                            "questions": []
+                        }
+                        """.trimIndent()
+
+                    RestAssured.given()
+                        .contentType(ContentType.JSON)
+                        .body(invalidRequestBody)
+                        .`when`()
+                        .put("/api/v1/surveys/$surveyId")
+                        .then()
+                        .statusCode(400)
+                        .body("errorCode", notNullValue())
+                }
+            }
+        }
     })

@@ -176,5 +176,115 @@ class SurveyTest : DescribeSpec({
                 question.survey shouldBe null
             }
         }
+
+        describe("updateQuestions") {
+            it("기존 질문을 soft delete하고 새로운 질문으로 교체해야 한다") {
+                val survey =
+                    Survey.create(
+                        title = "설문조사",
+                        description = "설명",
+                        questions =
+                            listOf(
+                                Question.create(
+                                    title = "기존 질문 1",
+                                    description = "기존 질문 설명 1",
+                                    type = QuestionType.SHORT_TEXT,
+                                    required = true,
+                                ),
+                                Question.create(
+                                    title = "기존 질문 2",
+                                    description = "기존 질문 설명 2",
+                                    type = QuestionType.SINGLE_CHOICE,
+                                    required = false,
+                                    choices = listOf("예", "아니오"),
+                                ),
+                            ),
+                    )
+
+                val originalVersion = survey.version
+                val originalQuestions = survey.allQuestions.toList()
+
+                val newQuestions =
+                    listOf(
+                        Question.create(
+                            title = "새 질문 1",
+                            description = "새 질문 설명 1",
+                            type = QuestionType.LONG_TEXT,
+                            required = false,
+                        ),
+                        Question.create(
+                            title = "새 질문 2",
+                            description = "새 질문 설명 2",
+                            type = QuestionType.MULTIPLE_CHOICE,
+                            required = true,
+                            choices = listOf("A", "B", "C"),
+                        ),
+                    )
+
+                survey.updateQuestions(newQuestions)
+
+                // 버전이 증가했는지 확인
+                survey.version shouldBe originalVersion + 1
+
+                // 활성 질문들만 확인 (soft delete 되지 않은 것)
+                survey.questions.size shouldBe 2
+                survey.questions[0].title shouldBe "새 질문 1"
+                survey.questions[1].title shouldBe "새 질문 2"
+
+                // 전체 질문 수 확인 (기존 2개 + 새로운 2개)
+                survey.allQuestions.size shouldBe 4
+
+                // 기존 질문들이 soft delete 되었는지 확인
+                originalQuestions.forEach { question ->
+                    question.isDeleted shouldBe true
+                }
+            }
+
+            it("빈 질문 목록으로 업데이트 시 모든 질문이 soft delete 되어야 한다") {
+                val survey =
+                    Survey.create(
+                        title = "설문조사",
+                        description = "설명",
+                        questions =
+                            listOf(
+                                Question.create(
+                                    title = "질문",
+                                    description = "설명",
+                                    type = QuestionType.SHORT_TEXT,
+                                ),
+                            ),
+                    )
+
+                val originalVersion = survey.version
+
+                survey.updateQuestions(emptyList())
+
+                survey.questions.size shouldBe 0
+                survey.allQuestions.size shouldBe 1 // soft delete된 질문 1개
+                survey.allQuestions.first().isDeleted shouldBe true
+                survey.version shouldBe originalVersion + 1
+            }
+
+            it("10개를 초과하는 질문으로 업데이트 시 예외가 발생해야 한다") {
+                val survey =
+                    Survey.create(
+                        title = "설문조사",
+                        description = "설명",
+                    )
+
+                val tooManyQuestions =
+                    (1..11).map {
+                        Question.create(
+                            title = "질문 $it",
+                            description = "설명 $it",
+                            type = QuestionType.SHORT_TEXT,
+                        )
+                    }
+
+                shouldThrow<IllegalArgumentException> {
+                    survey.updateQuestions(tooManyQuestions)
+                }.message shouldBe "설문조사는 최대 10개의 항목만 가질 수 있습니다."
+            }
+        }
     }
 })

@@ -31,6 +31,9 @@ class Survey private constructor(
     private val _questions: MutableList<Question> = mutableListOf()
 
     val questions: List<Question>
+        get() = _questions.filter { !it.isDeleted }.toList()
+
+    val allQuestions: List<Question> // 테스트용
         get() = _questions.toList()
 
     fun addQuestion(question: Question) {
@@ -55,7 +58,22 @@ class Survey private constructor(
         this.version++
     }
 
-    fun canAddMoreQuestions(): Boolean = _questions.size < MAX_QUESTIONS
+    fun updateQuestions(newQuestions: List<Question>) {
+        require(newQuestions.size <= MAX_QUESTIONS) {
+            "설문조사는 최대 ${MAX_QUESTIONS}개의 항목만 가질 수 있습니다."
+        }
+
+        // 기존 질문들을 soft delete 처리 (응답 보존을 위해)
+        _questions.forEach { it.isDeleted = true }
+
+        // 새로운 질문들 추가 (clear 하지 않고 추가만)
+        newQuestions.forEach { addQuestion(it) }
+
+        // 버전 증가
+        this.version++
+    }
+
+    fun canAddMoreQuestions(): Boolean = questions.size < MAX_QUESTIONS
 
     companion object {
         const val MAX_QUESTIONS = 10
