@@ -1,21 +1,20 @@
 package com.multi.sungwoongonboarding.common.valid;
 
+
 import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = EnumValidator.class)
-@Target({ElementType.FIELD, ElementType.TYPE_PARAMETER})
+@Constraint(validatedBy = OptionValidator.class)
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidEnum {
-    String message() default "유효하지 않은 타입입니다.";
-
+public @interface OptionValid {
+    String message() default "SINGLE_CHOICE 또는 MULTIPLE_CHOICE일 경우 옵션은 최소 1개 이상이어야 합니다.";
     Class<?>[] groups() default {};
-
-    Class<? extends jakarta.validation.Payload>[] payload() default {};
-    Class<? extends Enum<?>> enumClass();
+    Class<? extends Payload>[] payload() default {};
 
 }

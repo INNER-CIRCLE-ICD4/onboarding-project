@@ -1,5 +1,6 @@
 package com.multi.sungwoongonboarding.questions.dto;
 
+import com.multi.sungwoongonboarding.common.valid.OptionValid;
 import com.multi.sungwoongonboarding.common.valid.ValidEnum;
 import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
@@ -13,7 +14,9 @@ import java.util.List;
 @Getter
 @Builder
 @RequiredArgsConstructor
+@OptionValid
 public class QuestionCreateRequest {
+
 
     @NotBlank(message = "질문 내용은 필수 입력 항목입니다.")
     private final String questionText;
@@ -22,6 +25,6 @@ public class QuestionCreateRequest {
     private final String questionType;
     private final int order;
     private final boolean isRequired;
-    private final List<OptionCreateRequest> optionCreateRequests;
 
+    private final List<OptionCreateRequest> optionCreateRequests;
 }

@@ -1,13 +1,12 @@
 package com.multi.sungwoongonboarding.common.valid;
 
-import com.multi.sungwoongonboarding.questions.domain.Questions;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 
-public class QuestionEnumValidator implements ConstraintValidator<ValidEnum, String> {
+public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
 
-    private Class<? extends Enum<?>> enumClass;
+    private Class<? extends Enum> enumClass;
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
@@ -15,7 +14,7 @@ public class QuestionEnumValidator implements ConstraintValidator<ValidEnum, Str
             return false;
         }
         try {
-            Questions.QuestionType.valueOf(value);
+            Enum.valueOf(enumClass, value);
             return true;
         } catch (IllegalArgumentException e) {
             return false;
