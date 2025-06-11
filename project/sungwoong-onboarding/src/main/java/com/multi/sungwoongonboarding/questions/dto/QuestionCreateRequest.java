@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -27,4 +28,18 @@ public class QuestionCreateRequest {
     private final boolean isRequired;
 
     private final List<OptionCreateRequest> optionCreateRequests;
+
+    public Questions toDomain() {
+        Questions.QuestionsBuilder questionBuilder = Questions.builder()
+                .questionText(this.questionText)
+                .questionType(Questions.QuestionType.valueOf(this.getQuestionType().toUpperCase()))
+                .order(this.order)
+                .isRequired(this.isRequired);
+
+        if (this.optionCreateRequests != null) {
+            questionBuilder.options(this.optionCreateRequests.stream().map(OptionCreateRequest::toDomain).collect(Collectors.toList()));
+        }
+
+        return questionBuilder.build();
+    }
 }

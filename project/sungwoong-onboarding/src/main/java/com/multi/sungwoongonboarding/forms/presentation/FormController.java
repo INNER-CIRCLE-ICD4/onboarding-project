@@ -18,9 +18,7 @@ public class FormController {
 
     @PostMapping
     public void createForm(@RequestBody @Valid FormCreateRequest formCreateRequest) {
-
         formService.createForms(formCreateRequest);
-
     }
 
 }
