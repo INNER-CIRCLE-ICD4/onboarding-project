@@ -14,5 +14,5 @@ public class ResponseDto<T> {
     private final String message;
     private final String errorCode;
     private final T data;
-    private final List<FieldErrorDto> fieldErrors;
+    private final T errorDetail;
 }

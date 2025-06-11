@@ -26,6 +26,9 @@ public class FormsJpaEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "user_id")
+    private String userId;
+
     @OneToMany(mappedBy = "formsJpaEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionJpaEntity> questions = new ArrayList<>();
 
@@ -63,6 +66,10 @@ public class FormsJpaEntity extends BaseEntity {
                 .title(this.title)
                 .description(this.description)
                 .questions(this.questions.stream().map(QuestionJpaEntity::toDomain).toList())
+                .createdAt(this.getCreatedAt())
+                .createdAt(this.getUpdatedAt())
+                .userId(this.userId)
                 .build();
     }
+
 }

@@ -1,35 +1,32 @@
 package com.multi.sungwoongonboarding.forms.presentation;
 
-import com.multi.sungwoongonboarding.forms.application.FormService;
-import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest(FormController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@EnableJpaAuditing
 class FormControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private FormService formService;
 
     @Test
-    @DisplayName("설문 조사서 등록 요청 - RequestBody")
+    @DisplayName("설문 조사서 등록 요청 성공 - RequestBody")
     public void testCreateForm() throws Exception {
 
         // Given
@@ -133,26 +130,28 @@ class FormControllerTest {
                 }
                 """;
 
-        // When
+
+
+        // Expected
         // FormController를 사용하여 설문 조사서 등록 요청
         mockMvc.perform(post("/api/v1/forms")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestData))
                 .andDo(print())
-                .andExpect(status().isOk());
-
-        //Then
-        // FormService의 createForms 메소드가 호출되었는지 검증
-//        verify(formService, times(1)).createForms(any(FormCreateRequest.class));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
+                .andExpect(jsonPath("$.data.questionCreateResponses", hasSize(5)))
+                .andExpect(jsonPath("$.data.questionCreateResponses[0].optionCreateResponses", hasSize(4)));
 
     }
 
     @Test
-    @DisplayName("설문 조사서 등록 요청 - 잘못된 RequestBody")
+    @DisplayName("설문 조사서 등록 요청 실패 - 설문지 제목과 질문이 비어있는 경우")
     public void testCreateFormWithInvalidRequest() throws Exception {
 
         // Given
         // 잘못된 설문 조사서 등록 데이터 준비
+        // 제목과 질문이 비어있으
         String invalidRequestData = """
                 {
                   "title": "",
@@ -169,12 +168,13 @@ class FormControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value("E-004"))
-                .andExpect(jsonPath("$.data").exists());
+                .andExpect(jsonPath("$.errorDetail").exists())
+                .andExpect(jsonPath("$.errorDetail", hasSize(2)));
 
     }
 
     @Test
-    @DisplayName("설문 조사서 등록 요청 테스트 - 잘못된 RequestBody, 질문이 선택 형식인데 옵션의 내용이 없는 경우")
+    @DisplayName("설문 조사서 등록 요청 실패 - 질문이 선택 형식인데 옵션의 내용이 없는 경우")
     public void testCreateForm_fail() throws Exception {
 
         // Given
@@ -284,7 +284,8 @@ class FormControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestData))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorDetail", hasSize(2)));
     }
 
 

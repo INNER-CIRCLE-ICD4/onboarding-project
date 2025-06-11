@@ -31,7 +31,7 @@ public class ResponseUtil {
                 .status(ERROR.name())
                 .errorCode(errorCode.getCode())
                 .message(errorCode.getMessage())
-                .data(errorData)
+                .errorDetail(errorData)
                 .build();
     }
 }
