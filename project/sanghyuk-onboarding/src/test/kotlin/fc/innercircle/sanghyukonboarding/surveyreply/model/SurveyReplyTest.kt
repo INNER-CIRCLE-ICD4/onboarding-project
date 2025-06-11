@@ -23,7 +23,6 @@ class SurveyReplyTest : DescribeSpec({
                 // then
                 surveyReply.surveyId shouldBe surveyId
                 surveyReply.responseDate shouldBe responseDate
-                surveyReply.id shouldBe 0L
             }
 
             it("responseDate가 null인 SurveyReply를 생성할 수 있어야 한다") {
@@ -42,7 +41,6 @@ class SurveyReplyTest : DescribeSpec({
                 // then
                 surveyReply.surveyId shouldBe surveyId
                 surveyReply.responseDate shouldBe responseDate
-                surveyReply.id shouldBe 0L
             }
         }
     }

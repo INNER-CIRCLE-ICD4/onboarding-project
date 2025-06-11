@@ -52,7 +52,6 @@ class SurveyItemAnswerTest :
                     surveyItemAnswer.type shouldBe surveyInputType
                     surveyItemAnswer.answer shouldBe answer
                     surveyItemAnswer.selectedItemOptions.texts shouldBe selectedItemOptions
-                    surveyItemAnswer.id shouldBe 0L
                 }
 
                 it("빈 질문으로 SurveyItemAnswer를 생성하면 예외가 발생해야 한다") {

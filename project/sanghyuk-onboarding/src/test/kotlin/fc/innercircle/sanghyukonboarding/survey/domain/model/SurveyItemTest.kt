@@ -45,7 +45,6 @@ class SurveyItemTest :
                     surveyItem.required shouldBe required
                     surveyItem.displayOrder shouldBe displayOrder
                     surveyItem.survey shouldBe survey
-                    surveyItem.id shouldBe 0L
                 }
 
                 it("빈 질문으로 SurveyItem을 생성하면 예외가 발생해야 한다") {

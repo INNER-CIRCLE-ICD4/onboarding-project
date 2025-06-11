@@ -24,11 +24,11 @@ class IdGeneratingEntityListenerTest : BehaviorSpec({
         `when`("ID가 0인 엔티티에 대해 onPrePersist가 호출되면") {
             // 테스트용 Identifiable 구현체
             val entity = object : Identifiable {
-                override var id: Long = 0L
+                override var id: String = ""
             }
 
             // ID 생성기가 반환할 ID 설정
-            val generatedId = 12345L
+            val generatedId = "generated-id-1234"
             testIdGenerator.nextIdToReturn = generatedId
             testIdGenerator.callCount = 0
 
@@ -43,9 +43,9 @@ class IdGeneratingEntityListenerTest : BehaviorSpec({
 
         `when`("ID가 이미 설정된 엔티티에 대해 onPrePersist가 호출되면") {
             // 테스트용 Identifiable 구현체 (ID가 이미 설정됨)
-            val existingId = 9876L
+            val existingId = "existing-id-5678"
             val entity = object : Identifiable {
-                override var id: Long = existingId
+                override var id: String = existingId
             }
 
             // 호출 횟수 초기화

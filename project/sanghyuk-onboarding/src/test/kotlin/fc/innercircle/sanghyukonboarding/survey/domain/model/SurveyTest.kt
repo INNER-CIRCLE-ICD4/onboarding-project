@@ -25,7 +25,6 @@ class SurveyTest : DescribeSpec({
                 // then
                 survey.title shouldBe title
                 survey.description shouldBe description
-                survey.id shouldBe 0L
             }
 
             it("빈 제목으로 Survey를 생성하면 예외가 발생해야 한다") {

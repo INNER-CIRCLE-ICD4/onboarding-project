@@ -44,7 +44,6 @@ class ItemOptionsTest :
                     itemOptions.optionText shouldBe optionText
                     itemOptions.displayOrder shouldBe displayOrder
                     itemOptions.surveyItem shouldBe surveyItem
-                    itemOptions.id shouldBe 0L
                 }
 
                 it("빈 옵션 텍스트로 ItemOptions를 생성하면 예외가 발생해야 한다") {
