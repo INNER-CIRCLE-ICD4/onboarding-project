@@ -6,6 +6,7 @@ import com.multi.sungwoongonboarding.common.config.JpaAuditingConfig;
 import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
+import com.multi.sungwoongonboarding.forms.dto.FormCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +43,12 @@ public class FormServiceTest {
 
         // When
         // FormService를 사용하여 설문 조사서 등록
-        formService.createForms(formCreateRequest);
+        FormCreateResponse form = formService.createForms(formCreateRequest);
         List<Forms> all = formRepository.findAll();
 
         // Then
         // 등록된 설문 조사서가 올바르게 저장되었는지 검증
+        assertThat(form).isNotNull();
         assertThat(all.size()).isEqualTo(1);
         assertThat(all.get(0).getQuestions().size()).isEqualTo(5);
     }
