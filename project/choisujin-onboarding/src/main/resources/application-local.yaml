@@ -1,0 +1,18 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+logging:
+  file:
+    name: .${file.separator}project${file.separator}choisujin-onboarding${file.separator}logs${file.separator}logging.log
+  level:
+    root: info
+    com.zaxxer.hikari: info
+    org.hibernate.type.descriptor.sql.BasicBinder: info
+    org.hibernate.SQL: info
+    org.springframework: info
+
+
+
+
