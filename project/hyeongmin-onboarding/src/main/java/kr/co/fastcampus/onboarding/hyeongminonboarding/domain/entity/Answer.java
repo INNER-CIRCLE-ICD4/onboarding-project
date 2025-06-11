@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.global.entity.base.BaseTimeEntity;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +20,6 @@ import java.util.List;
 @Builder
 public class Answer extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

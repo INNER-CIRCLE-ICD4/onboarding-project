@@ -23,7 +23,6 @@ import java.util.List;
 @Builder
 public class SurveyResponse extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -3,9 +3,10 @@ package kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity;
 import jakarta.persistence.*;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.global.entity.base.BaseTimeEntity;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -19,10 +20,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Survey extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     private String name;
 
