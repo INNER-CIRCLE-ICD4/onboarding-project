@@ -15,8 +15,8 @@ public class Choice {
     @GeneratedValue
     private UUID id;
 
-    private String text;             // 선택지 텍스트
-    private int choiceIndex;         // 순서 정보
+    private String text;            // 선택지 텍스트
+    private int choiceIndex;        // 순서 정보
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

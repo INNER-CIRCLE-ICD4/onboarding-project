@@ -23,7 +23,6 @@ public class Response {
     private Survey survey;
 
     @Lob
-    private String surveySnapshot; // 설문 스냅샷 (JSON)
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

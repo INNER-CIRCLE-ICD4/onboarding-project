@@ -56,10 +56,6 @@ public class Question {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void softDelete() {
-        this.isDeleted = true;
-    }
-
     public void setSurvey(Survey survey) {
         this.survey = survey;
     }

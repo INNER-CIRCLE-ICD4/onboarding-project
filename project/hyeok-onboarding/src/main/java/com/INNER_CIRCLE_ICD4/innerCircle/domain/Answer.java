@@ -1,6 +1,5 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +25,6 @@ public class Answer {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    private String textValue; // 단답형/장문형 텍스트 응답
 
     @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerChoice> selectedChoices = new ArrayList<>();
