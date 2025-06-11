@@ -17,7 +17,7 @@ class IdGeneratingEntityListener {
 
     @PrePersist
     fun onPrePersist(target: Any) {
-        if (!(target !is Identifiable || target.id != 0L)) {
+        if (!(target !is Identifiable || target.id != "")) {
             target.id = idGenerator.nextId()
         }
     }

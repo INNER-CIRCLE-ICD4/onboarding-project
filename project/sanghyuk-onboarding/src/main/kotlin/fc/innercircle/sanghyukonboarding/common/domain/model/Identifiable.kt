@@ -1,5 +1,5 @@
 package fc.innercircle.sanghyukonboarding.common.domain.model
 
 interface Identifiable {
-    var id: Long
+    var id: String
 }

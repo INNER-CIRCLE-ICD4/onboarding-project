@@ -19,9 +19,9 @@ abstract class BaseEntity(
         nullable = false,
         updatable = false,
         unique = true,
-        columnDefinition = "bigint not null comment 'ID'"
+        columnDefinition = "char(26) not null comment 'ID'"
     )
-    override var id: Long = 0L // ID는 서브클래스에서 SnowflakeIdGenerator 등을 통해 생성될 예정
+    override var id: String = "" // ID는 서브클래스에서 SnowflakeIdGenerator 등을 통해 생성될 예정
 
     @Column(name = "created_by", nullable = false, length = 50, columnDefinition = "varchar(50) comment '생성자'")
     val createdBy: String = createdBy

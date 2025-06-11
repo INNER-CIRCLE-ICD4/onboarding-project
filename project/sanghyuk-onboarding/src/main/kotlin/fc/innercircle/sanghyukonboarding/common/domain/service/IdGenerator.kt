@@ -1,5 +1,5 @@
 package fc.innercircle.sanghyukonboarding.common.domain.service
 
 interface IdGenerator {
-    fun nextId(): Long
+    fun nextId(): String
 }

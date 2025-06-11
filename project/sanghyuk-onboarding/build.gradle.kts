@@ -38,6 +38,9 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.8.1")
     testImplementation("io.kotest:kotest-assertions-core:5.8.1")
     testImplementation("io.kotest:kotest-extensions-spring:4.4.3")
+
+    // ULID ID numbering
+    implementation("com.github.f4b6a3:ulid-creator:5.2.3")
 }
 
 allOpen {
