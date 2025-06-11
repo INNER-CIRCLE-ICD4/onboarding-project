@@ -7,11 +7,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@ComponentScan(basePackages="fastcampus")
-@EnableJpaRepositories(basePackages = "fastcampus")  // 추가
-@EntityScan(basePackages = "fastcampus")  // 추가
+@ComponentScan(basePackages = "fastcampus")
+@EnableJpaRepositories(basePackages = "fastcampus")
+@EntityScan(basePackages = "fastcampus")
 public class HyeminOnboardingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HyeminOnboardingApplication.class, args);
 	}
 }
+
