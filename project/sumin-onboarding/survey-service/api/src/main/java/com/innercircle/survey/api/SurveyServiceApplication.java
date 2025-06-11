@@ -1,4 +1,4 @@
-package com.sumin.surveyservice;
+package com.innercircle.survey.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
