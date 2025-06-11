@@ -54,7 +54,7 @@ class SurveyController(
     ): ResponseEntity<ApiResponse<SurveyResponse>> {
         logger.info { "Create survey request received: ${request.title}" }
 
-        val command = request.toCommand()
+        val command = request.toCreateSurveyCommand()
         val survey = surveyUseCase.createSurvey(command)
         val response = SurveyResponse.from(survey)
 
@@ -124,7 +124,7 @@ class SurveyController(
     ): ResponseEntity<ApiResponse<SurveyResponse>> {
         logger.info { "Update survey request received: $surveyId" }
 
-        val command = request.toCommand(surveyId)
+        val command = request.toUpdateSurveyCommand(surveyId)
         val survey = surveyUseCase.updateSurvey(command)
         val response = SurveyResponse.from(survey)
 
