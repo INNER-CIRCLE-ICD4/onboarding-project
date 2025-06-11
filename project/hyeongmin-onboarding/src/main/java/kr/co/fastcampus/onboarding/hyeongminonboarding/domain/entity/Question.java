@@ -6,7 +6,6 @@ import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.enums.Quest
 import kr.co.fastcampus.onboarding.hyeongminonboarding.global.entity.base.BaseTimeEntity;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,7 +22,6 @@ import java.util.List;
 @Builder
 public class Question extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
