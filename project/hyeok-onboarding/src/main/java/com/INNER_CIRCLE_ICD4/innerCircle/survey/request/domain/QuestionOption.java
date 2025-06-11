@@ -10,6 +10,7 @@ public class QuestionOption {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "option_value")
     private String optionValue; // 선택지 내용
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -21,12 +22,12 @@ public class QuestionOption {
         return id;
     }
 
-    public String getValue() {
+    public String getOptionValue() {
         return optionValue;
     }
 
-    public void setValue(String value) {
-        this.optionValue = value;
+    public void setOptionValue(String optionValue) {
+        this.optionValue = optionValue;
     }
 
     public Question getQuestion() {

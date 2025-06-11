@@ -41,11 +41,11 @@ public class Answer {
         this.question = question;
     }
 
-    public String getValue() {
+    public String getAnswerValue() {
         return answerValue;
     }
 
-    public void setValue(String value) {
-        this.answerValue = value;
+    public void setAnswerValue(String answerValue) {
+        this.answerValue = answerValue;
     }
 }
