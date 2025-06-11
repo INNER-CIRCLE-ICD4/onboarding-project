@@ -41,7 +41,7 @@ public class Item {
     
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
     private List<ItemResponse> responses = new ArrayList<>();
-    
+
     @Builder
     public Item(String itemTitle, String itemContent, ItemType itemType, boolean isRequired) {
         this.itemTitle = itemTitle;
