@@ -1,22 +1,16 @@
 package com.multi.sungwoongonboarding.forms.application.repository;
 
-import com.multi.sungwoongonboarding.common.config.JpaAuditingConfig;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
-import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
