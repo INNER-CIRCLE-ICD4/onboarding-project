@@ -1,31 +1,31 @@
 package com.fastcampus.survey.questionary.adapter.out.impl;
 
+import com.fastcampus.survey.questionary.adapter.in.mapper.SurveyFormJpaEntityMapper;
 import com.fastcampus.survey.questionary.domain.model.SurveyForm;
 import com.fastcampus.survey.questionary.domain.repository.SurveyFormRepository;
 import com.fastcampus.survey.questionary.adapter.out.repository.SurveyFormJpaRepository;
+import com.fastcampus.survey.questionary.adapter.out.entity.SurveyFormJpaEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class SurveyFormRepositoryImpl implements SurveyFormRepository {
     private final SurveyFormJpaRepository jpaRepository;
+    private final SurveyFormJpaEntityMapper surveyFormJpaEntityMapper;
 
-    public SurveyFormRepositoryImpl(SurveyFormJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
-    }
 
     @Override
     public SurveyForm save(SurveyForm form) {
-        // TODO: SurveyForm <-> SurveyFormJpaEntity 매핑 필요
-        // 임시로 null 반환
-        return null;
+        SurveyFormJpaEntity entity = surveyFormJpaEntityMapper.toJpaEntity(form);
+        SurveyFormJpaEntity saved = jpaRepository.save(entity);
+        return surveyFormJpaEntityMapper.toDomain(saved);
     }
 
     @Override
     public Optional<SurveyForm> findById(Long id) {
-        // TODO: SurveyFormJpaEntity <-> SurveyForm 매핑 필요
-        // 임시로 Optional.empty() 반환
-        return Optional.empty();
+        return jpaRepository.findById(id).map(surveyFormJpaEntityMapper::toDomain);
     }
 } 

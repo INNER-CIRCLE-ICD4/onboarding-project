@@ -1,5 +1,6 @@
 package com.fastcampus.survey.questionary.adapter.in.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ public class InsertContentRequest {
     private String name;
     private String describe;
     private String type;
+    @JsonProperty("isRequired")
     private boolean isRequired;
     private List<String> options;
 

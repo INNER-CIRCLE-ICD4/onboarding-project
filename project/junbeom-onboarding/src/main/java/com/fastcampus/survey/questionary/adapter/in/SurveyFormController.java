@@ -1,14 +1,18 @@
 package com.fastcampus.survey.questionary.adapter.in;
 
+import com.fastcampus.survey.questionary.application.service.exception.ContentValidationException;
 import com.fastcampus.survey.questionary.domain.model.SurveyForm;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fastcampus.survey.questionary.adapter.in.dto.InsertFormRequest;
-import com.fastcampus.survey.questionary.application.SurveyFormService;
+import com.fastcampus.survey.questionary.application.service.SurveyFormService;
 
 @RestController
 @RequestMapping("/api/surveys")
@@ -17,8 +21,16 @@ public class SurveyFormController {
     private final SurveyFormService surveyFormService;
 
     @PostMapping
-    public SurveyForm createSurvey(@RequestBody InsertFormRequest insertFormRequest) {
-        return surveyFormService.createSurveyForm(insertFormRequest);
+    public ResponseEntity<?> createSurvey(@Valid @RequestBody InsertFormRequest requestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // @Size 위반 등 Bean Validation 오류를 ContentValidationException으로 변환
+            bindingResult.getFieldErrors().forEach(error -> {
+                throw new ContentValidationException(error.getField(), error.getDefaultMessage());
+            });
+        }
+
+        SurveyForm surveyForm = surveyFormService.createSurveyForm(requestDto);
+        return ResponseEntity.ok(surveyForm);
     }
 
 } 

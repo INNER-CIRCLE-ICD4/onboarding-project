@@ -1,11 +1,14 @@
 package com.fastcampus.survey.questionary.domain.model;
 
+import com.fastcampus.survey.questionary.adapter.out.entity.SurveyContentType;
+import lombok.Builder;
 import lombok.Getter;
 
 
 import java.util.List;
 
 @Getter
+@Builder
 public class SurveyContent {
     private Long id;
     private Long formId;
@@ -15,5 +18,16 @@ public class SurveyContent {
     private boolean isRequired;
     private List<SurveyContentOption> options;
 
+    public SurveyContent() {
+    }
 
-} 
+    public SurveyContent(Long id, Long formId, String name, String describe, SurveyContentType type, boolean isRequired, List<SurveyContentOption> options) {
+        this.id = id;
+        this.formId = formId;
+        this.name = name;
+        this.describe = describe;
+        this.type = type;
+        this.isRequired = isRequired;
+        this.options = options;
+    }
+}

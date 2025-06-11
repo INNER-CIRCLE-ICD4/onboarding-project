@@ -1,10 +1,12 @@
-package com.fastcampus.survey.questionary.application;
+package com.fastcampus.survey.questionary.application.service;
 
 import com.fastcampus.survey.questionary.adapter.in.dto.InsertFormRequest;
+import com.fastcampus.survey.questionary.adapter.in.mapper.SurveyFormMapper;
 import com.fastcampus.survey.questionary.domain.model.SurveyForm;
 import com.fastcampus.survey.questionary.domain.repository.SurveyFormRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,7 +15,7 @@ public class SurveyFormService {
     private final SurveyFormRepository surveyFormRepository;
 
     public SurveyForm createSurveyForm(InsertFormRequest insertFormRequest) {
-        SurveyForm surveyForm = new SurveyForm(insertFormRequest);
+        SurveyForm surveyForm = SurveyFormMapper.toSurveyForm(insertFormRequest);
         return surveyFormRepository.save(surveyForm);
     }
 

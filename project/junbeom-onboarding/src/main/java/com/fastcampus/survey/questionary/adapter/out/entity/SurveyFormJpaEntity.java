@@ -1,10 +1,14 @@
 package com.fastcampus.survey.questionary.adapter.out.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "survey_form")
 public class SurveyFormJpaEntity {
     @Id
@@ -21,7 +25,16 @@ public class SurveyFormJpaEntity {
     private LocalDateTime createAt;
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter
     private List<SurveyContentJpaEntity> contents;
 
-    // getter, setter, 생성자 등
-} 
+    @Builder
+    protected SurveyFormJpaEntity(Long id, String name, String describe, LocalDateTime createAt) {
+        this.id = id;
+        this.name = name;
+        this.describe = describe;
+        this.createAt = createAt;
+    }
+
+
+}

@@ -1,5 +1,6 @@
 package com.fastcampus.survey.questionary.adapter.out.repository;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.fastcampus.survey.questionary.adapter.out.entity.SurveyFormJpaEntity;
