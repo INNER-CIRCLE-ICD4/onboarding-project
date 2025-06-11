@@ -41,11 +41,3 @@ logging:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-
-# 애플리케이션 설정
-app:
-  survey:
-    max-items-per-survey: 10
-    max-choices-per-item: 20
-    response:
-      max-text-length: 1000

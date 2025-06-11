@@ -5,6 +5,7 @@ import com.innercircle.survey.common.dto.PageRequest
 import com.innercircle.survey.common.dto.PageResponse
 import com.innercircle.survey.survey.adapter.`in`.web.dto.CreateSurveyRequest
 import com.innercircle.survey.survey.adapter.`in`.web.dto.SurveyResponse
+import com.innercircle.survey.survey.adapter.`in`.web.dto.UpdateSurveyRequest
 import com.innercircle.survey.survey.application.port.`in`.SurveyUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -91,6 +93,45 @@ class SurveyController(
 
         return ResponseEntity.ok(
             ApiResponse.success(response),
+        )
+    }
+
+    @Operation(
+        summary = "설문조사 수정",
+        description = "기존 설문조사를 수정합니다. 설문 항목이 추가/변경/삭제되더라도 기존 응답은 유지됩니다.",
+    )
+    @ApiResponses(
+        value = [
+            io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "설문조사 수정 성공",
+            ),
+            io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "400",
+                description = "잘못된 요청 (유효성 검증 실패)",
+            ),
+            io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "404",
+                description = "설문조사를 찾을 수 없음",
+            ),
+        ],
+    )
+    @PutMapping("/{surveyId}")
+    fun updateSurvey(
+        @Parameter(description = "설문조사 ID", required = true)
+        @PathVariable surveyId: UUID,
+        @Valid @RequestBody request: UpdateSurveyRequest,
+    ): ResponseEntity<ApiResponse<SurveyResponse>> {
+        logger.info { "Update survey request received: $surveyId" }
+
+        val command = request.toCommand(surveyId)
+        val survey = surveyUseCase.updateSurvey(command)
+        val response = SurveyResponse.from(survey)
+
+        logger.info { "Survey updated successfully: ${survey.id}, version: ${survey.version}" }
+
+        return ResponseEntity.ok(
+            ApiResponse.success(response, "설문조사가 성공적으로 수정되었습니다."),
         )
     }
 

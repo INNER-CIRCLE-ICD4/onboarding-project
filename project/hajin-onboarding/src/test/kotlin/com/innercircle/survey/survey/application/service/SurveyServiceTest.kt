@@ -1,7 +1,11 @@
 package com.innercircle.survey.survey.application.service
 
 import com.innercircle.survey.survey.application.port.`in`.SurveyUseCase.CreateSurveyCommand
+import com.innercircle.survey.survey.application.port.`in`.SurveyUseCase.UpdateSurveyCommand
 import com.innercircle.survey.survey.application.port.out.SurveyRepository
+import com.innercircle.survey.survey.domain.Question
+import com.innercircle.survey.survey.domain.QuestionType
+import com.innercircle.survey.survey.domain.Survey
 import com.innercircle.survey.survey.domain.exception.InvalidQuestionTypeException
 import com.innercircle.survey.survey.domain.exception.SurveyNotFoundException
 import io.kotest.assertions.throwables.shouldThrow
@@ -10,6 +14,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -144,6 +149,138 @@ class SurveyServiceTest : DescribeSpec({
                     result.content shouldBe mockSurveys
                     result.totalElements shouldBe 2
                     verify(exactly = 1) { surveyRepository.findAll(pageable) }
+                }
+            }
+        }
+
+        context("updateSurvey") {
+            context("유효한 설문조사 수정 요청이 주어졌을 때") {
+                val surveyRepository = mockk<SurveyRepository>()
+                val service = SurveyService(surveyRepository)
+                val surveyId = UUID.randomUUID()
+
+                val existingSurvey =
+                    Survey.create(
+                        title = "기존 설문조사",
+                        description = "기존 설명",
+                        questions =
+                            listOf(
+                                Question.create(
+                                    title = "기존 질문",
+                                    description = "기존 질문 설명",
+                                    type = QuestionType.SHORT_TEXT,
+                                    required = true,
+                                ),
+                            ),
+                    )
+
+                val command =
+                    UpdateSurveyCommand(
+                        surveyId = surveyId,
+                        title = "수정된 설문조사",
+                        description = "수정된 설명",
+                        questions =
+                            listOf(
+                                UpdateSurveyCommand.QuestionCommand(
+                                    title = "새로운 질문 1",
+                                    description = "새로운 질문 설명 1",
+                                    type = "SINGLE_CHOICE",
+                                    required = true,
+                                    choices = listOf("옵션1", "옵션2", "옵션3"),
+                                ),
+                                UpdateSurveyCommand.QuestionCommand(
+                                    title = "새로운 질문 2",
+                                    description = "새로운 질문 설명 2",
+                                    type = "LONG_TEXT",
+                                    required = false,
+                                ),
+                            ),
+                    )
+
+                it("설문조사가 성공적으로 수정되어야 한다") {
+                    val surveySlot = slot<Survey>()
+
+                    every { surveyRepository.findById(surveyId) } returns existingSurvey
+                    every { surveyRepository.save(capture(surveySlot)) } answers { firstArg() }
+
+                    val originalVersion = existingSurvey.version
+                    val result = service.updateSurvey(command)
+
+                    result shouldNotBe null
+                    result.title shouldBe command.title
+                    result.description shouldBe command.description
+                    result.questions.size shouldBe 2
+                    result.version shouldBe originalVersion + 2 // update + updateQuestions로 2 증가
+
+                    // 기존 질문이 soft delete 되었는지 확인
+                    surveySlot.captured.questions.forEach { question ->
+                        question.isDeleted shouldBe false // 새로운 질문들은 삭제되지 않음
+                    }
+
+                    verify(exactly = 1) { surveyRepository.findById(surveyId) }
+                    verify(exactly = 1) { surveyRepository.save(any()) }
+                }
+            }
+
+            context("존재하지 않는 설문조사 ID로 수정 요청이 주어졌을 때") {
+                val surveyRepository = mockk<SurveyRepository>()
+                val service = SurveyService(surveyRepository)
+                val surveyId = UUID.randomUUID()
+
+                val command =
+                    UpdateSurveyCommand(
+                        surveyId = surveyId,
+                        title = "수정할 설문조사",
+                        description = "수정할 설명",
+                        questions = emptyList(),
+                    )
+
+                it("SurveyNotFoundException이 발생해야 한다") {
+                    every { surveyRepository.findById(surveyId) } returns null
+
+                    shouldThrow<SurveyNotFoundException> {
+                        service.updateSurvey(command)
+                    }
+
+                    verify(exactly = 0) { surveyRepository.save(any()) }
+                }
+            }
+
+            context("잘못된 질문 타입으로 수정 요청이 주어졌을 때") {
+                val surveyRepository = mockk<SurveyRepository>()
+                val service = SurveyService(surveyRepository)
+                val surveyId = UUID.randomUUID()
+
+                val existingSurvey =
+                    Survey.create(
+                        title = "기존 설문조사",
+                        description = "기존 설명",
+                    )
+
+                val command =
+                    UpdateSurveyCommand(
+                        surveyId = surveyId,
+                        title = "수정된 설문조사",
+                        description = "수정된 설명",
+                        questions =
+                            listOf(
+                                UpdateSurveyCommand.QuestionCommand(
+                                    title = "잘못된 타입 질문",
+                                    description = "설명",
+                                    type = "INVALID_TYPE",
+                                    required = true,
+                                ),
+                            ),
+                    )
+
+                it("InvalidQuestionTypeException이 발생해야 한다") {
+                    every { surveyRepository.findById(surveyId) } returns existingSurvey
+
+                    shouldThrow<InvalidQuestionTypeException> {
+                        service.updateSurvey(command)
+                    }
+
+                    verify(exactly = 0) { surveyRepository.save(any()) }
                 }
             }
         }

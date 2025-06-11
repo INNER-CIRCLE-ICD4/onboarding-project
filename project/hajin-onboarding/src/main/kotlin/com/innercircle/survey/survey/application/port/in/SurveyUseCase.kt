@@ -8,6 +8,8 @@ import java.util.UUID
 interface SurveyUseCase {
     fun createSurvey(command: CreateSurveyCommand): Survey
 
+    fun updateSurvey(command: UpdateSurveyCommand): Survey
+
     fun getSurveyById(surveyId: UUID): Survey
 
     fun getSurveys(pageable: Pageable): Page<Survey>
@@ -18,6 +20,22 @@ interface SurveyUseCase {
         val questions: List<QuestionCommand> = emptyList(),
     ) {
         data class QuestionCommand(
+            val title: String,
+            val description: String,
+            val type: String,
+            val required: Boolean = false,
+            val choices: List<String> = emptyList(),
+        )
+    }
+
+    data class UpdateSurveyCommand(
+        val surveyId: UUID,
+        val title: String,
+        val description: String,
+        val questions: List<QuestionCommand> = emptyList(),
+    ) {
+        data class QuestionCommand(
+            val id: UUID? = null,
             val title: String,
             val description: String,
             val type: String,
