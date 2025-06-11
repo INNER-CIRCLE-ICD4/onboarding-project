@@ -250,6 +250,41 @@ public class SurveyQuestion extends BaseEntity {
     }
 
     /**
+     * 질문 정보의 JSON 스냅샷 생성 (응답 제출 시점용)
+     * 
+     * @return 질문 정보의 JSON 스냅샷
+     */
+    public String createSnapshot() {
+        // 실제 구현에서는 Jackson ObjectMapper 사용 권장
+        String optionsJson = options.isEmpty() ? "[]" : 
+            "[\"" + String.join("\", \"", options.stream()
+                .map(opt -> opt.replace("\"", "\\\""))
+                .toList()) + "\"]";
+                
+        return String.format("""
+            {
+                "questionId": "%s",
+                "title": "%s",
+                "description": "%s",
+                "questionType": "%s",
+                "required": %b,
+                "displayOrder": %d,
+                "options": %s,
+                "capturedAt": "%s"
+            }
+            """, 
+            id, 
+            title.replace("\"", "\\\""), 
+            description != null ? description.replace("\"", "\\\"") : "",
+            questionType.name(),
+            required,
+            displayOrder,
+            optionsJson,
+            java.time.LocalDateTime.now()
+        );
+    }
+
+    /**
      * 설문 항목 ID를 통한 동등성 비교
      */
     @Override

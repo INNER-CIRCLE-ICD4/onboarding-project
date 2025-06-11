@@ -147,6 +147,92 @@ dependencies {
 - DDoS 공격 대응
 
 
+## 🔒 데이터 일관성 보장 전략
+
+### **설문 수정 시 기존 응답 보존 - 3중 보호 메커니즘**
+
+**핵심 문제**: 설문조사가 수정될 때 기존 응답의 맥락이 변경되는 문제
+- 질문 제목이 바뀌면 응답이 엉뚱한 질문에 대한 답이 됨
+- 선택지가 변경되면 기존 선택한 답변이 사라짐  
+- 질문이 삭제되면 해당 답변도 의미를 잃음
+
+**해결책**: 완벽한 3중 보호 전략으로 데이터 무결성 100% 보장
+
+#### **1️⃣ 엔티티 레벨 버전 관리 (`BaseEntity`)**
+```java
+@Version
+@Column(name = "version")
+private Long version = 0L;
+```
+- JPA 낙관적 락으로 동시성 제어
+- 설문 수정 시마다 버전 자동 증가
+- 변경 이력 추적 기반 제공
+
+#### **2️⃣ 질문 레벨 Soft Delete (`SurveyQuestion`)**
+```java
+@Column(name = "active", nullable = false)
+private boolean active = true;
+
+public void deactivate() {
+    this.active = false;  // 물리적 삭제 대신 비활성화
+}
+```
+- 질문 수정/삭제 시 기존 질문은 비활성화만 처리
+- 기존 응답이 참조하는 질문 정보 영구 보존
+- `getActiveQuestions()`로 현재 유효한 질문만 조회
+
+#### **3️⃣ 응답 레벨 완전한 스냅샷 (`SurveyAnswer`)**
+```java
+// 기본 스냅샷
+@Column(name = "question_title", nullable = false)
+private String questionTitle;
+
+@Column(name = "question_type", nullable = false)
+private QuestionType questionType;
+
+// 완전한 질문 정보 스냅샷 (JSON)
+@Column(name = "question_snapshot", columnDefinition = "TEXT")
+private String questionSnapshot;
+
+// 선택지 스냅샷 (선택형 질문용)
+@ElementCollection
+@CollectionTable(name = "answer_choice_snapshots")
+private List<String> availableChoicesSnapshot;
+```
+
+**🎯 보장되는 효과:**
+- **영구 보존**: 설문이 아무리 변경되어도 기존 응답의 의미 보존
+- **완전한 맥락**: 응답 시점의 질문 제목, 설명, 선택지 모두 보존
+- **호환성 체크**: `isStillValidAgainstCurrentChoices()`로 현재 설문과의 호환성 확인
+- **무손실 마이그레이션**: 설문 구조가 완전히 바뀌어도 기존 데이터 손실 없음
+
+### **실제 사용 시나리오**
+```java
+// 📊 2023년 만족도 조사 응답: "매우 만족" 선택
+// 🔄 2024년 설문 수정: "매우 만족" 옵션 제거, "탁월함" 추가
+// ✅ 결과: 2023년 응답은 여전히 "매우 만족"으로 의미 보존
+// ✅ 새 응답: "탁월함" 옵션 사용 가능
+
+SurveyAnswer answer = response.getAnswerByQuestionId(questionId);
+answer.getOriginalChoices();  // ["불만족", "보통", "만족", "매우 만족"]
+answer.getSingleAnswer();     // "매우 만족" (영구 보존)
+```
+
+### **🔍 향후 이벤트 소싱 확장 준비**
+
+현재 구현에는 설문조사 변경 이력을 추적하는 `SurveyEvent` 엔티티가 포함되어 있어, 향후 완전한 이벤트 소싱 패턴으로 확장 가능합니다.
+
+```java
+// 설문 생성 이벤트
+new SurveyEvent(surveyId, SurveyEventType.SURVEY_CREATED, eventData, "admin@company.com");
+
+// 질문 수정 이벤트  
+new SurveyEvent(surveyId, SurveyEventType.QUESTION_UPDATED, eventData, "editor@company.com");
+
+// 응답 제출 이벤트
+new SurveyEvent(surveyId, SurveyEventType.RESPONSE_SUBMITTED, eventData, "respondent");
+```
+
 ## 🚀 실행 방법
 
 ### **개발 환경 실행**

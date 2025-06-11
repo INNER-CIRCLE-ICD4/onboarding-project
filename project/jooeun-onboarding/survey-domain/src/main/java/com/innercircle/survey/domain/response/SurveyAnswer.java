@@ -51,6 +51,23 @@ public class SurveyAnswer extends BaseEntity {
     private QuestionType questionType;
 
     /**
+     * 응답 시점의 완전한 질문 정보 스냅샷 (JSON 형태)
+     * 질문이 수정/삭제되어도 응답의 맥락을 영구 보존
+     */
+    @Column(name = "question_snapshot", columnDefinition = "TEXT")
+    private String questionSnapshot;
+
+    /**
+     * 선택형 질문의 응답 시점 선택지들 (스냅샷)
+     * 선택지가 변경되어도 원본 선택지 맥락 보존
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "answer_choice_snapshots", joinColumns = @JoinColumn(name = "answer_id"))
+    @Column(name = "choice_text")
+    @OrderColumn(name = "choice_order")
+    private List<String> availableChoicesSnapshot = new ArrayList<>();
+
+    /**
      * 응답 값들 (JSON 배열 형태로 저장)
      * - 단답형/장문형: 1개 요소
      * - 단일 선택: 1개 요소
@@ -76,6 +93,30 @@ public class SurveyAnswer extends BaseEntity {
         this.questionTitle = questionTitle;
         this.questionType = questionType;
         this.answerValues = new ArrayList<>(answerValues != null ? answerValues : List.of());
+        initializeTimestamps();
+        
+        validateAnswer();
+    }
+
+    /**
+     * 설문 항목 응답 생성 (완전한 스냅샷 포함)
+     *
+     * @param questionId 질문 ID
+     * @param questionTitle 질문 제목 (스냅샷용)
+     * @param questionType 질문 타입 (스냅샷용)
+     * @param answerValues 응답 값들
+     * @param questionSnapshot 질문 전체 정보 JSON 스냅샷
+     * @param availableChoices 응답 시점의 선택지들 (선택형 질문용)
+     */
+    public SurveyAnswer(String questionId, String questionTitle, QuestionType questionType, 
+                       List<String> answerValues, String questionSnapshot, List<String> availableChoices) {
+        this.id = UlidGenerator.generate();
+        this.questionId = questionId;
+        this.questionTitle = questionTitle;
+        this.questionType = questionType;
+        this.answerValues = new ArrayList<>(answerValues != null ? answerValues : List.of());
+        this.questionSnapshot = questionSnapshot;
+        this.availableChoicesSnapshot = new ArrayList<>(availableChoices != null ? availableChoices : List.of());
         initializeTimestamps();
         
         validateAnswer();
@@ -168,6 +209,24 @@ public class SurveyAnswer extends BaseEntity {
         String lowerSearchValue = searchValue.toLowerCase();
         return answerValues.stream()
                 .anyMatch(value -> value != null && value.toLowerCase().contains(lowerSearchValue));
+    }
+
+    /**
+     * 응답 시점의 원본 선택지들 조회 (선택형 질문용)
+     *
+     * @return 응답 시점의 선택지 목록
+     */
+    public List<String> getOriginalChoices() {
+        return new ArrayList<>(availableChoicesSnapshot);
+    }
+
+    /**
+     * 응답 시점의 질문 정보 스냅샷 조회
+     *
+     * @return 질문 스냅샷 JSON
+     */
+    public String getQuestionSnapshot() {
+        return questionSnapshot;
     }
 
     /**

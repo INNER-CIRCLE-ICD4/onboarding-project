@@ -134,6 +134,32 @@ public class Survey extends BaseEntity {
     }
 
     /**
+     * 현재 설문조사의 스냅샷 생성 (응답 제출 시점용)
+     * 
+     * @return 설문조사 정보의 JSON 스냅샷
+     */
+    public String createSnapshot() {
+        // 실제 구현에서는 Jackson ObjectMapper 사용 권장
+        return String.format("""
+            {
+                "surveyId": "%s",
+                "title": "%s",
+                "description": "%s",
+                "version": %d,
+                "capturedAt": "%s",
+                "questionCount": %d
+            }
+            """, 
+            id, 
+            title.replace("\"", "\\\""), 
+            description != null ? description.replace("\"", "\\\"") : "",
+            getVersion(),
+            java.time.LocalDateTime.now(),
+            getActiveQuestions().size()
+        );
+    }
+
+    /**
      * 설문조사 ID를 통한 동등성 비교
      */
     @Override
