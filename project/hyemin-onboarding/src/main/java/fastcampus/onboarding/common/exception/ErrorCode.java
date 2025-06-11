@@ -1,5 +1,8 @@
 package fastcampus.onboarding.common.exception;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorCode {
     // 공통 에러
     ENTITY_NOT_FOUND(404, "C001", "데이터를 찾을 수 없습니다"),
@@ -20,17 +23,5 @@ public enum ErrorCode {
         this.status = status;
         this.code = code;
         this.message = message;
-    }
-    
-    public int getStatus() {
-        return status;
-    }
-    
-    public String getCode() {
-        return code;
-    }
-    
-    public String getMessage() {
-        return message;
     }
 }
