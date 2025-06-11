@@ -1,4 +1,4 @@
-package fc.innercircle.jinhoonboarding.dto
+package fc.innercircle.jinhoonboarding.survey.dto
 
 data class CreateSurveyRequest(
     val title: String,

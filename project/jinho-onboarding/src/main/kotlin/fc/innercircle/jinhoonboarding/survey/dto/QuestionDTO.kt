@@ -1,11 +1,9 @@
-package fc.innercircle.jinhoonboarding.dto
-
-import fc.innercircle.jinhoonboarding.enum.QuestionType
+package fc.innercircle.jinhoonboarding.survey.dto
 
 data class QuestionDTO (
     val title: String,
     val description: String,
-    val questionType: QuestionType,
+    val questionType: String,
     val required: Boolean,
     val options: List<String>?
 )

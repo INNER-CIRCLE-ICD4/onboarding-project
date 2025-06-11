@@ -1,8 +1,8 @@
-package fc.innercircle.jinhoonboarding.controller
+package fc.innercircle.jinhoonboarding.survey.controller
 
-import fc.innercircle.jinhoonboarding.dto.CreateSurveyRequest
-import fc.innercircle.jinhoonboarding.entity.Survey
-import fc.innercircle.jinhoonboarding.service.SurveyService
+import fc.innercircle.jinhoonboarding.survey.dto.CreateSurveyRequest
+import fc.innercircle.jinhoonboarding.survey.domain.Survey
+import fc.innercircle.jinhoonboarding.survey.service.SurveyService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

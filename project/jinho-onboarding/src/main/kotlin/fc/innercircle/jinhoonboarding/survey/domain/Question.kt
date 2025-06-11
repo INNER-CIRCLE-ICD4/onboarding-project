@@ -1,6 +1,5 @@
-package fc.innercircle.jinhoonboarding.entity
+package fc.innercircle.jinhoonboarding.survey.domain
 
-import fc.innercircle.jinhoonboarding.enum.QuestionType
 import jakarta.persistence.*
 
 // [설문 받을 항목]은 [항목 이름], [항목 설명], [항목 입력 형태], [항목 필수 여부]의 구성으로 이루어져있습니다.

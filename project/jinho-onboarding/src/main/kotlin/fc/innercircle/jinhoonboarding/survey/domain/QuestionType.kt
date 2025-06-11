@@ -1,4 +1,4 @@
-package fc.innercircle.jinhoonboarding.enum
+package fc.innercircle.jinhoonboarding.survey.domain
 
 enum class QuestionType {
     SHORT_TEXT,

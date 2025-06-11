@@ -1,11 +1,12 @@
 package fc.innercircle.jinhoonboarding.service
 
-import fc.innercircle.jinhoonboarding.dto.CreateSurveyRequest
-import fc.innercircle.jinhoonboarding.dto.QuestionDTO
-import fc.innercircle.jinhoonboarding.entity.Question
-import fc.innercircle.jinhoonboarding.entity.Survey
-import fc.innercircle.jinhoonboarding.enum.QuestionType
-import fc.innercircle.jinhoonboarding.repository.SurveyRepository
+import fc.innercircle.jinhoonboarding.survey.dto.CreateSurveyRequest
+import fc.innercircle.jinhoonboarding.survey.dto.QuestionDTO
+import fc.innercircle.jinhoonboarding.survey.domain.Question
+import fc.innercircle.jinhoonboarding.survey.domain.Survey
+import fc.innercircle.jinhoonboarding.survey.domain.QuestionType
+import fc.innercircle.jinhoonboarding.survey.repository.SurveyRepository
+import fc.innercircle.jinhoonboarding.survey.service.SurveyService
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

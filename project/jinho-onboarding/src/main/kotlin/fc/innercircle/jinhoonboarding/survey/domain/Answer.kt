@@ -1,4 +1,4 @@
-package fc.innercircle.jinhoonboarding.entity
+package fc.innercircle.jinhoonboarding.survey.domain
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
