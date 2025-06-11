@@ -1,5 +1,5 @@
 plugins {
-    id("java")
+    java
     id("org.springframework.boot") version "3.2.0" apply false
     id("io.spring.dependency-management") version "1.1.4" apply false
 }
@@ -21,6 +21,7 @@ subprojects {
     apply(plugin = "java")
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
+    apply(plugin = "jacoco")
     
     dependencies {
         // 공통 의존성
@@ -39,5 +40,10 @@ subprojects {
     
     tasks.withType<Test> {
         useJUnitPlatform()
+    }
+    
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
