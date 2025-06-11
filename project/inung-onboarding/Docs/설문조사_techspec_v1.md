@@ -89,7 +89,7 @@ flowchart LR
 ### 스키마
 
 ```sql
-CREATE TABLE survay
+CREATE TABLE survey
 (
     id          binary(16) NOT NULL COMMENT '설문 조사 식별자',
     version     int          NOT NULL DEFAULT 1 COMMENT '설문 조사 버전',
@@ -103,8 +103,8 @@ CREATE TABLE survay
 CREATE TABLE questions
 (
     id             binary(16) NOT NULL COMMENT '질문 식별자',
-    survay_id      binary(16) NOT NULL COMMENT '설문 조사 식별자',
-    survay_version int          NOT NULL COMMENT '설문 조사 버전',
+    survey_id      binary(16) NOT NULL COMMENT '설문 조사 식별자',
+    survey_version int          NOT NULL COMMENT '설문 조사 버전',
     name           varchar(200) NOT NULL COMMENT '항목 이름',
     description    varchar(1000) NULL COMMENT '설명',
     input_type     varchar(20)  NOT NULL COMMENT '항목 입력 형태',
@@ -113,7 +113,7 @@ CREATE TABLE questions
     created_at     timestamp    NOT NULL COMMENT '생성일시',
     updated_at     timestamp    NOT NULL COMMENT '수정일시',
     PRIMARY KEY (id),
-    FOREIGN KEY (survay_id, survay_version) REFERENCES survay (id, version)
+    FOREIGN KEY (survey_id, survey_version) REFERENCES survey (id, version)
 ) COMMENT '질문 테이블';
 
 CREATE TABLE options
@@ -131,13 +131,13 @@ CREATE TABLE options
 CREATE TABLE response
 (
     response_id    binary(16) NOT NULL COMMENT '응답 식별자',
-    survay_id      binary(16) NOT NULL COMMENT '설문 조사 식별자',
-    survay_version int          NOT NULL COMMENT '설문 조사 버전',
+    survey_id      binary(16) NOT NULL COMMENT '설문 조사 식별자',
+    survey_version int          NOT NULL COMMENT '설문 조사 버전',
     respondent_id  varchar(200) NOT NULL COMMENT '제출자 ID',
     sumitted_at    timestamp    NOT NULL COMMENT '제출일시',
     created_at     timestamp    NOT NULL COMMENT '생성일시',
     PRIMARY KEY (response_id),
-    FOREIGN KEY (survay_id, survay_version) REFERENCES survay (id, version)
+    FOREIGN KEY (survey_id, survey_version) REFERENCES survey (id, version)
 ) COMMENT '설문 조사 응답 테이블';
 
 CREATE TABLE answer
@@ -157,7 +157,7 @@ CREATE TABLE answer
 
 ### 공통
 
-- 기본 URL : `/api/v1/survay`
+- 기본 URL : `/api/v1/survey`
 - 모든 응답 형식 : `application/json`
 - 모든 ID 형식은 UUID를 사용합니다.
 - `inputType`은 `SINGLE_SELECT`, `MULTI_SELECT`, `SHORT_TEXT`, `LONG_TEXT` 중 하나입니다.
@@ -166,7 +166,7 @@ CREATE TABLE answer
 
 #### 요청
 
-- URL : `/api/v1/survay`
+- URL : `/api/v1/survey`
 - Method : `POST`
 - 설명 : 새로운 설문 조사를 생성합니다.
 
@@ -205,7 +205,7 @@ CREATE TABLE answer
 ```json
 {
   "data": {
-    "id": "survay-UUID"
+    "id": "survey-UUID"
   }
 }
 ```
@@ -214,7 +214,7 @@ CREATE TABLE answer
 
 #### 요청
 
-- URL : `/api/v1/survay/{id}`
+- URL : `/api/v1/survey/{id}`
 - Method : `PUT`
 - 설명 : 기존 설문 조사를 수정합니다.
 - `id`는 수정할 설문 조사 ID입니다.
@@ -258,7 +258,7 @@ CREATE TABLE answer
 ```json
 {
   "data": {
-    "id": "survay-UUID"
+    "id": "survey-UUID"
   }
 }
 ```
@@ -267,7 +267,7 @@ CREATE TABLE answer
 
 #### 요청
 
-- URL : `/api/v1/survay/{id}/response`
+- URL : `/api/v1/survey/{id}/response`
 - Method : `POST`
 - 설명 : 설문 조사에 대한 응답을 제출합니다.
 
@@ -275,8 +275,8 @@ CREATE TABLE answer
 
 ```json
 {
-  "survayId": "설문 조사 ID",
-  "survayVersion": 1,
+  "surveyId": "설문 조사 ID",
+  "surveyVersion": 1,
   "respondentId": "응답자 ID",
   "answers": [
     {
@@ -307,7 +307,7 @@ CREATE TABLE answer
 
 #### 요청
 
-- URL : `/api/v1/survay/{id}/response`
+- URL : `/api/v1/survey/{id}/response`
 - Method : `GET`
 - 설명 : 특정 설문 조사에 대한 응답 결과를 조회합니다.
 - 쿼리 파라미터에는 질문과 옵션을 포함한 응답 결과를 필터링할 수 있습니다.
@@ -361,7 +361,7 @@ CREATE TABLE answer
 **설문 조사 생성 / 수정**
 
 - 404 NOT FOUND
-    - `SURVAY_NOT_FOUND`: "수정할 대상 설문 조사를 찾을 수 없습니다."
+    - `SURVEY_NOT_FOUND`: "수정할 대상 설문 조사를 찾을 수 없습니다."
 - 400 BAD REQUEST
     - `EMPTY_TITLE`: "설문 조사의 제목은 필수입니다."
     - `EMPTY_QUESTIONS`: "설문 조사는 최소 1개의 질문이 필요합니다."
@@ -373,7 +373,7 @@ CREATE TABLE answer
 **설문 조사 응답 제출**
 
 - 404 NOT FOUND
-    - `SURVAY_NOT_FOUND`: "해당 설문 조사이 이미 삭제되었거나 존재하지 않습니다."
+    - `SURVEY_NOT_FOUND`: "해당 설문 조사이 이미 삭제되었거나 존재하지 않습니다."
     - `QUESTION_NOT_FOUND`: "해당 질문이 존재하지 않습니다."
 - 400 BAD REQUEST
     - `MISSING_REQUIRED_ANSWER` : "필수 질문에 대한 응답이 누락되었습니다."
