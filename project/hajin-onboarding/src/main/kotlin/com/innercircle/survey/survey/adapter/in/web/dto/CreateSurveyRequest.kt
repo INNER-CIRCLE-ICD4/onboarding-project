@@ -1,6 +1,6 @@
 package com.innercircle.survey.survey.adapter.`in`.web.dto
 
-import com.innercircle.survey.survey.application.port.`in`.CreateSurveyUseCase.CreateSurveyCommand
+import com.innercircle.survey.survey.application.port.`in`.SurveyUseCase
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
@@ -32,13 +32,13 @@ data class CreateSurveyRequest(
         val choices: List<String> = emptyList(),
     )
 
-    fun toCommand(): CreateSurveyCommand =
-        CreateSurveyCommand(
+    fun toCommand(): SurveyUseCase.CreateSurveyCommand =
+        SurveyUseCase.CreateSurveyCommand(
             title = title,
             description = description,
             questions =
                 questions.map { question ->
-                    CreateSurveyCommand.QuestionCommand(
+                    SurveyUseCase.CreateSurveyCommand.QuestionCommand(
                         title = question.title,
                         description = question.description,
                         type = question.type,

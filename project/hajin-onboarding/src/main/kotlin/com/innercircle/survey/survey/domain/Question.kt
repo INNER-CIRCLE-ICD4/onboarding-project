@@ -82,6 +82,8 @@ class Question private constructor(
         }
     }
 
+    fun canAddMoreChoices(): Boolean = _choices.size < MAX_CHOICES
+
     private fun updateChoices(newChoiceTexts: List<String>) {
         clearChoices()
         newChoiceTexts.forEach { text ->
@@ -93,7 +95,7 @@ class Question private constructor(
         require(type.isChoiceType()) {
             "${type.description} 타입은 선택지를 가질 수 없습니다."
         }
-        require(_choices.size < MAX_CHOICES) {
+        require(canAddMoreChoices()) {
             "선택지는 최대 ${MAX_CHOICES}개까지만 추가할 수 있습니다."
         }
     }
@@ -108,8 +110,12 @@ class Question private constructor(
             required: Boolean = false,
             choices: List<String> = emptyList(),
         ): Question {
-            require(title.isNotBlank()) { "항목 제목은 필수입니다." }
-            require(description.isNotBlank()) { "항목 설명은 필수입니다." }
+            require(title.isNotBlank()) {
+                "항목 제목은 필수입니다."
+            }
+            require(description.isNotBlank()) {
+                "항목 설명은 필수입니다."
+            }
 
             val question = Question(title, description, type, required)
 

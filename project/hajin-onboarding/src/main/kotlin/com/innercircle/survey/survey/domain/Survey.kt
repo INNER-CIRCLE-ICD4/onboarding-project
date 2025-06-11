@@ -18,6 +18,8 @@ class Survey private constructor(
     var description: String,
     @Column(name = "version", nullable = false)
     var version: Int = 1,
+    @Column(name = "is_deleted", nullable = false)
+    var isDeleted: Boolean = false,
 ) : BaseEntity() {
     @OneToMany(
         mappedBy = "survey",
@@ -32,7 +34,7 @@ class Survey private constructor(
         get() = _questions.toList()
 
     fun addQuestion(question: Question) {
-        require(_questions.size < MAX_QUESTIONS) {
+        require(canAddMoreQuestions()) {
             "설문조사는 최대 ${MAX_QUESTIONS}개의 항목만 가질 수 있습니다."
         }
         _questions.add(question)
@@ -53,6 +55,8 @@ class Survey private constructor(
         this.version++
     }
 
+    fun canAddMoreQuestions(): Boolean = _questions.size < MAX_QUESTIONS
+
     companion object {
         const val MAX_QUESTIONS = 10
 
@@ -61,8 +65,12 @@ class Survey private constructor(
             description: String,
             questions: List<Question> = emptyList(),
         ): Survey {
-            require(title.isNotBlank()) { "설문조사 제목은 필수입니다." }
-            require(description.isNotBlank()) { "설문조사 설명은 필수입니다." }
+            require(title.isNotBlank()) {
+                "설문조사 제목은 필수입니다."
+            }
+            require(description.isNotBlank()) {
+                "설문조사 설명은 필수입니다."
+            }
             require(questions.size <= MAX_QUESTIONS) {
                 "설문조사는 최대 ${MAX_QUESTIONS}개의 항목만 가질 수 있습니다."
             }
