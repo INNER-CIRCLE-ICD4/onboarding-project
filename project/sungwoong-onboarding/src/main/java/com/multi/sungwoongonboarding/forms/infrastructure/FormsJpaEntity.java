@@ -62,7 +62,7 @@ public class FormsJpaEntity extends BaseEntity {
                 .id(this.id)
                 .title(this.title)
                 .description(this.description)
-                .questions(questions.stream().map(QuestionJpaEntity::toDomain).toList())
+                .questions(this.questions.stream().map(QuestionJpaEntity::toDomain).toList())
                 .build();
     }
 }

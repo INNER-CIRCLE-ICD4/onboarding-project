@@ -51,13 +51,14 @@ public class QuestionJpaEntity extends BaseEntity {
         return questionJpaEntity;
     }
 
-    public static Questions toDomain(QuestionJpaEntity questionJpaEntity) {
+    public Questions toDomain() {
         return Questions.builder()
-                .id(questionJpaEntity.getId())
-                .questionText(questionJpaEntity.getQuestionText())
-                .questionType(Questions.QuestionType.valueOf(questionJpaEntity.getQuestionType()))
-                .order(questionJpaEntity.getOrder())
-                .isRequired(questionJpaEntity.isRequired())
+                .id(this.id)
+                .questionText(this.questionText)
+                .questionType(Questions.QuestionType.valueOf(this.questionType))
+                .order(this.order)
+                .isRequired(this.isRequired)
+                .options(this.options.stream().map(OptionsJpaEntity::toDomain).toList())
                 .build();
     }
 
