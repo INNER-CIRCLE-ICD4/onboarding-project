@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,6 +18,7 @@ public class Forms {
     private final String title;
     private final String description;
     private final List<Questions> questions;
-
-
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
+    private final String userId;
 }

@@ -34,6 +34,10 @@ public class OptionsJpaEntity {
         return optionsJpaEntity;
     }
 
+    public Options toDomain() {
+        return new Options(id, optionText, order);
+    }
+
     public void mappingQuestionJpaEntity(QuestionJpaEntity questionJpaEntity) {
         this.questionJpaEntity = questionJpaEntity;
         if (!questionJpaEntity.getOptions().contains(this)) {
