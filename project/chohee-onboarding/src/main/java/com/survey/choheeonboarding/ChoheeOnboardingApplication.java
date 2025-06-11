@@ -1,4 +1,4 @@
-package com.choheeonboarding;
+package com.survey.choheeonboarding;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
