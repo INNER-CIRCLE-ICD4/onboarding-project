@@ -8,6 +8,7 @@ public class ChangzuneOnboardingApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ChangzuneOnboardingApplication.class, args);
-	}
+	//
 
+	}
 }
