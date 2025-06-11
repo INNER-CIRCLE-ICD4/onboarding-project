@@ -17,3 +17,11 @@
 
 # 2025-06-11 [v0.0.1]
 ## Changed or Added
+| Exception Handler 추가
+> Exception 발생 시, 응답 구조를 컨트롤 하기 위해 추가
+> 사용자에게 보여 줄 메시지는 ErrorCode에 작성한 message를 보여주도록 하고
+> 내부적으로 Exception message 를 systemMessage 에 담아서 리턴하여 디버깅을 원할하게 함
+> Exception 발생 시 원하는 구조로 응답이 오는지 테스트 하기위해 테스트 케이스 작성
+> Controller를 만들지 않아도 테스트 할 수 있을까 찾아봤지만 테스트용으로 Controller 만들고 하는게 가장 쉽고 깔끔
+
+

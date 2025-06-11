@@ -1,13 +1,10 @@
 package kr.co.fastcampus.onboarding.hyeongminonboarding.scenario_test;
 
 
-import com.mysema.commons.lang.Assert;
-import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.repository.SurveyRepository;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.Survey;
-import org.junit.jupiter.api.Assertions;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.repository.SurveyRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +30,6 @@ public class NormalCaseTest {
 //        survey = surveyRepository.save(survey);
         survey = surveyRepository.saveAndFlush(survey);
         System.out.println(survey.getId());
-
-
     }
 
     @Test
