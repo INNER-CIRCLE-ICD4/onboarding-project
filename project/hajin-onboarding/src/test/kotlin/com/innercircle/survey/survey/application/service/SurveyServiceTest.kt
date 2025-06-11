@@ -212,9 +212,9 @@ class SurveyServiceTest : DescribeSpec({
                     result.questions.size shouldBe 2
                     result.version shouldBe originalVersion + 2 // update + updateQuestions로 2 증가
 
-                    // 기존 질문이 soft delete 되었는지 확인
+                    // 기존 질문이 비활성화 되었는지 확인
                     surveySlot.captured.questions.forEach { question ->
-                        question.isDeleted shouldBe false // 새로운 질문들은 삭제되지 않음
+                        question.isActive shouldBe true // 새로운 질문들은 활성화됨
                     }
 
                     verify(exactly = 1) { surveyRepository.findById(surveyId) }

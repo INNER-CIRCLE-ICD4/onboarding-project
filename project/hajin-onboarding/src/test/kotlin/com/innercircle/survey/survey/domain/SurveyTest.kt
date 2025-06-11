@@ -234,9 +234,9 @@ class SurveyTest : DescribeSpec({
                 // 전체 질문 수 확인 (기존 2개 + 새로운 2개)
                 survey.allQuestions.size shouldBe 4
 
-                // 기존 질문들이 soft delete 되었는지 확인
+                // 기존 질문들이 비활성화 되었는지 확인
                 originalQuestions.forEach { question ->
-                    question.isDeleted shouldBe true
+                    question.isActive shouldBe false
                 }
             }
 
@@ -260,8 +260,8 @@ class SurveyTest : DescribeSpec({
                 survey.updateQuestions(emptyList())
 
                 survey.questions.size shouldBe 0
-                survey.allQuestions.size shouldBe 1 // soft delete된 질문 1개
-                survey.allQuestions.first().isDeleted shouldBe true
+                survey.allQuestions.size shouldBe 1 // 비활성화된 질문 1개
+                survey.allQuestions.first().isActive shouldBe false
                 survey.version shouldBe originalVersion + 1
             }
 

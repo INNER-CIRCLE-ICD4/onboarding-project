@@ -39,8 +39,12 @@ src/main/kotlin/com/innercircle/survey/
 │   └── domain/           # 도메인 엔티티
 └── response/             # 응답 기능
     ├── adapter/
+    │   ├── in/web/       # REST 컨트롤러
+    │   └── out/persistence/ # JPA 리포지토리
     ├── application/
-    └── domain/
+    │   ├── port/         # 인터페이스 정의
+    │   └── service/      # 비즈니스 로직
+    └── domain/           # 도메인 엔티티 (Response, Answer)
 ```
 
 ### 아키텍처 원칙
@@ -50,7 +54,29 @@ src/main/kotlin/com/innercircle/survey/
 - **도메인 중심 설계**: 비즈니스 로직은 도메인 엔티티에 위치
 - **명시적 트랜잭션 관리**: 서비스 계층에서만 트랜잭션 경계 설정
 
-## 실행 방법
+## API 목록
+
+### 1. 설문조사 생성
+- `POST /api/v1/surveys`
+- 새로운 설문조사를 생성합니다.
+
+### 2. 설문조사 수정
+- `PUT /api/v1/surveys/{surveyId}`
+- 기존 설문조사를 수정합니다. 기존 응답은 유지됩니다.
+
+### 3. 설문조사 단건 조회
+- `GET /api/v1/surveys/{surveyId}`
+- 특정 설문조사를 조회합니다.
+
+### 4. 설문조사 목록 조회
+- `GET /api/v1/surveys`
+- 설문조사 목록을 페이징하여 조회합니다.
+
+### 5. 설문조사 응답 제출
+- `POST /api/v1/surveys/{surveyId}/responses`
+- 설문조사에 대한 응답을 제출합니다.
+
+자세한 API 명세는 [API 문서](docs/)를 참고하시거나 실행 후 `/swagger-ui.html`에서 확인하세요.
 
 ### 로컬 환경에서 실행
 

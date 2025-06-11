@@ -20,12 +20,32 @@ data class SurveyResponse(
         val type: String,
         val required: Boolean,
         val choices: List<ChoiceResponse>,
-    )
+    ) {
+        companion object {
+            fun from(question: Question): QuestionResponse =
+                QuestionResponse(
+                    id = question.id.toString(),
+                    title = question.title,
+                    description = question.description,
+                    type = question.type.name,
+                    required = question.required,
+                    choices = question.choices.map { ChoiceResponse.from(it) },
+                )
+        }
+    }
 
     data class ChoiceResponse(
         val id: String,
         val text: String,
-    )
+    ) {
+        companion object {
+            fun from(choice: com.innercircle.survey.survey.domain.Choice): ChoiceResponse =
+                ChoiceResponse(
+                    id = choice.id.toString(),
+                    text = choice.text,
+                )
+        }
+    }
 
     companion object {
         fun from(survey: Survey): SurveyResponse =
@@ -34,25 +54,9 @@ data class SurveyResponse(
                 title = survey.title,
                 description = survey.description,
                 version = survey.version,
-                questions = survey.questions.map { fromQuestion(it) },
+                questions = survey.questions.map { QuestionResponse.from(it) },
                 createdAt = survey.createdAt,
                 updatedAt = survey.updatedAt,
-            )
-
-        private fun fromQuestion(question: Question): QuestionResponse =
-            QuestionResponse(
-                id = question.id.toString(),
-                title = question.title,
-                description = question.description,
-                type = question.type.name,
-                required = question.required,
-                choices =
-                    question.choices.map { choice ->
-                        ChoiceResponse(
-                            id = choice.id.toString(),
-                            text = choice.text,
-                        )
-                    },
             )
     }
 }
