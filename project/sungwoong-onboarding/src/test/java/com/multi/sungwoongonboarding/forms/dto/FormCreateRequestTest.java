@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -25,7 +27,7 @@ class FormCreateRequestTest {
     private Validator validator;
 
     @Test
-    @DisplayName("설문지 요청 객체 유효성 검사")
+    @DisplayName("FormCreateRequest 요청 객체 유효성 검사 - 질문이 10개가 넘어 검증 실패")
     public void testFormCreateRequestValidation() {
         // Given
         List<QuestionCreateRequest> questionCreateRequests =
@@ -39,7 +41,7 @@ class FormCreateRequestTest {
         var violations = validator.validate(formCreateRequest);
 
         // Then
-        Assertions.assertThat(violations).hasSize(1);
+        assertThat(violations).hasSize(1);
     }
 
 
@@ -55,30 +57,48 @@ class FormCreateRequestTest {
         var validate_success = validator.validate(questionCreateRequest_success);
 
         // Then
-        Assertions.assertThat(validate_fail.size()).isEqualTo(1);
-        Assertions.assertThat(validate_success.size()).isEqualTo(0);
+        assertThat(validate_fail.size()).isEqualTo(1);
+        assertThat(validate_success.size()).isEqualTo(0);
     }
 
     @Test
     @DisplayName("OptionCheck 검증 어노테이션 테스트 - 선택 형식의 질문에 옵션이 없는 경우")
     public void testOptionCreateRequestValidation() {
         // Given
+        // 질문 유형: Multiple
         QuestionCreateRequest multiple_or_single_option_null = new QuestionCreateRequest("question1", Questions.QuestionType.MULTIPLE_CHOICE.name(), 1, true, null);
         QuestionCreateRequest multiple_or_single_option_empty = new QuestionCreateRequest("question1", Questions.QuestionType.MULTIPLE_CHOICE.name(), 1, true, List.of());
         QuestionCreateRequest multiple_or_single_not_null = new QuestionCreateRequest("question1", Questions.QuestionType.MULTIPLE_CHOICE.name(), 1, true, List.of(new OptionCreateRequest("option1", 1)));
+        // 질문 유형: Single
+        QuestionCreateRequest single_or_single_option_null = new QuestionCreateRequest("question1", Questions.QuestionType.SINGLE_CHOICE.name(), 1, true, null);
+        QuestionCreateRequest single_or_single_option_empty = new QuestionCreateRequest("question1", Questions.QuestionType.SINGLE_CHOICE.name(), 1, true, List.of());
+        QuestionCreateRequest single_or_single_not_null = new QuestionCreateRequest("question1", Questions.QuestionType.SINGLE_CHOICE.name(), 1, true, List.of(new OptionCreateRequest("option1", 1)));
+        // 질문 유형: Short
         QuestionCreateRequest short_or_long_not_null = new QuestionCreateRequest("question1", Questions.QuestionType.MULTIPLE_CHOICE.name(), 1, true, List.of(new OptionCreateRequest("option1", 1)));
 
         // When
-        var validateNull = validator.validate(multiple_or_single_option_null);
-        var validateEmpty = validator.validate(multiple_or_single_option_empty);
-        var validateNotNull1 = validator.validate(multiple_or_single_not_null);
-        var validateNotNull2 = validator.validate(short_or_long_not_null);
+        // 질문 유형: Multiple
+        var multipleValidateNull = validator.validate(multiple_or_single_option_null);
+        var multipleValidateEmpty = validator.validate(multiple_or_single_option_empty);
+        var multipleValidateNotNull = validator.validate(multiple_or_single_not_null);
+        // 질문 유형: Single
+        var singleValidateNull = validator.validate(single_or_single_option_null);
+        var singleValidateEmpty = validator.validate(single_or_single_option_empty);
+        var singleValidateNotNull = validator.validate(single_or_single_not_null);
+        // 질문 유형: Short
+        var shortValidateNotNull = validator.validate(short_or_long_not_null);
 
         // Then
-        Assertions.assertThat(validateNull.size()).isEqualTo(1);
-        Assertions.assertThat(validateEmpty.size()).isEqualTo(1);
-        Assertions.assertThat(validateNotNull1.size()).isEqualTo(0);
-        Assertions.assertThat(validateNotNull2.size()).isEqualTo(0);
+        // 질문 유형: Multiple
+        assertThat(multipleValidateNull.size()).isEqualTo(1);
+        assertThat(multipleValidateEmpty.size()).isEqualTo(1);
+        assertThat(multipleValidateNotNull.size()).isEqualTo(0);
+        // 질문 유형: Single
+        assertThat(singleValidateNull.size()).isEqualTo(1);
+        assertThat(singleValidateEmpty.size()).isEqualTo(1);
+        assertThat(singleValidateNotNull.size()).isEqualTo(0);
+        // 질문 유형: Short
+        assertThat(shortValidateNotNull.size()).isEqualTo(0);
     }
 
 
@@ -110,7 +130,7 @@ class FormCreateRequestTest {
         var violations_option_size_10 = validator.validate(questionRequests_optionText_null);
 
         // Then
-        Assertions.assertThat(violations_option_size_1).hasSize(1);
-        Assertions.assertThat(violations_option_size_10).hasSize(10);
+        assertThat(violations_option_size_1).hasSize(1);
+        assertThat(violations_option_size_10).hasSize(10);
     }
 }

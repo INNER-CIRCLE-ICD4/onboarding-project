@@ -29,7 +29,7 @@ class FormControllerTest {
     private FormService formService;
 
     @Test
-    @DisplayName("설문 조사서 등록 요청 테스트 - RequestBody 테스트")
+    @DisplayName("설문 조사서 등록 요청 - RequestBody")
     public void testCreateForm() throws Exception {
 
         // Given
@@ -147,7 +147,7 @@ class FormControllerTest {
     }
 
     @Test
-    @DisplayName("설문 조사서 등록 요청 - 잘못된 RequestBody 테스트")
+    @DisplayName("설문 조사서 등록 요청 - 잘못된 RequestBody")
     public void testCreateFormWithInvalidRequest() throws Exception {
 
         // Given
@@ -173,7 +173,7 @@ class FormControllerTest {
     }
 
     @Test
-    @DisplayName("설문 조사서 등록 요청 테스트 - RequestBody 테스트(실패), 질문이 선택 형식인데 옵션의 내용이 없는 경우")
+    @DisplayName("설문 조사서 등록 요청 테스트 - 잘못된 RequestBody, 질문이 선택 형식인데 옵션의 내용이 없는 경우")
     public void testCreateForm_fail() throws Exception {
 
         // Given
