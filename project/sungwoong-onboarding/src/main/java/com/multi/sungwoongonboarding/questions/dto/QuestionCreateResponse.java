@@ -5,7 +5,7 @@ import com.multi.sungwoongonboarding.questions.domain.Questions;
 
 import java.util.List;
 
-public record QuestionCreateResponse(Long id, String questionText, int order, boolean isRequired, List<OptionCreateResponse> optionCreateResponseList) {
+public record QuestionCreateResponse(Long id, String questionText, int order, boolean isRequired, List<OptionCreateResponse> optionCreateResponses) {
 
     public static QuestionCreateResponse fromDomain(Questions question) {
         return new QuestionCreateResponse(
