@@ -2,10 +2,10 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.api.JavaVersion
 
 plugins {
-  id("org.springframework.boot") version "3.2.5"
-  id("io.spring.dependency-management") version "1.0.11.RELEASE"
-  id("org.jetbrains.kotlin.jvm") version "1.9.0"
-  id("org.jetbrains.kotlin.plugin.spring") version "1.9.0"
+    id("org.springframework.boot") version "3.2.5"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("org.jetbrains.kotlin.jvm") version "1.9.0"
+    id("org.jetbrains.kotlin.plugin.spring") version "1.9.0"
 }
 
 group = "com.survey"
@@ -14,21 +14,23 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-web")
-  implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
-  // Kotlin specific
-  implementation("org.jetbrains.kotlin:kotlin-reflect")
-  implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    // Kotlin specific
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
-  // h2 Database
-  runtimeOnly("com.h2database:h2")
+    // h2 Database
+    runtimeOnly("com.h2database:h2")
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.named<Test>("test") {
