@@ -151,6 +151,25 @@ class GlobalExceptionHandler {
             .body(response)
     }
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(
+        e: IllegalArgumentException,
+        request: HttpServletRequest,
+    ): ResponseEntity<ErrorResponse> {
+        logger.warn { "Illegal argument: ${e.message}" }
+
+        val response =
+            ErrorResponse.of(
+                errorCode = ErrorCode.INVALID_INPUT_VALUE,
+                message = e.message ?: "유효하지 않은 입력값입니다.",
+                path = request.requestURI,
+            )
+
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(response)
+    }
+
     @ExceptionHandler(Exception::class)
     fun handleException(
         e: Exception,

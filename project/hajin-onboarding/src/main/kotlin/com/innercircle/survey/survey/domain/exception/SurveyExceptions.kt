@@ -1,4 +1,4 @@
-package com.innercircle.survey.survey.exception
+package com.innercircle.survey.survey.domain.exception
 
 import com.innercircle.survey.common.exception.BusinessException
 import com.innercircle.survey.common.exception.ErrorCode
@@ -19,9 +19,9 @@ class SurveyChoiceLimitExceededException(currentCount: Int, maxCount: Int) : Bus
     message = "선택지 수가 제한을 초과했습니다. (현재: $currentCount, 최대: $maxCount)",
 )
 
-class InvalidQuestionTypeException(message: String) : BusinessException(
+class InvalidQuestionTypeException(type: String) : BusinessException(
     errorCode = ErrorCode.SURVEY_INVALID_ITEM_TYPE,
-    message = message,
+    message = "유효하지 않은 항목 타입입니다: $type",
 )
 
 class MissingChoicesException(questionTitle: String) : BusinessException(

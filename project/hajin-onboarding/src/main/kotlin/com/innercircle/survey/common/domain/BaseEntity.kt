@@ -4,7 +4,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
-import jakarta.persistence.PrePersist
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -14,29 +13,20 @@ import java.util.UUID
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
 abstract class BaseEntity {
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
+    @field:Id
+    @field:Column(name = "id", nullable = false, updatable = false)
     var id: UUID = UUID.randomUUID()
         protected set
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @field:CreatedDate
+    @field:Column(name = "created_at", nullable = false, updatable = false)
     lateinit var createdAt: LocalDateTime
         protected set
 
-    @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
+    @field:LastModifiedDate
+    @field:Column(name = "updated_at", nullable = false)
     lateinit var updatedAt: LocalDateTime
         protected set
-
-    @PrePersist
-    fun prePersist() {
-        if (id == UUID(0, 0)) {
-            id = UUID.randomUUID()
-        }
-    }
-
-    fun isPersisted(): Boolean = ::createdAt.isInitialized
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
