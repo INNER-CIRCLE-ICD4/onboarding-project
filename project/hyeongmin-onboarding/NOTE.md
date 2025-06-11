@@ -24,4 +24,17 @@
 > Exception 발생 시 원하는 구조로 응답이 오는지 테스트 하기위해 테스트 케이스 작성
 > Controller를 만들지 않아도 테스트 할 수 있을까 찾아봤지만 테스트용으로 Controller 만들고 하는게 가장 쉽고 깔끔
 
+| Survey Create API 추가
+> 설문조사 생성 API 추가 완료
+> 단순 Save 이므로 JPA Repository으로 처리 
+
+## fixed
+| Snowflake AOP 이슈 
+> Snowflake가 오직 Spring Data 리포지토리(save(...)) 호출만 가로채기 때문에
+> surveyRepository.save(survey) 할 때 전달된 Survey 엔티티에만 ID를 채워주는 현상을 테스트케이스에서 발견
+> questions와 그 안의 QuestionOption들은 모두 JPA의 cascade persist 로 
+> EntityManager.persist()를 통해 직접 저장되기 때문에, 리포지토리의 save(...) 메서드를 거치지 않는 사실을 알게됨
+> 때문에 @onPrePersist (JPA 라이프사이클 콜백)을 사용하여 JPA 가 persist 하기 직전에 ID를 Snowflake 로 채우는 로직으로 변경
+> SnowflakeIdAspect 삭제 후 SnowflakeIdListener 생성
+
 

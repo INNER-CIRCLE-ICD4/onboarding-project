@@ -20,16 +20,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Survey extends BaseTimeEntity {
     @Id
     private long id;
 
+    @Column(columnDefinition = "VARCHAR(100)")
     private String name;
 
     @Column(columnDefinition = "TEXT")
     private String description;
-
     /**
      * 하나의 설문조사에는 여러 질문이 생성 될 수 있다.
      */
