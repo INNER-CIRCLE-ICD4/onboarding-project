@@ -1,6 +1,7 @@
 package com.multi.sungwoongonboarding.questions.domain;
 
 import com.multi.sungwoongonboarding.options.domain.Options;
+import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
 import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,19 +25,4 @@ public class Questions {
     private final int order;
     private final boolean isRequired;
     private final List<Options> options;
-
-    public static Questions from(QuestionCreateRequest questionCreateRequest) {
-
-        QuestionsBuilder questionBuilder = Questions.builder()
-                .questionText(questionCreateRequest.getQuestionText())
-                .questionType(QuestionType.valueOf(questionCreateRequest.getQuestionType().toUpperCase()))
-                .order(questionCreateRequest.getOrder())
-                .isRequired(questionCreateRequest.isRequired());
-
-        if (questionCreateRequest.getOptionCreateRequests() != null) {
-            questionBuilder.options(questionCreateRequest.getOptionCreateRequests().stream().map(Options::from).collect(Collectors.toList()));
-        }
-
-        return questionBuilder.build();
-    }
 }
