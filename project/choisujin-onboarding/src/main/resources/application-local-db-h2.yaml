@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./project/choisujin-onboarding/src/main/resources/data/survey
+    username: sa
+    password:
+    hikari:
+      pool-name: hikari-cp
+      maximum-pool-size: 2
+      max-lifetime: 60000 # 60 seconds
+      auto-commit: false
+      connection-test-query: SELECT 1
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+
