@@ -15,8 +15,7 @@ public class FormService {
 
     @Transactional
     public void createForms(FormCreateRequest formCreateRequest) {
-        Forms form = Forms.form(formCreateRequest);
+        Forms form = formCreateRequest.toDomain();
         formRepository.save(form);
-
     }
 }

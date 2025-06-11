@@ -18,15 +18,5 @@ public class Forms {
     private final String description;
     private final List<Questions> questions;
 
-    public static Forms form(FormCreateRequest formCreateRequest) {
-        FormsBuilder formBuilder = Forms.builder()
-                .title(formCreateRequest.getTitle())
-                .description(formCreateRequest.getDescription());
 
-        if (formCreateRequest.getQuestionCreateRequests() != null) {
-            formBuilder.questions(formCreateRequest.getQuestionCreateRequests().stream().map(Questions::from).toList());
-        }
-
-        return formBuilder.build();
-    }
 }
