@@ -1,11 +1,15 @@
 package fastcampus.onboarding.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "form")
@@ -25,9 +29,33 @@ public class Form {
     private String formContent; // 설문조사 설명
 
     @Column(name="created_at")
-    private LocalDateTime createdAt; // 설문조사 설명
+    private LocalDateTime createdAt; // 생성일시
 
     @Column(name="updated_at")
-    private LocalDateTime updatedAt; // 설문조사 설명
-
+    private LocalDateTime updatedAt; // 수정일시
+    
+    @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Item> items = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "form", fetch = FetchType.LAZY)
+    private List<FormResponse> responses = new ArrayList<>();
+    
+    @Builder
+    public Form(String formTitle, String formContent) {
+        this.formTitle = formTitle;
+        this.formContent = formContent;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+    
+    public void updateForm(String formTitle, String formContent) {
+        this.formTitle = formTitle;
+        this.formContent = formContent;
+        this.updatedAt = LocalDateTime.now();
+    }
+    
+    public void addItem(Item item) {
+        this.items.add(item);
+        item.setForm(this);
+    }
 }
