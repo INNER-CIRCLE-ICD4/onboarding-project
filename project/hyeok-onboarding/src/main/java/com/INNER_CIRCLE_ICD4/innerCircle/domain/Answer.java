@@ -25,6 +25,7 @@ public class Answer {
     @JoinColumn(name = "question_id")
     private Question question;
 
+    private String textValue; // ✅ 여기 추가
 
     @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerChoice> selectedChoices = new ArrayList<>();

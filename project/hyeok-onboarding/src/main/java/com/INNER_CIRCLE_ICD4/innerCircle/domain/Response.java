@@ -1,6 +1,5 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +22,7 @@ public class Response {
     private Survey survey;
 
     @Lob
+    private String surveySnapshot; // ✅ 누락된 부분 추가
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
