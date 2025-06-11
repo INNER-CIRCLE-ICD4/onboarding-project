@@ -17,7 +17,7 @@ class OptionTest {
 	@ParameterizedTest
 	@NullAndEmptySource
 	@DisplayName("옵션 값이 null이거나 비어 있으면 예외를 반환 합니다.")
-	void test1 (String text) {
+	void throwExceptionWhenOptionTextIsNullAndEmpty (String text) {
 		// when
 		Exception ex = assertThrows(IllegalArgumentException.class, () -> Option.create(validQuestionId, text, validSortOrder));
 
@@ -28,7 +28,7 @@ class OptionTest {
 
 	@Test
 	@DisplayName("옵션의 sortOrder가 음수일 경우 예외를 반환 합니다.")
-	void test2 () {
+	void throwExceptionWhenOptionSortOrderIsNegativeNumber () {
 		// when
 		Exception ex = assertThrows(IllegalArgumentException.class, () -> Option.create(validQuestionId, validText, -1));
 
@@ -39,7 +39,7 @@ class OptionTest {
 
 	@Test
 	@DisplayName("옵션의 questionId가 비어 있으면 예외를 반환 합니다.")
-	void test3 () {
+	void throwExceptionWhenOptionQuestionIdIsNull () {
 		// when
 		Exception ex = assertThrows(IllegalArgumentException.class, () -> Option.create(null, validText, validSortOrder));
 
@@ -50,7 +50,7 @@ class OptionTest {
 
 	@Test
 	@DisplayName("옵션의 값과 ID가 유효하며, sortOrder가 음수가 아니면 객체가 생성됩니다.")
-	void test4 () {
+	void shouldCreateOptionWhenInputsAreValid () {
 		// when
 		Option option = Option.create(validQuestionId, validText, validSortOrder);
 

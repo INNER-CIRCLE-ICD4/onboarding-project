@@ -3,6 +3,8 @@ package icd.onboarding.surveyproject.service.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -10,9 +12,9 @@ import java.util.UUID;
 @Setter
 @Builder
 public class Option {
-	private UUID questionId;
-	private UUID id;
-	private String text;
+	private @NotNull UUID questionId;
+	private @Nullable UUID id;
+	private @NotNull String text;
 	private Integer sortOrder;
 
 	public static Option create (UUID questionId, String text, Integer sortOrder) {
