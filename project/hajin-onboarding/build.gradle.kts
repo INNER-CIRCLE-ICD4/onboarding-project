@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.6"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("org.jetbrains.dokka") version "1.9.20"
     kotlin("jvm") version "2.0.0"
     kotlin("plugin.spring") version "2.0.0"
     kotlin("plugin.jpa") version "2.0.0"
@@ -98,4 +99,41 @@ ktlint {
 // 빌드 시 ktlint 체크 강제
 tasks.named("check") {
     dependsOn("ktlintCheck")
+}
+
+// Dokka 문서 생성 설정
+tasks.dokkaHtml {
+    outputDirectory.set(file("$buildDir/dokka"))
+    dokkaSourceSets {
+        configureEach {
+            includeNonPublic.set(false)
+            skipEmptyPackages.set(true)
+            suppressInheritedMembers.set(true)
+
+            // 샘플 코드 포함
+            samples.from("src/test/kotlin")
+        }
+    }
+}
+
+// 통합 테스트를 위한 태스크
+tasks.register<Test>("integrationTest") {
+    description = "Runs integration tests"
+    group = "verification"
+
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+
+    useJUnitPlatform {
+        includeTags("integration")
+    }
+
+    shouldRunAfter("test")
+}
+
+// 전체 검증 태스크
+tasks.register("verifyAll") {
+    dependsOn("test", "integrationTest", "ktlintCheck")
+    description = "Runs all verification tasks"
+    group = "verification"
 }
