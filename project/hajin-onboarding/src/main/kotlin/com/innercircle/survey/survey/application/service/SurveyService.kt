@@ -1,6 +1,6 @@
 package com.innercircle.survey.survey.application.service
 
-import com.innercircle.survey.common.utils.toEnumOrNull
+import com.innercircle.survey.survey.adapter.out.persistence.dto.SurveySummaryProjection
 import com.innercircle.survey.survey.application.port.`in`.SurveyUseCase
 import com.innercircle.survey.survey.application.port.`in`.SurveyUseCase.CreateSurveyCommand
 import com.innercircle.survey.survey.application.port.`in`.SurveyUseCase.UpdateSurveyCommand
@@ -8,7 +8,6 @@ import com.innercircle.survey.survey.application.port.out.SurveyRepository
 import com.innercircle.survey.survey.domain.Question
 import com.innercircle.survey.survey.domain.QuestionType
 import com.innercircle.survey.survey.domain.Survey
-import com.innercircle.survey.survey.domain.exception.InvalidQuestionTypeException
 import com.innercircle.survey.survey.domain.exception.SurveyNotFoundException
 import mu.KotlinLogging
 import org.springframework.data.domain.Page
@@ -73,19 +72,25 @@ class SurveyService(
     override fun getSurveyById(surveyId: UUID): Survey {
         logger.debug { "Loading survey with id: $surveyId" }
 
-        return surveyRepository.findById(surveyId)
+        return surveyRepository.findByIdWithFullDetails(surveyId)
             ?: throw SurveyNotFoundException(surveyId)
     }
 
     @Transactional(readOnly = true)
     override fun getSurveys(pageable: Pageable): Page<Survey> {
         logger.debug { "Loading surveys with pagination: page=${pageable.pageNumber}, size=${pageable.pageSize}" }
-
         return surveyRepository.findAll(pageable)
     }
 
+    @Transactional(readOnly = true)
+    override fun getSurveySummaries(pageable: Pageable): Page<SurveySummaryProjection> {
+        logger.debug { "Loading survey summaries with pagination: page=${pageable.pageNumber}, size=${pageable.pageSize}" }
+
+        return surveyRepository.findAllSummaries(pageable)
+    }
+
     private fun createQuestionFromCommand(command: CreateSurveyCommand.QuestionCommand): Question {
-        val questionType = parseQuestionType(command.type)
+        val questionType = QuestionType.fromString(command.type)
 
         return Question.create(
             title = command.title,
@@ -97,7 +102,7 @@ class SurveyService(
     }
 
     private fun createQuestionFromUpdateCommand(command: UpdateSurveyCommand.QuestionCommand): Question {
-        val questionType = parseQuestionType(command.type)
+        val questionType = QuestionType.fromString(command.type)
 
         return Question.create(
             title = command.title,
@@ -106,10 +111,5 @@ class SurveyService(
             required = command.required,
             choices = command.choices,
         )
-    }
-
-    private fun parseQuestionType(type: String): QuestionType {
-        return type.toEnumOrNull<QuestionType>()
-            ?: throw InvalidQuestionTypeException(type)
     }
 }

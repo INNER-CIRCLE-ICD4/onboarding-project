@@ -5,7 +5,11 @@ import com.innercircle.survey.common.dto.PageRequest
 import com.innercircle.survey.common.dto.PageResponse
 import com.innercircle.survey.survey.adapter.`in`.web.dto.CreateSurveyRequest
 import com.innercircle.survey.survey.adapter.`in`.web.dto.SurveyResponse
+import com.innercircle.survey.survey.adapter.`in`.web.dto.SurveySummaryResponse
 import com.innercircle.survey.survey.adapter.`in`.web.dto.UpdateSurveyRequest
+import com.innercircle.survey.survey.adapter.`in`.web.dto.toCommand
+import com.innercircle.survey.survey.adapter.`in`.web.dto.toResponse
+import com.innercircle.survey.survey.adapter.out.persistence.dto.SurveySummaryProjection
 import com.innercircle.survey.survey.application.port.`in`.SurveyUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
@@ -54,9 +59,9 @@ class SurveyController(
     ): ResponseEntity<ApiResponse<SurveyResponse>> {
         logger.info { "Create survey request received: ${request.title}" }
 
-        val command = request.toCreateSurveyCommand()
+        val command = request.toCommand()
         val survey = surveyUseCase.createSurvey(command)
-        val response = SurveyResponse.from(survey)
+        val response = survey.toResponse()
 
         logger.info { "Survey created successfully: ${survey.id}" }
 
@@ -89,7 +94,7 @@ class SurveyController(
         logger.info { "Get survey request received: $surveyId" }
 
         val survey = surveyUseCase.getSurveyById(surveyId)
-        val response = SurveyResponse.from(survey)
+        val response = survey.toResponse()
 
         return ResponseEntity.ok(
             ApiResponse.success(response),
@@ -124,9 +129,9 @@ class SurveyController(
     ): ResponseEntity<ApiResponse<SurveyResponse>> {
         logger.info { "Update survey request received: $surveyId" }
 
-        val command = request.toUpdateSurveyCommand(surveyId)
+        val command = request.toCommand(surveyId)
         val survey = surveyUseCase.updateSurvey(command)
-        val response = SurveyResponse.from(survey)
+        val response = survey.toResponse()
 
         logger.info { "Survey updated successfully: ${survey.id}, version: ${survey.version}" }
 
@@ -137,7 +142,7 @@ class SurveyController(
 
     @Operation(
         summary = "설문조사 목록 조회",
-        description = "페이징을 적용하여 설문조사 목록을 조회합니다.",
+        description = "페이징을 적용하여 설문조사 목록을 조회합니다. summary=true 파라미터로 요약 정보만 조회할 수 있습니다.",
     )
     @ApiResponses(
         value = [
@@ -151,14 +156,31 @@ class SurveyController(
     fun getSurveys(
         @Parameter(description = "페이지 정보")
         @Valid pageRequest: PageRequest,
-    ): ResponseEntity<PageResponse<SurveyResponse>> {
-        logger.info { "Get surveys request received: page=${pageRequest.page}, size=${pageRequest.size}" }
+        @Parameter(description = "요약 정보만 조회할지 여부 (기본값: false)")
+        @RequestParam(required = false, defaultValue = "false") summary: Boolean,
+    ): ResponseEntity<*> {
+        logger.info { "Get surveys request received: page=${pageRequest.page}, size=${pageRequest.size}, summary=$summary" }
 
         val pageable = pageRequest.toPageable()
-        val surveysPage = surveyUseCase.getSurveys(pageable)
 
-        val response = PageResponse.of(surveysPage) { SurveyResponse.from(it) }
-
-        return ResponseEntity.ok(response)
+        return if (summary) {
+            val surveySummaries = surveyUseCase.getSurveySummaries(pageable)
+            val response = PageResponse.of(surveySummaries) { it.toSummaryResponse() }
+            ResponseEntity.ok(response)
+        } else {
+            val surveysPage = surveyUseCase.getSurveys(pageable)
+            val response = PageResponse.of(surveysPage) { it.toResponse() }
+            ResponseEntity.ok(response)
+        }
     }
 }
+
+fun SurveySummaryProjection.toSummaryResponse(): SurveySummaryResponse =
+    SurveySummaryResponse(
+        id = id.toString(),
+        title = title,
+        description = description,
+        version = version,
+        questionCount = questionCount,
+        createdAt = createdAt,
+    )

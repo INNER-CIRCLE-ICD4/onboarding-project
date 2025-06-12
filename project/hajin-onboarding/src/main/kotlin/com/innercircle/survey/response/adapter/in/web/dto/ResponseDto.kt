@@ -19,29 +19,25 @@ data class ResponseDto(
         val questionType: String,
         val textValue: String?,
         val selectedChoiceIds: Set<String>,
-    ) {
-        companion object {
-            fun from(answer: Answer): AnswerDto =
-                AnswerDto(
-                    id = answer.id.toString(),
-                    questionId = answer.questionId.toString(),
-                    questionTitle = answer.questionTitle,
-                    questionType = answer.questionType.name,
-                    textValue = answer.textValue,
-                    selectedChoiceIds = answer.selectedChoiceIds.map { it.toString() }.toSet(),
-                )
-        }
-    }
-
-    companion object {
-        fun from(response: Response): ResponseDto =
-            ResponseDto(
-                id = response.id.toString(),
-                surveyId = response.survey.id.toString(),
-                surveyVersion = response.surveyVersion,
-                respondentId = response.respondentId,
-                answers = response.answers.map { AnswerDto.from(it) },
-                createdAt = response.createdAt,
-            )
-    }
+    )
 }
+
+fun Response.toDto(): ResponseDto =
+    ResponseDto(
+        id = id.toString(),
+        surveyId = survey.id.toString(),
+        surveyVersion = surveyVersion,
+        respondentId = respondentId,
+        answers = answers.map { it.toDto() },
+        createdAt = createdAt,
+    )
+
+fun Answer.toDto(): ResponseDto.AnswerDto =
+    ResponseDto.AnswerDto(
+        id = id.toString(),
+        questionId = questionId.toString(),
+        questionTitle = questionTitle,
+        questionType = questionType.name,
+        textValue = textValue,
+        selectedChoiceIds = selectedChoiceIds.map { it.toString() }.toSet(),
+    )

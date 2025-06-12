@@ -30,21 +30,21 @@ data class CreateSurveyRequest(
         val required: Boolean = false,
         @field:Size(max = 20, message = "선택지는 최대 20개까지만 가능합니다.")
         val choices: List<String> = emptyList(),
-    ) {
-        fun toQuestionCommand(): SurveyUseCase.CreateSurveyCommand.QuestionCommand =
-            SurveyUseCase.CreateSurveyCommand.QuestionCommand(
-                title = title,
-                description = description,
-                type = type,
-                required = required,
-                choices = choices,
-            )
-    }
-
-    fun toCreateSurveyCommand(): SurveyUseCase.CreateSurveyCommand =
-        SurveyUseCase.CreateSurveyCommand(
-            title = title,
-            description = description,
-            questions = questions.map { it.toQuestionCommand() },
-        )
+    )
 }
+
+fun CreateSurveyRequest.toCommand(): SurveyUseCase.CreateSurveyCommand =
+    SurveyUseCase.CreateSurveyCommand(
+        title = title,
+        description = description,
+        questions = questions.map { it.toCommand() },
+    )
+
+fun CreateSurveyRequest.QuestionRequest.toCommand(): SurveyUseCase.CreateSurveyCommand.QuestionCommand =
+    SurveyUseCase.CreateSurveyCommand.QuestionCommand(
+        title = title,
+        description = description,
+        type = type,
+        required = required,
+        choices = choices,
+    )
