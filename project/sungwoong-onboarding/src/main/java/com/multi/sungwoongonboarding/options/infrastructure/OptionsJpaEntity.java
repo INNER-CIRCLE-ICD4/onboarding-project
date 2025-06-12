@@ -21,10 +21,12 @@ public class OptionsJpaEntity {
     @Column(name = "option_order")
     private int order;
 
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private QuestionJpaEntity questionJpaEntity;
-
 
     public static OptionsJpaEntity fromDomain(Options options) {
         OptionsJpaEntity optionsJpaEntity = new OptionsJpaEntity();
@@ -35,7 +37,7 @@ public class OptionsJpaEntity {
     }
 
     public Options toDomain() {
-        return new Options(id, optionText, order);
+        return new Options(id, optionText, order, deleted);
     }
 
     public void mappingQuestionJpaEntity(QuestionJpaEntity questionJpaEntity) {
@@ -44,5 +46,4 @@ public class OptionsJpaEntity {
             questionJpaEntity.getOptions().add(this);
         }
     }
-
 }

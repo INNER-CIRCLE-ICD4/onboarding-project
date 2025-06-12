@@ -12,4 +12,5 @@ public class Options {
     private final Long id;
     private final String optionText;
     private final int order;
+    private final Boolean deleted;
 }
