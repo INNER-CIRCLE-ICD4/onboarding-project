@@ -1,4 +1,4 @@
-package fc.innercircle.jinhoonboarding.entity
+package fc.innercircle.jinhoonboarding.answer.domain
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -13,4 +13,3 @@ class Answer(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 }
-
