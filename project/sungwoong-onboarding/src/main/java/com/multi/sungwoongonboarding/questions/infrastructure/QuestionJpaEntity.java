@@ -36,6 +36,12 @@ public class QuestionJpaEntity extends BaseEntity {
     @JoinColumn(name = "form_id")
     private FormsJpaEntity formsJpaEntity;
 
+    @Column(name = "version", nullable = false)
+    private int version = 1;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
     @OneToMany(mappedBy = "questionJpaEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OptionsJpaEntity> options = new ArrayList<>();
 
@@ -57,6 +63,7 @@ public class QuestionJpaEntity extends BaseEntity {
                 .questionText(this.questionText)
                 .questionType(Questions.QuestionType.valueOf(this.questionType))
                 .order(this.order)
+                .version(this.version)
                 .isRequired(this.isRequired)
                 .options(this.options.stream().map(OptionsJpaEntity::toDomain).toList())
                 .build();
