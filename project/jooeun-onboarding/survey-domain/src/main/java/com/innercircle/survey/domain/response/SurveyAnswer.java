@@ -270,6 +270,26 @@ public class SurveyAnswer extends BaseEntity {
     }
 
     /**
+     * 현재 선택지와 비교하여 여전히 유효한 응답인지 확인
+     *
+     * @param currentChoices 현재 질문의 선택지들
+     * @return 유효성 여부
+     */
+    public boolean isStillValidAgainstCurrentChoices(List<String> currentChoices) {
+        if (!isChoiceAnswer()) {
+            return true; // 텍스트 응답은 항상 유효
+        }
+        
+        if (currentChoices == null || currentChoices.isEmpty()) {
+            return false; // 현재 선택지가 없으면 무효
+        }
+        
+        // 모든 응답 값이 현재 선택지에 포함되어 있는지 확인
+        return answerValues.stream()
+                .allMatch(currentChoices::contains);
+    }
+
+    /**
      * 응답의 문자열 표현 (로깅/디버깅용)
      *
      * @return 응답 요약
