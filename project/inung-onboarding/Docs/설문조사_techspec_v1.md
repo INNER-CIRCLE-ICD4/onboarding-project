@@ -382,4 +382,4 @@ CREATE TABLE answer
 
 **설문 조사 응답 결과 조회**
 - 404 NOT FOUND
-    - `SURVAY_NOT_FOUND`: "해당 설문 조사가 존재하지 않습니다."
+    - `SURVEY_NOT_FOUND`: "해당 설문 조사가 존재하지 않습니다."
