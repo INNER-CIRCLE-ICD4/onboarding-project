@@ -1,4 +1,4 @@
-package fastcampus.onboarding.entity;
+package fastcampus.onboarding.form.entity;
 
 import lombok.Getter;
 

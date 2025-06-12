@@ -1,6 +1,7 @@
-package fastcampus.onboarding.dto.request;
+package fastcampus.onboarding.form.dto.request;
 
-import fastcampus.onboarding.entity.ItemType;
+import fastcampus.onboarding.form.entity.ItemType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,10 +9,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class ItemRequestDto {
     
@@ -31,7 +36,8 @@ public class ItemRequestDto {
     
     @Valid
     private List<OptionRequestDto> options = new ArrayList<>();
-    
+
+
     // 유효성 검증을 위한 메서드 (선택형 질문인 경우 옵션 필요)
     public boolean isChoiceTypeWithOptions() {
         return (itemType == ItemType.SINGLE_CHOICE || itemType == ItemType.MULTIPLE_CHOICE)

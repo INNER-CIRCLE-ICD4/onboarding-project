@@ -1,10 +1,9 @@
-package fastcampus.onboarding.entity;
+package fastcampus.onboarding.form.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;

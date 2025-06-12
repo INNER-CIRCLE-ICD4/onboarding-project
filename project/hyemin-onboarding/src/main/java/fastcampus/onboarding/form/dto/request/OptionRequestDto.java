@@ -1,5 +1,6 @@
-package fastcampus.onboarding.dto.request;
+package fastcampus.onboarding.form.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Getter
-@NoArgsConstructor
+@AllArgsConstructor
 public class OptionRequestDto {
     
     @NotBlank(message = "옵션 내용은 필수입니다")

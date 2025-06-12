@@ -1,5 +1,7 @@
-package fastcampus.onboarding.dto.request;
+package fastcampus.onboarding.form.dto.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,9 +11,11 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 
+@Builder
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
-public class FormCreateRequest {
+public class FormCreateRequestDto {
     
     @NotBlank(message = "설문조사 제목은 필수입니다")
     @Size(max = 200, message = "설문조사 제목은 200자를 초과할 수 없습니다")
