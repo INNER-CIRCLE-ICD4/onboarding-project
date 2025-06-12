@@ -6,6 +6,7 @@ import fc.innercircle.jinhoonboarding.survey.service.SurveyService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -18,10 +19,17 @@ class SurveyController(
 
     @PostMapping("/survey")
     fun createSurvey(@Valid @RequestBody request: CreateSurveyRequest): ResponseEntity<Survey> {
-
         return ResponseEntity.ok(
             surveyService.createSurvey(request)
         )
     }
+
+    @PutMapping
+    fun modifySurvey(request: CreateSurveyRequest): ResponseEntity<Survey> {
+        return ResponseEntity.ok(
+            surveyService.createSurvey(request)
+        )
+    }
+
 
 }
