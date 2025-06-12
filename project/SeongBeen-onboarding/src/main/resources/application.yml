@@ -1,4 +1,5 @@
-# application.yml
 spring:
   application:
     name: SeongBeen-onboarding
+  profiles:
+    active: local   # 기본값 local

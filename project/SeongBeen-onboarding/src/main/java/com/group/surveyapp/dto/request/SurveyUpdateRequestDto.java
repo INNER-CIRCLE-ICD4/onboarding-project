@@ -1,21 +1,25 @@
-package com.group.surveyapp.dto;
+package com.group.surveyapp.dto.request;
 
+import com.group.surveyapp.domain.entity.QuestionType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * 설문조사 생성 요청 DTO
+ * 설문조사 수정 요청 DTO
  * <p>
- * - 설문조사 생성 API(/api/surveys) 요청 본문에 사용.
+ * - 설문조사 수정 API(/api/surveys/{surveyId}) 요청 본문에 사용.
  * - 설문 이름, 설명, 설문 받을 항목 목록을 포함.
  * </p>
  */
 @Data
-public class SurveyCreateRequestDto {
+public class SurveyUpdateRequestDto {
     @NotBlank
     private String title; // 설문조사 이름
 
@@ -32,17 +36,11 @@ public class SurveyCreateRequestDto {
 
         private String description; // 항목 설명
 
-        private QuestionType type; // 입력 형태(enum)
+        @NotNull
+        private QuestionType type;
 
         private boolean required; // 필수 여부
 
         private List<String> candidates; // 선택형에만 해당
-    }
-
-    public enum QuestionType {
-        SHORT,     // 단답형
-        LONG,      // 장문형
-        SINGLE,    // 단일 선택 리스트
-        MULTI      // 다중 선택 리스트
     }
 }
