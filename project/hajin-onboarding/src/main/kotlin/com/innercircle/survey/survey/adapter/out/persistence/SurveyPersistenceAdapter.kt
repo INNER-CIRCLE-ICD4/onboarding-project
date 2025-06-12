@@ -1,5 +1,6 @@
 package com.innercircle.survey.survey.adapter.out.persistence
 
+import com.innercircle.survey.survey.adapter.out.persistence.dto.SurveySummaryProjection
 import com.innercircle.survey.survey.application.port.out.SurveyRepository
 import com.innercircle.survey.survey.domain.Survey
 import org.springframework.data.domain.Page
@@ -16,12 +17,22 @@ class SurveyPersistenceAdapter(
     }
 
     override fun findById(id: UUID): Survey? {
-        // Fetch Join을 사용하여 N+1 문제 방지
-        return surveyJpaRepository.findByIdWithQuestionsAndChoices(id)
+        return surveyJpaRepository.findByIdWithGraph(id)
+    }
+
+    override fun findByIdWithFullDetails(surveyId: UUID): Survey? {
+        return surveyJpaRepository.findByIdWithQuestionsAndChoices(surveyId)
     }
 
     override fun findAll(pageable: Pageable): Page<Survey> {
-        // 목록 조회 시에는 Survey만 조회 (Lazy Loading)
         return surveyJpaRepository.findAllActive(pageable)
+    }
+
+    override fun findAllWithQuestions(pageable: Pageable): Page<Survey> {
+        return surveyJpaRepository.findAllActiveWithQuestions(pageable)
+    }
+
+    override fun findAllSummaries(pageable: Pageable): Page<SurveySummaryProjection> {
+        return surveyJpaRepository.findAllSurveySummaries(pageable)
     }
 }

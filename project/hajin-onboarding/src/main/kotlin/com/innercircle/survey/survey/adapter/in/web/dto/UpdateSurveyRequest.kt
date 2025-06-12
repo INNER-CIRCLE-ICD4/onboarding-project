@@ -32,23 +32,23 @@ data class UpdateSurveyRequest(
         val required: Boolean = false,
         @field:Size(max = 20, message = "선택지는 최대 20개까지만 가능합니다.")
         val choices: List<String> = emptyList(),
-    ) {
-        fun toQuestionCommand(): SurveyUseCase.UpdateSurveyCommand.QuestionCommand =
-            SurveyUseCase.UpdateSurveyCommand.QuestionCommand(
-                id = id,
-                title = title,
-                description = description,
-                type = type,
-                required = required,
-                choices = choices,
-            )
-    }
-
-    fun toUpdateSurveyCommand(surveyId: UUID): SurveyUseCase.UpdateSurveyCommand =
-        SurveyUseCase.UpdateSurveyCommand(
-            surveyId = surveyId,
-            title = title,
-            description = description,
-            questions = questions.map { it.toQuestionCommand() },
-        )
+    )
 }
+
+fun UpdateSurveyRequest.toCommand(surveyId: UUID): SurveyUseCase.UpdateSurveyCommand =
+    SurveyUseCase.UpdateSurveyCommand(
+        surveyId = surveyId,
+        title = title,
+        description = description,
+        questions = questions.map { it.toCommand() },
+    )
+
+fun UpdateSurveyRequest.QuestionRequest.toCommand(): SurveyUseCase.UpdateSurveyCommand.QuestionCommand =
+    SurveyUseCase.UpdateSurveyCommand.QuestionCommand(
+        id = id,
+        title = title,
+        description = description,
+        type = type,
+        required = required,
+        choices = choices,
+    )

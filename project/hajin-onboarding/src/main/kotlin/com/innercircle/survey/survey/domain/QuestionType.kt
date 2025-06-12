@@ -1,5 +1,7 @@
 package com.innercircle.survey.survey.domain
 
+import com.innercircle.survey.survey.domain.exception.InvalidQuestionTypeException
+
 enum class QuestionType(
     val description: String,
     val requiresChoices: Boolean,
@@ -16,4 +18,14 @@ enum class QuestionType(
     fun isTextType(): Boolean = !requiresChoices
 
     fun isChoiceType(): Boolean = requiresChoices
+
+    companion object {
+        fun fromString(value: String): QuestionType {
+            return try {
+                valueOf(value.uppercase())
+            } catch (e: IllegalArgumentException) {
+                throw InvalidQuestionTypeException(value)
+            }
+        }
+    }
 }

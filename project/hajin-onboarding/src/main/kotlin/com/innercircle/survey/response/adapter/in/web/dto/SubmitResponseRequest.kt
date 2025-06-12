@@ -15,19 +15,19 @@ data class SubmitResponseRequest(
         val questionId: UUID,
         val textValue: String? = null,
         val selectedChoiceIds: Set<UUID>? = null,
-    ) {
-        fun toAnswerCommand(): ResponseUseCase.SubmitResponseCommand.AnswerCommand =
-            ResponseUseCase.SubmitResponseCommand.AnswerCommand(
-                questionId = questionId,
-                textValue = textValue,
-                selectedChoiceIds = selectedChoiceIds,
-            )
-    }
-
-    fun toSubmitResponseCommand(surveyId: UUID): ResponseUseCase.SubmitResponseCommand =
-        ResponseUseCase.SubmitResponseCommand(
-            surveyId = surveyId,
-            respondentId = respondentId,
-            answers = answers.map { it.toAnswerCommand() },
-        )
+    )
 }
+
+fun SubmitResponseRequest.toCommand(surveyId: UUID): ResponseUseCase.SubmitResponseCommand =
+    ResponseUseCase.SubmitResponseCommand(
+        surveyId = surveyId,
+        respondentId = respondentId,
+        answers = answers.map { it.toCommand() },
+    )
+
+fun SubmitResponseRequest.AnswerRequest.toCommand(): ResponseUseCase.SubmitResponseCommand.AnswerCommand =
+    ResponseUseCase.SubmitResponseCommand.AnswerCommand(
+        questionId = questionId,
+        textValue = textValue,
+        selectedChoiceIds = selectedChoiceIds,
+    )

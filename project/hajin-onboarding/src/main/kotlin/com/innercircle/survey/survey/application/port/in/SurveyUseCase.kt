@@ -1,5 +1,6 @@
 package com.innercircle.survey.survey.application.port.`in`
 
+import com.innercircle.survey.survey.adapter.out.persistence.dto.SurveySummaryProjection
 import com.innercircle.survey.survey.domain.Survey
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -13,6 +14,8 @@ interface SurveyUseCase {
     fun getSurveyById(surveyId: UUID): Survey
 
     fun getSurveys(pageable: Pageable): Page<Survey>
+
+    fun getSurveySummaries(pageable: Pageable): Page<SurveySummaryProjection>
 
     data class CreateSurveyCommand(
         val title: String,

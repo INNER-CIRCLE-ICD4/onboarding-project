@@ -1,5 +1,6 @@
 package com.innercircle.survey.survey.adapter.`in`.web.dto
 
+import com.innercircle.survey.survey.domain.Choice
 import com.innercircle.survey.survey.domain.Question
 import com.innercircle.survey.survey.domain.Survey
 import java.time.LocalDateTime
@@ -20,43 +21,37 @@ data class SurveyResponse(
         val type: String,
         val required: Boolean,
         val choices: List<ChoiceResponse>,
-    ) {
-        companion object {
-            fun from(question: Question): QuestionResponse =
-                QuestionResponse(
-                    id = question.id.toString(),
-                    title = question.title,
-                    description = question.description,
-                    type = question.type.name,
-                    required = question.required,
-                    choices = question.choices.map { ChoiceResponse.from(it) },
-                )
-        }
-    }
+    )
 
     data class ChoiceResponse(
         val id: String,
         val text: String,
-    ) {
-        companion object {
-            fun from(choice: com.innercircle.survey.survey.domain.Choice): ChoiceResponse =
-                ChoiceResponse(
-                    id = choice.id.toString(),
-                    text = choice.text,
-                )
-        }
-    }
-
-    companion object {
-        fun from(survey: Survey): SurveyResponse =
-            SurveyResponse(
-                id = survey.id.toString(),
-                title = survey.title,
-                description = survey.description,
-                version = survey.version,
-                questions = survey.questions.map { QuestionResponse.from(it) },
-                createdAt = survey.createdAt,
-                updatedAt = survey.updatedAt,
-            )
-    }
+    )
 }
+
+fun Survey.toResponse(): SurveyResponse =
+    SurveyResponse(
+        id = id.toString(),
+        title = title,
+        description = description,
+        version = version,
+        questions = questions.map { it.toResponse() },
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+
+fun Question.toResponse(): SurveyResponse.QuestionResponse =
+    SurveyResponse.QuestionResponse(
+        id = id.toString(),
+        title = title,
+        description = description,
+        type = type.name,
+        required = required,
+        choices = choices.map { it.toResponse() },
+    )
+
+fun Choice.toResponse(): SurveyResponse.ChoiceResponse =
+    SurveyResponse.ChoiceResponse(
+        id = id.toString(),
+        text = text,
+    )

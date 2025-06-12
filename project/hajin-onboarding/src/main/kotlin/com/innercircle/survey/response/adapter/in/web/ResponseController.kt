@@ -3,6 +3,8 @@ package com.innercircle.survey.response.adapter.`in`.web
 import com.innercircle.survey.common.dto.ApiResponse
 import com.innercircle.survey.response.adapter.`in`.web.dto.ResponseDto
 import com.innercircle.survey.response.adapter.`in`.web.dto.SubmitResponseRequest
+import com.innercircle.survey.response.adapter.`in`.web.dto.toCommand
+import com.innercircle.survey.response.adapter.`in`.web.dto.toDto
 import com.innercircle.survey.response.application.port.`in`.ResponseUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -55,9 +57,9 @@ class ResponseController(
     ): ResponseEntity<ApiResponse<ResponseDto>> {
         logger.info { "Submit response request received for survey: $surveyId" }
 
-        val command = request.toSubmitResponseCommand(surveyId)
+        val command = request.toCommand(surveyId)
         val response = responseUseCase.submitResponse(command)
-        val responseDto = ResponseDto.from(response)
+        val responseDto = response.toDto()
 
         logger.info { "Response submitted successfully: ${response.id}" }
 
