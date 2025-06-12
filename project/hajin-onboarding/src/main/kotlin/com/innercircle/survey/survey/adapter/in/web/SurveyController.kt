@@ -159,7 +159,9 @@ class SurveyController(
         @Parameter(description = "요약 정보만 조회할지 여부 (기본값: false)")
         @RequestParam(required = false, defaultValue = "false") summary: Boolean,
     ): ResponseEntity<*> {
-        logger.info { "Get surveys request received: page=${pageRequest.page}, size=${pageRequest.size}, summary=$summary" }
+        logger.info {
+            "Get surveys request received: page=${pageRequest.page}, size=${pageRequest.size}, summary=$summary"
+        }
 
         val pageable = pageRequest.toPageable()
 
