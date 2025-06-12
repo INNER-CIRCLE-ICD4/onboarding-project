@@ -1,1 +1,3 @@
 rootProject.name = 'survey-service'
+
+include("api", "application", "domain", "common")
