@@ -94,27 +94,27 @@ class QuestionTest : DescribeSpec({
                 }
 
                 it("선택형 질문에 선택지가 없으면 예외가 발생해야 한다") {
-                    shouldThrow<IllegalArgumentException> {
+                    shouldThrow<com.innercircle.survey.survey.domain.exception.MissingChoicesException> {
                         Question.create(
                             title = "선택",
                             description = "선택해주세요.",
                             type = QuestionType.SINGLE_CHOICE,
                             choices = emptyList(),
                         )
-                    }.message shouldBe "단일 선택 타입은 최소 1개 이상의 선택지가 필요합니다."
+                    }
                 }
 
                 it("선택지가 20개를 초과하면 예외가 발생해야 한다") {
                     val choices = (1..21).map { "선택지 $it" }
 
-                    shouldThrow<IllegalArgumentException> {
+                    shouldThrow<com.innercircle.survey.survey.domain.exception.SurveyChoiceLimitExceededException> {
                         Question.create(
                             title = "너무 많은 선택지",
                             description = "선택해주세요.",
                             type = QuestionType.MULTIPLE_CHOICE,
                             choices = choices,
                         )
-                    }.message shouldBe "선택지는 최대 20개까지만 추가할 수 있습니다."
+                    }
                 }
             }
         }
@@ -235,9 +235,9 @@ class QuestionTest : DescribeSpec({
                     )
 
                 it("21번째 선택지 추가 시 예외가 발생해야 한다") {
-                    shouldThrow<IllegalArgumentException> {
+                    shouldThrow<com.innercircle.survey.survey.domain.exception.SurveyChoiceLimitExceededException> {
                         question.addChoice(Choice.create("21번째"))
-                    }.message shouldBe "선택지는 최대 20개까지만 추가할 수 있습니다."
+                    }
                 }
             }
         }

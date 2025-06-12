@@ -28,8 +28,3 @@ class MissingChoicesException(questionTitle: String) : BusinessException(
     errorCode = ErrorCode.SURVEY_MISSING_CHOICES,
     message = "선택형 항목에는 선택지가 필요합니다. (항목: $questionTitle)",
 )
-
-class DuplicateChoiceException(duplicates: Set<String>) : BusinessException(
-    errorCode = ErrorCode.SURVEY_DUPLICATE_CHOICE,
-    message = "중복된 선택지가 있습니다: ${duplicates.joinToString(", ")}",
-)

@@ -1,5 +1,6 @@
 package com.innercircle.survey.survey.domain
 
+import com.innercircle.survey.survey.domain.exception.SurveyItemLimitExceededException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldHaveSize
@@ -92,7 +93,7 @@ class SurveyEntityTest : DescribeSpec({
                     survey.addQuestion(question)
                 }
 
-                shouldThrow<IllegalArgumentException> {
+                shouldThrow<SurveyItemLimitExceededException> {
                     survey.addQuestion(
                         Question.create(
                             title = "질문 11",
@@ -100,7 +101,7 @@ class SurveyEntityTest : DescribeSpec({
                             type = QuestionType.SHORT_TEXT,
                         ),
                     )
-                }.message shouldBe "설문조사는 최대 10개의 항목만 가질 수 있습니다."
+                }.message shouldBe "설문 항목 수가 제한을 초과했습니다. (현재: 11, 최대: 10)"
             }
         }
 

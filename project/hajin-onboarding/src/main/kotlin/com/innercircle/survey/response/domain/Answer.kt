@@ -1,6 +1,9 @@
 package com.innercircle.survey.response.domain
 
 import com.innercircle.survey.common.domain.BaseEntity
+import com.innercircle.survey.response.domain.exception.InvalidAnswerException
+import com.innercircle.survey.response.domain.exception.MultipleChoiceNotAllowedException
+import com.innercircle.survey.response.domain.exception.TextTooLongException
 import com.innercircle.survey.survey.domain.QuestionType
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
@@ -43,35 +46,63 @@ class Answer private constructor(
         when (questionType) {
             QuestionType.SHORT_TEXT -> {
                 val text = textValue
-                requireNotNull(text) { "단답형 질문에는 텍스트 응답이 필요합니다." }
-                require(text.length <= 500) { "단답형 응답은 500자를 초과할 수 없습니다." }
-                require(selectedChoiceIds.isEmpty()) { "텍스트형 질문에는 선택지를 선택할 수 없습니다." }
+                    ?: throw InvalidAnswerException("단답형 질문에는 텍스트 응답이 필요합니다.")
+                
+                if (text.length > MAX_SHORT_TEXT_LENGTH) {
+                    throw TextTooLongException(MAX_SHORT_TEXT_LENGTH, text.length)
+                }
+                
+                if (selectedChoiceIds.isNotEmpty()) {
+                    throw InvalidAnswerException("텍스트형 질문에는 선택지를 선택할 수 없습니다.")
+                }
             }
             QuestionType.LONG_TEXT -> {
                 val text = textValue
-                requireNotNull(text) { "장문형 질문에는 텍스트 응답이 필요합니다." }
-                require(text.length <= 5000) { "장문형 응답은 5000자를 초과할 수 없습니다." }
-                require(selectedChoiceIds.isEmpty()) { "텍스트형 질문에는 선택지를 선택할 수 없습니다." }
+                    ?: throw InvalidAnswerException("장문형 질문에는 텍스트 응답이 필요합니다.")
+                
+                if (text.length > MAX_LONG_TEXT_LENGTH) {
+                    throw TextTooLongException(MAX_LONG_TEXT_LENGTH, text.length)
+                }
+                
+                if (selectedChoiceIds.isNotEmpty()) {
+                    throw InvalidAnswerException("텍스트형 질문에는 선택지를 선택할 수 없습니다.")
+                }
             }
             QuestionType.SINGLE_CHOICE -> {
-                require(selectedChoiceIds.size == 1) { "단일 선택 질문에는 정확히 하나의 선택지를 선택해야 합니다." }
-                require(textValue == null) { "선택형 질문에는 텍스트 응답을 입력할 수 없습니다." }
+                if (selectedChoiceIds.isEmpty()) {
+                    throw InvalidAnswerException("단일 선택 질문에는 하나의 선택지를 선택해야 합니다.")
+                }
+                if (selectedChoiceIds.size > 1) {
+                    throw MultipleChoiceNotAllowedException(questionId)
+                }
+                if (textValue != null) {
+                    throw InvalidAnswerException("선택형 질문에는 텍스트 응답을 입력할 수 없습니다.")
+                }
             }
             QuestionType.MULTIPLE_CHOICE -> {
-                require(selectedChoiceIds.isNotEmpty()) { "다중 선택 질문에는 최소 하나 이상의 선택지를 선택해야 합니다." }
-                require(textValue == null) { "선택형 질문에는 텍스트 응답을 입력할 수 없습니다." }
+                if (selectedChoiceIds.isEmpty()) {
+                    throw InvalidAnswerException("다중 선택 질문에는 최소 하나 이상의 선택지를 선택해야 합니다.")
+                }
+                if (textValue != null) {
+                    throw InvalidAnswerException("선택형 질문에는 텍스트 응답을 입력할 수 없습니다.")
+                }
             }
         }
     }
 
     companion object {
+        const val MAX_SHORT_TEXT_LENGTH = 500
+        const val MAX_LONG_TEXT_LENGTH = 5000
+
         fun createTextAnswer(
             questionId: UUID,
             questionTitle: String,
             questionType: QuestionType,
             textValue: String,
         ): Answer {
-            require(questionType.isTextType()) { "텍스트 응답은 텍스트형 질문에만 가능합니다." }
+            require(questionType.isTextType()) { 
+                "텍스트 응답은 텍스트형 질문에만 가능합니다." 
+            }
 
             val answer =
                 Answer(
@@ -90,7 +121,9 @@ class Answer private constructor(
             questionType: QuestionType,
             selectedChoiceIds: Set<UUID>,
         ): Answer {
-            require(questionType.isChoiceType()) { "선택지 응답은 선택형 질문에만 가능합니다." }
+            require(questionType.isChoiceType()) { 
+                "선택지 응답은 선택형 질문에만 가능합니다." 
+            }
 
             val answer =
                 Answer(

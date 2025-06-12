@@ -1,6 +1,7 @@
 package com.innercircle.survey.response.domain
 
 import com.innercircle.survey.common.domain.BaseEntity
+import com.innercircle.survey.response.domain.exception.MissingRequiredAnswerException
 import com.innercircle.survey.survey.domain.Survey
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -53,8 +54,8 @@ class Response private constructor(
 
         val missingRequiredQuestions = requiredQuestionIds - answeredQuestionIds
 
-        require(missingRequiredQuestions.isEmpty()) {
-            "필수 항목에 대한 응답이 누락되었습니다. 누락된 항목 ID: ${missingRequiredQuestions.joinToString(", ")}"
+        if (missingRequiredQuestions.isNotEmpty()) {
+            throw MissingRequiredAnswerException(missingRequiredQuestions)
         }
     }
 

@@ -1,9 +1,11 @@
 package com.innercircle.survey.response.adapter.`in`.web
 
+import com.innercircle.survey.response.adapter.out.persistence.dto.ResponseSummaryProjection
 import com.innercircle.survey.response.application.port.`in`.ResponseUseCase
 import com.innercircle.survey.response.domain.Answer
 import com.innercircle.survey.response.domain.Response
 import com.innercircle.survey.response.domain.exception.MissingRequiredAnswerException
+import com.innercircle.survey.response.domain.exception.ResponseNotFoundException
 import com.innercircle.survey.survey.domain.QuestionType
 import com.innercircle.survey.survey.domain.Survey
 import com.innercircle.survey.survey.domain.exception.SurveyNotFoundException
@@ -18,6 +20,8 @@ import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.notNullValue
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.TestConstructor
 import java.time.LocalDateTime
 import java.util.UUID
@@ -231,6 +235,179 @@ class ResponseControllerTest(
                         .then()
                         .statusCode(400)
                         .body("errorCode", notNullValue())
+                }
+            }
+        }
+
+        describe("GET /api/v1/responses/{responseId}") {
+            context("존재하는 응답 ID로 조회") {
+                it("200 OK와 함께 응답을 반환해야 한다") {
+                    // given
+                    val responseId = UUID.randomUUID()
+                    val surveyId = UUID.randomUUID()
+
+                    val mockSurvey =
+                        Survey.create(
+                            title = "테스트 설문",
+                            description = "테스트 설명",
+                        ).apply {
+                            val baseClass = this::class.java.superclass
+                            val idField = baseClass.getDeclaredField("id")
+                            idField.isAccessible = true
+                            idField.set(this, surveyId)
+                        }
+
+                    val mockResponse =
+                        Response.create(
+                            survey = mockSurvey,
+                            respondentId = "user123",
+                        ).apply {
+                            val baseClass = this::class.java.superclass
+
+                            val idField = baseClass.getDeclaredField("id")
+                            idField.isAccessible = true
+                            idField.set(this, responseId)
+
+                            val createdAtField = baseClass.getDeclaredField("createdAt")
+                            createdAtField.isAccessible = true
+                            createdAtField.set(this, LocalDateTime.now())
+                        }
+
+                    every { responseUseCase.getResponseById(responseId) } returns mockResponse
+
+                    // when & then
+                    RestAssured.given()
+                        .`when`()
+                        .get("/api/v1/responses/$responseId")
+                        .then()
+                        .statusCode(200)
+                        .body("success", equalTo(true))
+                        .body("data.id", equalTo(responseId.toString()))
+                        .body("data.respondentId", equalTo("user123"))
+                }
+            }
+
+            context("존재하지 않는 응답 ID로 조회") {
+                it("404 Not Found를 반환해야 한다") {
+                    // given
+                    val responseId = UUID.randomUUID()
+                    every { responseUseCase.getResponseById(responseId) } throws ResponseNotFoundException(responseId)
+
+                    // when & then
+                    RestAssured.given()
+                        .`when`()
+                        .get("/api/v1/responses/$responseId")
+                        .then()
+                        .statusCode(404)
+                }
+            }
+        }
+
+        describe("GET /api/v1/surveys/{surveyId}/responses") {
+            val surveyId = UUID.randomUUID()
+
+            context("페이징 파라미터와 함께 목록 조회") {
+                it("200 OK와 함께 페이징된 응답 목록을 반환해야 한다") {
+                    // given
+                    val pageable = PageRequest.of(0, 10)
+                    val mockSurvey =
+                        Survey.create(
+                            title = "테스트 설문",
+                            description = "테스트 설명",
+                        ).apply {
+                            val baseClass = this::class.java.superclass
+                            val idField = baseClass.getDeclaredField("id")
+                            idField.isAccessible = true
+                            idField.set(this, surveyId)
+                        }
+
+                    val mockResponses = listOf(
+                        Response.create(survey = mockSurvey, respondentId = "user1"),
+                        Response.create(survey = mockSurvey, respondentId = "user2")
+                    )
+                    mockResponses.forEach { response ->
+                        val baseClass = response::class.java.superclass
+                        val idField = baseClass.getDeclaredField("id")
+                        idField.isAccessible = true
+                        idField.set(response, UUID.randomUUID())
+
+                        val createdAtField = baseClass.getDeclaredField("createdAt")
+                        createdAtField.isAccessible = true
+                        createdAtField.set(response, LocalDateTime.now())
+                    }
+
+                    val page = PageImpl(mockResponses, pageable, 2)
+                    every { responseUseCase.getResponsesBySurveyId(surveyId, any()) } returns page
+
+                    // when & then
+                    RestAssured.given()
+                        .queryParam("page", 0)
+                        .queryParam("size", 10)
+                        .`when`()
+                        .get("/api/v1/surveys/$surveyId/responses")
+                        .then()
+                        .statusCode(200)
+                        .body("content", hasSize<Any>(2))
+                        .body("pageNumber", equalTo(0))
+                        .body("pageSize", equalTo(10))
+                        .body("totalElements", equalTo(2))
+                }
+            }
+
+            context("summary=true 파라미터와 함께 요약 조회") {
+                it("200 OK와 함께 응답 요약 목록을 반환해야 한다") {
+                    // given
+                    val pageable = PageRequest.of(0, 10)
+                    val mockSummaries = listOf(
+                        ResponseSummaryProjection(
+                            id = UUID.randomUUID(),
+                            surveyId = surveyId,
+                            surveyVersion = 1,
+                            respondentId = "user1",
+                            createdAt = LocalDateTime.now(),
+                            answerCount = 5
+                        ),
+                        ResponseSummaryProjection(
+                            id = UUID.randomUUID(),
+                            surveyId = surveyId,
+                            surveyVersion = 1,
+                            respondentId = "user2",
+                            createdAt = LocalDateTime.now(),
+                            answerCount = 3
+                        )
+                    )
+                    val page = PageImpl(mockSummaries, pageable, 2)
+                    every { responseUseCase.getResponseSummariesBySurveyId(surveyId, any()) } returns page
+
+                    // when & then
+                    RestAssured.given()
+                        .queryParam("page", 0)
+                        .queryParam("size", 10)
+                        .queryParam("summary", true)
+                        .`when`()
+                        .get("/api/v1/surveys/$surveyId/responses")
+                        .then()
+                        .statusCode(200)
+                        .body("content", hasSize<Any>(2))
+                        .body("content[0].answerCount", equalTo(5))
+                        .body("content[1].answerCount", equalTo(3))
+                }
+            }
+
+            context("존재하지 않는 설문조사 ID로 조회") {
+                it("404 Not Found를 반환해야 한다") {
+                    // given
+                    every { responseUseCase.getResponsesBySurveyId(surveyId, any()) } throws 
+                        SurveyNotFoundException(surveyId)
+
+                    // when & then
+                    RestAssured.given()
+                        .queryParam("page", 0)
+                        .queryParam("size", 10)
+                        .`when`()
+                        .get("/api/v1/surveys/$surveyId/responses")
+                        .then()
+                        .statusCode(404)
                 }
             }
         }
