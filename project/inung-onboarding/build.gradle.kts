@@ -32,9 +32,6 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
-    // Jetbrains Annotations
-    compileOnly("org.jetbrains:annotations:24.1.0")
-
     // JPA + DB
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("com.h2database:h2")
