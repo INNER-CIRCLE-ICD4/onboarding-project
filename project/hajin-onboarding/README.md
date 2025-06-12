@@ -71,10 +71,20 @@ src/main/kotlin/com/innercircle/survey/
 ### 4. 설문조사 목록 조회
 - `GET /api/v1/surveys`
 - 설문조사 목록을 페이징하여 조회합니다.
+- `?summary=true` 파라미터로 요약 정보만 조회 가능
 
 ### 5. 설문조사 응답 제출
 - `POST /api/v1/surveys/{surveyId}/responses`
 - 설문조사에 대한 응답을 제출합니다.
+
+### 6. 응답 단건 조회
+- `GET /api/v1/responses/{responseId}`
+- 특정 응답을 조회합니다.
+
+### 7. 설문조사별 응답 목록 조회
+- `GET /api/v1/surveys/{surveyId}/responses`
+- 특정 설문조사의 응답 목록을 페이징하여 조회합니다.
+- `?summary=true` 파라미터로 요약 정보만 조회 가능
 
 자세한 API 명세는 [API 문서](docs/)를 참고하시거나 실행 후 `/swagger-ui.html`에서 확인하세요.
 

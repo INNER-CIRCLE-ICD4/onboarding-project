@@ -1,5 +1,7 @@
 package com.innercircle.survey.survey.domain
 
+import com.innercircle.survey.survey.domain.exception.MissingChoicesException
+import com.innercircle.survey.survey.domain.exception.SurveyChoiceLimitExceededException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldHaveSize
@@ -41,14 +43,14 @@ class QuestionEntityTest : DescribeSpec({
             }
 
             it("선택형 질문은 선택지가 필수다") {
-                shouldThrow<IllegalArgumentException> {
+                shouldThrow<MissingChoicesException> {
                     Question.create(
                         title = "선택 질문",
                         description = "설명",
                         type = QuestionType.SINGLE_CHOICE,
                         choices = emptyList(),
                     )
-                }.message shouldBe "단일 선택 타입은 최소 1개 이상의 선택지가 필요합니다."
+                }.message shouldBe "선택형 항목에는 선택지가 필요합니다. (항목: 선택 질문)"
             }
 
             it("빈 제목으로는 생성할 수 없다") {
@@ -100,9 +102,9 @@ class QuestionEntityTest : DescribeSpec({
 
                 question.choices shouldHaveSize 20
 
-                shouldThrow<IllegalArgumentException> {
+                shouldThrow<SurveyChoiceLimitExceededException> {
                     question.addChoice(Choice.create("옵션21"))
-                }.message shouldBe "선택지는 최대 20개까지만 추가할 수 있습니다."
+                }.message shouldBe "선택지 수가 제한을 초과했습니다. (현재: 21, 최대: 20)"
             }
         }
 
