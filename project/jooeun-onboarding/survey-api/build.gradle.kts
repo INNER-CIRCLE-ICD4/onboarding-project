@@ -8,10 +8,13 @@ dependencies {
     implementation(project(":survey-common"))
     implementation(project(":survey-domain"))
     implementation(project(":survey-infrastructure"))
-    
+
     // Web & API
     implementation("org.springframework.boot:spring-boot-starter-web")
-    
+
+    //JPA
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
     // API 문서화 (Swagger/OpenAPI) - API 명세 제출 요구사항
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     
