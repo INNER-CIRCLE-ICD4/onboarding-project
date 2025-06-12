@@ -1,25 +1,26 @@
 package fc.icd.baulonboarding.survey.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import fc.icd.baulonboarding.survey.model.dto.SurveyDto;
+import fc.icd.baulonboarding.survey.service.SurveyService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/api/surveys")
 public class SurveyApiController {
 
-    @PostMapping("")
-    public void 설문조사생성API(){
+    private final SurveyService surveyService;
 
+    @PostMapping
+    public void registerSurvey(@RequestBody SurveyDto.RegisterSurveyRequest request){
+        surveyService.registerSurvey(request);
     }
 
-    @PutMapping("")
+    @PutMapping
     public void 설문조사수정API(){
 
     }
 
-    @PostMapping("/submit")
-    public void 설문조사응답제출API(){
-
-    }
 
 }

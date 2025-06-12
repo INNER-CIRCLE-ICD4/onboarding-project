@@ -2,6 +2,7 @@ package fc.icd.baulonboarding.survey.model.entity;
 
 import fc.icd.baulonboarding.common.model.entity.AbstractEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,5 +26,11 @@ public class Survey extends AbstractEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "survey", cascade = CascadeType.PERSIST)
     private List<SurveyItem> surveyItemsList = new ArrayList<>();
+
+    @Builder
+    public Survey(String name, String description){
+        this.name = name;
+        this.description = description;
+    }
 
 }

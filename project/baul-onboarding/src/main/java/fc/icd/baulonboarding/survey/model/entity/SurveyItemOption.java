@@ -2,6 +2,7 @@ package fc.icd.baulonboarding.survey.model.entity;
 
 import fc.icd.baulonboarding.common.model.entity.AbstractEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,5 +25,16 @@ public class SurveyItemOption extends AbstractEntity {
     private Integer ordering;
 
     private boolean isDeleted;
+
+    @Builder
+    public SurveyItemOption(SurveyItem surveyItem,
+                            String content,
+                            Integer ordering
+                            ){
+        this.surveyItem = surveyItem;
+        this.content = content;
+        this.ordering = ordering;
+        this.isDeleted = false;
+    }
 
 }
