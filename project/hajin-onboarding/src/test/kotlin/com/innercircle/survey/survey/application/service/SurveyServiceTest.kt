@@ -106,12 +106,12 @@ class SurveyServiceTest : DescribeSpec({
                     }
 
                 it("설문조사를 반환해야 한다") {
-                    every { surveyRepository.findById(surveyId) } returns mockSurvey
+                    every { surveyRepository.findByIdWithFullDetails(surveyId) } returns mockSurvey
 
                     val result = service.getSurveyById(surveyId)
 
                     result shouldBe mockSurvey
-                    verify(exactly = 1) { surveyRepository.findById(surveyId) }
+                    verify(exactly = 1) { surveyRepository.findByIdWithFullDetails(surveyId) }
                 }
             }
 
@@ -119,7 +119,7 @@ class SurveyServiceTest : DescribeSpec({
                 val surveyId = UUID.randomUUID()
 
                 it("SurveyNotFoundException이 발생해야 한다") {
-                    every { surveyRepository.findById(surveyId) } returns null
+                    every { surveyRepository.findByIdWithFullDetails(surveyId) } returns null
 
                     shouldThrow<SurveyNotFoundException> {
                         service.getSurveyById(surveyId)
@@ -200,7 +200,7 @@ class SurveyServiceTest : DescribeSpec({
                 it("설문조사가 성공적으로 수정되어야 한다") {
                     val surveySlot = slot<Survey>()
 
-                    every { surveyRepository.findById(surveyId) } returns existingSurvey
+                    every { surveyRepository.findByIdWithFullDetails(surveyId) } returns existingSurvey
                     every { surveyRepository.save(capture(surveySlot)) } answers { firstArg() }
 
                     val originalVersion = existingSurvey.version
@@ -217,7 +217,7 @@ class SurveyServiceTest : DescribeSpec({
                         question.isActive shouldBe true // 새로운 질문들은 활성화됨
                     }
 
-                    verify(exactly = 1) { surveyRepository.findById(surveyId) }
+                    verify(exactly = 1) { surveyRepository.findByIdWithFullDetails(surveyId) }
                     verify(exactly = 1) { surveyRepository.save(any()) }
                 }
             }
@@ -236,7 +236,7 @@ class SurveyServiceTest : DescribeSpec({
                     )
 
                 it("SurveyNotFoundException이 발생해야 한다") {
-                    every { surveyRepository.findById(surveyId) } returns null
+                    every { surveyRepository.findByIdWithFullDetails(surveyId) } returns null
 
                     shouldThrow<SurveyNotFoundException> {
                         service.updateSurvey(command)
@@ -274,7 +274,7 @@ class SurveyServiceTest : DescribeSpec({
                     )
 
                 it("InvalidQuestionTypeException이 발생해야 한다") {
-                    every { surveyRepository.findById(surveyId) } returns existingSurvey
+                    every { surveyRepository.findByIdWithFullDetails(surveyId) } returns existingSurvey
 
                     shouldThrow<InvalidQuestionTypeException> {
                         service.updateSurvey(command)
