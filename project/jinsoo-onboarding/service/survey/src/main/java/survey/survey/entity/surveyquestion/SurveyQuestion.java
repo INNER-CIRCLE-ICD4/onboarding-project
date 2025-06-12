@@ -25,6 +25,8 @@ public class SurveyQuestion {
     private InputType inputType;
     private boolean required;
 
+    private boolean deleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "survey_form_id", referencedColumnName = "surveyFormId"),
@@ -57,6 +59,7 @@ public class SurveyQuestion {
         surveyQuestion.description = description;
         surveyQuestion.inputType = inputType;
         surveyQuestion.required = required;
+        surveyQuestion.deleted = false;
         return surveyQuestion;
     }
 
@@ -66,5 +69,13 @@ public class SurveyQuestion {
 
     public void assignSurveyForm(SurveyForm surveyForm) {
         this.surveyForm = surveyForm;
+    }
+
+    public void deleted() {
+        this.deleted = true;
+    }
+
+    public void restore() {
+        this.deleted = false;
     }
 }
