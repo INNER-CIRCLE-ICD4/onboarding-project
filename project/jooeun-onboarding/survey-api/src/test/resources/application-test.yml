@@ -1,17 +1,34 @@
+server:
+  port: 0  # 랜덤 포트 사용
+
 spring:
   datasource:
-    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
     password:
     
+  h2:
+    console:
+      enabled: false  # 테스트에서는 비활성화
+      
   jpa:
     hibernate:
       ddl-auto: create-drop
-    show-sql: false
-    
+    show-sql: false  # 테스트 로그 간소화
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+        
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+# 테스트용 로깅 설정
 logging:
   level:
     com.innercircle.survey: INFO
     org.springframework.web: WARN
     org.hibernate.SQL: WARN
+    org.springframework.test: INFO
