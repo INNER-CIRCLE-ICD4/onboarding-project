@@ -1,8 +1,9 @@
 package fc.icd.baulonboarding.survey.model.entity;
 
 import fc.icd.baulonboarding.common.model.entity.AbstractEntity;
-import fc.icd.baulonboarding.survey.model.code.InputType;
+import fc.icd.baulonboarding.common.model.code.InputType;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,6 +40,23 @@ public class SurveyItem extends AbstractEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyItem", cascade = CascadeType.PERSIST)
     private List<SurveyItemOption> surveyItemOptionList = new ArrayList<>();
+
+    @Builder
+    public SurveyItem(Survey survey,
+                      String name,
+                      String description,
+                      InputType inputType,
+                      boolean isRequired,
+                      Integer ordering
+                      ){
+        this.survey = survey;
+        this.name = name;
+        this.description = description;
+        this.inputType = inputType;
+        this.isRequired = isRequired;
+        this.isDeleted = false;
+        this.ordering = ordering;
+    }
 
 
 }

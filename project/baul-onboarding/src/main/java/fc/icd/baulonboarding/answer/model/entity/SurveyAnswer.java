@@ -1,7 +1,7 @@
 package fc.icd.baulonboarding.answer.model.entity;
 
 import fc.icd.baulonboarding.common.model.entity.AbstractEntity;
-import fc.icd.baulonboarding.survey.model.code.InputType;
+import fc.icd.baulonboarding.common.model.code.InputType;
 import fc.icd.baulonboarding.survey.model.entity.SurveyItem;
 import jakarta.persistence.*;
 import lombok.Getter;
