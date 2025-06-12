@@ -1,5 +1,6 @@
 package fc.innercircle.jinhoonboarding.survey.domain
 
+import fc.innercircle.jinhoonboarding.common.entity.BaseEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -11,12 +12,19 @@ import jakarta.persistence.OneToMany
 
 @Entity
 class Survey(
-    val title: String,
-    val description: String,
-    @OneToMany(mappedBy = "survey", cascade = [CascadeType.ALL])
-    val questions: MutableList<Question>
-) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Long? = null,
+
+    val title: String,
+    var description: String,
+
+    @OneToMany(mappedBy = "survey", cascade = [CascadeType.ALL])
+    val questions: MutableList<Question> = mutableListOf(),
+): BaseEntity() {
+
+    fun updateDescription(description: String) {
+        this.description = description
+    }
+
 }

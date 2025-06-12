@@ -1,7 +1,6 @@
 package fc.innercircle.jinhoonboarding.service
 
 import fc.innercircle.jinhoonboarding.survey.dto.CreateSurveyRequest
-import fc.innercircle.jinhoonboarding.survey.dto.QuestionDTO
 import fc.innercircle.jinhoonboarding.survey.domain.Question
 import fc.innercircle.jinhoonboarding.survey.domain.Survey
 import fc.innercircle.jinhoonboarding.survey.domain.QuestionType
@@ -38,10 +37,10 @@ class SurveyServiceTest {
                 title = "test",
                 description = "test",
                 questions = listOf(
-                    QuestionDTO(
+                    CreateSurveyRequest.QuestionDTO(
                         title = "test question",
                         description = "test question",
-                        questionType = QuestionType.SINGLE_SELECT,
+                        questionType = "SINGLE_SELECT",
                         required = true,
                         options = null
                     )
@@ -51,10 +50,10 @@ class SurveyServiceTest {
                 title = "test",
                 description = "test",
                 questions = listOf(
-                    QuestionDTO(
+                    CreateSurveyRequest.QuestionDTO(
                         title = "test question",
                         description = "test question",
-                        questionType = QuestionType.SINGLE_SELECT,
+                        questionType = "SINGLE_SELECT",
                         required = true,
                         options = null
                     )
