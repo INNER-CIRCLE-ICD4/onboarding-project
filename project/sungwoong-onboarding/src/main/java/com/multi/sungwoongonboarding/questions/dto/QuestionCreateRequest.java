@@ -12,11 +12,13 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.*;
+
 @Getter
 @Builder
 @RequiredArgsConstructor
 @OptionValid
-public class QuestionCreateRequest {
+public class QuestionCreateRequest implements OptionContainer{
 
 
     @NotBlank(message = "질문 내용은 필수 입력 항목입니다.")
@@ -24,15 +26,27 @@ public class QuestionCreateRequest {
 
     @ValidEnum(enumClass = Questions.QuestionType.class, message = "유효하지 않은 질문 유형입니다. 단문, 장문, 단일 선택, 복수 선택 중 하나를 선택하세요.")
     private final String questionType;
+
     private final int order;
+
     private final boolean isRequired;
 
     private final List<OptionCreateRequest> optionCreateRequests;
 
+    @Override
+    public String getType() {
+        return this.questionType;
+    }
+
+    @Override
+    public List<?> getOptions() {
+        return this.optionCreateRequests;
+    }
+
     public Questions toDomain() {
         Questions.QuestionsBuilder questionBuilder = Questions.builder()
                 .questionText(this.questionText)
-                .questionType(Questions.QuestionType.valueOf(this.getQuestionType().toUpperCase()))
+                .questionType(valueOf(this.getQuestionType().toUpperCase()))
                 .order(this.order)
                 .isRequired(this.isRequired);
 
