@@ -5,7 +5,7 @@ import com.multi.sungwoongonboarding.questions.domain.Questions;
 
 import java.util.List;
 
-public record QuestionCreateResponse(Long id, String questionText, int order, boolean isRequired, List<OptionCreateResponse> optionCreateResponses) {
+public record QuestionCreateResponse(Long id, String questionText, int order, boolean isRequired, int version, boolean deleted, List<OptionCreateResponse> optionCreateResponses) {
 
     public static QuestionCreateResponse fromDomain(Questions question) {
         return new QuestionCreateResponse(
@@ -13,6 +13,8 @@ public record QuestionCreateResponse(Long id, String questionText, int order, bo
                 question.getQuestionText(),
                 question.getOrder(),
                 question.isRequired(),
+                question.getVersion(),
+                question.isDeleted(),
                 question.getOptions().stream().map(OptionCreateResponse::fromDomain).toList()
         );
     }

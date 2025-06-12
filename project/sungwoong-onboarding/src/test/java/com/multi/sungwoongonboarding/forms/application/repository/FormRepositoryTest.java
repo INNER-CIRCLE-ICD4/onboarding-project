@@ -3,6 +3,8 @@ package com.multi.sungwoongonboarding.forms.application.repository;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import com.multi.sungwoongonboarding.options.domain.Options;
+import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaEntity;
+import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,9 @@ public class FormRepositoryTest {
 
     @Autowired
     FormRepository formRepository;
+
+    @Autowired
+    OptionsJpaRepository optionsJpaRepository;
 
     @Test
     @DisplayName("Forms 엔티티가 저장되고 조회되는지 테스트")
@@ -127,11 +132,23 @@ public class FormRepositoryTest {
         //질문 검증
         assertThat(save.getQuestions().size()).isEqualTo(2);
         assertThat(all.get(0).getQuestions().size()).isEqualTo(2);
+        assertThat(all.get(0).getQuestions().get(0).isDeleted()).isEqualTo(false);
 
         //옵션 검증
         assertThat(save.getQuestions().get(0).getOptions().size()).isEqualTo(2);
         assertThat(save.getQuestions().get(1).getOptions().size()).isEqualTo(2);
         assertThat(all.get(0).getQuestions().get(0).getOptions().size()).isEqualTo(2);
         assertThat(all.get(0).getQuestions().get(1).getOptions().size()).isEqualTo(2);
+        assertThat(all.get(0).getQuestions().get(1).getOptions().get(0).getDeleted()).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("옵션의 삭제여부 기본값 검증")
+    public void saveForm() {
+        OptionsJpaEntity optionsJpaEntity = OptionsJpaEntity.fromDomain(Options.builder().optionText("test").build());
+        OptionsJpaEntity save = optionsJpaRepository.save(optionsJpaEntity);
+
+        System.out.println("save = " + save.getDeleted());
+
     }
 }

@@ -2,6 +2,7 @@ package com.multi.sungwoongonboarding.common.valid;
 
 import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
+import com.multi.sungwoongonboarding.questions.dto.OptionContainer;
 import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -9,10 +10,11 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.*;
 
-public class OptionValidator implements ConstraintValidator<OptionValid, QuestionCreateRequest> {
+public class OptionValidator implements ConstraintValidator<OptionValid, OptionContainer> {
 
     private final Validator validator;
 
@@ -26,14 +28,14 @@ public class OptionValidator implements ConstraintValidator<OptionValid, Questio
     }
 
     @Override
-    public boolean isValid(QuestionCreateRequest questionCreateRequest, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(OptionContainer request, ConstraintValidatorContext constraintValidatorContext) {
 
-        if (questionCreateRequest == null) {
+        if (request == null) {
             return false;
         }
 
-        String questionType = questionCreateRequest.getQuestionType();
-        List<OptionCreateRequest> options = questionCreateRequest.getOptionCreateRequests();
+        String questionType = request.getType();
+        List<?> options = request.getOptions();
 
         // 타입이 null이면 다른 검증에서 처리
         if (questionType == null) {
@@ -45,22 +47,25 @@ public class OptionValidator implements ConstraintValidator<OptionValid, Questio
             if (type == SINGLE_CHOICE || type == MULTIPLE_CHOICE) {
                 // 옵션이 null이거나 비어있으면 유효하지 않음
                 if (options == null || options.isEmpty()) {
+                    constraintValidatorContext.disableDefaultConstraintViolation();
+                    constraintValidatorContext.buildConstraintViolationWithTemplate(
+                                    "SINGLE_CHOICE 또는 MULTIPLE_CHOICE 타입에서는 옵션 목록이 필수입니다.")
+                            .addConstraintViolation();
                     return false;
                 }
-
 
                 // 모든 OptionCreateRequest 검증
                 boolean isValid = true;
                 for (int i = 0; i < options.size(); i++) {
 
-                    OptionCreateRequest optionCreateRequest = options.get(i);
-                    var violations = validator.validate(optionCreateRequest);
+                    Object optionRequest = options.get(i);
+                    var violations = validator.validate(optionRequest);
 
                     if(!violations.isEmpty()) {
                         isValid = false;
                         // 옵션이 유효하지 않으면 false 반환
 
-                        for (ConstraintViolation<OptionCreateRequest> violation : violations) {
+                        for (ConstraintViolation<?> violation : violations) {
                             constraintValidatorContext.disableDefaultConstraintViolation();
                             constraintValidatorContext.buildConstraintViolationWithTemplate(violation.getMessage())
                                     .addPropertyNode("optionCreateRequests[" + i + "]")
