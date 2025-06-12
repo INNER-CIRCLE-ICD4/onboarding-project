@@ -5,11 +5,11 @@ import com.group.surveyapp.service.SurveyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.group.surveyapp.dto.SurveyAnswerRequestDto;
-import com.group.surveyapp.dto.SurveyAnswerResponseDto;
-import com.group.surveyapp.dto.SurveyCreateRequestDto;
-import com.group.surveyapp.dto.SurveyResponseDto;
-import com.group.surveyapp.dto.SurveyUpdateRequestDto;
+import com.group.surveyapp.dto.request.SurveyAnswerRequestDto;
+import com.group.surveyapp.dto.response.SurveyAnswerResponseDto;
+import com.group.surveyapp.dto.request.SurveyCreateRequestDto;
+import com.group.surveyapp.dto.response.SurveyResponseDto;
+import com.group.surveyapp.dto.request.SurveyUpdateRequestDto;
 
 import java.util.List;
 
