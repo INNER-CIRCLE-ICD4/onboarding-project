@@ -17,15 +17,7 @@ class OptionTest {
 	@ParameterizedTest
 	@NullAndEmptySource
 	@DisplayName("옵션 값이 null이거나 비어 있으면 예외를 반환 합니다.")
-<<<<<<< HEAD
-<<<<<<< HEAD
 	void throwExceptionWhenOptionTextIsNullAndEmpty (String text) {
-=======
-	void test1 (String text) {
->>>>>>> f24b238 (feat: Option 도메인 단위 테스트 성공)
-=======
-	void throwExceptionWhenOptionTextIsNullAndEmpty (String text) {
->>>>>>> 2f6452b (feat: Question 테스트 케이스 작성 및 일부 구현)
 		// when
 		Exception ex = assertThrows(IllegalArgumentException.class, () -> Option.create(validQuestionId, text, validSortOrder));
 
@@ -36,15 +28,7 @@ class OptionTest {
 
 	@Test
 	@DisplayName("옵션의 sortOrder가 음수일 경우 예외를 반환 합니다.")
-<<<<<<< HEAD
-<<<<<<< HEAD
 	void throwExceptionWhenOptionSortOrderIsNegativeNumber () {
-=======
-	void test2 () {
->>>>>>> f24b238 (feat: Option 도메인 단위 테스트 성공)
-=======
-	void throwExceptionWhenOptionSortOrderIsNegativeNumber () {
->>>>>>> 2f6452b (feat: Question 테스트 케이스 작성 및 일부 구현)
 		// when
 		Exception ex = assertThrows(IllegalArgumentException.class, () -> Option.create(validQuestionId, validText, -1));
 
@@ -55,15 +39,7 @@ class OptionTest {
 
 	@Test
 	@DisplayName("옵션의 questionId가 비어 있으면 예외를 반환 합니다.")
-<<<<<<< HEAD
-<<<<<<< HEAD
 	void throwExceptionWhenOptionQuestionIdIsNull () {
-=======
-	void test3 () {
->>>>>>> f24b238 (feat: Option 도메인 단위 테스트 성공)
-=======
-	void throwExceptionWhenOptionQuestionIdIsNull () {
->>>>>>> 2f6452b (feat: Question 테스트 케이스 작성 및 일부 구현)
 		// when
 		Exception ex = assertThrows(IllegalArgumentException.class, () -> Option.create(null, validText, validSortOrder));
 
@@ -74,15 +50,7 @@ class OptionTest {
 
 	@Test
 	@DisplayName("옵션의 값과 ID가 유효하며, sortOrder가 음수가 아니면 객체가 생성됩니다.")
-<<<<<<< HEAD
-<<<<<<< HEAD
 	void shouldCreateOptionWhenInputsAreValid () {
-=======
-	void test4 () {
->>>>>>> f24b238 (feat: Option 도메인 단위 테스트 성공)
-=======
-	void shouldCreateOptionWhenInputsAreValid () {
->>>>>>> 2f6452b (feat: Question 테스트 케이스 작성 및 일부 구현)
 		// when
 		Option option = Option.create(validQuestionId, validText, validSortOrder);
 
