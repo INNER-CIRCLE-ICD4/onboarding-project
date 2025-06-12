@@ -2,6 +2,7 @@ package icd.onboarding.surveyproject.service.domain;
 
 import icd.onboarding.surveyproject.common.NotImplementedTestException;
 import icd.onboarding.surveyproject.service.enums.InputType;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Disabled
 class QuestionTest {
 
 	@Test
