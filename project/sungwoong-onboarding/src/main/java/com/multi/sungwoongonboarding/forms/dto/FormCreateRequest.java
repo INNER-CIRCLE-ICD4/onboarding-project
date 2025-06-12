@@ -1,11 +1,8 @@
 package com.multi.sungwoongonboarding.forms.dto;
 
 import com.multi.sungwoongonboarding.forms.domain.Forms;
-import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;

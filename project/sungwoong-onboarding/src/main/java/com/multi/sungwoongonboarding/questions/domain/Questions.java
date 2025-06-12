@@ -1,8 +1,6 @@
 package com.multi.sungwoongonboarding.questions.domain;
 
 import com.multi.sungwoongonboarding.options.domain.Options;
-import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
-import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
