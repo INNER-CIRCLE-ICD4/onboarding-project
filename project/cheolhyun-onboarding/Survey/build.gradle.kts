@@ -34,6 +34,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testImplementation("org.assertj:assertj-core:3.6.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
