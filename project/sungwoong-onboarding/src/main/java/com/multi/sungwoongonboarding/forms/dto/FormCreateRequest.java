@@ -11,19 +11,26 @@ import lombok.*;
 import java.util.List;
 
 @Getter
-@Builder
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class FormCreateRequest {
 
     @NotBlank(message = "제목은 필수 입력 항목입니다.")
-    private final String title;
+    private String title;
 
-    private final String description;
+    private String description;
 
     @Valid
     @NotNull(message = "질문 목록은 필수 입력 항목입니다.")
     @Size(min = 1, max = 10, message = "질문은 최소 1개에서 최대 10개까지 입력할 수 있습니다.")
-    private final List<QuestionCreateRequest> questionCreateRequests;
+    private List<QuestionCreateRequest> questionCreateRequests;
+
+
+    @Builder
+    public FormCreateRequest(String title, String description, List<QuestionCreateRequest> questionCreateRequests) {
+        this.title = title;
+        this.description = description;
+        this.questionCreateRequests = questionCreateRequests;
+    }
 
     public Forms toDomain() {
         Forms.FormsBuilder formBuilder = Forms.builder()
