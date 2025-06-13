@@ -1,0 +1,28 @@
+spring:
+  # Database settings info
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:survey
+    username: sa
+    password:
+  # h2 settings info
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  # JPA settings info
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
+
