@@ -22,4 +22,7 @@ dependencies {
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")  // IDE 인식 위해선 위 플러그인 必
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    compileOnly("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0") //spring boot 3이상 버전에서 가능
 }
