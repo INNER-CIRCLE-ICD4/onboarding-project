@@ -14,15 +14,11 @@ import jakarta.persistence.*
 @Entity
 class SurveyResponseAnswer(
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "survey_item_id")
-    var surveyItem: SurveyItem? = null,
+    @JoinColumn(name = "survey_item_id", nullable = false)
+    var surveyItem: SurveyItem,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "survey_item_archive_id")
-    var surveyItemArchive: SurveyItemArchive? = null,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "survey_id", nullable = false)
+    @JoinColumn(name = "survey_response_id", nullable = false)
     var surveyResponse: SurveyResponse,
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
