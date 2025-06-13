@@ -3,7 +3,6 @@ package fc.innercircle.sanghyukonboarding.common.infrastructure.numbering
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldHaveLength
 import io.kotest.matchers.string.shouldMatch
 import java.util.concurrent.ConcurrentHashMap

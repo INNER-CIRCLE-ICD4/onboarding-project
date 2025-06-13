@@ -25,7 +25,7 @@
     - kotlin("jvm"), kotlin("plugin.spring"), kotlin("plugin.jpa"): Kotlin 지원
     - org.springframework.boot: Spring Boot 애플리케이션 빌드
     - io.spring.dependency-management: 스프링 의존성 관리
-    - org.jlleitschuh.gradle.ktlint: 코드 스타일 검사
+    - org.jlleitschuh.gradle.ktlint: 코드 스타일 검사 (버전 11.6.1)
 
 - **데이터베이스**: H2 Database (인메모리)
   - **사용 목적**: 개발 및 테스트 환경에서 빠른 설정과 실행 가능
@@ -37,13 +37,16 @@
 - **테스트 프레임워크**:
   - **JUnit5**: 기본 테스트 프레임워크
   - **Kotest**: 더 표현력 있는 테스트 작성을 위한 Kotlin 특화 테스트 프레임워크
-    - kotest-runner-junit5: JUnit5 기반 실행
-    - kotest-assertions-core: 강력한 assertion 라이브러리
-    - kotest-extensions-spring: 스프링 통합 테스트 지원
+    - kotest-runner-junit5: JUnit5 기반 실행 (버전 5.8.1)
+    - kotest-assertions-core: 강력한 assertion 라이브러리 (버전 5.8.1)
+    - kotest-extensions-spring: 스프링 통합 테스트 지원 (버전 4.4.3)
   - **사용 목적**: 다양한 테스트 스타일 지원과 가독성 높은 테스트 코드 작성
 
-- **코드 스타일 검사**: Ktlint
+- **코드 스타일 검사**: Ktlint (버전 11.6.1)
   - **사용 목적**: 일관된 코드 스타일 유지와 코드 품질 향상
+
+- **ID 생성 라이브러리**: ULID Creator (버전 5.2.3)
+  - **사용 목적**: 분산 환경에서 고유한 ID 생성을 위한 ULID(Universally Unique Lexicographically Sortable Identifier) 구현
 
 ## 주요 기능
 - 설문조사 생성 및 관리
@@ -59,22 +62,46 @@
 
 ## 도메인 설계
 
-- **Survey(설문)**: 설문조사 폼 메타데이터
-- **SurveyItem(설문 항목):** 개별 문항(Question)
-- **SurveyOption(선택 옵션)**: 선택형(단일/다중) 문항의 후보 옵션
-- **SurveyReply(설문 응답)**: 사용자의 한 번의 “회신”(응답 묶음)
-- **SurveyAnswer(설문 답변)**: 각 문항에 대한 응답(메타데이터 스냅샷 + 실제 답변)
+### 주요 도메인 엔티티
+
+- **Form(설문)**: 설문조사 폼의 기본 정보를 담고 있는 엔티티
+  - 제목, 설명 등의 메타데이터 포함
+  - 여러 QuestionTemplate과 연결됨
+
+- **QuestionTemplate(질문 템플릿)**: 질문 템플릿 정보를 담고 있는 엔티티
+  - Form과 연결되어 있으며, 하나의 Form에 여러 QuestionTemplate이 존재할 수 있음
+  - 버전 관리를 통해 질문 템플릿의 변경 이력 관리
+
+- **QuestionSnapshot(질문 스냅샷)**: 설문조사의 각 질문을 나타내는 엔티티
+  - 질문 내용, 설명, 입력 타입, 필수 여부, 표시 순서 등의 정보 포함
+  - QuestionTemplate과 연결되어 있으며, 하나의 QuestionTemplate에 여러 QuestionSnapshot이 존재할 수 있음
+  - 버전 관리를 통해 질문의 변경 이력 관리
+
+- **SelectableOption(선택 옵션)**: 선택형 항목(라디오 버튼, 체크박스, 드롭다운)의 옵션을 나타내는 엔티티
+  - 옵션 값, 표시 순서 등의 정보 포함
+  - QuestionSnapshot과 연결되어 있으며, 하나의 QuestionSnapshot에 여러 SelectableOption이 존재할 수 있음
+
+- **InputType(입력 타입)**: 질문의 입력 타입을 나타내는 열거형
+  - TEXT(단답형), LONG_TEXT(장문형), RADIO(라디오 버튼), CHECKBOX(체크박스), SELECT(드롭다운) 등의 타입 제공
+
+- **FormReply(설문 응답)**: 설문조사에 대한 응답 정보를 담고 있는 엔티티
+  - Form의 ID, 제출 일시 등의 정보 포함
+  - 여러 Answer와 연결됨
+
+- **Answer(설문 답변)**: 설문 항목에 대한 응답 정보를 담고 있는 엔티티
+  - FormReply, QuestionSnapshot과 연결되어 있음
+  - 주관식 답변(answer)과 선택형 답변(selectableOptionId)을 모두 지원
 
 비즈니스 규칙에 따라 `함께 생성되고 변경되는 객체`들을 각각의 애그리거트로 묶어 다음과 같이 구분하였습니다.
 
-`[Survey - SurveyItem - SurveyOption]` 객체들은 “한 설문조사에는 최대 10개의 문항”과 같은 비즈니스 규칙을 한 트랜잭션 내에서 처리하여야 하기 때문에 하나의 애그리거트로 묶었고, 이에 대한 루트 엔티티(단일 진입점)으로 하위 객체들을 아우를 수 있는 Survey로 선정하였습니다.
+`[Form - QuestionTemplate - QuestionSnapshot - SelectableOption]` 객체들은 "한 설문조사에는 최대 10개의 문항"과 같은 비즈니스 규칙을 한 트랜잭션 내에서 처리하여야 하기 때문에 하나의 애그리거트로 묶었고, 이에 대한 루트 엔티티(단일 진입점)으로 하위 객체들을 아우를 수 있는 Form으로 선정하였습니다.
 
-`[SurveyReply - SurveyAnswer]` 객체들 또한, 설문 조사에 대한 응답이 이루어질 때, 공통으로 생성되고 변경되므로 하나의 애그리거트로 묶었으며, 마찬가지로 SurveyReply 객체가 하위 객체들의 생명 주기를 관리하므로 루트 앤티티로 설정하였습니다.
+`[FormReply - Answer]` 객체들 또한, 설문 조사에 대한 응답이 이루어질 때, 공통으로 생성되고 변경되므로 하나의 애그리거트로 묶었으며, 마찬가지로 FormReply 객체가 하위 객체들의 생명 주기를 관리하므로 루트 엔티티로 설정하였습니다.
 
-| 애그리거트              | 루트 엔티티        | 내부 엔티티                       | 주요 불변식／트랜잭션 경계                                                        |
-|--------------------|---------------|------------------------------|-----------------------------------------------------------------------|
-| **Survey 애그리거트**   | `Survey`      | `SurveyItem`, `SurveyOption` | - `Survey`당 `SurveyItem` ≤ 10- 문항·옵션 CRUD는 한 트랜잭션                     |
-| **Response 애그리거트** | `SurveyReply` | `SurveyAnswer`               | - 한 번의 제출 시 `SurveyReply` + 다수 `SurveyAnswer` 저장- 응답 검증(필수 여부, 타입 일치) |
+| 애그리거트              | 루트 엔티티        | 내부 엔티티                                                   | 주요 불변식／트랜잭션 경계                                                        |
+|--------------------|---------------|----------------------------------------------------------|-----------------------------------------------------------------------|
+| **Form 애그리거트**    | `Form`        | `QuestionTemplate`, `QuestionSnapshot`, `SelectableOption` | - `Form`당 `QuestionSnapshot` ≤ 10- 문항·옵션 CRUD는 한 트랜잭션                 |
+| **Response 애그리거트** | `FormReply`   | `Answer`                                                  | - 한 번의 제출 시 `FormReply` + 다수 `Answer` 저장- 응답 검증(필수 여부, 타입 일치) |
 
 ### 주요 설계 포인트
 
@@ -88,16 +115,13 @@ fc.innercircle.sanghyukonboarding
 │   └── domain
 │       ├── exception
 │       └── model
-├── survey
+├── form
 │   └── domain
 │       ├── model
-│       ├── validator
-│       └── value
-└── surveyreply
-    ├── model
-    │   └── vo
-    ├── validator
-    └── value
+│       │   └── vo
+│       └── validator
+└── formreply
+    └── model
 ```
 
 - **common/domain/exception**: 공통 예외 처리 관련 클래스
@@ -107,24 +131,22 @@ fc.innercircle.sanghyukonboarding
 - **common/domain/model**: 공통 도메인 모델
   - [BaseEntity](src/main/kotlin/fc/innercircle/sanghyukonboarding/common/domain/model/BaseEntity.kt): 모든 엔티티의 기본 클래스로 생성/수정 정보 관리
 
-- **domain/model**: 설문조사 관련 도메인 모델
-  - [Survey](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/model/Survey.kt): 설문조사 정보
-  - [SurveyItem](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/model/SurveyItem.kt): 설문 항목 정보
-  - [ItemOptions](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/model/ItemOptions.kt): 선택형 항목의 옵션 정보
+- **form/domain/model**: 설문조사 관련 도메인 모델
+  - [Form](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/Form.kt): 설문조사 정보
+  - [QuestionTemplate](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/QuestionTemplate.kt): 질문 템플릿 정보
+  - [QuestionSnapshot](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/QuestionSnapshot.kt): 질문 스냅샷 정보
+  - [SelectableOption](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/SelectableOption.kt): 선택형 항목의 옵션 정보
 
-- **domain/validator**: 도메인 모델 유효성 검사 클래스
-  - 각 도메인 모델별 전용 검증 로직 구현 ([SurveyValidator](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/validator/SurveyValidator.kt), [SurveyItemValidator](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/validator/SurveyItemValidator.kt), [ItemOptionsValidator](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/validator/ItemOptionsValidator.kt))
+- **form/domain/model/vo**: 설문조사 관련 값 객체
+  - [InputType](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/vo/InputType.kt): 질문 입력 타입 (TEXT, LONG_TEXT, RADIO, CHECKBOX, SELECT)
+
+- **form/domain/validator**: 도메인 모델 유효성 검사 클래스
+  - 각 도메인 모델별 전용 검증 로직 구현 ([FormValidator](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/validator/FormValidator.kt), [QuestionTemplateValidator](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/validator/QuestionTemplateValidator.kt), [QuestionSnapshotValidator](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/validator/QuestionSnapshotValidator.kt), [SelectableOptionsValidator](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/validator/SelectableOptionsValidator.kt))
   - 비즈니스 규칙 강제
 
-- **domain/value**: 도메인 값 객체
-  - 불변성을 가진 값 표현 객체 정의
-
-- **surveyreply/model**: 설문 응답 관련 도메인 모델
-  - [SurveyReply](src/main/kotlin/fc/innercircle/sanghyukonboarding/surveyreply/model/SurveyReply.kt): 설문 응답 정보
-  - [SurveyItemAnswer](src/main/kotlin/fc/innercircle/sanghyukonboarding/surveyreply/model/SurveyItemAnswer.kt): 설문 항목 응답 정보
-
-- **surveyreply/model/vo**: 설문 응답 관련 값 객체
-  - [SelectedItemOptions](src/main/kotlin/fc/innercircle/sanghyukonboarding/surveyreply/model/vo/SelectedItemOptions.kt): 선택형 항목의 선택된 옵션 정보
+- **formreply/model**: 설문 응답 관련 도메인 모델
+  - [FormReply](src/main/kotlin/fc/innercircle/sanghyukonboarding/formreply/model/FormReply.kt): 설문 응답 정보
+  - [Answer](src/main/kotlin/fc/innercircle/sanghyukonboarding/formreply/model/Answer.kt): 설문 항목 응답 정보
 
 ## 엔티티 설계
 
@@ -135,58 +157,63 @@ fc.innercircle.sanghyukonboarding
 - **updatedBy**: 수정자 (nullable, 최대 50자)
 - **updatedAt**: 수정 시간 (nullable)
 
-### [Survey](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/model/Survey.kt) (설문 조사)
+### [Form](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/Form.kt) (설문 조사)
 설문조사의 기본 정보를 담고 있는 엔티티입니다.
 - **id**: 설문조사 ID (PK)
 - **title**: 설문조사 제목 (최대 255자)
 - **description**: 설문조사 설명 (최대 1000자, 기본값: 빈 문자열)
 - BaseEntity 상속 (createdBy, createdAt, updatedBy, updatedAt)
 
-### [SurveyItem](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/model/SurveyItem.kt) (설문 항목)
-설문조사의 각 항목을 나타내는 엔티티입니다.
-- **id**: 설문 항목 ID (PK)
-- **question**: 질문 내용 (최대 500자)
+### [QuestionTemplate](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/QuestionTemplate.kt) (질문 템플릿)
+질문 템플릿 정보를 담고 있는 엔티티입니다.
+- **id**: 질문 템플릿 ID (PK)
+- **version**: 버전 (기본값: 0)
+- **form**: 연관된 설문조사 (FK)
+- BaseEntity 상속 (createdBy, createdAt, updatedBy, updatedAt)
+
+### [QuestionSnapshot](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/QuestionSnapshot.kt) (질문 스냅샷)
+설문조사의 각 질문을 나타내는 엔티티입니다.
+- **id**: 질문 스냅샷 ID (PK)
+- **title**: 질문 내용 (최대 500자)
 - **description**: 질문 설명 (최대 1000자, 기본값: 빈 문자열)
 - **type**: 항목 유형 (TEXT, LONG_TEXT, RADIO, CHECKBOX, SELECT)
 - **required**: 필수 응답 여부 (기본값: false)
 - **displayOrder**: 표시 순서 (기본값: 0)
-- **survey**: 연관된 설문조사 (FK)
+- **version**: 버전 (기본값: 0)
+- **questionTemplate**: 연관된 질문 템플릿 (FK)
 - BaseEntity 상속 (createdBy, createdAt, updatedBy, updatedAt)
 
-### [ItemOptions](src/main/kotlin/fc/innercircle/sanghyukonboarding/survey/domain/model/ItemOptions.kt) (항목 옵션)
+### [SelectableOption](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/SelectableOption.kt) (선택 옵션)
 라디오 버튼, 체크박스, 드롭다운과 같은 선택형 항목의 옵션을 나타내는 엔티티입니다.
 - **id**: 옵션 ID (PK)
-- **optionText**: 옵션 텍스트 (최대 50자)
+- **value**: 옵션 값 (최대 50자)
 - **displayOrder**: 표시 순서 (기본값: 0)
-- **surveyItem**: 연관된 설문 항목 (FK)
-- BaseEntity를 상속하지 않음 (createdBy, createdAt, updatedBy, updatedAt 필드 없음)
+- **questionSnapshot**: 연관된 질문 스냅샷 (FK)
+- BaseEntity 상속 (createdBy, createdAt, updatedBy, updatedAt)
 
-### [SurveyReply](src/main/kotlin/fc/innercircle/sanghyukonboarding/surveyreply/model/SurveyReply.kt) (설문 응답)
+### [FormReply](src/main/kotlin/fc/innercircle/sanghyukonboarding/formreply/model/FormReply.kt) (설문 응답)
 설문조사에 대한 응답 정보를 담고 있는 엔티티입니다.
 - **id**: 설문 응답 ID (PK)
-- **surveyId**: 연관된 설문조사 ID
-- **responseDate**: 응답 일시
+- **formId**: 연관된 설문조사 ID (String)
+- **submittedAt**: 제출 일시 (nullable)
 - BaseEntity 상속 (createdBy, createdAt, updatedBy, updatedAt)
 
-### [SurveyItemAnswer](src/main/kotlin/fc/innercircle/sanghyukonboarding/surveyreply/model/SurveyItemAnswer.kt) (설문 항목 응답)
+### [Answer](src/main/kotlin/fc/innercircle/sanghyukonboarding/formreply/model/Answer.kt) (설문 항목 응답)
 설문 항목에 대한 응답 정보를 담고 있는 엔티티입니다.
 - **id**: 설문 항목 응답 ID (PK)
-- **surveyReply**: 연관된 설문 응답 (FK)
-- **surveyItemId**: 연관된 설문 항목 ID
-- **question**: (snapshot) 설문 당시의 질문 내용 (최대 500자)
-- **description**: (snapshot) 설문 당시의 질문 설명 (최대 1000자)
-- **required**: (snapshot) 설문 당시의 필수 응답 여부
-- **type**: (snapshot) 설문 당시의 항목 유형
-- **answer**: (snapshot) 설문 당시의 응답 내용 (단답형, 장문형)
-- **selectedItemOptions**: (snapshot) 설문 당시의 선택된 항목 옵션 (선택형)
+- **formReply**: 연관된 설문 응답 (FK)
+- **questionSnapshotId**: 연관된 질문 스냅샷 ID (String)
+- **answer**: 주관식 답변 내용 (단답형, 장문형)
+- **selectableOptionId**: 선택형 답변용 선택 옵션 ID
 - BaseEntity 상속 (createdBy, createdAt, updatedBy, updatedAt)
+
 
 ## RDBMS 스키마
 
-### survey 테이블
+### form 테이블
 ```sql
-CREATE TABLE survey (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE form (
+    id CHAR(26) PRIMARY KEY COMMENT 'ULID 형식의 ID',
     title VARCHAR(255) NOT NULL COMMENT '설문 제목',
     description VARCHAR(1000) NOT NULL COMMENT '설문 설명',
     created_by VARCHAR(50) NOT NULL COMMENT '생성자',
@@ -196,65 +223,81 @@ CREATE TABLE survey (
 );
 ```
 
-### survey_item 테이블
+### question_template 테이블
 ```sql
-CREATE TABLE survey_item (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    question VARCHAR(500) NOT NULL COMMENT '설문 항목 제목',
-    description VARCHAR(1000) NOT NULL COMMENT '설문 항목 설명',
-    type VARCHAR(20) NOT NULL COMMENT '설문 항목 타입',
-    required BOOLEAN DEFAULT FALSE NOT NULL COMMENT '필수 여부',
-    display_order INT DEFAULT 0 NOT NULL COMMENT '항목 순서',
-    survey_id BIGINT NOT NULL,
-    created_by VARCHAR(50) NOT NULL COMMENT '생성자',
-    created_at TIMESTAMP NOT NULL COMMENT '생성 일시',
-    updated_by VARCHAR(50) COMMENT '수정자',
-    updated_at TIMESTAMP COMMENT '수정 일시',
-    FOREIGN KEY (survey_id) REFERENCES survey(id)
-);
-```
-
-### item_options 테이블
-```sql
-CREATE TABLE item_options (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    option_text VARCHAR(50) NOT NULL COMMENT '설문 선택 옵션',
-    display_order INT DEFAULT 0 NOT NULL COMMENT '항목 순서',
-    survey_item_id BIGINT NOT NULL COMMENT '설문 항목 ID',
-    FOREIGN KEY (survey_item_id) REFERENCES survey_item(id)
-);
-```
-
-### survey_reply 테이블
-```sql
-CREATE TABLE survey_reply (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    survey_id BIGINT NOT NULL COMMENT '설문 ID',
-    response_date DATETIME NOT NULL COMMENT '설문 응답일자',
+CREATE TABLE question_template (
+    id CHAR(26) PRIMARY KEY COMMENT 'ULID 형식의 ID',
+    version BIGINT DEFAULT 0 NOT NULL COMMENT '버전',
+    form_id CHAR(26) NOT NULL COMMENT '설문 ID',
     created_by VARCHAR(50) NOT NULL COMMENT '생성자',
     created_at TIMESTAMP NOT NULL COMMENT '생성 일시',
     updated_by VARCHAR(50) COMMENT '수정자',
     updated_at TIMESTAMP COMMENT '수정 일시'
+    -- 외래 키: form_id -> form.id
 );
 ```
 
-### survey_item_answer 테이블
+### question_snapshot 테이블
 ```sql
-CREATE TABLE survey_item_answer (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    survey_reply_id BIGINT NOT NULL COMMENT '설문 응답 ID',
-    survey_item_id BIGINT NOT NULL COMMENT '설문 항목 ID',
-    question VARCHAR(500) NOT NULL COMMENT '설문 항목 제목',
-    description VARCHAR(1000) NOT NULL COMMENT '설문 항목 설명',
-    required TINYINT(1) NOT NULL COMMENT '설문 항목 입력 필수 여부',
-    type VARCHAR(20) NOT NULL COMMENT '설문 항목 입력 타입',
-    answer TEXT NOT NULL COMMENT '설문 항목 응답 내용(단답형, 장문형)',
-    selected_item_option_text VARCHAR(50) NOT NULL COMMENT '선택된 항목 옵션 텍스트(단일/다중 선택 리스트)',
+CREATE TABLE question_snapshot (
+    id CHAR(26) PRIMARY KEY COMMENT 'ULID 형식의 ID',
+    title VARCHAR(500) NOT NULL COMMENT '질문 제목',
+    description VARCHAR(1000) NOT NULL COMMENT '질문 설명',
+    type VARCHAR(20) NOT NULL COMMENT '질문 입력 타입',
+    required BOOLEAN DEFAULT FALSE NOT NULL COMMENT '필수 여부',
+    display_order INT DEFAULT 0 NOT NULL COMMENT '항목 순서',
+    version BIGINT DEFAULT 0 NOT NULL COMMENT '버전',
+    question_template_id CHAR(26) NOT NULL COMMENT '질문 템플릿 ID',
     created_by VARCHAR(50) NOT NULL COMMENT '생성자',
     created_at TIMESTAMP NOT NULL COMMENT '생성 일시',
     updated_by VARCHAR(50) COMMENT '수정자',
-    updated_at TIMESTAMP COMMENT '수정 일시',
-    FOREIGN KEY (survey_reply_id) REFERENCES survey_reply(id)
+    updated_at TIMESTAMP COMMENT '수정 일시'
+    -- 외래 키: question_template_id -> question_template.id
+);
+```
+
+### selectable_option 테이블
+```sql
+CREATE TABLE selectable_option (
+    id CHAR(26) PRIMARY KEY COMMENT 'ULID 형식의 ID',
+    value VARCHAR(50) NOT NULL COMMENT '질문 선택 옵션',
+    display_order INT DEFAULT 0 NOT NULL COMMENT '항목 순서',
+    question_snapshot_id CHAR(26) NOT NULL COMMENT '질문 스냅샷 ID',
+    created_by VARCHAR(50) NOT NULL COMMENT '생성자',
+    created_at TIMESTAMP NOT NULL COMMENT '생성 일시',
+    updated_by VARCHAR(50) COMMENT '수정자',
+    updated_at TIMESTAMP COMMENT '수정 일시'
+    -- 외래 키: question_snapshot_id -> question_snapshot.id
+);
+```
+
+### form_reply 테이블
+```sql
+CREATE TABLE form_reply (
+    id CHAR(26) PRIMARY KEY COMMENT 'ULID 형식의 ID',
+    form_id VARCHAR(255) NOT NULL COMMENT '설문 ID',
+    submitted_at DATETIME COMMENT '제출 일시',
+    created_by VARCHAR(50) NOT NULL COMMENT '생성자',
+    created_at TIMESTAMP NOT NULL COMMENT '생성 일시',
+    updated_by VARCHAR(50) COMMENT '수정자',
+    updated_at TIMESTAMP COMMENT '수정 일시'
+    -- 외래 키: form_id -> form.id
+);
+```
+
+### answer 테이블
+```sql
+CREATE TABLE answer (
+    id CHAR(26) PRIMARY KEY COMMENT 'ULID 형식의 ID',
+    form_reply_id CHAR(26) NOT NULL COMMENT '설문 응답 ID',
+    question_snapshot_id VARCHAR(255) NOT NULL COMMENT '질문 스냅샷 ID',
+    answer TEXT NOT NULL COMMENT '주관식 답변 내용',
+    selectable_option_id VARCHAR(255) NOT NULL COMMENT '선택형 답변용 선택 옵션 ID',
+    created_by VARCHAR(50) NOT NULL COMMENT '생성자',
+    created_at TIMESTAMP NOT NULL COMMENT '생성 일시',
+    updated_by VARCHAR(50) COMMENT '수정자',
+    updated_at TIMESTAMP COMMENT '수정 일시'
+    -- 외래 키: form_reply_id -> form_reply.id
 );
 ```
 
@@ -276,3 +319,38 @@ spring:
         format_sql: true
         show_sql: true
 ```
+
+## ID 채번 전략
+
+본 프로젝트에서는 [대용량 트래픽, 분산 환경]에 대한 엔티티의 안전한 ID 생성을 보장하기 위해 ULID(Universally Unique Lexicographically Sortable Identifier) 전략을 채택하였습니다.
+
+### ULID 구조
+- **26자리 문자열** (Crockford's Base32 알파벳 사용: 0123456789ABCDEFGHJKMNPQRSTVWXYZ)
+- **첫 10자리**: 타임스탬프 (밀리초)
+- **나머지 16자리**: 무작위 값
+
+### ULID 특징
+- **시간 정렬 가능**: 타임스탬프가 포함되어 생성 시간 순으로 정렬 가능
+- **고유성 보장**: 충돌 가능성이 극히 낮음 (무작위 부분이 16자리)
+- **분산 환경 적합**: 중앙 조정 없이 여러 노드에서 독립적으로 생성 가능
+- **성능**: 초당 수십만 개의 ID 생성 가능
+- **URL 안전**: URL에 사용해도 안전한 문자만 사용
+- **가독성**: 숫자와 대문자만 사용하여 가독성이 좋음 (I, L, O, U 제외)
+
+### 왜 ULID를 선택했는가?
+기존에는 Snowflake ID 전략을 사용할 계획이었으나, 다음과 같은 이유로 ULID로 변경하였습니다:
+
+1. **분산 시스템 지원**: ULID는 중앙 조정 없이 여러 서버에서 독립적으로 ID를 생성할 수 있어, 분산 시스템에 더 적합합니다.
+2. **시간 정렬 가능**: ULID는 Snowflake ID와 마찬가지로 시간 정렬이 가능하지만, 문자열 기반이라 정렬이 더 직관적입니다.
+3. **가독성과 디버깅**: 문자열 형식으로 가독성이 좋고, 디버깅이 용이합니다.
+4. **충돌 가능성 최소화**: 128비트(16바이트) 크기로 충돌 가능성이 극히 낮습니다.
+5. **구현 단순성**: Snowflake ID는 워커 ID와 데이터센터 ID 관리가 필요하지만, ULID는 그런 복잡성이 없습니다.
+
+### 구현 방식
+- [UlidGenerator](src/main/kotlin/fc/innercircle/sanghyukonboarding/common/infrastructure/numbering/UlidGenerator.kt): ULID 생성 구현체
+- [IdGeneratingEntityListener](src/main/kotlin/fc/innercircle/sanghyukonboarding/common/infrastructure/numbering/IdGeneratingEntityListener.kt): JPA 엔티티 저장 전 ID 자동 생성
+- [BaseEntity](src/main/kotlin/fc/innercircle/sanghyukonboarding/common/domain/model/BaseEntity.kt): 모든 엔티티의 기본 클래스로 ID 필드 정의
+
+### 테스트
+- [UlidGeneratorTest](src/test/kotlin/fc/innercircle/sanghyukonboarding/common/infrastructure/numbering/UlidGeneratorTest.kt): 대용량 트래픽, 동시성, 분산 환경에서의 안전성 검증
+- [UlidGeneratorStructureTest](src/test/kotlin/fc/innercircle/sanghyukonboarding/common/infrastructure/numbering/UlidGeneratorStructureTest.kt): ID 구조 검증

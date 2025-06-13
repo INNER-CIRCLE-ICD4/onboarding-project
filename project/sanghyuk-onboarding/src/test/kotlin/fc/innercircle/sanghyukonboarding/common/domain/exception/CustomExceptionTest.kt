@@ -9,7 +9,7 @@ class CustomExceptionTest : DescribeSpec({
         context("CustomException 생성") {
             it("ErrorCode만 받는 생성자로 CustomException을 생성할 수 있어야 한다") {
                 // given
-                val errorCode = ErrorCode.INVALID_SURVEY_TITLE
+                val errorCode = ErrorCode.INVALID_FORM_TITLE
                 val args = arrayOf("테스트 제목")
                 val formattedMessage = MessageFormat.format(errorCode.message, *args)
 
@@ -26,7 +26,7 @@ class CustomExceptionTest : DescribeSpec({
 
             it("ErrorCode만 받는 두 번째 생성자로 CustomException을 생성할 수 있어야 한다") {
                 // given
-                val errorCode = ErrorCode.INVALID_SURVEY_DESCRIPTION
+                val errorCode = ErrorCode.INVALID_FORM_DESCRIPTION
                 val formattedMessage = errorCode.message
 
                 // when
@@ -42,7 +42,7 @@ class CustomExceptionTest : DescribeSpec({
 
             it("ErrorCode와 원인 예외를 함께 받는 생성자로 CustomException을 생성할 수 있어야 한다") {
                 // given
-                val errorCode = ErrorCode.INVALID_SURVEY_ITEM_QUESTION
+                val errorCode = ErrorCode.INVALID_QUESTION_TITLE
                 val cause = RuntimeException("원인 예외")
                 val formattedMessage = errorCode.message
 
@@ -59,7 +59,7 @@ class CustomExceptionTest : DescribeSpec({
 
             it("FormattedErrorCode와 원인 예외를 함께 받는 생성자로 CustomException을 생성할 수 있어야 한다") {
                 // given
-                val errorCode = ErrorCode.INVALID_SURVEY_ITEM_DESCRIPTION
+                val errorCode = ErrorCode.INVALID_QUESTION_DESCRIPTION
                 val args = arrayOf("테스트 설명")
                 val formattedErrorCode = errorCode.withArgs(*args)
                 val cause = RuntimeException("원인 예외")

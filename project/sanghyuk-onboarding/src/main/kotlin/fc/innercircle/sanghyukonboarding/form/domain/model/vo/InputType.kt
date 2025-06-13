@@ -1,4 +1,4 @@
-package fc.innercircle.sanghyukonboarding.survey.domain.model.vo
+package fc.innercircle.sanghyukonboarding.form.domain.model.vo
 
 enum class InputType {
     TEXT, // 단답형

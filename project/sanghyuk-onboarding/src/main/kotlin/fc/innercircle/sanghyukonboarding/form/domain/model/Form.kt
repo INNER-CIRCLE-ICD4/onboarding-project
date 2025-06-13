@@ -1,12 +1,12 @@
-package fc.innercircle.sanghyukonboarding.survey.domain.model
+package fc.innercircle.sanghyukonboarding.form.domain.model
 
 import fc.innercircle.sanghyukonboarding.common.domain.model.BaseEntity
-import fc.innercircle.sanghyukonboarding.survey.domain.validator.SurveyValidator
+import fc.innercircle.sanghyukonboarding.form.domain.validator.FormValidator
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 
 @Entity
-open class Survey(
+open class Form(
     title: String,
     description: String = "",
     createdBy: String,
@@ -25,7 +25,7 @@ open class Survey(
     }
 
     private fun validateRequiredFields() {
-        SurveyValidator.validateTitle(title)
-        SurveyValidator.validateDescription(description)
+        FormValidator.validateTitle(title)
+        FormValidator.validateDescription(description)
     }
 }
