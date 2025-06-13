@@ -20,7 +20,6 @@ public class Questions {
     private final Long id;
     private final String questionText;
     private final QuestionType questionType;
-    private final int order;
     private final boolean isRequired;
     private final int version;
     private final boolean deleted;

@@ -27,8 +27,6 @@ public class QuestionCreateRequest implements OptionContainer{
     @ValidEnum(enumClass = Questions.QuestionType.class, message = "유효하지 않은 질문 유형입니다. 단문, 장문, 단일 선택, 복수 선택 중 하나를 선택하세요.")
     private final String questionType;
 
-    private final int order;
-
     private final boolean isRequired;
 
     private final List<OptionCreateRequest> optionCreateRequests;
@@ -47,7 +45,6 @@ public class QuestionCreateRequest implements OptionContainer{
         Questions.QuestionsBuilder questionBuilder = Questions.builder()
                 .questionText(this.questionText)
                 .questionType(valueOf(this.getQuestionType().toUpperCase()))
-                .order(this.order)
                 .isRequired(this.isRequired);
 
         if (this.optionCreateRequests != null) {
