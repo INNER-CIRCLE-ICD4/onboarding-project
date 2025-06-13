@@ -2,9 +2,10 @@
 
 ## Open Source Library
 
-| name         | link                                   | 사용 이유       |
-|--------------|----------------------------------------|-------------|
-| tsid-creator | https://github.com/f4b6a3/tsid-creator | 엔티티 식별자로 사용 |
+| name           | link                                                       | 사용 이유          |
+|----------------|------------------------------------------------------------|----------------|
+| tsid-creator   | https://github.com/f4b6a3/tsid-creator                     | 엔티티 식별자로 사용    |
+| fixture-monkey | https://github.com/naver/fixture-monkey?tab=readme-ov-file | Fixture 데이터 사용 |
 
 ---
 

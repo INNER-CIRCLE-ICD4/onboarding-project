@@ -1,6 +1,6 @@
 package formService.application
 
-import formService.application.port.inbound.CreateSurveyForm
+import formService.application.port.inbound.CreateSurveyFormUseCase
 import formService.application.port.outbound.SurveyFormRepository
 import formService.domain.Question
 import formService.domain.QuestionOption
@@ -9,8 +9,8 @@ import formService.util.getTsid
 
 class SurveyFormService(
     private val repository: SurveyFormRepository,
-) : CreateSurveyForm {
-    override fun createSurveyForm(command: CreateSurveyForm.CreateSurveyFormCommand) {
+) : CreateSurveyFormUseCase {
+    override fun createSurveyForm(command: CreateSurveyFormUseCase.CreateSurveyFormCommand) {
         // command convert to domain
         val surveyForm =
             SurveyForm(

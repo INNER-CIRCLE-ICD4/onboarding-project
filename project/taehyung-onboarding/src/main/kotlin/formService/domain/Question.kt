@@ -14,4 +14,7 @@ class Question(
         SINGLE_CHOICE,
         MULTI_CHOICE,
     }
+
+    override fun toString(): String =
+        "Question(id=$id, name='$name', description='$description', inputType=$inputType, required=$required, options=$options)"
 }

@@ -1,6 +1,6 @@
 package formService.application
 
-import formService.application.port.inbound.CreateSurveyForm
+import formService.application.port.inbound.CreateSurveyFormUseCase
 import formService.application.port.outbound.SurveyFormRepository
 import formService.domain.Question
 import formService.domain.SurveyForm
@@ -27,12 +27,12 @@ class SurveyFormServiceTest {
         val questionDescription = "description"
 
         val command =
-            CreateSurveyForm.CreateSurveyFormCommand(
+            CreateSurveyFormUseCase.CreateSurveyFormCommand(
                 surveyName = surveyName,
                 description = surveyDescription,
                 questions =
                     listOf(
-                        CreateSurveyForm.CreateSurveyFormQuestion(
+                        CreateSurveyFormUseCase.CreateSurveyFormQuestion(
                             name = questionName,
                             description = questionDescription,
                             required = true,

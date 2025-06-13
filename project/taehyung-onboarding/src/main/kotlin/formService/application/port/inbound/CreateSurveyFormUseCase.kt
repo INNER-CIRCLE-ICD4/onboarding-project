@@ -2,7 +2,7 @@ package formService.application.port.inbound
 
 import formService.domain.Question
 
-interface CreateSurveyForm {
+interface CreateSurveyFormUseCase {
     fun createSurveyForm(command: CreateSurveyFormCommand)
 
     data class CreateSurveyFormCommand(
