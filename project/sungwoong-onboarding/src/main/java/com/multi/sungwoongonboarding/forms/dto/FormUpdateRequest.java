@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FormUpdateRequest {
 
-    @NotNull(message = "잘못된 요청입니다.")
     private final Long id;
 
     @NotBlank(message = "제목은 필수 입력 항목입니다.")
@@ -38,6 +37,5 @@ public class FormUpdateRequest {
                 .title(this.title)
                 .description(this.description)
                 .build();
-
     }
 }

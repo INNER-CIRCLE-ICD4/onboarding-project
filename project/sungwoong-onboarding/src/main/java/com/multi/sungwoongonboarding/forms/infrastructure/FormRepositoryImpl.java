@@ -32,11 +32,13 @@ public class FormRepositoryImpl implements FormRepository {
 
     @Override
     @Transactional
-    public Forms update(Forms forms) {
+    public Forms update(Long formId, Forms forms) {
 
-        FormsJpaEntity formsJpaEntity = FormsJpaEntity.fromDomain(forms);
-        formJpaRepository.save(formsJpaEntity);
+        FormsJpaEntity existingForm = formJpaRepository.findById(formId)
+                .orElseThrow(() -> new IllegalArgumentException("Form not found with id: " + formId));
 
-        return null;
+        existingForm.update(forms);
+
+        return existingForm.toDomain();
     }
 }
