@@ -1,0 +1,18 @@
+package survey.survey.config;
+
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+public enum ErrorType {
+    MINIMUM_QUESTION("최소 1개의 질문이 필요합니다.", HttpStatus.BAD_REQUEST),
+    MAXIMUM_QUESTION("최대 10개의 질문이 허용됩니다.", HttpStatus.BAD_REQUEST);
+
+    ErrorType(String description, HttpStatus badRequest) {
+        this.description = description;
+        this.status = badRequest;
+    }
+
+    private final String description;
+    private final HttpStatus status;
+}

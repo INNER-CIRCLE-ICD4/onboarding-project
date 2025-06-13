@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import survey.common.snowflake.Snowflake;
+import survey.survey.config.ApplicationException;
 import survey.survey.controller.request.SurveyFormCreateRequest;
 import survey.survey.controller.request.SurveyFormCreateRequest.QuestionCreateRequest;
 import survey.survey.entity.surveyform.SurveyForm;
@@ -15,6 +16,9 @@ import survey.survey.service.response.SurveyFormResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static survey.survey.config.ErrorType.MAXIMUM_QUESTION;
+import static survey.survey.config.ErrorType.MINIMUM_QUESTION;
 
 @Service
 @RequiredArgsConstructor
@@ -87,14 +91,10 @@ public class SurveyFormService {
                 .count();
 
         if (activeQuestionsCount < MIN_QUESTIONS) {
-            throw new IllegalArgumentException(
-                    String.format("활성화된 질문이 최소 %d개 이상이어야 합니다.", MIN_QUESTIONS)
-            );
+            throw new ApplicationException(MINIMUM_QUESTION);
         }
         if (activeQuestionsCount > MAX_QUESTIONS) {
-            throw new IllegalArgumentException(
-                    String.format("활성화된 질문은 %d개 이하여야 합니다.", MAX_QUESTIONS)
-            );
+            throw new ApplicationException(MAXIMUM_QUESTION);
         }
     }
 }
