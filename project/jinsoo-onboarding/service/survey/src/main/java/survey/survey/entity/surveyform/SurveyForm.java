@@ -19,14 +19,22 @@ public class SurveyForm {
     @EmbeddedId
     private SurveyFormId surveyFormId;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
     private Long surveyId;
 
-    @OneToMany(mappedBy = "surveyForm", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "surveyForm", cascade = CascadeType.ALL)
     private List<SurveyQuestion> surveyQuestionList = new ArrayList<>();
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
     public static SurveyForm create(SurveyFormId surveyFormId, String title, String description, Long surveyId) {

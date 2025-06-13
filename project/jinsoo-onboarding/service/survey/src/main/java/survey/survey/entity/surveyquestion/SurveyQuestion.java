@@ -63,8 +63,10 @@ public class SurveyQuestion {
         return surveyQuestion;
     }
 
-    public void addCandidate(CheckCandidate candidate) {
-        this.candidates.add(candidate);
+    public void addCandidate(List<CheckCandidate> candidates) {
+        this.inputType.validateQuestion(this, candidates);
+        this.candidates = candidates;
+
     }
 
     public void assignSurveyForm(SurveyForm surveyForm) {

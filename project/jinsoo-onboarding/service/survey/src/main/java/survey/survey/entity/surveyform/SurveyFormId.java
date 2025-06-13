@@ -1,5 +1,6 @@
 package survey.survey.entity.surveyform;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
@@ -9,8 +10,10 @@ import java.util.Objects;
 @Getter
 @Embeddable
 public class SurveyFormId implements Serializable {
+    @Column(nullable = false)
     private Long surveyFormId;
-    private Long version;
+    @Column(nullable = false)
+    private Long version = 1L;
 
     public SurveyFormId() {
     }
@@ -20,7 +23,11 @@ public class SurveyFormId implements Serializable {
         this.version = version;
     }
 
-    public static SurveyFormId of(Long surveyFormId, Long version) {
+    public static SurveyFormId create(Long surveyFormId) {
+        return new SurveyFormId(surveyFormId,1L);
+    }
+
+    public static SurveyFormId update(Long surveyFormId, Long version) {
         return new SurveyFormId(surveyFormId, version);
     }
 
