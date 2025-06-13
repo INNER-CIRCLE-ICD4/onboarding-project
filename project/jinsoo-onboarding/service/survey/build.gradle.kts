@@ -6,4 +6,5 @@ dependencies {
     runtimeOnly("com.h2database:h2")
 
     implementation(project(":common:snowflake"))
+    implementation(project(":common:api"))
 }
