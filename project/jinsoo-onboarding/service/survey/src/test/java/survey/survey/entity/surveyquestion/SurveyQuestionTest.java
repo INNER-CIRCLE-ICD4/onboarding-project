@@ -6,6 +6,8 @@ import survey.common.snowflake.Snowflake;
 import survey.survey.entity.surveyform.SurveyForm;
 import survey.survey.entity.surveyform.SurveyFormId;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SurveyQuestionTest {
@@ -49,9 +51,9 @@ class SurveyQuestionTest {
         CheckCandidate candidate1 = CheckCandidate.of(0,"선택지 1");
         CheckCandidate candidate2 = CheckCandidate.of(1,"선택지 2");
 
+        List<CheckCandidate> candidates = List.of(candidate1, candidate2);
         // when
-        surveyQuestion.addCandidate(candidate1);
-        surveyQuestion.addCandidate(candidate2);
+        surveyQuestion.addCandidate(candidates);
 
         // then
         assertThat(surveyQuestion.getCandidates()).hasSize(2);
@@ -67,7 +69,7 @@ class SurveyQuestionTest {
         );
 
         SurveyForm surveyForm = SurveyForm.create(
-                SurveyFormId.of(1L, 1L), "설문 제목", "설문 설명", 1L
+                SurveyFormId.create(1L), "설문 제목", "설문 설명", 1L
         );
 
         // when

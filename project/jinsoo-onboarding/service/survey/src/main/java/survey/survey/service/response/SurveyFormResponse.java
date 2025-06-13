@@ -34,8 +34,31 @@ public class SurveyFormResponse {
         this.modifiedAt = surveyForm.getModifiedAt();
     }
 
+    // 테스트용 생성자 추가
+    private SurveyFormResponse(Long surveyFormId, Long version, Long surveyId, String title,
+                               String description, List<QuestionResponse> questions,
+                               LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        this.surveyFormId = surveyFormId;
+        this.version = version;
+        this.surveyId = surveyId;
+        this.title = title;
+        this.description = description;
+        this.questions = questions;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+    }
+
     public static SurveyFormResponse from(SurveyForm surveyForm) {
         return new SurveyFormResponse(surveyForm);
+    }
+
+    // 테스트용 팩토리 메서드 추가
+    public static SurveyFormResponse of(Long surveyFormId, Long version, Long surveyId,
+                                        String title, String description,
+                                        List<QuestionResponse> questions,
+                                        LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        return new SurveyFormResponse(surveyFormId, version, surveyId, title, description,
+                questions, createdAt, modifiedAt);
     }
 
     @Getter
@@ -58,8 +81,28 @@ public class SurveyFormResponse {
             this.candidates = question.getCandidates().stream().toList();
         }
 
+        // 테스트용 생성자 추가
+        private QuestionResponse(Long questionId, int questionIndex, String name, String description,
+                                 InputType inputType, boolean required, List<CheckCandidate> candidates) {
+            this.questionId = questionId;
+            this.questionIndex = questionIndex;
+            this.name = name;
+            this.description = description;
+            this.inputType = inputType;
+            this.required = required;
+            this.candidates = candidates;
+        }
+
         public static QuestionResponse from(SurveyQuestion question) {
             return new QuestionResponse(question);
+        }
+
+        // 테스트용 팩토리 메서드 추가
+        public static QuestionResponse of(Long questionId, int questionIndex, String name,
+                                          String description, InputType inputType, boolean required,
+                                          List<CheckCandidate> candidates) {
+            return new QuestionResponse(questionId, questionIndex, name, description, inputType,
+                    required, candidates);
         }
     }
 }
