@@ -1,5 +1,12 @@
 # Donghwan Onboarding
 
+## 🛠 기술 스택
+- Kotlin
+- Spring Boot 3.5.0
+- Spring Data JPA
+- H2 (In-memory)
+- Gradle (Kotlin DSL)
+
 ## 🏗 Architecture
 - [아키텍처 소개](documentation/architecture/architecture-diagram.md)
 - [계층 소개](documentation/architecture/architecture-layer.md)
