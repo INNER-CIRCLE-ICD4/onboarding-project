@@ -12,7 +12,7 @@ SurveyVersion
 - surveyId: Long
 - title: String
 - description: String
-- order: Integer
+- versionNumber: Integer
 - createdAt: LocalDateTime
 ```
 ```
@@ -37,13 +37,17 @@ QuestionChoiceOption
 ```
 SurveySubmission
 - id: Long
+- surveyId: Long
 - surveyVersionId: Long
+- content: Map<String, Object>
 - submittedAt: LocalDateTime
 ```
 ```
-AnswerItem
+SurveySubmissionSearch
 - id: Long
+- surveyId: Long
+- surveyVersionId: Long
 - surveySubmissionId: Long
-- questionItemId: Long
+- contentType: String(Enum: Answer, Question)
 - content: String
 ```
