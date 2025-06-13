@@ -56,7 +56,7 @@ public class FormRepositoryTest {
 
     @Test
     @DisplayName("Form을 저장한다 - 질문 형식 (단문, 장문")
-     public void saveFormWithQuestions() {
+    public void saveFormWithQuestions() {
 
         // Given
         List<Questions> questionCreateRequests = List.of(
@@ -149,6 +149,79 @@ public class FormRepositoryTest {
         OptionsJpaEntity save = optionsJpaRepository.save(optionsJpaEntity);
 
         System.out.println("save = " + save.getDeleted());
+    }
 
+    @Test
+    @DisplayName("Form을 업데이트한다")
+    public void updateForm() {
+        // Given
+        // 1. 원본 폼 생성 및 저장
+        Forms originalForm = Forms.builder()
+                .title("원본 설문 제목")
+                .description("원본 설문 설명")
+                .questions(List.of(
+                        Questions.builder()
+                                .questionText("원본 질문")
+                                .questionType(SHORT_ANSWER)
+                                .build()
+                ))
+                .build();
+
+        Forms savedForm = formRepository.save(originalForm);
+        Long formId = savedForm.getId();
+
+        // 2. 업데이트할 폼 데이터 생성
+        List<Options> 새_옵션_항목 = List.of(
+                Options.builder().optionText("새 옵션1").build(),
+                Options.builder().optionText("새 옵션2").build()
+        );
+
+        List<Questions> 새_질문_목록 = List.of(
+                Questions.builder()
+                        .questionText("새 단일 선택 질문")
+                        .questionType(SINGLE_CHOICE)
+                        .options(새_옵션_항목)
+                        .build(),
+                Questions.builder()
+                        .questionText("새 장문 질문")
+                        .questionType(LONG_ANSWER)
+                        .build()
+        );
+
+        Forms updatedFormData = Forms.builder()
+                .title("업데이트된 설문 제목")
+                .description("업데이트된 설문 설명")
+                .questions(새_질문_목록)
+                .build();
+
+        // When
+        Forms result = formRepository.update(formId, updatedFormData);
+
+        // Then
+        // 업데이트된 폼 검증
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(formId);
+        assertThat(result.getTitle()).isEqualTo("업데이트된 설문 제목");
+        assertThat(result.getDescription()).isEqualTo("업데이트된 설문 설명");
+
+        // 질문 검증
+        assertThat(result.getQuestions().size()).isEqualTo(2);
+        assertThat(result.getQuestions().get(0).getQuestionText()).isEqualTo("새 단일 선택 질문");
+        assertThat(result.getQuestions().get(0).getQuestionType()).isEqualTo(SINGLE_CHOICE);
+        assertThat(result.getQuestions().get(1).getQuestionText()).isEqualTo("새 장문 질문");
+        assertThat(result.getQuestions().get(1).getQuestionType()).isEqualTo(LONG_ANSWER);
+
+        // 옵션 검증
+        assertThat(result.getQuestions().get(0).getOptions().size()).isEqualTo(2);
+        assertThat(result.getQuestions().get(0).getOptions().get(0).getOptionText()).isEqualTo("새 옵션1");
+        assertThat(result.getQuestions().get(0).getOptions().get(1).getOptionText()).isEqualTo("새 옵션2");
+
+        // DB에서 다시 조회하여 검증
+        List<Forms> all = formRepository.findAll();
+        assertThat(all.size()).isEqualTo(1);
+        Forms updatedFormInDb = all.get(0);
+        assertThat(updatedFormInDb.getTitle()).isEqualTo("업데이트된 설문 제목");
+        assertThat(updatedFormInDb.getDescription()).isEqualTo("업데이트된 설문 설명");
+        assertThat(updatedFormInDb.getQuestions().size()).isEqualTo(2);
     }
 }
