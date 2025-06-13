@@ -29,4 +29,14 @@ public class FormRepositoryImpl implements FormRepository {
     public List<Forms> findAll() {
         return formJpaRepository.findAll().stream().map(FormsJpaEntity::toDomain).toList();
     }
+
+    @Override
+    @Transactional
+    public Forms update(Forms forms) {
+
+        FormsJpaEntity formsJpaEntity = FormsJpaEntity.fromDomain(forms);
+        formJpaRepository.save(formsJpaEntity);
+
+        return null;
+    }
 }

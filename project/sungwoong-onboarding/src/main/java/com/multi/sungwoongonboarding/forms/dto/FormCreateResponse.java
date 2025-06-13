@@ -11,7 +11,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-public record FormCreateResponse (Long id, String title, String description, List<QuestionCreateResponse> questionCreateResponses, LocalDateTime createdAt, LocalDateTime updatedAt, String userId) {
+public record FormCreateResponse (Long id,
+                                  String title,
+                                  String description,
+                                  List<QuestionCreateResponse> questionCreateResponses,
+                                  LocalDateTime createdAt,
+                                  LocalDateTime updatedAt,
+                                  String userId) {
 
     public static FormCreateResponse fromDomain(Forms form) {
         return new FormCreateResponse(
