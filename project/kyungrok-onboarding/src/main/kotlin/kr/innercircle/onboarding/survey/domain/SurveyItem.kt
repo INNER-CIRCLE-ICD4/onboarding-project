@@ -20,9 +20,6 @@ class SurveyItem (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(nullable = false)
-    var surveyItemId: Long,
-
     @Column(nullable = false, length = 200)
     var name: String,
 
@@ -37,5 +34,8 @@ class SurveyItem (
     var isRequired: Boolean,
 
     @Column(nullable = false)
-    var orderNumber: Int
+    var orderNumber: Int,
+
+    @Column(nullable = false)
+    var isDeleted: Boolean = false
 ): BaseTimeEntity()
