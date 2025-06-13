@@ -10,4 +10,6 @@ public interface FormRepository {
 
     List<Forms> findAll();
 
+    Forms update(Long formId, Forms forms);
+
 }

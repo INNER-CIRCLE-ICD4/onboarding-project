@@ -26,9 +26,6 @@ public class QuestionJpaEntity extends BaseEntity {
     @Column(name = "question_type", nullable = false)
     private String questionType;
 
-    @Column(name = "question_order", nullable = false)
-    private int order;
-
     @Column(name = "is_required", nullable = false)
     private boolean isRequired;
 
@@ -52,7 +49,6 @@ public class QuestionJpaEntity extends BaseEntity {
         questionJpaEntity.id = questions.getId();
         questionJpaEntity.questionText = questions.getQuestionText();
         questionJpaEntity.questionType = questions.getQuestionType().name();
-        questionJpaEntity.order = questions.getOrder();
         questionJpaEntity.isRequired = questions.isRequired();
         return questionJpaEntity;
     }
@@ -62,7 +58,6 @@ public class QuestionJpaEntity extends BaseEntity {
                 .id(this.id)
                 .questionText(this.questionText)
                 .questionType(Questions.QuestionType.valueOf(this.questionType))
-                .order(this.order)
                 .version(this.version)
                 .isRequired(this.isRequired)
                 .options(this.options.stream().map(OptionsJpaEntity::toDomain).toList())

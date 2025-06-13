@@ -18,9 +18,6 @@ public class OptionsJpaEntity {
     @Column(name = "option_text", nullable = false)
     private String optionText;
 
-    @Column(name = "option_order")
-    private int order;
-
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
 
@@ -32,12 +29,11 @@ public class OptionsJpaEntity {
         OptionsJpaEntity optionsJpaEntity = new OptionsJpaEntity();
         optionsJpaEntity.id = options.getId();
         optionsJpaEntity.optionText = options.getOptionText();
-        optionsJpaEntity.order = options.getOrder();
         return optionsJpaEntity;
     }
 
     public Options toDomain() {
-        return new Options(id, optionText, order, deleted);
+        return new Options(id, optionText, deleted);
     }
 
     public void mappingQuestionJpaEntity(QuestionJpaEntity questionJpaEntity) {

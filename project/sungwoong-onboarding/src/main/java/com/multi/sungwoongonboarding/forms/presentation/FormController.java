@@ -4,13 +4,11 @@ import com.multi.sungwoongonboarding.common.dto.ResponseDto;
 import com.multi.sungwoongonboarding.common.util.ResponseUtil;
 import com.multi.sungwoongonboarding.forms.application.FormService;
 import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
-import com.multi.sungwoongonboarding.forms.dto.FormCreateResponse;
+import com.multi.sungwoongonboarding.forms.dto.FormResponse;
+import com.multi.sungwoongonboarding.forms.dto.FormUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +18,14 @@ public class FormController {
     private final FormService formService;
 
     @PostMapping
-    public ResponseDto<FormCreateResponse> createForm(@RequestBody @Valid FormCreateRequest formCreateRequest) {
-        FormCreateResponse formCreateResponse = formService.createForms(formCreateRequest);
-        return ResponseUtil.success(formCreateResponse);
+    public ResponseDto<FormResponse> createForm(@RequestBody @Valid FormCreateRequest formCreateRequest) {
+        FormResponse formResponse = formService.createForms(formCreateRequest);
+        return ResponseUtil.success(formResponse);
+    }
+
+    @PatchMapping("/{formId}")
+    public ResponseDto<FormResponse> updateForm(@PathVariable Long formId, @RequestBody @Valid FormUpdateRequest formUpdateRequest) {
+        FormResponse formResponse = formService.updateForms(formId, formUpdateRequest);
+        return ResponseUtil.success(formResponse);
     }
 }

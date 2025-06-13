@@ -2,23 +2,23 @@ package com.multi.sungwoongonboarding.options.dto;
 
 import com.multi.sungwoongonboarding.options.domain.Options;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Getter
-@Builder
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class OptionCreateRequest {
 
     @NotBlank(message = "옵션 내용은 필수 입력 항목입니다.")
-    private final String optionText;
-    private final int order;
+    private String optionText;
+
+    @Builder
+    public OptionCreateRequest(String optionText) {
+        this.optionText = optionText;
+    }
 
     public Options toDomain() {
         return Options.builder()
                 .optionText(this.optionText)
-                .order(this.order)
                 .build();
 
     }

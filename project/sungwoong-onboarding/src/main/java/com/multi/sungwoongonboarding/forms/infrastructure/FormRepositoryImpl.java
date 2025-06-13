@@ -29,4 +29,16 @@ public class FormRepositoryImpl implements FormRepository {
     public List<Forms> findAll() {
         return formJpaRepository.findAll().stream().map(FormsJpaEntity::toDomain).toList();
     }
+
+    @Override
+    @Transactional
+    public Forms update(Long formId, Forms forms) {
+
+        FormsJpaEntity existingForm = formJpaRepository.findById(formId)
+                .orElseThrow(() -> new IllegalArgumentException("Form not found with id: " + formId));
+
+        existingForm.update(forms);
+
+        return existingForm.toDomain();
+    }
 }
