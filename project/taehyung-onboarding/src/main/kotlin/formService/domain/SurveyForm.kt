@@ -13,4 +13,6 @@ class SurveyForm(
             throw IllegalArgumentException("question size less equal than 10")
         }
     }
+
+    override fun toString(): String = "SurveyForm(id='$id', surveyName='$surveyName', description='$description', questions=$questions)"
 }
