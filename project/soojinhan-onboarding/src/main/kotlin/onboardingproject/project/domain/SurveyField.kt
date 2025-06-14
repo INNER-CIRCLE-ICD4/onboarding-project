@@ -1,0 +1,49 @@
+package onboardingproject.project.domain
+
+import jakarta.persistence.*
+import java.util.*
+
+/**
+ * packageName : onboardingproject.project.domain
+ * fileName    : SurveyField
+ * author      : hsj
+ * date        : 2025. 6. 14.
+ * description :
+ */
+@Entity
+class SurveyField(
+    @Id
+    val id: String = UUID.randomUUID().toString(),
+
+    @Column(nullable = false)
+    val fieldKey: String = UUID.randomUUID().toString(),
+
+    @Column(nullable = false)
+    var version: Int = 1,
+
+    @Column(nullable = false)
+    var fieldName: String,
+
+    @Column
+    var description: String?,
+
+    @Column(nullable = false)
+    var type: FieldType,
+
+    @Column(nullable = false)
+    var isRequired: Boolean,
+
+    @Column(nullable = false)
+    var isDeleted: Boolean = false,
+
+    @Column(nullable = false)
+    var order: Int,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "survey_version_id", nullable = false)
+    val surveyVersion: SurveyVersion,
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "option_id")
+    val fieldOptions: List<FieldOption>?
+) : BaseEntity()
