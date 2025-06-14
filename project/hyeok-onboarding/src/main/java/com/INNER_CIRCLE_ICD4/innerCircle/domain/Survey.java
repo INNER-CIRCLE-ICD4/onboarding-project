@@ -33,7 +33,7 @@ public class Survey {
             orphanRemoval = true
     )
     @OrderColumn(name = "question_order")
-    @JsonIgnore // 직렬화 무한 루프 방지
+    @JsonIgnore
     private List<Question> questions = new ArrayList<>();
 
     public Survey(String title, String description) {

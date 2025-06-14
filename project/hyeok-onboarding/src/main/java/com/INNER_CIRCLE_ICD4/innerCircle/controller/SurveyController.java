@@ -20,7 +20,6 @@ public class SurveyController {
 
     private final SurveyService surveyService;
 
-    // ─── 1) 설문 생성 ────────────────────────────────────────────────────────────
     @PostMapping
     public ResponseEntity<SurveyResponse> createSurvey(
             @Valid @RequestBody SurveyRequest request) {
@@ -31,19 +30,16 @@ public class SurveyController {
                 .body(created);
     }
 
-    // ─── 2) 전체 설문 조회 ───────────────────────────────────────────────────────
     @GetMapping
     public ResponseEntity<List<SurveyResponse>> getAllSurveys() {
         return ResponseEntity.ok(surveyService.findAll());
     }
 
-    // ─── 3) 단건 설문 조회 ───────────────────────────────────────────────────────
     @GetMapping("/{id}")
     public ResponseEntity<SurveyResponse> getSurveyById(@PathVariable UUID id) {
         return ResponseEntity.ok(surveyService.findById(id));
     }
 
-    // ─── 4) 설문 수정 ────────────────────────────────────────────────────────────
     @PutMapping("/{id}")
     public ResponseEntity<SurveyResponse> updateSurvey(
             @PathVariable UUID id,
