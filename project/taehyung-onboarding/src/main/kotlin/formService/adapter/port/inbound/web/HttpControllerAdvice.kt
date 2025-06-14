@@ -53,6 +53,10 @@ class HttpControllerAdvice {
     fun invokeInternalServerError(e: Error): Fail {
         logger.error(e.message)
 
+        e.stackTrace.forEach {
+            logger.error(it.toString())
+        }
+
         return Fail(
             message = ExceptionMessage.INTERNAL_ERROR_MESSAGE.message,
             status = HttpStatus.INTERNAL_SERVER_ERROR,

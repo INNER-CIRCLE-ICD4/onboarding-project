@@ -23,5 +23,5 @@ class QuestionOptionJpaEntity(
     @JoinColumn(name = "question_id")
     var question: QuestionJpaEntity? = null
 
-    override fun toString(): String = "QuestionOptionJpaEntity(id=$id, option='$option', question=$question)"
+    override fun toString(): String = "QuestionOptionJpaEntity(id=$id, option='$option')"
 }
