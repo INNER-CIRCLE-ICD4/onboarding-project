@@ -321,10 +321,11 @@ class ResponseControllerTest(
                             idField.set(this, surveyId)
                         }
 
-                    val mockResponses = listOf(
-                        Response.create(survey = mockSurvey, respondentId = "user1"),
-                        Response.create(survey = mockSurvey, respondentId = "user2")
-                    )
+                    val mockResponses =
+                        listOf(
+                            Response.create(survey = mockSurvey, respondentId = "user1"),
+                            Response.create(survey = mockSurvey, respondentId = "user2"),
+                        )
                     mockResponses.forEach { response ->
                         val baseClass = response::class.java.superclass
                         val idField = baseClass.getDeclaredField("id")
@@ -358,24 +359,25 @@ class ResponseControllerTest(
                 it("200 OK와 함께 응답 요약 목록을 반환해야 한다") {
                     // given
                     val pageable = PageRequest.of(0, 10)
-                    val mockSummaries = listOf(
-                        ResponseSummaryProjection(
-                            id = UUID.randomUUID(),
-                            surveyId = surveyId,
-                            surveyVersion = 1,
-                            respondentId = "user1",
-                            createdAt = LocalDateTime.now(),
-                            answerCount = 5
-                        ),
-                        ResponseSummaryProjection(
-                            id = UUID.randomUUID(),
-                            surveyId = surveyId,
-                            surveyVersion = 1,
-                            respondentId = "user2",
-                            createdAt = LocalDateTime.now(),
-                            answerCount = 3
+                    val mockSummaries =
+                        listOf(
+                            ResponseSummaryProjection(
+                                id = UUID.randomUUID(),
+                                surveyId = surveyId,
+                                surveyVersion = 1,
+                                respondentId = "user1",
+                                createdAt = LocalDateTime.now(),
+                                answerCount = 5,
+                            ),
+                            ResponseSummaryProjection(
+                                id = UUID.randomUUID(),
+                                surveyId = surveyId,
+                                surveyVersion = 1,
+                                respondentId = "user2",
+                                createdAt = LocalDateTime.now(),
+                                answerCount = 3,
+                            ),
                         )
-                    )
                     val page = PageImpl(mockSummaries, pageable, 2)
                     every { responseUseCase.getResponseSummariesBySurveyId(surveyId, any()) } returns page
 
@@ -397,8 +399,12 @@ class ResponseControllerTest(
             context("존재하지 않는 설문조사 ID로 조회") {
                 it("404 Not Found를 반환해야 한다") {
                     // given
-                    every { responseUseCase.getResponsesBySurveyId(surveyId, any()) } throws 
-                        SurveyNotFoundException(surveyId)
+                    every {
+                        responseUseCase.getResponsesBySurveyId(
+                            surveyId,
+                            any(),
+                        )
+                    } throws SurveyNotFoundException(surveyId)
 
                     // when & then
                     RestAssured.given()

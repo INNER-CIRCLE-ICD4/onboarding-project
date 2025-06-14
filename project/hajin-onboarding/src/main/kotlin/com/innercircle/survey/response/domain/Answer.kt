@@ -52,25 +52,27 @@ class Answer private constructor(
     fun validateAnswer() {
         when (questionType) {
             QuestionType.SHORT_TEXT -> {
-                val text = textValue
-                    ?: throw InvalidAnswerException("단답형 질문에는 텍스트 응답이 필요합니다.")
-                
+                val text =
+                    textValue
+                        ?: throw InvalidAnswerException("단답형 질문에는 텍스트 응답이 필요합니다.")
+
                 if (text.length > MAX_SHORT_TEXT_LENGTH) {
                     throw TextTooLongException(MAX_SHORT_TEXT_LENGTH, text.length)
                 }
-                
+
                 if (selectedChoiceIds.isNotEmpty()) {
                     throw InvalidAnswerException("텍스트형 질문에는 선택지를 선택할 수 없습니다.")
                 }
             }
             QuestionType.LONG_TEXT -> {
-                val text = textValue
-                    ?: throw InvalidAnswerException("장문형 질문에는 텍스트 응답이 필요합니다.")
-                
+                val text =
+                    textValue
+                        ?: throw InvalidAnswerException("장문형 질문에는 텍스트 응답이 필요합니다.")
+
                 if (text.length > MAX_LONG_TEXT_LENGTH) {
                     throw TextTooLongException(MAX_LONG_TEXT_LENGTH, text.length)
                 }
-                
+
                 if (selectedChoiceIds.isNotEmpty()) {
                     throw InvalidAnswerException("텍스트형 질문에는 선택지를 선택할 수 없습니다.")
                 }
@@ -107,8 +109,8 @@ class Answer private constructor(
             questionType: QuestionType,
             textValue: String,
         ): Answer {
-            require(questionType.isTextType()) { 
-                "텍스트 응답은 텍스트형 질문에만 가능합니다." 
+            require(questionType.isTextType()) {
+                "텍스트 응답은 텍스트형 질문에만 가능합니다."
             }
 
             val answer =
@@ -129,8 +131,8 @@ class Answer private constructor(
             selectedChoiceIds: Set<UUID>,
             selectedChoiceTexts: Set<String> = emptySet(),
         ): Answer {
-            require(questionType.isChoiceType()) { 
-                "선택지 응답은 선택형 질문에만 가능합니다." 
+            require(questionType.isChoiceType()) {
+                "선택지 응답은 선택형 질문에만 가능합니다."
             }
 
             val answer =

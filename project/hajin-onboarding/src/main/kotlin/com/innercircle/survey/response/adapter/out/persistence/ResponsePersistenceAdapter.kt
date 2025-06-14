@@ -43,9 +43,10 @@ class ResponsePersistenceAdapter(
         criteria: ResponseSearchCriteria,
         pageable: Pageable,
     ): Page<Response> {
-        // 일단 기본 쿼리만 사용
-        return responseJpaRepository.findBySurveyIdWithAnswers(
+        return responseJpaRepository.searchResponsesByCriteria(
             surveyId = criteria.surveyId,
+            questionTitle = criteria.questionTitle,
+            answerValue = criteria.answerValue,
             pageable = pageable,
         )
     }
