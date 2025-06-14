@@ -1,10 +1,7 @@
 package icd.onboarding.surveyproject.service.domain;
 
 import icd.onboarding.surveyproject.service.enums.InputType;
-import icd.onboarding.surveyproject.service.exception.InSufficientOptionException;
-import icd.onboarding.surveyproject.service.exception.InvalidInputTypeException;
-import icd.onboarding.surveyproject.service.exception.InvalidQuestionInfoException;
-import icd.onboarding.surveyproject.service.exception.NotNegativeNumberException;
+import icd.onboarding.surveyproject.service.exception.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,6 +64,21 @@ class QuestionTest {
 		assertThrows(
 				InSufficientOptionException.class,
 				() -> Question.create(validName, validDescription, inputType, validRequired, validSortOrder, emptyOptions)
+		);
+	}
+
+	@Test
+	@DisplayName("입력 형태가 SINGLE_SELECT, MULTI_SELECT인 경우 옵션이 10개 이상이면 예외를 반환 한다.")
+	void throwWhenQuestionOptionIsOver10Count () {
+		// given
+		List<Option> overCountOptions = IntStream.rangeClosed(1, 11)
+												 .mapToObj(i -> Option.create("질문 " + i, i))
+												 .toList();
+
+		// when
+		assertThrows(
+				MaxOptionCountExceededException.class,
+				() -> Question.create(validName, validDescription, validInputType, validRequired, validSortOrder, overCountOptions)
 		);
 	}
 

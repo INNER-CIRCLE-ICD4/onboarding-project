@@ -1,5 +1,6 @@
 package icd.onboarding.surveyproject.service.domain;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ public class Option {
 	private Integer sortOrder;
 
 	public static Option create (String text, Integer sortOrder) {
-		if (text == null || text.isBlank()) throw new IllegalArgumentException("옵션 텍스트는 필수입니다.");
+		if (StringUtils.isBlank(text)) throw new IllegalArgumentException("옵션 텍스트는 필수입니다.");
 		if (sortOrder < 0) throw new IllegalArgumentException("정렬 순서는 음수일 수 없습니다.");
 
 		return Option.builder()

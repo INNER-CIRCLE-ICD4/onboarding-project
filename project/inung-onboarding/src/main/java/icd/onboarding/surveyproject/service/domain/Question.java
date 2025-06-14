@@ -1,11 +1,8 @@
 package icd.onboarding.surveyproject.service.domain;
 
 import icd.onboarding.surveyproject.service.enums.InputType;
-import icd.onboarding.surveyproject.service.exception.InSufficientOptionException;
-import icd.onboarding.surveyproject.service.exception.InvalidInputTypeException;
-import icd.onboarding.surveyproject.service.exception.InvalidQuestionInfoException;
-import icd.onboarding.surveyproject.service.exception.NotNegativeNumberException;
-import lombok.Builder;
+import icd.onboarding.surveyproject.service.exception.*;
+import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +22,8 @@ public class Question {
 
 	private @Nullable List<Option> options;
 
+	private static final int MAX_OPTION_COUNT = 10;
+
 	private Question (String name, String description, String inputType, Boolean required, Integer sortOrder, List<Option> options) {
 		this.name = name;
 		this.description = description;
@@ -40,9 +39,7 @@ public class Question {
 	}
 
 	public static Question create (String name, String description, String inputType, Boolean required, Integer sortOrder, List<Option> options) {
-		if (name == null || name.isBlank())
-			throw new InvalidQuestionInfoException();
-		if (description == null || description.isBlank())
+		if (StringUtils.isBlank(name) || StringUtils.isBlank(description))
 			throw new InvalidQuestionInfoException();
 		if (sortOrder < 0)
 			throw new NotNegativeNumberException();
@@ -50,6 +47,8 @@ public class Question {
 			throw new InvalidInputTypeException();
 		if (options == null || options.isEmpty())
 			throw new InSufficientOptionException();
+		if (options.size() > MAX_OPTION_COUNT)
+			throw new MaxOptionCountExceededException();
 
 		return new Question(name, description, inputType, required, sortOrder, options);
 	}
