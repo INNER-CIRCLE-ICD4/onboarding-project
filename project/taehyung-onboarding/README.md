@@ -51,3 +51,26 @@
  
 - QuestionAnswer
   - 응답값
+
+---
+
+## API Spec
+
+
+| API명   | url            | content-type     | 
+|--------|----------------|------------------| 
+| 설문지 생성 | /api/v1/survey | application/json |
+
+### 설문지 생성
+
+| name                          | type                                                     | nullable | 설명           | 
+|-------------------------------|----------------------------------------------------------|----------|--------------| 
+| surveyName                    | String                                                   | false    | 설문지 이름       |
+| description                   | String                                                   | false    | 설문지 설명       |
+| questions                     | List                                                     | false    | 설문 항목 목록     |
+| questions[*].name             | String                                                   | false    | 설문 항목 이름     |
+| questions[*].description      | String                                                   | false    | 설문 항목 설명     |
+| questions[*].inputType        | Enum(SHORT_TEXT, LONG_TEXT, SINGLE_CHOICE, MULTI_CHOICE) | false    | 설문 항목 유형     |
+| questions[*].required         | Boolean                                                  | false    | 설문 항목 필수 여부  |
+| questions[*].options          | List                                                     | true     | 설문 항목 선택지 목록 |
+| questions[*].options[*].value | String                                                   | false    | 설문 항목 선택지 값  |
