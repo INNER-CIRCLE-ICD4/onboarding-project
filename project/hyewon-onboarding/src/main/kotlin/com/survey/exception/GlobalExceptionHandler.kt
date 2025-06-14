@@ -74,6 +74,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(Exception::class)
     fun handleAll(ex: Exception, request: WebRequest): ResponseEntity<ApiErrorResponse> {
         val generic = RuntimeException("내부 서버 오류가 발생했습니다.")
+        ex.printStackTrace();
         return buildResponse(generic, HttpStatus.INTERNAL_SERVER_ERROR, request)
     }
 }

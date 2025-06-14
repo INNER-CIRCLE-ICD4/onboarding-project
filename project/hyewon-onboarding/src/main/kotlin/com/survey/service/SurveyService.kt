@@ -60,7 +60,7 @@ class SurveyService(
         }
         
         // 항목 수가 10개 초과하는 경우
-        val itemCount = surveyItemRepository.findAll().count()
+        val itemCount = surveyItemRepository.findAll().count {it.survey.id == request.surveyId}
         if(itemCount >= 10) throw SurveyItemCountException()
 
         val survey = surveyRepository.findById(request.surveyId).orElseThrow(){SurveyNotFoundException()}
@@ -74,16 +74,16 @@ class SurveyService(
 
         val savedItem = surveyItemRepository.save(surveyItem)
 
-        val savedOptions: List<SurveyOption> = options.map { opt: SurveyOptionRequest ->
+        val savedOptions: MutableList<SurveyOption> = options.map { opt ->
             SurveyOption(
                 surveyItem = savedItem,
                 optionValue = opt.optionValue,
                 optionOrder = opt.optionOrder
             )
-        }
+        }.toMutableList()
         surveyOptionRepository.saveAll(savedOptions)
 
-        return savedItem
+        return savedItem.copy(options = savedOptions)
     }
 
 //    문항 수정

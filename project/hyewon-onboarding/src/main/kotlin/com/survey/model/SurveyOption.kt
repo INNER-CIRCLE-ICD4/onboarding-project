@@ -1,5 +1,6 @@
 package com.survey.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
 import java.time.LocalDateTime
 import java.util.*
@@ -13,6 +14,7 @@ data class SurveyOption(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SURVEY_ITEM_ID", nullable = false)
+    @JsonBackReference  // SurveyItem → SurveyOption 자식 관계
     val surveyItem: SurveyItem,
 
     @Column(name = "OPTION_VALUE", nullable = false)
@@ -26,4 +28,13 @@ data class SurveyOption(
 
     @Column(name = "UPDATE_DT")
     val updateDt: LocalDateTime = LocalDateTime.now()
-)
+) {
+    constructor(): this(
+        id = UUID.randomUUID(),
+        surveyItem = SurveyItem(),
+        optionValue = "",
+        optionOrder = 0,
+        createDt = LocalDateTime.now(),
+        updateDt = LocalDateTime.now()
+    )
+}

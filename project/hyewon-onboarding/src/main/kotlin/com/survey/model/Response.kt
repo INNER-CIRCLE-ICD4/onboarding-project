@@ -1,5 +1,7 @@
 package com.survey.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import java.time.LocalDateTime
 import java.util.*
@@ -13,6 +15,7 @@ data class Response(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SURVEY_ID", nullable = false)
+    @JsonBackReference  // Response → Survey 관계의 자식
     val survey: Survey,
 
     @Column(name = "RESPONDENT")
@@ -22,8 +25,18 @@ data class Response(
     val updateDt: LocalDateTime = LocalDateTime.now(),
 
     @OneToMany(mappedBy = "response", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JsonManagedReference   // Response → ResponseItem 관계의 부모
     val responseItems: List<ResponseItem> = listOf(),
 
     @Column(name = "CREATE_DT")
     val createDt: LocalDateTime = LocalDateTime.now()
-)
+) {
+    constructor(): this(
+        id = UUID.randomUUID(),
+        survey = Survey(),
+        respondent = null,
+        responseItems = listOf(),
+        createDt = LocalDateTime.now(),
+        updateDt = LocalDateTime.now()
+    )
+}

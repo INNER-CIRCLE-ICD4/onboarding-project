@@ -1,5 +1,6 @@
 package com.survey.model
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -23,9 +24,11 @@ data class Survey(
     val description: String? = null,
 
     @OneToMany(mappedBy = "survey", cascade=[(CascadeType.ALL)], orphanRemoval = true)
+    @JsonManagedReference   // Survey → SurveyItem 관계의 부모
     val items: List<SurveyItem> = listOf(),
 
     @OneToMany(mappedBy = "survey", cascade=[(CascadeType.ALL)], orphanRemoval = true)
+    @JsonManagedReference   // Survey → Response 관계의 부모
     val responses: List<Response> = listOf(),
 
     @Column(name="CREATE_DT")
@@ -33,4 +36,14 @@ data class Survey(
 
     @Column(name="UPDATE_DT")
     val updateDt: LocalDateTime = LocalDateTime.now()
-)
+) {
+    constructor() : this(
+        id = UUID.randomUUID(),
+        title = "",
+        description = null,
+        items = listOf(),
+        responses = listOf(),
+        createDt = LocalDateTime.now(),
+        updateDt = LocalDateTime.now()
+    )
+}

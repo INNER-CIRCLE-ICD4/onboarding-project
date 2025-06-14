@@ -49,12 +49,12 @@ class SurveyController(
     }
 
 //    설문 항목 수정
-    @PutMapping("/items/{id}")
+    @PutMapping("/items/{surveyOptionId}")
     fun updateSurveyItem(
-        @PathVariable id: UUID,
+        @PathVariable surveyOptionId: UUID,
         @RequestBody updated: SurveyItemRequest
     ): ResponseEntity<SurveyItem> {
-        val updatedItem = surveyService.updateSurveyItem(id, updated)
+        val updatedItem = surveyService.updateSurveyItem(surveyOptionId, updated)
         return ResponseEntity.ok(updatedItem)
     }
 

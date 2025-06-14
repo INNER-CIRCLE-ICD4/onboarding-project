@@ -1,5 +1,7 @@
 package com.survey.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import java.time.LocalDateTime
 import java.util.*
@@ -12,7 +14,8 @@ data class SurveyItem(
     val id: UUID = UUID.randomUUID(),
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SURVEY_ITEM_ID", nullable = false)
+    @JoinColumn(name = "SURVEY_ID", nullable = false)
+    @JsonBackReference  // SurveyItem → Survey 관계의 자식
     val survey: Survey,
 
     @Column(name = "QUESTION", nullable = false)
@@ -25,9 +28,11 @@ data class SurveyItem(
     val itemOrder: Int,
 
     @OneToMany(mappedBy = "surveyItem", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
-    val options: List<SurveyOption> = listOf(),
+    @JsonManagedReference   // SurveyItem → SurveyOption 관계의 부모
+    val options: MutableList<SurveyOption> = mutableListOf(),
 
     @OneToMany(mappedBy = "surveyItem", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JsonManagedReference   // SurveyItem → ResponseItem 관계의 부모
     val responseItems: List<ResponseItem> = listOf(),
 
     @Column(name = "CREATE_DT")
@@ -35,4 +40,15 @@ data class SurveyItem(
 
     @Column(name = "UPDATE_DT")
     val updateDt: LocalDateTime = LocalDateTime.now()
-)
+) {
+    constructor() : this(
+        id = UUID.randomUUID(),
+        survey = Survey(),
+        question = "",
+        type = "",
+        itemOrder = 0,
+        options = mutableListOf(),
+        createDt = LocalDateTime.now(),
+        updateDt = LocalDateTime.now()
+    )
+}
