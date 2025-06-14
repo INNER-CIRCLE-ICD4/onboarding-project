@@ -1,8 +1,10 @@
 package formService.adapter.port.outbound.persistence.jpa
 
 import formService.application.port.outbound.SurveyFormRepository
+import formService.common.Adapter
 import formService.domain.SurveyForm
 
+@Adapter
 class SurveyFormPersistenceAdapter(
     private val surveyFormJpaRepository: SurveyFormJpaRepository,
 ) : SurveyFormRepository {

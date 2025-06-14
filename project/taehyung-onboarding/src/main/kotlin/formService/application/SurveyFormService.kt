@@ -6,7 +6,9 @@ import formService.domain.Question
 import formService.domain.QuestionOption
 import formService.domain.SurveyForm
 import formService.util.getTsid
+import org.springframework.stereotype.Service
 
+@Service
 class SurveyFormService(
     private val repository: SurveyFormRepository,
 ) : CreateSurveyFormUseCase {
