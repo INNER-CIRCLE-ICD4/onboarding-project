@@ -1,3 +1,4 @@
+// SurveyController.java
 package com.INNER_CIRCLE_ICD4.innerCircle.controller;
 
 import com.INNER_CIRCLE_ICD4.innerCircle.dto.SurveyRequest;
@@ -39,11 +40,11 @@ public class SurveyController {
 
     // ─── 4) 설문 수정 ────────────────────────────────────────────────────────────
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateSurvey(
+    public ResponseEntity<SurveyResponse> updateSurvey(
             @PathVariable UUID id,
             @RequestBody SurveyUpdateRequest request
     ) {
-        surveyService.updateSurvey(id, request);
-        return ResponseEntity.ok().build();
+        SurveyResponse updated = surveyService.updateSurvey(id, request);
+        return ResponseEntity.ok(updated);
     }
 }
