@@ -29,7 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     
     // UUID 7 생성을 위한 의존성
-    implementation("com.github.f4b6a3:ulid-creator:5.2.0")
+    implementation("com.github.f4b6a3:uuid-creator:5.3.5")
 }
 
 tasks.withType<Test> {
