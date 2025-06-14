@@ -1,27 +1,21 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
-public class SurveyUpdateRequest {
-    private String title;
-    private String description;
-    private List<QuestionUpdateRequest> questions;
+public record SurveyUpdateRequest(
+        @NotBlank(message = "설문 제목은 필수입니다.")
+        String title,
 
-    public SurveyUpdateRequest() {}
+        @NotBlank(message = "설문 설명은 필수입니다.")
+        String description,
 
-    public SurveyUpdateRequest(String title, String description, List<QuestionUpdateRequest> questions) {
-        this.title = title;
-        this.description = description;
-        this.questions = questions;
-    }
+        @NotNull(message = "질문 목록은 필수입니다.")
+        @Size(min = 1, max = 10, message = "질문은 1개 이상, 최대 10개까지 허용됩니다.")
+        @Valid
+        List<@Valid QuestionUpdateRequest> questions
 
-    // Getters & Setters
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public List<QuestionUpdateRequest> getQuestions() { return questions; }
-    public void setQuestions(List<QuestionUpdateRequest> questions) { this.questions = questions; }
-}
+) {}

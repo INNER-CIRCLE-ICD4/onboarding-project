@@ -1,10 +1,10 @@
-// SurveyController.java
 package com.INNER_CIRCLE_ICD4.innerCircle.controller;
 
 import com.INNER_CIRCLE_ICD4.innerCircle.dto.SurveyRequest;
 import com.INNER_CIRCLE_ICD4.innerCircle.dto.SurveyResponse;
 import com.INNER_CIRCLE_ICD4.innerCircle.dto.SurveyUpdateRequest;
 import com.INNER_CIRCLE_ICD4.innerCircle.service.SurveyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,8 @@ public class SurveyController {
 
     // ─── 1) 설문 생성 ────────────────────────────────────────────────────────────
     @PostMapping
-    public ResponseEntity<SurveyResponse> createSurvey(@RequestBody SurveyRequest request) {
+    public ResponseEntity<SurveyResponse> createSurvey(
+            @Valid @RequestBody SurveyRequest request) {
         SurveyResponse created = surveyService.createSurvey(request);
         return ResponseEntity.ok(created);
     }
@@ -42,7 +43,7 @@ public class SurveyController {
     @PutMapping("/{id}")
     public ResponseEntity<SurveyResponse> updateSurvey(
             @PathVariable UUID id,
-            @RequestBody SurveyUpdateRequest request
+            @Valid @RequestBody SurveyUpdateRequest request
     ) {
         SurveyResponse updated = surveyService.updateSurvey(id, request);
         return ResponseEntity.ok(updated);

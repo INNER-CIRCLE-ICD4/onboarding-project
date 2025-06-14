@@ -1,5 +1,4 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.dto;
-
 import com.INNER_CIRCLE_ICD4.innerCircle.domain.QuestionType;
 
 import java.util.List;
