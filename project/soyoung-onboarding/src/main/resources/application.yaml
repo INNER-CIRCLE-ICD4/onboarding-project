@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: soyoung-onboarding
+  datasource:
+    url: jdbc:h2:mem:survey
+    driver-class-name: org.h2.Driver
+    username: soy
+    password: 1234
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
