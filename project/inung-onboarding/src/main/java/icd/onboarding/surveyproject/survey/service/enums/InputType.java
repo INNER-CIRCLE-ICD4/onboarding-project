@@ -16,4 +16,8 @@ public enum InputType {
 		}
 		return false;
 	}
+
+	public boolean isSelectType () {
+		return this == SINGLE_SELECT || this == MULTI_SELECT;
+	}
 }

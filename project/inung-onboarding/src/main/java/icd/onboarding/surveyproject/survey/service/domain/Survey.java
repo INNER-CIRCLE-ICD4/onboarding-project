@@ -1,12 +1,7 @@
 package icd.onboarding.surveyproject.survey.service.domain;
 
-import icd.onboarding.surveyproject.survey.service.exception.InSufficientQuestionException;
-import icd.onboarding.surveyproject.survey.service.exception.InValidSurveyInfoException;
-import icd.onboarding.surveyproject.survey.service.exception.MaxQuestionCountExceededException;
-import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,19 +21,12 @@ public class Survey {
 		this.id = UUID.randomUUID();
 
 		for (Question question : questions) {
-			question.setSurvey(this);
+			question.assignSurvey(this);
 		}
-		this.questions = Collections.unmodifiableList(questions);
+		this.questions = List.copyOf(questions);
 	}
 
 	public static Survey create (String title, String description, List<Question> questions) {
-		if (StringUtils.isBlank(title))
-			throw new InValidSurveyInfoException();
-		if (questions == null || questions.isEmpty())
-			throw new InSufficientQuestionException();
-		if (questions.size() > MAX_QUESTION_COUNT)
-			throw new MaxQuestionCountExceededException();
-
 		return new Survey(title, description, questions);
 	}
 }

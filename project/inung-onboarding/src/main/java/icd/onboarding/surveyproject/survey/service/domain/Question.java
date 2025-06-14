@@ -2,9 +2,9 @@ package icd.onboarding.surveyproject.survey.service.domain;
 
 import icd.onboarding.surveyproject.survey.service.enums.InputType;
 import icd.onboarding.surveyproject.survey.service.exception.*;
-import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,43 +15,55 @@ public class Question {
 	private final String name;
 	private final String description;
 	private final InputType inputType;
-	private final Boolean required;
+	private final boolean required;
 	private final Integer sortOrder;
 
-	private final List<Option> options;
+	private List<Option> options = Collections.emptyList();
 
 	private static final int MAX_OPTION_COUNT = 10;
 
-	private Question (String name, String description, String inputType, Boolean required, Integer sortOrder, List<Option> options) {
+	private Question (String name, String description, String inputType, boolean required, Integer sortOrder, List<Option> options) {
 		this.name = name;
 		this.description = description;
 		this.inputType = InputType.valueOf(inputType);
-		this.required = required != null ? required : false;
+		this.required = required;
 		this.sortOrder = sortOrder;
 		this.id = UUID.randomUUID();
 
 		for (Option option : options) {
-			option.setQuestion(this);
+			option.assignQuestion(this);
 		}
-		this.options = options;
+		this.options = List.copyOf(options);
 	}
 
 	public static Question create (String name, String description, String inputType, Boolean required, Integer sortOrder, List<Option> options) {
-		if (StringUtils.isBlank(name) || StringUtils.isBlank(description))
-			throw new InvalidQuestionInfoException();
-		if (sortOrder < 0)
-			throw new NotNegativeNumberException();
 		if (!InputType.contains(inputType))
 			throw new InvalidInputTypeException();
-		if (options == null || options.isEmpty())
-			throw new InSufficientOptionException();
-		if (options.size() > MAX_OPTION_COUNT)
-			throw new MaxOptionCountExceededException();
 
-		return new Question(name, description, inputType, required, sortOrder, options);
+		Question question = new Question(name, description, inputType, required, sortOrder, options);
+		question.validateOptions();
+
+		return question;
 	}
 
-	protected void setSurvey (Survey survey) {
+	protected void assignSurvey (Survey survey) {
 		this.survey = survey;
+	}
+
+	public void validateOptions () {
+		if (!inputType.isSelectType()) return;
+
+		if (options.isEmpty()) {
+			throw new InSufficientOptionException();
+		}
+	}
+
+	public void validateRequiredAnswer (List<Answer> answers) {
+		if (required) {
+			boolean hasAnswer = answers.stream().anyMatch(answer -> answer.getQuestionId().equals(this.id));
+
+			if (!hasAnswer)
+				throw new RequiredQuestionNotAnsweredException();
+		}
 	}
 }
