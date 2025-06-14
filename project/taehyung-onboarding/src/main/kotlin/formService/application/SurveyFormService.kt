@@ -1,18 +1,22 @@
 package formService.application
 
 import formService.application.port.inbound.CreateSurveyFormUseCase
+import formService.application.port.inbound.RetrieveOneSurveyFormUseCase
 import formService.application.port.outbound.SurveyFormRepository
 import formService.domain.Question
 import formService.domain.QuestionOption
 import formService.domain.SurveyForm
+import formService.exception.BadRequestException
 import formService.util.getTsid
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SurveyFormService(
     private val repository: SurveyFormRepository,
-) : CreateSurveyFormUseCase {
+) : CreateSurveyFormUseCase,
+    RetrieveOneSurveyFormUseCase {
     @Transactional
     override fun createSurveyForm(command: CreateSurveyFormUseCase.CreateSurveyFormCommand): CreateSurveyFormUseCase.CreateSurveyFormId {
         // command convert to domain
@@ -42,5 +46,36 @@ class SurveyFormService(
         repository.save(surveyForm)
 
         return CreateSurveyFormUseCase.CreateSurveyFormId(surveyForm.id)
+    }
+
+    @Transactional(readOnly = true)
+    override fun retrieveSurveyForm(id: String): RetrieveOneSurveyFormUseCase.RetrieveSurveyFormRead {
+        try {
+            val surveyForm = repository.getOneBy(id)
+            return RetrieveOneSurveyFormUseCase.RetrieveSurveyFormRead(
+                id = surveyForm.id,
+                surveyName = surveyForm.surveyName,
+                description = surveyForm.description,
+                questions =
+                    surveyForm.questions.map { q ->
+                        RetrieveOneSurveyFormUseCase.RetrieveSurveyFormQuestion(
+                            id = q.id!!,
+                            name = q.name,
+                            description = q.description,
+                            inputType = q.inputType,
+                            required = q.required,
+                            options =
+                                q.options?.map { qo ->
+                                    RetrieveOneSurveyFormUseCase.RetrieveSurveyFormQuestionOption(
+                                        id = qo.id!!,
+                                        value = qo.value,
+                                    )
+                                } ?: emptyList(),
+                        )
+                    },
+            )
+        } catch (e: EntityNotFoundException) {
+            throw BadRequestException(message = "설문지를 찾지 못햇습니다. id: $id")
+        }
     }
 }

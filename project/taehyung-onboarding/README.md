@@ -56,12 +56,41 @@
 
 ## API Spec
 
+### 공통
 
-| API명   | url            | content-type     | 
-|--------|----------------|------------------| 
-| 설문지 생성 | /api/v1/survey | application/json |
+**응답 포맷**
+
+성공
+
+```json
+{
+  "message": "success",
+  "status": "OK",
+  "data": object
+}
+
+```
+
+실패
+```json
+{
+  "message": string,
+  "status": Http Status Code,
+  "errorCode": "10000"
+}
+```
+
+### API List
+
+| API명      | method | url                 | content-type     | 
+|-----------|--------|---------------------|------------------| 
+| 설문지 생성    | POST   | /api/v1/survey      | application/json |
+| 설문지 단건 조회 | GET    | /api/v1/survey/{id} | application/json |
+
 
 ### 설문지 생성
+
+**RequestBody**
 
 | name                          | type                                                     | nullable | 설명           | 
 |-------------------------------|----------------------------------------------------------|----------|--------------| 
@@ -74,3 +103,15 @@
 | questions[*].required         | Boolean                                                  | false    | 설문 항목 필수 여부  |
 | questions[*].options          | List                                                     | true     | 설문 항목 선택지 목록 |
 | questions[*].options[*].value | String                                                   | false    | 설문 항목 선택지 값  |
+
+**Response**
+```json
+{
+  "message": "success",
+  "status": "CREATED",
+  "data": {
+    "id": "0M0XQCYK2669Q"
+  }
+}
+
+```
