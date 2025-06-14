@@ -7,11 +7,13 @@ import formService.domain.QuestionOption
 import formService.domain.SurveyForm
 import formService.util.getTsid
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SurveyFormService(
     private val repository: SurveyFormRepository,
 ) : CreateSurveyFormUseCase {
+    @Transactional
     override fun createSurveyForm(command: CreateSurveyFormUseCase.CreateSurveyFormCommand) {
         // command convert to domain
         val surveyForm =
