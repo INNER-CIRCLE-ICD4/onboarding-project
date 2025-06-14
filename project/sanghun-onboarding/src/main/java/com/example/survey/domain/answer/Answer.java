@@ -1,13 +1,18 @@
-package com.example.survey.repository;
+package com.example.survey.domain.answer;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.example.survey.domain.survey.Survey;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor( access = AccessLevel.PROTECTED )
-public class AnswerItem {
+public class Answer {
 	
 	/*
 	 * @NoArgsConstructor( access = AccessLevel.PROTECTED)
@@ -25,18 +30,16 @@ public class AnswerItem {
 	 * 
 	 * */
 	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long answerId;	// 응답 아이디
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Answer answer;
 	
-    private Long surveyitemId; // 설문조사 항목 아이디 (surveyItem과 매칭)
-    private int surveyitemSn;  // 설문조사 항목 순번  (surveyItem과 매칭)
-    
-    private String answerData;	// 응답값
-	//	 private 
+    @ManyToOne
+    private Survey survey;	// 설문조사
+	
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnswerItem> answerItems = new ArrayList<>(); // 설문조사 항목
+	 
 	private LocalDateTime insertDt;	// 생성일자
 	private LocalDateTime updateDt;	// 수정일자
 	 
