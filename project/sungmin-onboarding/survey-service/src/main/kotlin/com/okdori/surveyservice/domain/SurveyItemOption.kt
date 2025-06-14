@@ -33,8 +33,5 @@ class SurveyItemOption(
     var optionName = ""
 
     @Column(nullable = false, columnDefinition = "BOOLEAN")
-    var isOtherOption = false
-
-    @Column(nullable = false, columnDefinition = "BOOLEAN")
     var isDeleted = false
 }

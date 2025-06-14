@@ -46,4 +46,7 @@ class SurveyItem(
 
     @Column(nullable = false, columnDefinition = "BOOLEAN")
     var isDeleted = false
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN")
+    var hasOtherOption = false
 }

@@ -12,6 +12,7 @@ create table t_survey_item (
     survey_id CHAR(13),
     created_date timestamp(6),
     last_modified_date timestamp(6),
+    has_other_option BOOLEAN not null,
     is_deleted BOOLEAN not null,
     is_required BOOLEAN not null,
     item_description VARCHAR(2000),
@@ -27,7 +28,6 @@ create table t_survey_item_option (
     created_date timestamp(6),
     last_modified_date timestamp(6),
     is_deleted BOOLEAN not null,
-    is_other_option BOOLEAN not null,
     option_name VARCHAR(200) not null,
     primary key (option_id),
     foreign key (item_id) references t_survey_item
