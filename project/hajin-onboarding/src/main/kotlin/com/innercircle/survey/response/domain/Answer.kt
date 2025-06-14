@@ -36,6 +36,13 @@ class Answer private constructor(
     )
     @Column(name = "choice_id")
     val selectedChoiceIds: MutableSet<UUID> = mutableSetOf(),
+    @ElementCollection
+    @CollectionTable(
+        name = "ANSWER_CHOICE_TEXTS",
+        joinColumns = [JoinColumn(name = "answer_id")],
+    )
+    @Column(name = "choice_text")
+    val selectedChoiceTexts: MutableSet<String> = mutableSetOf(),
 ) : BaseEntity() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "response_id")
@@ -120,6 +127,7 @@ class Answer private constructor(
             questionTitle: String,
             questionType: QuestionType,
             selectedChoiceIds: Set<UUID>,
+            selectedChoiceTexts: Set<String> = emptySet(),
         ): Answer {
             require(questionType.isChoiceType()) { 
                 "선택지 응답은 선택형 질문에만 가능합니다." 
@@ -132,6 +140,7 @@ class Answer private constructor(
                     questionType = questionType,
                 )
             answer.selectedChoiceIds.addAll(selectedChoiceIds)
+            answer.selectedChoiceTexts.addAll(selectedChoiceTexts)
             answer.validateAnswer()
             return answer
         }

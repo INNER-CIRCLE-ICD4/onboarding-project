@@ -32,7 +32,10 @@ interface ResponseJpaRepository : JpaRepository<Response, UUID> {
 
     @Query(
         """
-        SELECT r FROM Response r 
+        SELECT DISTINCT r FROM Response r 
+        LEFT JOIN FETCH r._answers a
+        LEFT JOIN FETCH a.selectedChoiceIds
+        LEFT JOIN FETCH a.selectedChoiceTexts
         WHERE r.survey.id = :surveyId 
         ORDER BY r.createdAt DESC
     """,
@@ -44,7 +47,9 @@ interface ResponseJpaRepository : JpaRepository<Response, UUID> {
     @Query(
         value = """
         SELECT DISTINCT r FROM Response r 
-        LEFT JOIN FETCH r._answers 
+        LEFT JOIN FETCH r._answers a
+        LEFT JOIN FETCH a.selectedChoiceIds
+        LEFT JOIN FETCH a.selectedChoiceTexts
         WHERE r.survey.id = :surveyId
         ORDER BY r.createdAt DESC
     """,
@@ -72,4 +77,6 @@ interface ResponseJpaRepository : JpaRepository<Response, UUID> {
         @Param("surveyId") surveyId: UUID,
         pageable: Pageable,
     ): Page<ResponseSummaryProjection>
+
+
 }

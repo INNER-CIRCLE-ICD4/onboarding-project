@@ -1,6 +1,7 @@
 package com.innercircle.survey.response.adapter.out.persistence
 
 import com.innercircle.survey.response.adapter.out.persistence.dto.ResponseSummaryProjection
+import com.innercircle.survey.response.application.port.`in`.ResponseUseCase.ResponseSearchCriteria
 import com.innercircle.survey.response.application.port.out.ResponseRepository
 import com.innercircle.survey.response.domain.Response
 import org.springframework.data.domain.Page
@@ -36,5 +37,16 @@ class ResponsePersistenceAdapter(
         pageable: Pageable,
     ): Page<ResponseSummaryProjection> {
         return responseJpaRepository.findResponseSummariesBySurveyId(surveyId, pageable)
+    }
+
+    override fun searchResponsesByCriteria(
+        criteria: ResponseSearchCriteria,
+        pageable: Pageable,
+    ): Page<Response> {
+        // 일단 기본 쿼리만 사용
+        return responseJpaRepository.findBySurveyIdWithAnswers(
+            surveyId = criteria.surveyId,
+            pageable = pageable,
+        )
     }
 }

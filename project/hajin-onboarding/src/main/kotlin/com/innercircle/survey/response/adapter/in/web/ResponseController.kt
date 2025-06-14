@@ -107,7 +107,9 @@ class ResponseController(
 
     @Operation(
         summary = "설문조사별 응답 목록 조회",
-        description = "특정 설문조사에 대한 응답 목록을 페이징하여 조회합니다. summary=true 파라미터로 요약 정보만 조회할 수 있습니다.",
+        description = "특정 설문조사에 대한 응답 목록을 페이징하여 조회합니다. " +
+                "summary=true 파라미터로 요약 정보만 조회할 수 있습니다. " +
+                "questionTitle과 answerValue 파라미터로 특정 항목의 응답을 검색할 수 있습니다.",
     )
     @ApiResponses(
         value = [
@@ -129,10 +131,15 @@ class ResponseController(
         @Valid pageRequest: PageRequest,
         @Parameter(description = "요약 정보만 조회할지 여부 (기본값: false)")
         @RequestParam(required = false, defaultValue = "false") summary: Boolean,
+        @Parameter(description = "검색할 질문 제목 (부분 일치)")
+        @RequestParam(required = false) questionTitle: String?,
+        @Parameter(description = "검색할 응답 값 (부분 일치)")
+        @RequestParam(required = false) answerValue: String?,
     ): ResponseEntity<*> {
         logger.info { 
             "Get responses request received for survey: $surveyId, " +
-            "page=${pageRequest.page}, size=${pageRequest.size}, summary=$summary" 
+            "page=${pageRequest.page}, size=${pageRequest.size}, summary=$summary, " +
+            "questionTitle=$questionTitle, answerValue=$answerValue" 
         }
 
         val pageable = pageRequest.toPageable()
@@ -143,8 +150,17 @@ class ResponseController(
             val response = PageResponse.of(responseSummaries) { it.toSummaryDto() }
             ResponseEntity.ok(response)
         } else {
-            // 전체 정보 조회
-            val responsesPage = responseUseCase.getResponsesBySurveyId(surveyId, pageable)
+            // 전체 정보 조회 (검색 조건 포함)
+            val responsesPage = if (questionTitle != null || answerValue != null) {
+                val searchCriteria = ResponseUseCase.ResponseSearchCriteria(
+                    surveyId = surveyId,
+                    questionTitle = questionTitle,
+                    answerValue = answerValue,
+                )
+                responseUseCase.searchResponses(searchCriteria, pageable)
+            } else {
+                responseUseCase.getResponsesBySurveyId(surveyId, pageable)
+            }
             val response = PageResponse.of(responsesPage) { it.toDto() }
             ResponseEntity.ok(response)
         }

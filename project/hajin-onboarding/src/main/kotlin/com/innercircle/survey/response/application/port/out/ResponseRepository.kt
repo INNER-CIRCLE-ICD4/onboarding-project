@@ -1,6 +1,7 @@
 package com.innercircle.survey.response.application.port.out
 
 import com.innercircle.survey.response.adapter.out.persistence.dto.ResponseSummaryProjection
+import com.innercircle.survey.response.application.port.`in`.ResponseUseCase.ResponseSearchCriteria
 import com.innercircle.survey.response.domain.Response
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,4 +23,9 @@ interface ResponseRepository {
         surveyId: UUID,
         pageable: Pageable,
     ): Page<ResponseSummaryProjection>
+
+    fun searchResponsesByCriteria(
+        criteria: ResponseSearchCriteria,
+        pageable: Pageable,
+    ): Page<Response>
 }

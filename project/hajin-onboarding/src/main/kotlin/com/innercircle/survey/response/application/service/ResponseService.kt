@@ -2,6 +2,7 @@ package com.innercircle.survey.response.application.service
 
 import com.innercircle.survey.response.adapter.out.persistence.dto.ResponseSummaryProjection
 import com.innercircle.survey.response.application.port.`in`.ResponseUseCase
+import com.innercircle.survey.response.application.port.`in`.ResponseUseCase.ResponseSearchCriteria
 import com.innercircle.survey.response.application.port.`in`.ResponseUseCase.SubmitResponseCommand
 import com.innercircle.survey.response.application.port.out.ResponseRepository
 import com.innercircle.survey.response.domain.Answer
@@ -15,6 +16,7 @@ import com.innercircle.survey.survey.domain.Question
 import com.innercircle.survey.survey.domain.exception.SurveyNotFoundException
 import mu.KotlinLogging
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -101,6 +103,69 @@ class ResponseService(
         return responseRepository.findResponseSummariesBySurveyId(surveyId, pageable)
     }
 
+    @Transactional(readOnly = true)
+    override fun searchResponses(
+        criteria: ResponseSearchCriteria,
+        pageable: Pageable,
+    ): Page<Response> {
+        logger.debug { 
+            "Searching responses for survey: ${criteria.surveyId}, " +
+            "questionTitle=${criteria.questionTitle}, answerValue=${criteria.answerValue}, " +
+            "page=${pageable.pageNumber}, size=${pageable.pageSize}" 
+        }
+
+        // 설문조사 존재 여부 확인
+        surveyRepository.findById(criteria.surveyId)
+            ?: throw SurveyNotFoundException(criteria.surveyId)
+
+        // 전체 응답을 가져와서 메모리에서 필터링
+        val allResponses = responseRepository.findBySurveyId(criteria.surveyId)
+        
+        // 검색 조건이 없으면 페이징 적용하여 반환
+        if (criteria.questionTitle == null && criteria.answerValue == null) {
+            val start = pageable.pageNumber * pageable.pageSize
+            val end = minOf(start + pageable.pageSize, allResponses.size)
+            val pageContent = if (start < allResponses.size) {
+                allResponses.subList(start, end)
+            } else {
+                emptyList()
+            }
+            return PageImpl(pageContent, pageable, allResponses.size.toLong())
+        }
+        
+        // 필터링
+        val filteredResponses = allResponses.filter { response ->
+            response.answers.any { answer ->
+                val matchesQuestionTitle = criteria.questionTitle?.let {
+                    answer.questionTitle.contains(it, ignoreCase = true)
+                } ?: true
+                
+                val matchesAnswerValue = criteria.answerValue?.let { searchValue ->
+                    // 텍스트 응답 검색
+                    val matchesText = answer.textValue?.contains(searchValue, ignoreCase = true) ?: false
+                    // 선택지 텍스트 검색
+                    val matchesChoice = answer.selectedChoiceTexts.any { choiceText ->
+                        choiceText.contains(searchValue, ignoreCase = true)
+                    }
+                    matchesText || matchesChoice
+                } ?: true
+                
+                matchesQuestionTitle && matchesAnswerValue
+            }
+        }
+        
+        // 페이징 적용
+        val start = pageable.pageNumber * pageable.pageSize
+        val end = minOf(start + pageable.pageSize, filteredResponses.size)
+        val pageContent = if (start < filteredResponses.size) {
+            filteredResponses.subList(start, end)
+        } else {
+            emptyList()
+        }
+        
+        return PageImpl(pageContent, pageable, filteredResponses.size.toLong())
+    }
+
     private fun validateAnswersAgainstSurvey(
         answerCommands: List<SubmitResponseCommand.AnswerCommand>,
         questions: List<Question>,
@@ -161,11 +226,18 @@ class ResponseService(
                     throw InvalidChoiceException(invalidChoiceIds)
                 }
 
+                // 선택된 선택지의 텍스트 수집
+                val selectedChoiceTexts = question.choices
+                    .filter { it.id in selectedChoiceIds }
+                    .map { it.text }
+                    .toSet()
+
                 Answer.createChoiceAnswer(
                     questionId = question.id,
                     questionTitle = question.title,
                     questionType = question.type,
                     selectedChoiceIds = selectedChoiceIds,
+                    selectedChoiceTexts = selectedChoiceTexts,
                 )
             }
             else -> throw InvalidAnswerException("알 수 없는 질문 타입: ${question.type}")

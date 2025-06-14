@@ -24,6 +24,12 @@ interface ResponseUseCase {
         pageable: Pageable,
     ): Page<ResponseSummaryProjection>
 
+    // 응답 검색 (항목 이름과 응답 값 기반)
+    fun searchResponses(
+        criteria: ResponseSearchCriteria,
+        pageable: Pageable,
+    ): Page<Response>
+
     data class SubmitResponseCommand(
         val surveyId: UUID,
         val respondentId: String? = null,
@@ -35,4 +41,10 @@ interface ResponseUseCase {
             val selectedChoiceIds: Set<UUID>? = null,
         )
     }
+
+    data class ResponseSearchCriteria(
+        val surveyId: UUID,
+        val questionTitle: String? = null,
+        val answerValue: String? = null,
+    )
 }
