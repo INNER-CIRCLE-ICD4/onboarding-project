@@ -2,7 +2,6 @@ package com.multi.sungwoongonboarding.forms.infrastructure;
 
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
-import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaEntity;
 import com.multi.sungwoongonboarding.questions.infrastructure.QuestionJpaEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
