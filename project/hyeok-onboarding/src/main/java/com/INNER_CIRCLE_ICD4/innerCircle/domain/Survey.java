@@ -1,6 +1,6 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +28,7 @@ public class Survey {
 
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderColumn(name = "question_order")
+    @JsonIgnore // ✅ 직렬화 무한루프 방지용
     private List<Question> questions = new ArrayList<>();
 
     public Survey(String title, String description) {

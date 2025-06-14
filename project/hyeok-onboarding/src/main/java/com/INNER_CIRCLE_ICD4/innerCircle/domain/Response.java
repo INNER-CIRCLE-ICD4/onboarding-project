@@ -1,5 +1,6 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore; // ✅ 추가
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +20,11 @@ public class Response {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_id")
+    @JsonIgnore // ✅ 프록시 직렬화 문제 해결
     private Survey survey;
 
     @Lob
-    private String surveySnapshot; // ✅ 누락된 부분 추가
+    private String surveySnapshot;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
