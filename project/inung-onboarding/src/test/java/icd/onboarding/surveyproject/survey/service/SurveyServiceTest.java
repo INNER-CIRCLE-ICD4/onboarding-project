@@ -1,31 +1,59 @@
 package icd.onboarding.surveyproject.survey.service;
 
-import icd.onboarding.surveyproject.common.NotImplementedTestException;
+import icd.onboarding.surveyproject.survey.fixtures.SurveyFixtures;
+import icd.onboarding.surveyproject.survey.repository.SurveyRepository;
+import icd.onboarding.surveyproject.survey.service.domain.Option;
+import icd.onboarding.surveyproject.survey.service.domain.Question;
+import icd.onboarding.surveyproject.survey.service.domain.Survey;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(MockitoExtension.class)
 class SurveyServiceTest {
+	@InjectMocks
+	private SurveyService sut;
+
+	@Mock
+	private SurveyRepository surveyRepository;
 
 	@Nested
 	class CreateSurvey {
-
 		@Test
-		@DisplayName("설문 조사의 이름, 설명, 질문의 값이 없는 경우 IllegalArgumentException을 반환 한다.")
-		void test1 () {
-			throw new NotImplementedTestException();
-		}
+		@DisplayName("설문 조사를 생성할 수 있어야 한다.")
+		void shouldCreateSurveyWithValidInput () {
+			// given
+			Survey survey = SurveyFixtures.basicSurvey();
 
-		@Test
-		@DisplayName("질문의 수가 없는 경우 InSufficientQuestionsException을 반환 한다.")
-		void test2 () {
-			throw new NotImplementedTestException();
-		}
+			// when
+			Mockito.when(surveyRepository.save(survey)).thenReturn(survey);
+			Survey created = sut.createSurvey(survey);
 
-		@Test
-		@DisplayName("질문의 수가 10개를 초과한 경우 MaxQuestionLimitExceededException을 반환 한다.")
-		void test3 () {
-			throw new NotImplementedTestException();
+			// then
+			assertEquals(survey.getId(), created.getId());
+			assertEquals(1, created.getVersion());
+			assertEquals(survey.getQuestions().size(), created.getQuestions().size());
 		}
+	}
+
+	@Nested
+	class UpdateSurvey {
+
+	}
+
+	@Nested
+	class SubmitResponse {
+
 	}
 }

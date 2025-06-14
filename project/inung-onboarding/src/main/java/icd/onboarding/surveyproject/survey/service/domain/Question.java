@@ -18,7 +18,7 @@ public class Question {
 	private final boolean required;
 	private final Integer sortOrder;
 
-	private List<Option> options = Collections.emptyList();
+	private final List<Option> options;
 
 	private static final int MAX_OPTION_COUNT = 10;
 
@@ -36,7 +36,7 @@ public class Question {
 		this.options = List.copyOf(options);
 	}
 
-	public static Question create (String name, String description, String inputType, Boolean required, Integer sortOrder, List<Option> options) {
+	public static Question create (String name, String description, String inputType, boolean required, Integer sortOrder, List<Option> options) {
 		if (!InputType.contains(inputType))
 			throw new InvalidInputTypeException();
 
