@@ -43,13 +43,22 @@ public class QuestionJpaEntity extends BaseEntity {
     private List<OptionsJpaEntity> options = new ArrayList<>();
 
 
-    public static QuestionJpaEntity fromDomain(Questions questions) {
+    public static QuestionJpaEntity fromDomain(Questions question) {
 
         QuestionJpaEntity questionJpaEntity = new QuestionJpaEntity();
-        questionJpaEntity.id = questions.getId();
-        questionJpaEntity.questionText = questions.getQuestionText();
-        questionJpaEntity.questionType = questions.getQuestionType().name();
-        questionJpaEntity.isRequired = questions.isRequired();
+        questionJpaEntity.id = question.getId();
+        questionJpaEntity.questionText = question.getQuestionText();
+        questionJpaEntity.questionType = question.getQuestionType().name();
+        questionJpaEntity.isRequired = question.isRequired();
+
+        if (question.getOptions() != null && !question.getOptions().isEmpty()) {
+            question.getOptions().forEach(options -> {
+                OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
+                optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
+            });
+        }
+
+
         return questionJpaEntity;
     }
 

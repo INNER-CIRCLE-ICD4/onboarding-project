@@ -44,14 +44,6 @@ public class FormsJpaEntity extends BaseEntity {
 
                 QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
                 questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
-
-                if (question.getOptions() != null && !question.getOptions().isEmpty()) {
-                    question.getOptions().forEach(options -> {
-
-                        OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
-                        optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
-                    });
-                }
             });
         }
 
@@ -68,13 +60,6 @@ public class FormsJpaEntity extends BaseEntity {
             form.getQuestions().forEach(question -> {
                 QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
                 questionJpaEntity.mappingFormJpaEntity(this);
-                if (question.getOptions() != null && !question.getOptions().isEmpty()) {
-                    question.getOptions().forEach(options -> {
-
-                        OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
-                        optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
-                    });
-                }
             });
         }
     }
