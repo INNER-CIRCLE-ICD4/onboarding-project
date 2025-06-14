@@ -69,11 +69,3 @@ src/
 - JDBC URL: `jdbc:h2:mem:testdb`, 사용자: `sa`
 - `ddl-auto: update` 설정으로 Entity 기반 자동 테이블 생성
 
----
-
-필요하다면 `docs/api-spec.md` 파일 만들어서 **API 스펙 문서화**도 가능하고,  
-ERD나 구조도 이미지도 `/docs/img` 폴더 만들어서 넣으면 좋아.
-
----
-
-**👉 지금 바로 `/docs/architecture.md` 파일로 만들고 싶은 거면**, 내가 마크다운 파일 생성해줄게. 원할까?

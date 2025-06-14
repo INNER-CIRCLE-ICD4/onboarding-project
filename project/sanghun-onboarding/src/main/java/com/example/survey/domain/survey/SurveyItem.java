@@ -6,10 +6,14 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,20 +22,26 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 기본 생성자 필수
-public class Item {
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;				// 아이디
+public class SurveyItem {
+
+	@EmbeddedId
+	private SurveyItemId surveyItemId;	// 설문조사 항목 복합키( 설문조사 항목 아이디, 설문조사 항목 순번(이력))
+
+    private String name;				// 설문조사 항목 이름
+
+    private String description;			// 설문조사 항목 설명
+
+    @ManyToOne
+    private Survey survey;				// 설문조사 클래스
     
-    private int sn;					// 순번(이력관리)
+    @Enumerated(EnumType.STRING)
+    private InputType inputType; 		// 항목 입력 형태 (단답형, 장문형, 단일 선택, 다중 선택)
 
-    private String name;			// 설문조사 이름
-
-    private String description;		// 설문조사 설명
-
-    @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Item> items = new ArrayList<>();
-
+    private String selectList;			// 항목 후보 리스트
+    	
+    private String reqYn;				// 항목 필수값 표시
+    
+    private String deleteYn;			// 항목 삭제 여부
     
     /**
      * @Column 생략 가능 
