@@ -1,5 +1,6 @@
 package icd.onboarding.surveyproject.service.enums;
 
+// 차후 Controller의 ErrorCodes 생성 시 합칠 예정
 public enum QuestionErrors {
 	INVALID_SURVEY_INFO("설문에 대한 정보가 없습니다."),
 	EMPTY_QUESTION_INFO("질문 제목 및 설명은 필수 입력 값 입니다."),
