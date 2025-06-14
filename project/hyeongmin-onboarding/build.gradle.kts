@@ -36,6 +36,8 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    implementation("cn.hutool:hutool-core:5.8.11")
+
     // Jackson JSR-310
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     // QueryDSL
@@ -43,6 +45,7 @@ dependencies {
     annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jakarta")
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+
 }
 
 tasks.withType<Test> {

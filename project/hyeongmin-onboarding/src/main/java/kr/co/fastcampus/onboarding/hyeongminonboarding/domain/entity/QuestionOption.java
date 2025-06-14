@@ -11,15 +11,14 @@ import lombok.*;
  * - 질문 문항 테이블 (Optional)
  */
 @EqualsAndHashCode(callSuper = true)
-@Entity
 @Table(name = "question_option")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Builder
 public class QuestionOption extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
