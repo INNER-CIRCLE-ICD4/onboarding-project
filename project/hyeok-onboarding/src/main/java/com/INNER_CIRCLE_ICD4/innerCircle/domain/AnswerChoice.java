@@ -1,7 +1,9 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
@@ -23,6 +25,11 @@ public class AnswerChoice {
     private Choice choice;
 
     public AnswerChoice(Choice choice) {
+        this.choice = choice;
+    }
+
+    public AnswerChoice(Answer answer, Choice choice) {
+        this.answer = answer;
         this.choice = choice;
     }
 
