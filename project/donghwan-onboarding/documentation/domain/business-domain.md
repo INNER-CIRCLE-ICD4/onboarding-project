@@ -10,16 +10,16 @@ Survey
 SurveyVersion
 - id: Long
 - surveyId: Long
+- sequecne: Integer
 - title: String
 - description: String
-- versionNumber: Integer
 - createdAt: LocalDateTime
 ```
 ```
 QuestionItem
 - id: Long
 - surveyVersionId: Long
-- isRequired: Boolean
+- required: Boolean
 - order: Integer
 - title: String
 - description: String
@@ -48,6 +48,6 @@ SurveySubmissionSearch
 - surveyId: Long
 - surveyVersionId: Long
 - surveySubmissionId: Long
-- contentType: String(Enum: Answer, Question)
-- content: String
+- contentOrigin: String(Enum: QEUSTION)
+- contentValue: String
 ```
