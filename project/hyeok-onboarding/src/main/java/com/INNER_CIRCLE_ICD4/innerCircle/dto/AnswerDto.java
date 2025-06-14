@@ -8,21 +8,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public record AnswerDto(
-        UUID id,
         UUID questionId,
-        String textValue,
-        List<UUID> selectedChoiceIds
-) {
-    public static AnswerDto from(Answer answer) {
-        List<UUID> choiceIds = answer.getChoices().stream()
-                .map(ac -> ac.getChoice().getId())
-                .collect(Collectors.toList());
+        String text,
+        List<String> selected
+) {}
 
-        return new AnswerDto(
-                answer.getId(),
-                answer.getQuestion().getId(),
-                answer.getTextValue(),
-                choiceIds
-        );
-    }
-}

@@ -1,10 +1,7 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore; // ✅ 추가
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,29 +15,17 @@ public class Response {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "survey_id")
-    @JsonIgnore // ✅ 프록시 직렬화 문제 해결
+    @ManyToOne(optional = false)
     private Survey survey;
 
-    @Lob
-    private String surveySnapshot;
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "response", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "response",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Answer> answers = new ArrayList<>();
 
-    public Response(Survey survey, String surveySnapshot) {
+    public Response(Survey survey) {
         this.survey = survey;
-        this.surveySnapshot = surveySnapshot;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.setResponse(this);
-        this.answers.add(answer);
     }
 }
