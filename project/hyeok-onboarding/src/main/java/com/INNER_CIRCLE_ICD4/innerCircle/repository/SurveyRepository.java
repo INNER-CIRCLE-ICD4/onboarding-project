@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface SurveyRepository extends JpaRepository<Survey, UUID> {
-    // 추가 메서드는 필요 시 여기에 작성
+
 }

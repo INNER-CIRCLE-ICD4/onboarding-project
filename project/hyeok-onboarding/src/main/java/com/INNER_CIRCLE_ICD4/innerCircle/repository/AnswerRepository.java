@@ -1,4 +1,5 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.repository;
+
 import com.INNER_CIRCLE_ICD4.innerCircle.domain.Answer;
 import org.springframework.data.jpa.repository.JpaRepository;
 

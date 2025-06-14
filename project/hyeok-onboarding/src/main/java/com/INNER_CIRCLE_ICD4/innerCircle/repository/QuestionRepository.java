@@ -1,4 +1,8 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.repository;
+<<<<<<< hyeok-onboarding-Entity
+
+=======
+>>>>>>> hyeok-onboarding-setting
 import com.INNER_CIRCLE_ICD4.innerCircle.domain.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 
