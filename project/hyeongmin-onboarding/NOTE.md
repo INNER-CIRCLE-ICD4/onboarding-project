@@ -38,3 +38,15 @@
 > SnowflakeIdAspect 삭제 후 SnowflakeIdListener 생성
 
 
+# 2025-06-11 [v0.0.2]
+## fixed
+- JPA 의 연관관게 (OneToMany) 사용하지 않도록 다시 모델링 작업함
+- 만든 모델링으로 전체적인 데이터 테이스 케이스 작성함
+- Snapshot 기반 데이터 체계 구현
+  - 설문조사 업데이트 시, Survey Version UP
+  - 모든 설문조사 응답 제출시, 질문과 응답은 각각 스냅샷으로 변경되어 디비에 저장
+  - 설문조사 응답을 조회하면 각각의 응답은 기존 질문과 응답을 스냅샷으로 가지고있음
+- DTO 기반 데이터 조립 Assembler 생성
+  - 모든 Entity의 조립은 Assembler 에서 담당하도록 함
+- 설문조사 제출시, 각각의 응답에는 질문타입이 있으므로 타입별 validation 체크와 Entity 조립을 위해 AnswerHandler 인터페이스 추가
+  - 추후 설문조사 응답에 타입이 추가되더라도 구현체를 하나 추가하면 되도록 함

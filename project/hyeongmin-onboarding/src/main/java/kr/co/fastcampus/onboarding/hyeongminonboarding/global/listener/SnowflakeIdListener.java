@@ -1,4 +1,4 @@
-package kr.co.fastcampus.onboarding.hyeongminonboarding.global.aop;
+package kr.co.fastcampus.onboarding.hyeongminonboarding.global.listener;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;

@@ -36,14 +36,6 @@ public class Question extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private QuestionType type;
 
-    private boolean required; // 필수 여부
+    private boolean required;
 
-    /**
-     * 하나의 질문에는 여러개 질문 옵션이 있을 수 있다. (Optional)
-     * QuestionType
-     *  -  SINGLE_CHOICE
-     *  -  MULTIPLE_CHOICE
-     */
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionOption> options;
 }
