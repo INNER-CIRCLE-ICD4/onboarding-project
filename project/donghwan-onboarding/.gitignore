@@ -1,0 +1,47 @@
+# IntelliJ IDEA 관련 설정
+.idea/
+*.iml
+*.iws
+out/
+
+# 운영체제 관련 파일
+.DS_Store
+Thumbs.db
+
+# 로그 파일
+*.log
+
+# Kotlin/Java 빌드 결과물
+*.class
+*.jar
+*.war
+*.ear
+
+# 환경 변수 및 설정 파일
+.env
+*.local
+
+# Kotlin annotation processing
+kaptGenerated/
+
+# 테스트 결과물
+test-results/
+test-output/
+
+# Spring Boot-specific
+.spring-boot-devtools.properties
+
+# 임시 및 백업 파일
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# VS Code 프로젝트 설정 (optional)
+.vscode/
+
+# Gradle 관련 파일
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar        # Gradle Wrapper 실행 파일 포함
+!gradle/wrapper/gradle-wrapper.properties # Gradle Wrapper 설정 파일 포함

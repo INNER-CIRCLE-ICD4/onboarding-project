@@ -1,0 +1,6 @@
+| 필드명                 | 타입                                                                  | 필수 | 제약조건                                                                    |
+|---------------------|---------------------------------------------------------------------|----|-------------------------------------------------------------------------|
+| questionTitle       | String                                                              | 필수 | -                                                                       |
+| questionDescription | String                                                              | 필수 | -                                                                       |
+| questionType        | String                                                              | 필수 | • SHORT_ANSWER<br>• LONG_ANSWER<br>• SINGLE_CHOICE<br>• MULTIPLE_CHOICE |
+| questionContent     | • String<br> [• List[Object]](./SurveySubmissionChoiceOptionDto.md) | 필수 | -                                                                       |
