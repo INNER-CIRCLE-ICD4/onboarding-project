@@ -85,6 +85,10 @@ src/main/kotlin/com/innercircle/survey/
 - `GET /api/v1/surveys/{surveyId}/responses`
 - 특정 설문조사의 응답 목록을 페이징하여 조회합니다.
 - `?summary=true` 파라미터로 요약 정보만 조회 가능
+- **검색 기능 (Advanced)**:
+  - `?questionTitle=검색어` - 질문 제목으로 검색 (부분 일치)
+  - `?answerValue=검색어` - 응답 값으로 검색 (텍스트 응답 및 선택지 텍스트 부분 일치)
+  - 두 파라미터를 함께 사용하여 AND 조건 검색 가능
 
 자세한 API 명세는 [API 문서](docs/)를 참고하시거나 실행 후 `/swagger-ui.html`에서 확인하세요.
 

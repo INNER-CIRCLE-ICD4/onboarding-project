@@ -90,7 +90,7 @@ class Survey private constructor(
             require(description.isNotBlank()) {
                 "설문조사 설명은 필수입니다."
             }
-            
+
             if (questions.size > MAX_QUESTIONS) {
                 throw SurveyItemLimitExceededException(questions.size, MAX_QUESTIONS)
             }

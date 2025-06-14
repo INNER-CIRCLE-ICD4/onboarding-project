@@ -94,7 +94,7 @@ class SurveyTest : DescribeSpec({
                             title = "설문조사",
                             description = "설명",
                         )
-                    
+
                     val question =
                         Question.create(
                             title = "질문",
@@ -115,7 +115,7 @@ class SurveyTest : DescribeSpec({
                             title = "설문조사",
                             description = "설명",
                         )
-                    
+
                     repeat(10) {
                         survey.addQuestion(
                             Question.create(

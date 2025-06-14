@@ -10,7 +10,6 @@ import com.innercircle.survey.survey.domain.exception.SurveyNotFoundException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -28,14 +27,16 @@ class ResponseServiceTest : DescribeSpec({
 
             context("존재하는 응답 ID가 주어졌을 때") {
                 val responseId = UUID.randomUUID()
-                val mockSurvey = mockk<Survey> {
-                    every { id } returns UUID.randomUUID()
-                    every { title } returns "Test Survey"
-                }
-                val mockResponse = mockk<Response> {
-                    every { id } returns responseId
-                    every { survey } returns mockSurvey
-                }
+                val mockSurvey =
+                    mockk<Survey> {
+                        every { id } returns UUID.randomUUID()
+                        every { title } returns "Test Survey"
+                    }
+                val mockResponse =
+                    mockk<Response> {
+                        every { id } returns responseId
+                        every { survey } returns mockSurvey
+                    }
 
                 it("응답을 반환해야 한다") {
                     every { responseRepository.findById(responseId) } returns mockResponse
@@ -65,16 +66,18 @@ class ResponseServiceTest : DescribeSpec({
                 val responseRepository = mockk<ResponseRepository>()
                 val surveyRepository = mockk<SurveyRepository>()
                 val service = ResponseService(responseRepository, surveyRepository)
-                
+
                 val surveyId = UUID.randomUUID()
                 val pageable = PageRequest.of(0, 10)
-                val mockSurvey = mockk<Survey> {
-                    every { id } returns surveyId
-                }
-                val mockResponses = listOf(
-                    mockk<Response>(),
-                    mockk<Response>()
-                )
+                val mockSurvey =
+                    mockk<Survey> {
+                        every { id } returns surveyId
+                    }
+                val mockResponses =
+                    listOf(
+                        mockk<Response>(),
+                        mockk<Response>(),
+                    )
                 val page = PageImpl(mockResponses, pageable, 2)
 
                 it("페이징된 응답 목록을 반환해야 한다") {
@@ -94,7 +97,7 @@ class ResponseServiceTest : DescribeSpec({
                 val responseRepository = mockk<ResponseRepository>(relaxed = true)
                 val surveyRepository = mockk<SurveyRepository>()
                 val service = ResponseService(responseRepository, surveyRepository)
-                
+
                 val surveyId = UUID.randomUUID()
                 val pageable = PageRequest.of(0, 10)
 
@@ -119,27 +122,29 @@ class ResponseServiceTest : DescribeSpec({
             context("존재하는 설문조사 ID로 요약 조회할 때") {
                 val surveyId = UUID.randomUUID()
                 val pageable = PageRequest.of(0, 10)
-                val mockSurvey = mockk<Survey> {
-                    every { id } returns surveyId
-                }
-                val mockSummaries = listOf(
-                    ResponseSummaryProjection(
-                        id = UUID.randomUUID(),
-                        surveyId = surveyId,
-                        surveyVersion = 1,
-                        respondentId = "user1",
-                        createdAt = LocalDateTime.now(),
-                        answerCount = 5
-                    ),
-                    ResponseSummaryProjection(
-                        id = UUID.randomUUID(),
-                        surveyId = surveyId,
-                        surveyVersion = 1,
-                        respondentId = "user2",
-                        createdAt = LocalDateTime.now(),
-                        answerCount = 3
+                val mockSurvey =
+                    mockk<Survey> {
+                        every { id } returns surveyId
+                    }
+                val mockSummaries =
+                    listOf(
+                        ResponseSummaryProjection(
+                            id = UUID.randomUUID(),
+                            surveyId = surveyId,
+                            surveyVersion = 1,
+                            respondentId = "user1",
+                            createdAt = LocalDateTime.now(),
+                            answerCount = 5,
+                        ),
+                        ResponseSummaryProjection(
+                            id = UUID.randomUUID(),
+                            surveyId = surveyId,
+                            surveyVersion = 1,
+                            respondentId = "user2",
+                            createdAt = LocalDateTime.now(),
+                            answerCount = 3,
+                        ),
                     )
-                )
                 val page = PageImpl(mockSummaries, pageable, 2)
 
                 it("페이징된 응답 요약 목록을 반환해야 한다") {

@@ -97,7 +97,7 @@ class Question private constructor(
         require(type.isChoiceType()) {
             "${type.description} 타입은 선택지를 가질 수 없습니다."
         }
-        
+
         if (!canAddMoreChoices()) {
             throw SurveyChoiceLimitExceededException(_choices.size + 1, MAX_CHOICES)
         }
