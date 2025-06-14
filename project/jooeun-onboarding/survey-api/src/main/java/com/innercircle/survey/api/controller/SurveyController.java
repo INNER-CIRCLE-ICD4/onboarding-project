@@ -88,31 +88,7 @@ public class SurveyController {
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = CreateSurveyRequest.class),
-                            examples = @ExampleObject(
-                                    name = "고객 만족도 조사 예시",
-                                    value = """
-                                    {
-                                        "title": "2024년 고객 만족도 조사",
-                                        "description": "고객 서비스 개선을 위한 만족도 조사입니다.",
-                                        "questions": [
-                                            {
-                                                "title": "전반적인 서비스에 만족하십니까?",
-                                                "description": "서비스 전반에 대한 만족도를 평가해 주세요.",
-                                                "questionType": "SINGLE_CHOICE",
-                                                "required": true,
-                                                "options": ["매우 불만족", "불만족", "보통", "만족", "매우 만족"]
-                                            },
-                                            {
-                                                "title": "개선사항이나 의견을 자유롭게 작성해 주세요.",
-                                                "description": "더 나은 서비스를 위한 소중한 의견을 들려주세요.",
-                                                "questionType": "LONG_TEXT",
-                                                "required": false
-                                            }
-                                        ]
-                                    }
-                                    """
-                            )
+                            schema = @Schema(implementation = CreateSurveyRequest.class)
                     )
             )
             @Valid @RequestBody CreateSurveyRequest request) {

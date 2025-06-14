@@ -35,28 +35,24 @@ public class SurveyService {
     @Transactional
     public SurveyResponse createSurvey(CreateSurveyRequest request) {
         log.info("설문조사 생성 시작 - 제목: {}, 질문 수: {}", request.getTitle(), request.getQuestions().size());
-        
-        try {
-            // 1. 설문조사 기본 정보 생성
-            Survey survey = new Survey(request.getTitle(), request.getDescription());
-            
-            // 2. 설문 항목들 생성 및 추가
-            List<SurveyQuestion> questions = createQuestions(request.getQuestions());
-            for (SurveyQuestion question : questions) {
-                survey.addQuestion(question);
-            }
-            
-            // 3. 설문조사 저장
-            Survey savedSurvey = surveyRepository.save(survey);
-            
-            log.info("설문조사 생성 완료 - ID: {}, 제목: {}", savedSurvey.getId(), savedSurvey.getTitle());
-            
-            return new SurveyResponse(savedSurvey);
-            
-        } catch (Exception e) {
-            log.error("설문조사 생성 실패 - 제목: {}, 오류: {}", request.getTitle(), e.getMessage(), e);
-            throw new RuntimeException("설문조사 생성에 실패했습니다: " + e.getMessage(), e);
+
+        // 1. 설문조사 기본 정보 생성
+        Survey survey = new Survey(request.getTitle(), request.getDescription());
+
+        // 2. 설문 항목들 생성 및 추가
+        List<SurveyQuestion> questions = createQuestions(request.getQuestions());
+        for (SurveyQuestion question : questions) {
+            survey.addQuestion(question);
         }
+
+        // 3. 설문조사 저장
+        Survey savedSurvey = surveyRepository.save(survey);
+
+        log.info("설문조사 생성 완료 - ID: {}, 제목: {}", savedSurvey.getId(), savedSurvey.getTitle());
+
+        return new SurveyResponse(savedSurvey);
+            
+
     }
 
     /**
