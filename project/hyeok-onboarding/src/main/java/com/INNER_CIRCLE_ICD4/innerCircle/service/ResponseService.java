@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -21,7 +22,7 @@ public class ResponseService {
     private final ResponseRepository responseRepository;
 
     @Transactional
-    public ResponseDto saveResponse(ResponseRequest req) {
+    public UUID saveResponse(ResponseRequest req) {
         Survey survey = surveyRepository.findById(req.surveyId())
                 .orElseThrow(() -> new ResourceNotFoundException("설문이 존재하지 않습니다."));
 
@@ -40,15 +41,7 @@ public class ResponseService {
         }
 
         Response saved = responseRepository.save(resp);
-        List<AnswerDto> dtoAnswers = saved.getAnswers().stream()
-                .map(a -> new AnswerDto(
-                        a.getQuestion().getId(),
-                        a.getText(),
-                        a.getSelectedOptions()
-                ))
-                .collect(toList());
-
-        return new ResponseDto(saved.getId(), survey.getId(), dtoAnswers);
+        return saved.getId();
     }
 
     @Transactional(readOnly = true)
