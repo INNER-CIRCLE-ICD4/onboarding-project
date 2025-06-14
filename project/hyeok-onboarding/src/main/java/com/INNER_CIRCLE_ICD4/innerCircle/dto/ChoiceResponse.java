@@ -7,4 +7,3 @@ public record ChoiceResponse(
         String text,
         int choiceIndex
 ) {}
-
