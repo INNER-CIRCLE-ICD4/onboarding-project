@@ -1,4 +1,4 @@
-package icd.onboarding.surveyproject.service.enums;
+package icd.onboarding.surveyproject.survey.service.enums;
 
 // 차후 Controller의 ErrorCodes 생성 시 합칠 예정
 public enum QuestionErrors {

@@ -1,7 +1,8 @@
-package icd.onboarding.surveyproject.service.domain;
+package icd.onboarding.surveyproject.survey.service.domain;
 
-import icd.onboarding.surveyproject.service.exception.InvalidOptionInfoException;
-import icd.onboarding.surveyproject.service.exception.NotNegativeNumberException;
+import icd.onboarding.surveyproject.survey.service.domain.Option;
+import icd.onboarding.surveyproject.survey.service.exception.InvalidOptionInfoException;
+import icd.onboarding.surveyproject.survey.service.exception.NotNegativeNumberException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

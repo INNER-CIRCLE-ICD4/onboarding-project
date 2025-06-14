@@ -1,9 +1,9 @@
-package icd.onboarding.surveyproject.service.domain;
+package icd.onboarding.surveyproject.survey.service.domain;
 
-import icd.onboarding.surveyproject.fixtures.QuestionFixtures;
-import icd.onboarding.surveyproject.service.exception.InSufficientQuestionException;
-import icd.onboarding.surveyproject.service.exception.InValidSurveyInfoException;
-import icd.onboarding.surveyproject.service.exception.MaxQuestionCountExceededException;
+import icd.onboarding.surveyproject.survey.fixtures.QuestionFixtures;
+import icd.onboarding.surveyproject.survey.service.exception.InSufficientQuestionException;
+import icd.onboarding.surveyproject.survey.service.exception.InValidSurveyInfoException;
+import icd.onboarding.surveyproject.survey.service.exception.MaxQuestionCountExceededException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

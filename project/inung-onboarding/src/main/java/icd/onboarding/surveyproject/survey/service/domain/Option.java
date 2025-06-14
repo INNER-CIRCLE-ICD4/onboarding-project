@@ -1,7 +1,7 @@
-package icd.onboarding.surveyproject.service.domain;
+package icd.onboarding.surveyproject.survey.service.domain;
 
-import icd.onboarding.surveyproject.service.exception.InvalidOptionInfoException;
-import icd.onboarding.surveyproject.service.exception.NotNegativeNumberException;
+import icd.onboarding.surveyproject.survey.service.exception.InvalidOptionInfoException;
+import icd.onboarding.surveyproject.survey.service.exception.NotNegativeNumberException;
 import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 

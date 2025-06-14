@@ -1,4 +1,4 @@
-package icd.onboarding.surveyproject.service.enums;
+package icd.onboarding.surveyproject.survey.service.enums;
 
 public enum InputType {
 	SHORT_TEXT,

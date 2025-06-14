@@ -1,8 +1,8 @@
-package icd.onboarding.surveyproject.service.domain;
+package icd.onboarding.surveyproject.survey.service.domain;
 
-import icd.onboarding.surveyproject.service.exception.InSufficientQuestionException;
-import icd.onboarding.surveyproject.service.exception.InValidSurveyInfoException;
-import icd.onboarding.surveyproject.service.exception.MaxQuestionCountExceededException;
+import icd.onboarding.surveyproject.survey.service.exception.InSufficientQuestionException;
+import icd.onboarding.surveyproject.survey.service.exception.InValidSurveyInfoException;
+import icd.onboarding.surveyproject.survey.service.exception.MaxQuestionCountExceededException;
 import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 

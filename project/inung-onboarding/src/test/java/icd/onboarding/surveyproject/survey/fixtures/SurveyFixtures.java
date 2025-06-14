@@ -1,7 +1,7 @@
-package icd.onboarding.surveyproject.fixtures;
+package icd.onboarding.surveyproject.survey.fixtures;
 
-import icd.onboarding.surveyproject.service.domain.Question;
-import icd.onboarding.surveyproject.service.domain.Survey;
+import icd.onboarding.surveyproject.survey.service.domain.Question;
+import icd.onboarding.surveyproject.survey.service.domain.Survey;
 
 import java.util.List;
 

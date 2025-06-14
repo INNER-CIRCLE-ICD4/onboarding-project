@@ -1,4 +1,4 @@
-package icd.onboarding.surveyproject.service;
+package icd.onboarding.surveyproject.survey.service;
 
 import icd.onboarding.surveyproject.common.NotImplementedTestException;
 import org.junit.jupiter.api.DisplayName;
