@@ -1,6 +1,7 @@
 package formService.adapter.port.inbound.web
 
 import formService.adapter.port.inbound.web.dto.RequestCreateSurveyFormDto
+import formService.adapter.port.inbound.web.dto.Success
 import formService.application.port.inbound.CreateSurveyFormUseCase
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -18,8 +19,8 @@ class CreateSurveyFormController(
     fun execute(
         @Valid @RequestBody
         request: RequestCreateSurveyFormDto,
-    ) {
+    ): Success<CreateSurveyFormUseCase.CreateSurveyFormId> {
         request.validConditionOptions()
-        useCase.createSurveyForm(request.toCommand())
+        return Success(message = "success", status = HttpStatus.CREATED, data = useCase.createSurveyForm(request.toCommand()))
     }
 }

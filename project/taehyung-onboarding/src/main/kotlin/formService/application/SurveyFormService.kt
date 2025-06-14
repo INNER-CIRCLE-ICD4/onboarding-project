@@ -14,7 +14,7 @@ class SurveyFormService(
     private val repository: SurveyFormRepository,
 ) : CreateSurveyFormUseCase {
     @Transactional
-    override fun createSurveyForm(command: CreateSurveyFormUseCase.CreateSurveyFormCommand) {
+    override fun createSurveyForm(command: CreateSurveyFormUseCase.CreateSurveyFormCommand): CreateSurveyFormUseCase.CreateSurveyFormId {
         // command convert to domain
         val surveyForm =
             SurveyForm(
@@ -40,5 +40,7 @@ class SurveyFormService(
 
         // save persist
         repository.save(surveyForm)
+
+        return CreateSurveyFormUseCase.CreateSurveyFormId(surveyForm.id)
     }
 }
