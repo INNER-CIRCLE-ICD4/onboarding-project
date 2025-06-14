@@ -29,8 +29,7 @@ public class SurveyResponse extends BaseTimeEntity {
     @JoinColumn(name = "survey_id", nullable = false)
     private Survey survey;
 
-    private LocalDateTime submittedAt;
+    private int surveyVersion;
 
-    @OneToMany(mappedBy = "response", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers;
+    private LocalDateTime submittedAt;
 }

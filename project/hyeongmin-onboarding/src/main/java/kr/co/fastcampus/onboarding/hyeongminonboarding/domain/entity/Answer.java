@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.global.entity.base.BaseTimeEntity;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,16 +31,17 @@ public class Answer extends BaseTimeEntity {
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
-    // 단답/장문형 답변인 경우
     @Column(columnDefinition = "TEXT")
     private String answerText;
 
-    // 선택형 답변인 경우
-    @ManyToMany
-    @JoinTable(
-            name = "answer_selected_options",
-            joinColumns = @JoinColumn(name = "answer_id"),
-            inverseJoinColumns = @JoinColumn(name = "option_id")
-    )
-    private List<QuestionOption> selectedOptions;
+    @ElementCollection
+    private List<Long> selectedOptionIds;
+
+    @Column(columnDefinition = "TEXT")
+    private String questionSnapshotJson;
+
+    @Column(columnDefinition = "TEXT")
+    private String optionSnapshotJson;
+
+
 }

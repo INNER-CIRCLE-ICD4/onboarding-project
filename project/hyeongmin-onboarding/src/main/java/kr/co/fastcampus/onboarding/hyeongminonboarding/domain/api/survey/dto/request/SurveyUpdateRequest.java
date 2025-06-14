@@ -3,6 +3,7 @@ package kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.re
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.enums.QuestionType;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SurveyCreateRequest {
+public class SurveyUpdateRequest {
+
+    @NotNull
+    private Long id;
 
     @NotBlank
     private String name;
@@ -25,6 +29,7 @@ public class SurveyCreateRequest {
 
     @Size(min = 1, max = 10)
     private List<QuestionSurveyRequest> questions;
+
 
     @Data
     @Builder

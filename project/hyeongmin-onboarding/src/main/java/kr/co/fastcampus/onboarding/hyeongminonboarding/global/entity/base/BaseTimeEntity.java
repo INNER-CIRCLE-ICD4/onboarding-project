@@ -3,7 +3,7 @@ package kr.co.fastcampus.onboarding.hyeongminonboarding.global.entity.base;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import kr.co.fastcampus.onboarding.hyeongminonboarding.global.aop.SnowflakeIdListener;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.global.listener.SnowflakeIdListener;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
