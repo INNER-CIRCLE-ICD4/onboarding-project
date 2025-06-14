@@ -2,7 +2,6 @@ package com.multi.sungwoongonboarding.forms.infrastructure;
 
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
-import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaEntity;
 import com.multi.sungwoongonboarding.questions.infrastructure.QuestionJpaEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -44,14 +43,6 @@ public class FormsJpaEntity extends BaseEntity {
 
                 QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
                 questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
-
-                if (question.getOptions() != null && !question.getOptions().isEmpty()) {
-                    question.getOptions().forEach(options -> {
-
-                        OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
-                        optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
-                    });
-                }
             });
         }
 
@@ -68,13 +59,6 @@ public class FormsJpaEntity extends BaseEntity {
             form.getQuestions().forEach(question -> {
                 QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
                 questionJpaEntity.mappingFormJpaEntity(this);
-                if (question.getOptions() != null && !question.getOptions().isEmpty()) {
-                    question.getOptions().forEach(options -> {
-
-                        OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
-                        optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
-                    });
-                }
             });
         }
     }
