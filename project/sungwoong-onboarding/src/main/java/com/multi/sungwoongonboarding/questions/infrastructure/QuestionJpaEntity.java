@@ -28,7 +28,8 @@ public class QuestionJpaEntity extends BaseEntity {
     private String questionText;
 
     @Column(name = "question_type", nullable = false)
-    private String questionType;
+    @Enumerated(EnumType.STRING)
+    private Questions.QuestionType questionType;
 
     @Column(name = "is_required", nullable = false)
     private boolean isRequired;
@@ -52,7 +53,7 @@ public class QuestionJpaEntity extends BaseEntity {
 
         QuestionJpaEntity questionJpaEntity = new QuestionJpaEntity();
         questionJpaEntity.questionText = question.getQuestionText();
-        questionJpaEntity.questionType = question.getQuestionType().name();
+        questionJpaEntity.questionType = question.getQuestionType();
         questionJpaEntity.isRequired = question.isRequired();
 
         if (question.getId() != null) {
@@ -73,7 +74,7 @@ public class QuestionJpaEntity extends BaseEntity {
         return Questions.builder()
                 .id(this.id)
                 .questionText(this.questionText)
-                .questionType(Questions.QuestionType.valueOf(this.questionType))
+                .questionType(this.questionType)
                 .version(this.version)
                 .isRequired(this.isRequired)
                 .options(this.options.stream().map(OptionsJpaEntity::toDomain).toList())
