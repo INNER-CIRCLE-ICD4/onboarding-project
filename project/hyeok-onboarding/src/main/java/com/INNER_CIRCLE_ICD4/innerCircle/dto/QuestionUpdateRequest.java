@@ -1,41 +1,26 @@
-// QuestionUpdateRequest.java
 package com.INNER_CIRCLE_ICD4.innerCircle.dto;
 
 import com.INNER_CIRCLE_ICD4.innerCircle.domain.QuestionType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.UUID;
 
-public class QuestionUpdateRequest {
-    private Long id;
-    private String title;
-    private String description;
-    private QuestionType type;
-    private boolean required;
-    private List<String> choices;
+public record QuestionUpdateRequest(
+        UUID id,
 
-    public QuestionUpdateRequest() {} // ✅ 기본 생성자 추가
+        @NotBlank(message = "질문 제목은 필수입니다.")
+        String title,
 
-    public QuestionUpdateRequest(Long id, String title, String description,
-                                 QuestionType type, boolean required, List<String> choices) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.type = type;
-        this.required = required;
-        this.choices = choices;
-    }
+        @NotBlank(message = "질문 설명은 필수입니다.")
+        String description,
 
-    // Getters & Setters
-    public Long getId() { return id; }
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public QuestionType getType() { return type; }
-    public boolean isRequired() { return required; }
-    public List<String> getChoices() { return choices; }
+        @NotNull(message = "질문 타입은 필수입니다.")
+        QuestionType type,
 
-    public void setId(Long id) { this.id = id; }
-    public void setTitle(String title) { this.title = title; }
-    public void setDescription(String description) { this.description = description; }
-    public void setType(QuestionType type) { this.type = type; }
-    public void setRequired(boolean required) { this.required = required; }
-    public void setChoices(List<String> choices) { this.choices = choices; }
-}
+        @NotNull(message = "필수 여부(required) 필드는 true/false로 지정해야 합니다.")
+        Boolean required,
+
+        @NotNull(message = "choices 필드는 null일 수 없습니다.")
+        List<@NotBlank(message = "선택지 텍스트는 비어있을 수 없습니다.") String> choices
+) {}
