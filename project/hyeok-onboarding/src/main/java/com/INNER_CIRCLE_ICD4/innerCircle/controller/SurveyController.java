@@ -6,10 +6,10 @@ import com.INNER_CIRCLE_ICD4.innerCircle.dto.SurveyUpdateRequest;
 import com.INNER_CIRCLE_ICD4.innerCircle.service.SurveyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,8 +25,9 @@ public class SurveyController {
     public ResponseEntity<SurveyResponse> createSurvey(
             @Valid @RequestBody SurveyRequest request) {
         SurveyResponse created = surveyService.createSurvey(request);
+        URI location = URI.create("/surveys/" + created.id());
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .created(location)
                 .body(created);
     }
 
