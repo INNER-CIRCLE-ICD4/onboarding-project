@@ -1,6 +1,5 @@
-package fastcampus.hyemin_onboarding;
+package fastcampus.onboarding.config;
 
-import fastcampus.onboarding.config.HyeminOnboardingApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
