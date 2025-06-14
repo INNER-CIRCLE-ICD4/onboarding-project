@@ -16,7 +16,7 @@ public class Survey {
 	private final String title;
 	private final String description;
 
-	private List<Question> questions;
+	private final List<Question> questions;
 
 	private static final int MAX_QUESTION_COUNT = 10;
 

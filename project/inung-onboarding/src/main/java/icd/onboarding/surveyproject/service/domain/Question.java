@@ -4,8 +4,6 @@ import icd.onboarding.surveyproject.service.enums.InputType;
 import icd.onboarding.surveyproject.service.exception.*;
 import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,14 +11,14 @@ import java.util.UUID;
 @Getter
 public class Question {
 	private Survey survey;
-	private @Nullable UUID id;
-	private @NotNull String name;
-	private @NotNull String description;
-	private @NotNull InputType inputType;
-	private @Nullable Boolean required;
-	private @NotNull Integer sortOrder;
+	private final UUID id;
+	private final String name;
+	private final String description;
+	private final InputType inputType;
+	private final Boolean required;
+	private final Integer sortOrder;
 
-	private @Nullable List<Option> options;
+	private final List<Option> options;
 
 	private static final int MAX_OPTION_COUNT = 10;
 
