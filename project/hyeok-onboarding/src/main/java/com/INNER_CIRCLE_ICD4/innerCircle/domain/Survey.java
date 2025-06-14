@@ -21,32 +21,51 @@ public class Survey {
     private String title;
     private String description;
 
+    @Version
     private int version = 1;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "survey",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     @OrderColumn(name = "question_order")
-    @JsonIgnore // ✅ 직렬화 무한루프 방지용
+    @JsonIgnore // 직렬화 무한 루프 방지
     private List<Question> questions = new ArrayList<>();
 
     public Survey(String title, String description) {
         this.title = title;
         this.description = description;
-        this.createdAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+        this.version++;
     }
 
     public void update(String title, String description) {
         this.title = title;
         this.description = description;
-        this.version += 1;
-        this.updatedAt = LocalDateTime.now();
     }
 
     public void addQuestion(Question question) {
         question.setSurvey(this);
         this.questions.add(question);
+    }
+
+    public void replaceQuestions(List<Question> newQuestions) {
+        this.questions.clear();
+        newQuestions.forEach(this::addQuestion);
     }
 }

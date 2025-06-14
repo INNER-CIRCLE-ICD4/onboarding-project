@@ -6,6 +6,7 @@ import com.INNER_CIRCLE_ICD4.innerCircle.dto.SurveyUpdateRequest;
 import com.INNER_CIRCLE_ICD4.innerCircle.service.SurveyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,9 @@ public class SurveyController {
     public ResponseEntity<SurveyResponse> createSurvey(
             @Valid @RequestBody SurveyRequest request) {
         SurveyResponse created = surveyService.createSurvey(request);
-        return ResponseEntity.ok(created);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(created);
     }
 
     // ─── 2) 전체 설문 조회 ───────────────────────────────────────────────────────
