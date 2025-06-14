@@ -1,7 +1,5 @@
 package icd.onboarding.surveyproject.survey.service.domain;
 
-import icd.onboarding.surveyproject.survey.service.domain.Option;
-import icd.onboarding.surveyproject.survey.service.domain.Question;
 import icd.onboarding.surveyproject.survey.service.enums.InputType;
 import icd.onboarding.surveyproject.survey.service.exception.*;
 import org.junit.jupiter.api.DisplayName;

@@ -1,6 +1,5 @@
 package icd.onboarding.surveyproject.survey.service.domain;
 
-import icd.onboarding.surveyproject.survey.service.domain.Option;
 import icd.onboarding.surveyproject.survey.service.exception.InvalidOptionInfoException;
 import icd.onboarding.surveyproject.survey.service.exception.NotNegativeNumberException;
 import org.junit.jupiter.api.DisplayName;
