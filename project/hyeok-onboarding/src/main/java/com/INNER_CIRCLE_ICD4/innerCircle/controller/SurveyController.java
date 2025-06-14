@@ -16,23 +16,32 @@ import java.util.UUID;
 @RequestMapping("/surveys")
 @RequiredArgsConstructor
 public class SurveyController {
+
     private final SurveyService surveyService;
 
+    // 설문 생성: 201 Created + Location 헤더
     @PostMapping
     public ResponseEntity<SurveyResponse> createSurvey(
             @Valid @RequestBody SurveyRequest request) {
         SurveyResponse created = surveyService.createSurvey(request);
-        // 테스트에서는 200 OK를 기대합니다.
-        return ResponseEntity.ok(created);
+        URI location = URI.create("/surveys/" + created.id());
+        return ResponseEntity
+                .created(location)
+                .body(created);
     }
 
+    // 전체 설문 조회: 200 OK
     @GetMapping
     public ResponseEntity<List<SurveyResponse>> getAllSurveys() {
-        return ResponseEntity.ok(surveyService.findAll());
+        List<SurveyResponse> list = surveyService.findAll();
+        return ResponseEntity.ok(list);
     }
 
+    // 단건 설문 조회: 200 OK
     @GetMapping("/{id}")
-    public ResponseEntity<SurveyResponse> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(surveyService.findById(id));
+    public ResponseEntity<SurveyResponse> getSurveyById(
+            @PathVariable UUID id) {
+        SurveyResponse response = surveyService.findById(id);
+        return ResponseEntity.ok(response);
     }
 }
