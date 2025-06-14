@@ -11,8 +11,9 @@ data class SurveyOption(
     @Column(name = "ID")
     val id: UUID = UUID.randomUUID(),
 
-    @Column(name = "SURVEY_ITEM_ID", nullable = false)
-    val surveyItemId: UUID,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SURVEY_ITEM_ID", nullable = false)
+    val surveyItem: SurveyItem,
 
     @Column(name = "OPTION_VALUE", nullable = false)
     val optionValue: String,

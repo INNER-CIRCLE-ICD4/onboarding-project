@@ -26,6 +26,7 @@ dependencies {
     // Kotlin specific
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // h2 Database
     runtimeOnly("com.h2database:h2")
