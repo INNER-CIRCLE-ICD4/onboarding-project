@@ -1,54 +1,57 @@
 package icd.onboarding.surveyproject.service.domain;
 
 import icd.onboarding.surveyproject.service.enums.InputType;
-import icd.onboarding.surveyproject.service.enums.QuestionErrors;
-import icd.onboarding.surveyproject.service.exception.InvalidQuestionException;
-import lombok.Builder;
+import icd.onboarding.surveyproject.service.exception.*;
+import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
-import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
-@Builder
 public class Question {
-	private @NotNull UUID surveyId;
-	private @NotNull Integer surveyVersion;
-	private @Nullable UUID id;
-	private @NotNull String name;
-	private @NotNull String description;
-	private @NotNull InputType inputType;
-	private @Nullable Boolean required;
-	private @NotNull Integer sortOrder;
+	private Survey survey;
+	private final UUID id;
+	private final String name;
+	private final String description;
+	private final InputType inputType;
+	private final Boolean required;
+	private final Integer sortOrder;
 
-	private @Nullable List<Option> options;
+	private final List<Option> options;
 
-	public static Question create (UUID surveyId, Integer surveyVersion, String name, String description, String inputType, Boolean required, Integer sortOrder) {
-		if (surveyId == null || surveyVersion == null)
-			throw new InvalidQuestionException(QuestionErrors.INVALID_SURVEY_INFO);
-		if (name == null || name.isBlank())
-			throw new InvalidQuestionException(QuestionErrors.EMPTY_QUESTION_INFO);
-		if (description == null || description.isBlank())
-			throw new InvalidQuestionException(QuestionErrors.EMPTY_QUESTION_INFO);
-		if (sortOrder < 0)
-			throw new InvalidQuestionException(QuestionErrors.NOT_NEGATIVE_NUMBER);
-		if (!InputType.contains(inputType)) {
-			throw new InvalidQuestionException(QuestionErrors.INVALID_INPUT_TYPE);
+	private static final int MAX_OPTION_COUNT = 10;
+
+	private Question (String name, String description, String inputType, Boolean required, Integer sortOrder, List<Option> options) {
+		this.name = name;
+		this.description = description;
+		this.inputType = InputType.valueOf(inputType);
+		this.required = required != null ? required : false;
+		this.sortOrder = sortOrder;
+		this.id = UUID.randomUUID();
+
+		for (Option option : options) {
+			option.setQuestion(this);
 		}
+		this.options = options;
+	}
 
-		return Question.builder()
-					   .id(UUID.randomUUID())
-					   .surveyId(surveyId)
-					   .surveyVersion(surveyVersion)
-					   .name(name)
-					   .description(description)
-					   .inputType(InputType.valueOf(inputType))
-					   .required(required)
-					   .sortOrder(sortOrder)
-					   .build();
+	public static Question create (String name, String description, String inputType, Boolean required, Integer sortOrder, List<Option> options) {
+		if (StringUtils.isBlank(name) || StringUtils.isBlank(description))
+			throw new InvalidQuestionInfoException();
+		if (sortOrder < 0)
+			throw new NotNegativeNumberException();
+		if (!InputType.contains(inputType))
+			throw new InvalidInputTypeException();
+		if (options == null || options.isEmpty())
+			throw new InSufficientOptionException();
+		if (options.size() > MAX_OPTION_COUNT)
+			throw new MaxOptionCountExceededException();
+
+		return new Question(name, description, inputType, required, sortOrder, options);
+	}
+
+	protected void setSurvey (Survey survey) {
+		this.survey = survey;
 	}
 }
