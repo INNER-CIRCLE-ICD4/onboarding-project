@@ -5,6 +5,7 @@ plugins {
 }
 
 group = 'com.example.survey'
+
 version = '0.0.1-SNAPSHOT'
 
 java {
