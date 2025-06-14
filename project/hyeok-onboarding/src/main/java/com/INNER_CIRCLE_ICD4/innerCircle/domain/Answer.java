@@ -2,6 +2,7 @@ package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -23,9 +24,9 @@ public class Answer {
     private String text;
 
     @ElementCollection
-    private List<String> selectedOptions;
+    private List<UUID> selectedOptions;
 
-    public Answer(Response response, Question question, String text, List<String> selectedOptions) {
+    public Answer(Response response, Question question, String text, List<UUID> selectedOptions) {
         this.response = response;
         this.question = question;
         this.text = text;
