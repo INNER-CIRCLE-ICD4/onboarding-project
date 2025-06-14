@@ -16,7 +16,7 @@ class Payload<T> {
     var path: String
     var timestamp: LocalDateTime? = null
     var error: String? = null
-    var datas: T? = null
+    var data: T? = null
 
     init {
         timestamp = LocalDateTime.now()
@@ -39,7 +39,7 @@ class Payload<T> {
         datas: T,
     ) : this(status, message, path) {
         this.message = message
-        this.datas = datas
+        this.data = datas
     }
 
     constructor(
