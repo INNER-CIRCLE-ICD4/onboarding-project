@@ -8,5 +8,5 @@ public record AnswerRequest(
         @NotNull(message = "질문 ID는 필수입니다.")
         UUID questionId,
         String text,
-        List<String> selected
+        List<UUID> selected
 ) {}

@@ -2,13 +2,15 @@ package com.INNER_CIRCLE_ICD4.innerCircle.service;
 
 import com.INNER_CIRCLE_ICD4.innerCircle.domain.*;
 import com.INNER_CIRCLE_ICD4.innerCircle.dto.*;
-import com.INNER_CIRCLE_ICD4.innerCircle.exception.*;
-import com.INNER_CIRCLE_ICD4.innerCircle.repository.*;
+import com.INNER_CIRCLE_ICD4.innerCircle.exception.BusinessException;
+import com.INNER_CIRCLE_ICD4.innerCircle.exception.ResourceNotFoundException;
+import com.INNER_CIRCLE_ICD4.innerCircle.repository.ResponseRepository;
+import com.INNER_CIRCLE_ICD4.innerCircle.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -19,11 +21,10 @@ public class ResponseService {
     private final ResponseRepository responseRepository;
 
     @Transactional
-    public ResponseDto submit(ResponseRequest req) {
+    public ResponseDto saveResponse(ResponseRequest req) {
         Survey survey = surveyRepository.findById(req.surveyId())
                 .orElseThrow(() -> new ResourceNotFoundException("설문이 존재하지 않습니다."));
 
-        // 비즈니스 검증: 질문 갯수 일치
         if (survey.getQuestions().size() != req.answers().size()) {
             throw new BusinessException("응답 개수가 설문 질문 개수와 일치하지 않습니다.");
         }
@@ -40,7 +41,11 @@ public class ResponseService {
 
         Response saved = responseRepository.save(resp);
         List<AnswerDto> dtoAnswers = saved.getAnswers().stream()
-                .map(a -> new AnswerDto(a.getQuestion().getId(), a.getText(), a.getSelectedOptions()))
+                .map(a -> new AnswerDto(
+                        a.getQuestion().getId(),
+                        a.getText(),
+                        a.getSelectedOptions()
+                ))
                 .collect(toList());
 
         return new ResponseDto(saved.getId(), survey.getId(), dtoAnswers);
@@ -53,7 +58,10 @@ public class ResponseService {
                         r.getId(),
                         r.getSurvey().getId(),
                         r.getAnswers().stream()
-                                .map(a -> new AnswerDto(a.getQuestion().getId(), a.getText(), a.getSelectedOptions()))
+                                .map(a -> new AnswerDto(
+                                        a.getQuestion().getId(),
+                                        a.getText(),
+                                        a.getSelectedOptions()))
                                 .collect(toList())
                 ))
                 .collect(toList());

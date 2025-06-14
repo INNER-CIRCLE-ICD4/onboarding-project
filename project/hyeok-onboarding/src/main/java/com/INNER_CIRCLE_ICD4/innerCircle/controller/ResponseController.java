@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.net.URI;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ResponseController {
     public ResponseEntity<Void> submitResponse(
             @Valid @RequestBody ResponseRequest request
     ) {
-        ResponseDto dto = responseService.submit(request);
+        ResponseDto dto = responseService.saveResponse(request);
         URI location = URI.create("/responses/" + dto.id());
         return ResponseEntity.created(location).build();
     }
