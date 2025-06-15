@@ -85,7 +85,8 @@ class SurveyIntegrationTest {
                                 false,
                                 null
                         )
-                )
+                ),
+                "admin@company.com"
         );
 
         // When 1 - 설문조사 생성
@@ -225,7 +226,8 @@ class SurveyIntegrationTest {
                                 false,
                                 null
                         )
-                )
+                ),
+                "tester@company.com"
         );
 
         // When
@@ -283,7 +285,8 @@ class SurveyIntegrationTest {
                                 false,
                                 null
                         )
-                )
+                ),
+                "tester@company.com"
         );
 
         // When
@@ -295,8 +298,8 @@ class SurveyIntegrationTest {
         assertThat(response.getBody()).isNotNull();
         
         var responseBody = objectMapper.readTree(response.getBody());
-        assertThat(responseBody.get("error").asText()).isEqualTo("VALIDATION_FAILED");
-        assertThat(responseBody.get("message").asText()).contains("입력 데이터 검증에 실패했습니다");
+        assertThat(responseBody.get("error").asText()).isEqualTo("INVALID_REQUEST");
+        assertThat(responseBody.get("message").asText()).contains("입력 데이터가 유효하지 않습니다");
     }
 
     @Test
@@ -320,7 +323,8 @@ class SurveyIntegrationTest {
         CreateSurveyRequest request = new CreateSurveyRequest(
                 "질문 개수 초과 테스트",
                 "11개 질문 테스트",
-                tooManyQuestions
+                tooManyQuestions,
+                "tester@company.com"
         );
 
         // When
@@ -332,6 +336,6 @@ class SurveyIntegrationTest {
         assertThat(response.getBody()).isNotNull();
         
         var responseBody = objectMapper.readTree(response.getBody());
-        assertThat(responseBody.get("error").asText()).isEqualTo("VALIDATION_FAILED");
+        assertThat(responseBody.get("error").asText()).isEqualTo("INVALID_REQUEST");
     }
 }

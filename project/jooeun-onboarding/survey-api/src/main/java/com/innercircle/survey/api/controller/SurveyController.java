@@ -1,6 +1,7 @@
 package com.innercircle.survey.api.controller;
 
 import com.innercircle.survey.api.dto.request.CreateSurveyRequest;
+import com.innercircle.survey.api.dto.request.UpdateSurveyRequest;
 import com.innercircle.survey.api.dto.response.SurveyResponse;
 import com.innercircle.survey.api.service.SurveyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,6 +96,7 @@ public class SurveyController {
                                     {
                                         "title": "2024년 고객 만족도 조사",
                                         "description": "고객 서비스 개선을 위한 만족도 조사입니다.",
+                                        "createdBy": "admin@company.com",
                                         "questions": [
                                             {
                                                 "title": "전반적인 서비스에 만족하십니까?",
@@ -167,6 +169,210 @@ public class SurveyController {
         SurveyResponse response = surveyService.getSurvey(surveyId);
         
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 설문조사 수정 API
+     */
+    @Operation(
+            summary = "설문조사 수정",
+            description = """
+                    기존 설문조사를 수정합니다. 
+                    • 제목과 설명을 수정할 수 있습니다.
+                    • 질문을 추가/수정/삭제할 수 있습니다.
+                    • 기존 응답 보존을 위해 기존 질문은 비활성화되고 새 질문이 추가됩니다.
+                    • 생성자만 수정할 수 있습니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "설문조사 수정 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = SurveyResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청 데이터",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "INVALID_REQUEST",
+                                        "message": "설문조사 제목은 필수입니다.",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "권한 없음 (생성자가 아님)",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "ACCESS_DENIED",
+                                        "message": "설문조사 수정 권한이 없습니다.",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "설문조사를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "SURVEY_NOT_FOUND",
+                                        "message": "설문조사를 찾을 수 없습니다: 01HK123ABC456DEF789GHI012J",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "동시성 충돌 (낙관적 락)",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "OPTIMISTIC_LOCK_EXCEPTION",
+                                        "message": "다른 사용자가 동시에 수정했습니다. 최신 버전을 다시 조회하여 수정해주세요.",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
+    @PutMapping("/{surveyId}")
+    public ResponseEntity<SurveyResponse> updateSurvey(
+            @Parameter(description = "설문조사 ID", example = "01HK123ABC456DEF789GHI012J")
+            @PathVariable String surveyId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "설문조사 수정 요청 데이터",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UpdateSurveyRequest.class),
+                            examples = @ExampleObject(
+                                    name = "설문조사 수정 예시",
+                                    value = """
+                                    {
+                                        "title": "2024년 상반기 고객 만족도 조사 (수정됨)",
+                                        "description": "고객 서비스 개선을 위한 만족도 조사입니다. (업데이트된 설명)",
+                                        "modifiedBy": "admin@company.com",
+                                        "questions": [
+                                            {
+                                                "title": "전반적인 서비스에 만족하십니까?",
+                                                "description": "서비스 전반에 대한 만족도를 평가해 주세요.",
+                                                "questionType": "SINGLE_CHOICE",
+                                                "required": true,
+                                                "options": ["매우 불만족", "불만족", "보통", "만족", "매우 만족", "탁월함"]
+                                            },
+                                            {
+                                                "title": "가장 개선이 필요한 부분은 무엇입니까?",
+                                                "description": "개선이 필요한 영역을 모두 선택해 주세요.",
+                                                "questionType": "MULTIPLE_CHOICE",
+                                                "required": true,
+                                                "options": ["응답 속도", "친절도", "전문성", "접근성", "기타"]
+                                            },
+                                            {
+                                                "title": "추가 의견이나 제안사항을 자유롭게 작성해 주세요.",
+                                                "description": "더 나은 서비스를 위한 소중한 의견을 들려주세요.",
+                                                "questionType": "LONG_TEXT",
+                                                "required": false
+                                            }
+                                        ]
+                                    }
+                                    """
+                            )
+                    )
+            )
+            @Valid @RequestBody UpdateSurveyRequest request) {
+        
+        log.info("설문조사 수정 요청 - ID: {}, 제목: {}, 수정자: {}", surveyId, request.getTitle(), request.getModifiedBy());
+        
+        SurveyResponse response = surveyService.updateSurvey(surveyId, request);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 설문조사 비활성화(삭제) API
+     */
+    @Operation(
+            summary = "설문조사 비활성화",
+            description = """
+                    설문조사를 비활성화(논리적 삭제)합니다.
+                    • 기존 응답은 보존됩니다.
+                    • 비활성화된 설문조사는 새로운 응답을 받을 수 없습니다.
+                    • 생성자만 비활성화할 수 있습니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "설문조사 비활성화 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "권한 없음 (생성자가 아님)",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "ACCESS_DENIED",
+                                        "message": "설문조사 비활성화 권한이 없습니다.",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "설문조사를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "SURVEY_NOT_FOUND",
+                                        "message": "설문조사를 찾을 수 없습니다: 01HK123ABC456DEF789GHI012J",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
+    @DeleteMapping("/{surveyId}")
+    public ResponseEntity<Void> deactivateSurvey(
+            @Parameter(description = "설문조사 ID", example = "01HK123ABC456DEF789GHI012J")
+            @PathVariable String surveyId,
+            @Parameter(description = "삭제 요청자 식별자", example = "admin@company.com")
+            @RequestParam String requestedBy) {
+        
+        log.info("설문조사 비활성화 요청 - ID: {}, 요청자: {}", surveyId, requestedBy);
+        
+        surveyService.deactivateSurvey(surveyId, requestedBy);
+        
+        return ResponseEntity.noContent().build();
     }
 
     /**

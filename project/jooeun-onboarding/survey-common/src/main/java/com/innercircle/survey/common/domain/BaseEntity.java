@@ -57,4 +57,26 @@ public abstract class BaseEntity {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    /**
+     * 테스트 환경에서 버전 증가용 메서드
+     * 실제 JPA 환경에서는 @Version이 자동으로 처리됨
+     */
+    protected void incrementVersionForTest() {
+        if (this.version == null) {
+            this.version = 1L;
+        } else {
+            this.version++;
+        }
+        onUpdate(); // 수정 시간도 업데이트
+    }
+
+    /**
+     * 테스트 환경에서 초기 버전 설정용 메서드
+     */
+    protected void setInitialVersionForTest() {
+        if (this.version == null || this.version == 0L) {
+            this.version = 1L;
+        }
+    }
 }

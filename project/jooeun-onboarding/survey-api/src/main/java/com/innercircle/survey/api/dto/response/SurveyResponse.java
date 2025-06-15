@@ -24,6 +24,12 @@ public class SurveyResponse {
     @Schema(description = "설문조사 설명", example = "고객 서비스 개선을 위한 만족도 조사입니다.")
     private final String description;
 
+    @Schema(description = "생성자", example = "admin@company.com")
+    private final String createdBy;
+
+    @Schema(description = "활성화 상태", example = "true")
+    private final boolean active;
+
     @Schema(description = "설문 항목 목록")
     private final List<QuestionResponse> questions;
 
@@ -43,6 +49,8 @@ public class SurveyResponse {
         this.id = survey.getId();
         this.title = survey.getTitle();
         this.description = survey.getDescription();
+        this.createdBy = survey.getCreatedBy();
+        this.active = survey.isActive();
         this.questions = survey.getActiveQuestions().stream()
                 .map(QuestionResponse::new)
                 .toList();

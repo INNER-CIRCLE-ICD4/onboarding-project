@@ -149,6 +149,36 @@ dependencies {
 
 ## 🔒 데이터 일관성 보장 전략
 
+### **설문조사 수정 API - 완벽한 기존 응답 보존**
+
+**핵심 기능**: `PUT /api/surveys/{id}` 엔드포인트를 통한 설문조사 수정
+- **권한 제어**: 생성자(createdBy)만 수정 가능
+- **동시성 제어**: JPA 낙관적 락으로 버전 충돌 방지
+- **데이터 보존**: 3중 보호 메커니즘으로 기존 응답 100% 보존
+
+**API 특징:**
+```json
+PUT /api/surveys/{surveyId}
+{
+  "title": "수정된 설문조사 제목",
+  "description": "수정된 설명",
+  "modifiedBy": "admin@company.com",
+  "questions": [
+    {
+      "title": "새로운 질문",
+      "questionType": "SINGLE_CHOICE",
+      "required": true,
+      "options": ["옵션1", "옵션2", "옵션3"]
+    }
+  ]
+}
+```
+
+**논리적 삭제 API**: `DELETE /api/surveys/{id}?requestedBy={userId}`
+- 물리적 삭제 대신 `active=false`로 비활성화
+- 기존 모든 응답과 질문 데이터 완전 보존
+- 생성자만 삭제 권한 보유
+
 ### **설문 수정 시 기존 응답 보존 - 3중 보호 메커니즘**
 
 **핵심 문제**: 설문조사가 수정될 때 기존 응답의 맥락이 변경되는 문제
@@ -256,7 +286,9 @@ new SurveyEvent(surveyId, SurveyEventType.RESPONSE_SUBMITTED, eventData, "respon
 | Method | Endpoint | 설명 |
 |--------|----------|------|
 | `POST` | `/api/surveys` | 설문조사 생성 |
+| `GET` | `/api/surveys/{id}` | 설문조사 조회 |
 | `PUT` | `/api/surveys/{id}` | 설문조사 수정 |
+| `DELETE` | `/api/surveys/{id}?requestedBy={userId}` | 설문조사 비활성화 |
 | `POST` | `/api/surveys/{id}/responses` | 응답 제출 |
 | `GET` | `/api/surveys/{id}/responses` | 응답 조회 |
 | `GET` | `/api/surveys/{id}/responses/search` | 응답 검색 (Advanced) |

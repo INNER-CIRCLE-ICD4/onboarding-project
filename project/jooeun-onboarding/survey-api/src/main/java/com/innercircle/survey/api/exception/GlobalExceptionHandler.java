@@ -1,6 +1,7 @@
 package com.innercircle.survey.api.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,91 +14,125 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 전역 예외 처리기
+ * 글로벌 예외 처리 핸들러
  * 
- * 애플리케이션에서 발생하는 예외를 일관된 형태로 처리합니다.
+ * 애플리케이션 전체에서 발생하는 예외를 일관된 형태로 처리합니다.
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * Bean Validation 예외 처리
+     * 설문조사를 찾을 수 없을 때
+     */
+    @ExceptionHandler(SurveyNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleSurveyNotFound(SurveyNotFoundException e) {
+        log.warn("설문조사 조회 실패: {}", e.getMessage());
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", "SURVEY_NOT_FOUND");
+        response.put("message", e.getMessage());
+        response.put("timestamp", LocalDateTime.now());
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /**
+     * 접근 권한이 없을 때
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException e) {
+        log.warn("접근 권한 없음: {}", e.getMessage());
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", "ACCESS_DENIED");
+        response.put("message", e.getMessage());
+        response.put("timestamp", LocalDateTime.now());
+        
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    /**
+     * 낙관적 락 충돌
+     */
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ResponseEntity<Map<String, Object>> handleOptimisticLockingFailure(OptimisticLockingFailureException e) {
+        log.warn("낙관적 락 충돌: {}", e.getMessage());
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", "OPTIMISTIC_LOCK_EXCEPTION");
+        response.put("message", "다른 사용자가 동시에 수정했습니다. 최신 버전을 다시 조회하여 수정해주세요.");
+        response.put("timestamp", LocalDateTime.now());
+        
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    /**
+     * 유효성 검증 실패
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-        log.warn("Validation 예외 발생: {}", ex.getMessage());
+    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException e) {
+        log.warn("유효성 검증 실패: {}", e.getMessage());
         
+        Map<String, Object> response = new HashMap<>();
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        
+        e.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
         
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .error("VALIDATION_FAILED")
-                .message("입력 데이터 검증에 실패했습니다.")
-                .details(errors)
-                .timestamp(LocalDateTime.now())
-                .build();
+        response.put("error", "INVALID_REQUEST");
+        response.put("message", "입력 데이터가 유효하지 않습니다.");
+        response.put("details", errors);
+        response.put("timestamp", LocalDateTime.now());
         
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     /**
-     * IllegalArgumentException 처리
+     * 일반적인 IllegalArgumentException
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
-        log.warn("잘못된 인수 예외: {}", ex.getMessage());
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException e) {
+        log.warn("잘못된 인수: {}", e.getMessage());
         
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .error("INVALID_ARGUMENT")
-                .message(ex.getMessage())
-                .timestamp(LocalDateTime.now())
-                .build();
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", "INVALID_REQUEST");
+        response.put("message", e.getMessage());
+        response.put("timestamp", LocalDateTime.now());
         
-        // 설문조사를 찾을 수 없는 경우 404 반환
-        if (ex.getMessage().contains("설문조사를 찾을 수 없습니다")) {
-            errorResponse = errorResponse.toBuilder()
-                    .error("SURVEY_NOT_FOUND")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-        
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     /**
-     * RuntimeException 처리
+     * 보안 예외 (SecurityException)
      */
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
-        log.error("런타임 예외: {}", ex.getMessage(), ex);
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<Map<String, Object>> handleSecurityException(SecurityException e) {
+        log.warn("보안 예외: {}", e.getMessage());
         
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .error("INTERNAL_SERVER_ERROR")
-                .message("서버 내부 오류가 발생했습니다.")
-                .timestamp(LocalDateTime.now())
-                .build();
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", "ACCESS_DENIED");
+        response.put("message", e.getMessage());
+        response.put("timestamp", LocalDateTime.now());
         
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
     /**
-     * 기타 모든 예외 처리
+     * 기타 모든 예외
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-        log.error("예상치 못한 예외: {}", ex.getMessage(), ex);
+    public ResponseEntity<Map<String, Object>> handleGeneralException(Exception e) {
+        log.error("서버 내부 오류: {}", e.getMessage(), e);
         
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .error("INTERNAL_SERVER_ERROR")
-                .message("예상치 못한 오류가 발생했습니다.")
-                .timestamp(LocalDateTime.now())
-                .build();
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", "INTERNAL_SERVER_ERROR");
+        response.put("message", "서버 내부 오류가 발생했습니다.");
+        response.put("timestamp", LocalDateTime.now());
         
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
