@@ -1,5 +1,8 @@
 package fc.innercircle.sanghyukonboarding.form.domain.model.vo
 
+import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
+import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
+
 enum class InputType {
     TEXT, // 단답형
     LONG_TEXT, // 장문형
@@ -9,8 +12,18 @@ enum class InputType {
     ;
 
     companion object {
-        fun fromString(type: String): InputType = valueOf(type.uppercase())
+        fun isValidTypeIgnoreCase(type: String): Boolean = InputType.entries.any { it.name == type.uppercase() }
+        fun validateOrThrows(type: String) {
+            if (!isValidTypeIgnoreCase(type)) {
+                throw CustomException(ErrorCode.INVALID_QUESTION_INPUT_TYPE.withArgs(type))
+            }
+        }
 
-        fun isValidType(type: String): Boolean = InputType.entries.any { it.name == type.uppercase() }
+        fun valueOrThrows(type: String): InputType {
+            this.validateOrThrows(type)
+            return InputType.valueOf(
+                type.uppercase()
+            )
+        }
     }
 }

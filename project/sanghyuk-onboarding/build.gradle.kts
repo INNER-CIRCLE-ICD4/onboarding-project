@@ -41,6 +41,9 @@ dependencies {
 
     // ULID ID numbering
     implementation("com.github.f4b6a3:ulid-creator:5.2.3")
+
+    // mysql
+    runtimeOnly("com.mysql:mysql-connector-j")
 }
 
 allOpen {
@@ -57,6 +60,4 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    systemProperty("kotest.framework.classpath.scanning.config.disable", "true")
-    systemProperty("kotest.framework.classpath.scanning.autoscan.disable", "true")
 }

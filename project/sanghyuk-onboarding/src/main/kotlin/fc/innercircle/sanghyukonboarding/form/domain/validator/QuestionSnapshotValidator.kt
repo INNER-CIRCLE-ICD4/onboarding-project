@@ -22,15 +22,8 @@ object QuestionSnapshotValidator {
 
     // 질문 스냅샷 설명은 빈 문자열이 아니어야 하며, 최대 1000자 이내여야 한다.
     fun validateDescription(description: String) {
-        if (description.isBlank() || description.length > 1000) {
+        if (description.isNotBlank() && description.length > 1000) {
             throw CustomException(ErrorCode.INVALID_QUESTION_DESCRIPTION.withArgs(description))
-        }
-    }
-
-    // 항목 순서는 0 이상의 정수여야 하며, 기본값은 0
-    fun validateDisplayOrder(displayOrder: Int) {
-        if (displayOrder < 0) {
-            throw CustomException(ErrorCode.INVALID_QUESTION_ORDER.withArgs(displayOrder.toString()))
         }
     }
 

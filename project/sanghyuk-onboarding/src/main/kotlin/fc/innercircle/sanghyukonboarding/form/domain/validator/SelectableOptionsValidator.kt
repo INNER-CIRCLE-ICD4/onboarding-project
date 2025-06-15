@@ -12,7 +12,7 @@ import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
  */
 object SelectableOptionsValidator {
     // 질문 옵션 텍스트는 빈 문자열이 아니어야 하며, 최대 50자 이내여야 한다.
-    fun validateValue(value: String) {
+    fun validateText(value: String) {
         if (value.isBlank() || value.length > 50) {
             throw CustomException(ErrorCode.INVALID_ITEM_OPTION_TEXT.withArgs(value))
         }

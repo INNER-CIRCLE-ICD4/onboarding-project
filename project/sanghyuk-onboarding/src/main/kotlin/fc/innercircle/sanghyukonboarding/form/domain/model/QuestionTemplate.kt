@@ -1,35 +1,21 @@
 package fc.innercircle.sanghyukonboarding.form.domain.model
 
-import fc.innercircle.sanghyukonboarding.common.domain.model.BaseEntity
+import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
+import fc.innercircle.sanghyukonboarding.form.domain.model.vo.QuestionSnapshots
 import fc.innercircle.sanghyukonboarding.form.domain.validator.QuestionTemplateValidator
-import jakarta.persistence.Column
-import jakarta.persistence.ConstraintMode
-import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
-import jakarta.persistence.ForeignKey
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 
-@Entity
 open class QuestionTemplate(
-    form: Form,
-    version: Long = 0L,
-    createdBy: String,
-) : BaseEntity(createdBy) {
+    val id: String = "",
+    val version: Long,
+    val required: Boolean,
+    val displayOrder: Int,
+    snapshots: List<QuestionSnapshot>,
+    val formId: String = ""
+) {
 
-    @Column(nullable = false, columnDefinition = "bigint default 0 not null comment '버전'")
-    var version: Long = version
-        protected set
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(
-        name = "form_id",
-        nullable = false,
-        columnDefinition = "char(26) not null comment '설문 ID'",
-        foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT)
+    val snapshots: QuestionSnapshots = QuestionSnapshots(
+        values = snapshots.filter { it.questionTemplateId == id }
     )
-    var form: Form = form
-        protected set
 
     init {
         validateRequiredFields()
@@ -37,5 +23,25 @@ open class QuestionTemplate(
 
     private fun validateRequiredFields() {
         QuestionTemplateValidator.validateVersion(version)
+        QuestionTemplateValidator.validateDisplayOrder(displayOrder)
+    }
+
+    fun getLatestSnapshot(): QuestionSnapshot {
+        return snapshots.list().maxByOrNull { it.version }
+            ?: throw IllegalStateException("No snapshots available for question template with id: $id")
+    }
+
+    companion object {
+        fun of(cmd: FormCommand.Question, displayOrder: Int): QuestionTemplate {
+            val questionSnapshots: List<QuestionSnapshot> = listOf(
+                QuestionSnapshot.from(cmd)
+            )
+            return QuestionTemplate(
+                version = cmd.version,
+                required = cmd.required,
+                displayOrder = displayOrder,
+                snapshots = questionSnapshots,
+            )
+        }
     }
 }

@@ -67,6 +67,7 @@
 - **Form(설문)**: 설문조사 폼의 기본 정보를 담고 있는 엔티티
   - 제목, 설명 등의 메타데이터 포함
   - 여러 QuestionTemplate과 연결됨
+  - createQuestionTemplate 메서드를 통해 QuestionTemplate 생성 가능
 
 - **QuestionTemplate(질문 템플릿)**: 질문 템플릿 정보를 담고 있는 엔티티
   - Form과 연결되어 있으며, 하나의 Form에 여러 QuestionTemplate이 존재할 수 있음
@@ -162,6 +163,7 @@ fc.innercircle.sanghyukonboarding
 - **id**: 설문조사 ID (PK)
 - **title**: 설문조사 제목 (최대 255자)
 - **description**: 설문조사 설명 (최대 1000자, 기본값: 빈 문자열)
+- **createQuestionTemplate**: QuestionTemplate을 생성하는 메서드
 - BaseEntity 상속 (createdBy, createdAt, updatedBy, updatedAt)
 
 ### [QuestionTemplate](src/main/kotlin/fc/innercircle/sanghyukonboarding/form/domain/model/QuestionTemplate.kt) (질문 템플릿)

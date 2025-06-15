@@ -1,31 +1,55 @@
 package fc.innercircle.sanghyukonboarding.form.domain.model
 
-import fc.innercircle.sanghyukonboarding.common.domain.model.BaseEntity
+import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
+import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
+import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
+import fc.innercircle.sanghyukonboarding.form.domain.model.vo.QuestionTemplates
 import fc.innercircle.sanghyukonboarding.form.domain.validator.FormValidator
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
 
-@Entity
 open class Form(
-    title: String,
-    description: String = "",
-    createdBy: String,
-) : BaseEntity(createdBy) {
+    val id: String = "",
+    val title: String,
+    val description: String,
+    questionTemplates: List<QuestionTemplate>
+) {
 
-    @Column(nullable = false, length = 255, columnDefinition = "varchar(255) comment '설문 제목'")
-    var title: String = title
-        protected set
-
-    @Column(nullable = false, length = 1000, columnDefinition = "varchar(1000) comment '설문 설명'")
-    var description: String = description
-        protected set
+    val questionTemplates: QuestionTemplates = QuestionTemplates(
+        values = questionTemplates.filter { it.formId == id }
+    )
 
     init {
         validateRequiredFields()
+        verifyOrThrowsMaxQuestionCounts(this.questionTemplates)
     }
 
     private fun validateRequiredFields() {
         FormValidator.validateTitle(title)
         FormValidator.validateDescription(description)
+    }
+
+    /**
+     * 비즈니스 정책 검사
+     * 1. 설문은 최대 10개의 질문을 가질 수 있다.
+     */
+    private fun verifyOrThrowsMaxQuestionCounts(questionTemplates: QuestionTemplates) {
+        if (questionTemplates.count() > 10) {
+            throw CustomException(ErrorCode.EXCEEDS_MAX_QUESTION_COUNT.withArgs(questionTemplates.count()))
+        }
+    }
+
+    companion object {
+        fun from(cmd: FormCommand): Form {
+            val questionTemplates: List<QuestionTemplate> = cmd.questions.mapIndexed { idx, it ->
+                QuestionTemplate.of(
+                    cmd = it,
+                    displayOrder = idx
+                )
+            }
+            return Form(
+                title = cmd.title,
+                description = cmd.description,
+                questionTemplates = questionTemplates
+            )
+        }
     }
 }
