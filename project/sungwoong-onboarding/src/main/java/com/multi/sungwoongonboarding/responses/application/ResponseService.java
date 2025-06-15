@@ -1,13 +1,15 @@
 package com.multi.sungwoongonboarding.responses.application;
 
 import com.multi.sungwoongonboarding.questions.application.repository.QuestionRepository;
-import com.multi.sungwoongonboarding.responses.application.repository.AnswerRepository;
+import com.multi.sungwoongonboarding.questions.domain.Questions;import com.multi.sungwoongonboarding.responses.domain.Answers;
 import com.multi.sungwoongonboarding.responses.domain.Responses;
 import com.multi.sungwoongonboarding.responses.application.repository.ResponseRepository;
 import com.multi.sungwoongonboarding.responses.dto.ResponseCreateRequest;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 
 @Service
@@ -15,16 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class ResponseService {
 
     private final ResponseRepository responseRepository;
-    private final AnswerRepository answerRepository;
     private final QuestionRepository questionService;
+    private final Validator validator;
 
     @Transactional
     public void submitResponse(ResponseCreateRequest request) {
+
         // 응답 저장
         Responses response = request.toDomain();
+
         response.getAnswers().forEach(answer -> {
-            answer.setOriginalQuestion(questionService.findById(answer.getQuestionId()));
+
+            Questions originalQuestion = questionService.findById(answer.getQuestionId());
+            answer.setOriginalQuestion(originalQuestion);
+
         });
+
         Responses savedResponse = responseRepository.save(response);
     }
 }
