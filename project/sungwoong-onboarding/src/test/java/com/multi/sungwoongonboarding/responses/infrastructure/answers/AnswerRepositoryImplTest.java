@@ -5,7 +5,6 @@ import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.application.repository.QuestionRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
-import com.multi.sungwoongonboarding.responses.application.ResponseService;
 import com.multi.sungwoongonboarding.responses.application.repository.AnswerRepository;
 import com.multi.sungwoongonboarding.responses.application.repository.ResponseRepository;
 import com.multi.sungwoongonboarding.responses.domain.Answers;
@@ -29,6 +28,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @EnableJpaAuditing
+@Transactional
 public class AnswerRepositoryImplTest {
 
     @Autowired
@@ -43,8 +43,6 @@ public class AnswerRepositoryImplTest {
     @Autowired
     ResponseRepository responseRepository;
 
-    @Autowired
-    ResponseService responseService;
 
 
     @BeforeEach
@@ -87,7 +85,6 @@ public class AnswerRepositoryImplTest {
                 .build();
 
         responseRepository.save(responses.toDomain());
-
     }
 
     @Test
