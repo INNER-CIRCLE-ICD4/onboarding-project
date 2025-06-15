@@ -1,6 +1,6 @@
 package com.multi.sungwoongonboarding.questions.dto;
 
-import com.multi.sungwoongonboarding.common.valid.OptionValid;
+import com.multi.sungwoongonboarding.common.valid.QuestionOptionValid;
 import com.multi.sungwoongonboarding.common.valid.ValidEnum;
 import com.multi.sungwoongonboarding.options.dto.OptionUpdateRequest;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
@@ -12,11 +12,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.*;
-
 @Getter
 @Builder
-@OptionValid
+@QuestionOptionValid
 @RequiredArgsConstructor
 public class QuestionUpdateRequest implements OptionContainer {
 

@@ -1,6 +1,6 @@
 package com.multi.sungwoongonboarding.questions.dto;
 
-import com.multi.sungwoongonboarding.common.valid.OptionValid;
+import com.multi.sungwoongonboarding.common.valid.QuestionOptionValid;
 import com.multi.sungwoongonboarding.common.valid.ValidEnum;
 import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionT
 @Getter
 @Builder
 @NoArgsConstructor
-@OptionValid
+@QuestionOptionValid
 public class QuestionCreateRequest implements OptionContainer{
 
 

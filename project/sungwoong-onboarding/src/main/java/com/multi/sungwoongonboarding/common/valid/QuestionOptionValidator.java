@@ -1,29 +1,26 @@
 package com.multi.sungwoongonboarding.common.valid;
 
-import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.questions.dto.OptionContainer;
-import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.*;
 
-public class OptionValidator implements ConstraintValidator<OptionValid, OptionContainer> {
+public class QuestionOptionValidator implements ConstraintValidator<QuestionOptionValid, OptionContainer> {
 
     private final Validator validator;
 
-    public OptionValidator(Validator validator) {
+    public QuestionOptionValidator(Validator validator) {
         this.validator = validator;
     }
 
     @Override
-    public void initialize(OptionValid constraintAnnotation) {
+    public void initialize(QuestionOptionValid constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
