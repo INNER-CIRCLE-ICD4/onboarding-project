@@ -50,8 +50,8 @@ open class FormEntity(
         )
     }
 
-    override fun getId(): String? {
-        return id
+    override fun getId(): String {
+        return id ?: throw IllegalStateException("cannot get ID before persist")
     }
 
     override fun isNew(): Boolean {

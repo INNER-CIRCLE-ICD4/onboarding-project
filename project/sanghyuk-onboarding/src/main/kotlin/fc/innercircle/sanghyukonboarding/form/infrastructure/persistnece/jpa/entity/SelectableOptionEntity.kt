@@ -62,12 +62,12 @@ open class SelectableOptionEntity(
             id = id!!,
             text = text,
             displayOrder = displayOrder,
-            questionSnapshotId = questionSnapshotEntity.id!!,
+            questionSnapshotId = questionSnapshotEntity.id,
         )
     }
 
-    override fun getId(): String? {
-        return id
+    override fun getId(): String {
+        return id ?: throw IllegalStateException("cannot get ID before persist")
     }
 
     override fun isNew(): Boolean {

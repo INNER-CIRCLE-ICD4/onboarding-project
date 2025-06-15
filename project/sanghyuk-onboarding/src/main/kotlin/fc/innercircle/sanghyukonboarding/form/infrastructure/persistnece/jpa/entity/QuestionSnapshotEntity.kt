@@ -69,8 +69,8 @@ open class QuestionSnapshotEntity(
         QuestionSnapshotValidator.validateVersion(version)
     }
 
-    override fun getId(): String? {
-        return id
+    override fun getId(): String {
+        return id ?: throw IllegalStateException("cannot get ID before persist")
     }
 
     override fun isNew(): Boolean {
@@ -92,7 +92,7 @@ open class QuestionSnapshotEntity(
             type = type,
             version = version,
             selectableOptions = selectableOptions.filter { it.questionSnapshotId == id },
-            questionTemplateId = questionTemplateEntity.id!!,
+            questionTemplateId = questionTemplateEntity.id,
         )
     }
 

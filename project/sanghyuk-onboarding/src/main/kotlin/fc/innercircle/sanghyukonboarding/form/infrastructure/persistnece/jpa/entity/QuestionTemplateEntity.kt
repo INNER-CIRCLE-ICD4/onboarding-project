@@ -63,12 +63,12 @@ open class QuestionTemplateEntity(
             required = required,
             displayOrder = displayOrder,
             snapshots = questionSnapshots,
-            formId = formEntity.id!!,
+            formId = formEntity.id,
         )
     }
 
-    override fun getId(): String? {
-        return id
+    override fun getId(): String {
+        return id ?: throw IllegalStateException("cannot get ID before persist")
     }
 
     override fun isNew(): Boolean {
