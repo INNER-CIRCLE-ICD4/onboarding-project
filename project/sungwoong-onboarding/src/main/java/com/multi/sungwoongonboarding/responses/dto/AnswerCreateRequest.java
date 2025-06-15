@@ -1,16 +1,16 @@
 package com.multi.sungwoongonboarding.responses.dto;
 
+import com.multi.sungwoongonboarding.common.valid.AnswerOptionValid;
 import com.multi.sungwoongonboarding.responses.domain.Answers;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AnswerOptionValid
 public class AnswerCreateRequest {
 
-    @NotNull(message = "질문 ID는 필수 입력 항목입니다.")
     private Long questionId;
 
     // 선택형 질문(단일 선택, 복수 선택)의 경우 필요
