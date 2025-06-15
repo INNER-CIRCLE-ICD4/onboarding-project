@@ -282,16 +282,20 @@ new SurveyEvent(surveyId, SurveyEventType.RESPONSE_SUBMITTED, eventData, "respon
 
 ## 📝 API 명세
 
-### **주요 엔드포인트**
+### **설문조사 관리 API**
 | Method | Endpoint | 설명 |
 |--------|----------|------|
 | `POST` | `/api/surveys` | 설문조사 생성 |
 | `GET` | `/api/surveys/{id}` | 설문조사 조회 |
 | `PUT` | `/api/surveys/{id}` | 설문조사 수정 |
 | `DELETE` | `/api/surveys/{id}?requestedBy={userId}` | 설문조사 비활성화 |
-| `POST` | `/api/surveys/{id}/responses` | 응답 제출 |
+| `GET` | `/api/surveys/{id}/exists` | 설문조사 존재 확인 |
+
+### **설문조사 응답 API**
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| `POST` | `/api/surveys/{id}/responses` | **응답 제출** |
 | `GET` | `/api/surveys/{id}/responses` | 응답 조회 |
-| `GET` | `/api/surveys/{id}/responses/search` | 응답 검색 (Advanced) |
 
 *상세한 API 명세는 Swagger UI에서 확인 가능합니다.*
 

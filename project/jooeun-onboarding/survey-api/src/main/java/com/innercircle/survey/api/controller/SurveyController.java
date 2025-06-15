@@ -1,9 +1,14 @@
 package com.innercircle.survey.api.controller;
 
 import com.innercircle.survey.api.dto.request.CreateSurveyRequest;
+import com.innercircle.survey.api.dto.request.SubmitSurveyResponseRequest;
 import com.innercircle.survey.api.dto.request.UpdateSurveyRequest;
 import com.innercircle.survey.api.dto.response.SurveyResponse;
+import com.innercircle.survey.api.dto.response.SurveyResponseSubmissionResult;
+import com.innercircle.survey.api.dto.response.SurveyResponseListResult;
+import com.innercircle.survey.api.dto.response.SurveyResponseDetail;
 import com.innercircle.survey.api.service.SurveyService;
+import com.innercircle.survey.api.service.SurveyResponseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,10 +33,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/surveys")
 @RequiredArgsConstructor
-@Tag(name = "설문조사 API", description = "설문조사 생성, 조회, 수정 기능을 제공합니다.")
+@Tag(name = "설문조사 API", description = "설문조사 생성, 조회, 수정 및 응답 제출 기능을 제공합니다.")
 public class SurveyController {
 
     private final SurveyService surveyService;
+    private final SurveyResponseService surveyResponseService;
 
     /**
      * 설문조사 생성 API
@@ -423,6 +429,270 @@ public class SurveyController {
         return ResponseEntity.ok(java.util.Map.of(
                 "exists", exists,
                 "surveyId", surveyId
+        ));
+    }
+
+    /**
+     * 설문조사 응답 제출 API
+     */
+    @Operation(
+            summary = "설문조사 응답 제출",
+            description = """
+                    설문조사에 대한 응답을 제출합니다.
+                    • 모든 필수 질문에 응답해야 합니다.
+                    • 선택형 질문은 유효한 선택지만 허용됩니다.
+                    • 응답자 정보가 있는 경우 중복 제출이 방지됩니다.
+                    • 응답은 제출 후 수정할 수 없습니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "응답 제출 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = SurveyResponseSubmissionResult.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청 데이터",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "INVALID_REQUEST",
+                                        "message": "필수 질문에 대한 응답이 누락되었습니다: 서비스 만족도",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "설문조사를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "SURVEY_NOT_FOUND",
+                                        "message": "설문조사를 찾을 수 없습니다: 01HK123ABC456DEF789GHI012J",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "중복 응답",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "DUPLICATE_RESPONSE",
+                                        "message": "이미 응답을 제출한 응답자입니다: user@company.com",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
+    @PostMapping("/{surveyId}/responses")
+    public ResponseEntity<SurveyResponseSubmissionResult> submitSurveyResponse(
+            @Parameter(description = "설문조사 ID", example = "01HK123ABC456DEF789GHI012J")
+            @PathVariable String surveyId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "설문조사 응답 제출 요청 데이터",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = SubmitSurveyResponseRequest.class),
+                            examples = @ExampleObject(
+                                    name = "고객 만족도 응답 예시",
+                                    value = """
+                                    {
+                                        "respondentInfo": "customer@company.com",
+                                        "answers": [
+                                            {
+                                                "questionId": "01HK123ABC456DEF789GHI012J",
+                                                "answerValues": ["매우 만족"]
+                                            },
+                                            {
+                                                "questionId": "01HK456DEF789GHI012JKLM345",
+                                                "answerValues": ["재택근무", "하이브리드"]
+                                            },
+                                            {
+                                                "questionId": "01HK789GHI012JKLM345NOPQ678",
+                                                "answerValues": ["홍길동"]
+                                            },
+                                            {
+                                                "questionId": "01HKABC012JKLM345NOPQ678RST9",
+                                                "answerValues": ["서비스가 매우 좋습니다. 앞으로도 계속 이용하고 싶습니다."]
+                                            }
+                                        ]
+                                    }
+                                    """
+                            )
+                    )
+            )
+            @Valid @RequestBody SubmitSurveyResponseRequest request) {
+        
+        log.info("설문조사 응답 제출 요청 - 설문조사 ID: {}, 응답자: {}, 응답 개수: {}", 
+                surveyId, request.getRespondentInfo(), request.getAnswers().size());
+        
+        SurveyResponseSubmissionResult result = surveyResponseService.submitResponse(surveyId, request);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    /**
+     * 설문조사 응답 목록 조회 API
+     */
+    @Operation(
+            summary = "설문조사 응답 목록 조회",
+            description = """
+                    설문조사에 제출된 모든 응답을 조회합니다.
+                    • includeDetails=true: 개별 응답 상세 내용 포함
+                    • includeDetails=false: 응답 요약 정보만 포함 (성능 최적화)
+                    • 최신 응답순으로 정렬되어 반환됩니다.
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "응답 목록 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = SurveyResponseListResult.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "설문조사를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "SURVEY_NOT_FOUND",
+                                        "message": "설문조사를 찾을 수 없습니다: 01HK123ABC456DEF789GHI012J",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
+    @GetMapping("/{surveyId}/responses")
+    public ResponseEntity<SurveyResponseListResult> getSurveyResponses(
+            @Parameter(description = "설문조사 ID", example = "01HK123ABC456DEF789GHI012J")
+            @PathVariable String surveyId,
+            @Parameter(description = "개별 응답 상세 포함 여부", example = "true")
+            @RequestParam(defaultValue = "true") boolean includeDetails) {
+        
+        log.info("설문조사 응답 목록 조회 요청 - 설문조사 ID: {}, 상세 포함: {}", surveyId, includeDetails);
+        
+        SurveyResponseListResult result = surveyResponseService.getResponses(surveyId, includeDetails);
+        
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 개별 응답 상세 조회 API
+     */
+    @Operation(
+            summary = "개별 응답 상세 조회",
+            description = """
+                    특정 응답의 상세 정보를 조회합니다.
+                    • 응답자가 제출한 모든 답변 내용 포함
+                    • 응답 시점의 질문 정보 스냅샷 포함
+                    • 질문이 수정되어도 응답 맥락 완전 보존
+                    """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "응답 상세 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = SurveyResponseDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "응답을 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "error": "INVALID_REQUEST",
+                                        "message": "응답을 찾을 수 없습니다: 01HK456DEF789GHI012JKLM345N",
+                                        "timestamp": "2024-01-15T10:30:00"
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
+    @GetMapping("/responses/{responseId}")
+    public ResponseEntity<SurveyResponseDetail> getResponseDetail(
+            @Parameter(description = "응답 ID", example = "01HK456DEF789GHI012JKLM345N")
+            @PathVariable String responseId) {
+        
+        log.info("개별 응답 상세 조회 요청 - 응답 ID: {}", responseId);
+        
+        SurveyResponseDetail result = surveyResponseService.getResponseDetail(responseId);
+        
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 설문조사 응답 개수 조회 API
+     */
+    @Operation(
+            summary = "설문조사 응답 개수 조회",
+            description = "설문조사에 제출된 총 응답 개수를 조회합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "응답 개수 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                        "surveyId": "01HK123ABC456DEF789GHI012J",
+                                        "responseCount": 150
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "설문조사를 찾을 수 없음"
+            )
+    })
+    @GetMapping("/{surveyId}/responses/count")
+    public ResponseEntity<Object> getResponseCount(
+            @Parameter(description = "설문조사 ID", example = "01HK123ABC456DEF789GHI012J")
+            @PathVariable String surveyId) {
+        
+        log.info("설문조사 응답 개수 조회 요청 - 설문조사 ID: {}", surveyId);
+        
+        long count = surveyResponseService.getResponseCount(surveyId);
+        
+        return ResponseEntity.ok(java.util.Map.of(
+                "surveyId", surveyId,
+                "responseCount", count
         ));
     }
 }
