@@ -1,4 +1,88 @@
+@host = http://localhost:8080
+
+### 설문 조회
+GET {{host}}/api/survey/1
+Accept: application/json
+
 ### 설문조사 생성 API
-POST http://localhost:8080/survey
+POST {{host}}/api/survey
+Content-Type: application/json
+
+{
+  "title": "test",
+  "description": "test",
+  "questions": [
+    {
+      "title": "test short question1",
+      "description": "test short question",
+      "questionType": "SHORT_TEXT",
+      "required": true,
+      "options": []
+    },
+    {
+      "title": "test select question2",
+      "description": "test select question",
+      "questionType": "SINGLE_SELECT",
+      "required": false,
+      "options": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "title": "test select question3",
+      "description": "test select question",
+      "questionType": "SINGLE_SELECT",
+      "required": false,
+      "options": [
+        "A",
+        "B"
+      ]
+    }
+  ]
+}
 
 ### 설문조사 수정 API
+PUT {{host}}/api/survey/1
+Content-Type: application/json
+
+{
+    "title": "test",
+    "description" : "test",
+    "questions" : [
+        {
+            "title" : "test short question1_modified",
+            "description" : "test short question",
+            "questionType" : "SHORT_TEXT",
+            "required": true
+        },
+        {
+            "title" : "test select question2",
+            "description" : "test select question",
+            "questionType" : "SINGLE_SELECT",
+            "required": false,
+            "options" : ["A", "B"]
+        },
+        {
+            "title" : "test select question3",
+            "description" : "test select question",
+            "questionType" : "SINGLE_SELECT",
+            "required": false,
+            "options" : ["A", "B"]
+        },
+        {
+            "title" : "test select question4",
+            "description" : "test select question",
+            "questionType" : "SINGLE_SELECT",
+            "required": false,
+            "options" : ["A", "B"]
+        },
+        {
+            "title" : "test select question5",
+            "description" : "test select question",
+            "questionType" : "SINGLE_SELECT",
+            "required": false,
+            "options" : ["A", "B"]
+        }
+    ]
+}

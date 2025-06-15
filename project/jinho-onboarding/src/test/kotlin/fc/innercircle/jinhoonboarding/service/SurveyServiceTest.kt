@@ -1,6 +1,6 @@
 package fc.innercircle.jinhoonboarding.service
 
-import fc.innercircle.jinhoonboarding.survey.dto.CreateSurveyRequest
+import fc.innercircle.jinhoonboarding.survey.dto.request.CreateSurveyRequest
 import fc.innercircle.jinhoonboarding.survey.domain.Question
 import fc.innercircle.jinhoonboarding.survey.domain.Survey
 import fc.innercircle.jinhoonboarding.survey.domain.QuestionType
