@@ -68,7 +68,7 @@ public class OptionValidator implements ConstraintValidator<OptionValid, OptionC
                         for (ConstraintViolation<?> violation : violations) {
                             constraintValidatorContext.disableDefaultConstraintViolation();
                             constraintValidatorContext.buildConstraintViolationWithTemplate(violation.getMessage())
-                                    .addPropertyNode("optionCreateRequests[" + i + "]")
+                                    .addPropertyNode(String.format("optionCreateRequests[%d]", i))
                                     .addPropertyNode("optionText")
                                     .addConstraintViolation();
                         }

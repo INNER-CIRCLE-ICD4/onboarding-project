@@ -1,5 +1,9 @@
 package com.multi.sungwoongonboarding.forms.presentation;
 
+import com.multi.sungwoongonboarding.forms.infrastructure.FormJpaRepository;
+import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaRepository;
+import com.multi.sungwoongonboarding.questions.infrastructure.QuestionJpaRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,10 +29,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @EnableJpaAuditing
 @ActiveProfiles("test")
+@Transactional
 class FormControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    FormJpaRepository formJpaRepository;
+    @Autowired
+    OptionsJpaRepository optionsJpaRepository;
+    @Autowired
+    QuestionJpaRepository questionJpaRepository;
+
+    @AfterEach
+    public void tearDown() {
+        // 테스트 후 데이터 정리
+        // 예: 데이터베이스 초기화, 테스트 데이터 삭제 등
+        // 현재는 특별한 정리 작업이 필요하지 않음
+        optionsJpaRepository.deleteAll();
+        questionJpaRepository.deleteAll();
+        formJpaRepository.deleteAll();
+    }
 
 
     @Test
@@ -116,7 +138,6 @@ class FormControllerTest {
                   ]
                 }
                 """;
-
 
 
         // Expected
