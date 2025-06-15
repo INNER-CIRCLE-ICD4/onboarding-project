@@ -1,0 +1,22 @@
+package com.multi.sungwoongonboarding.responses.domain;
+
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Getter
+@Builder
+@RequiredArgsConstructor
+public class Responses {
+
+    private final Long id;
+    private final Long formId;
+    private final String userId;
+    private final LocalDateTime createdAt;
+    private final List<Answers> answers;
+
+}
