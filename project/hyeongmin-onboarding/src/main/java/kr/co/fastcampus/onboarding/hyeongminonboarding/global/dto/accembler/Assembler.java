@@ -1,6 +1,8 @@
 package kr.co.fastcampus.onboarding.hyeongminonboarding.global.dto.accembler;
 
-public interface Assembler<E, D> {
-    D toDto(E entity);
-    E toEntity(D dto);
+import kr.co.fastcampus.onboarding.hyeongminonboarding.global.dto.accembler.impl.AssemblyContext;
+
+public interface Assembler<D> {
+    D assemble(AssemblyContext context);
+    Class<D> supportType();
 }

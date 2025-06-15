@@ -19,7 +19,7 @@ import java.util.List;
 public class SurveyCreateRequest {
 
     @NotBlank
-    private String name;
+    private String title;
 
     private String description;
 

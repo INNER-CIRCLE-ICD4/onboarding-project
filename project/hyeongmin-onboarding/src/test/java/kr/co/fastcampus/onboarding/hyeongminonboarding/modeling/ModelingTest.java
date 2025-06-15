@@ -131,7 +131,7 @@ public class ModelingTest {
         // 1. 설문 생성
         Survey survey = Survey.builder()
                 .id(1L)
-                .name("직무 만족도 조사")
+                .title("직무 만족도 조사")
                 .description("직원들의 업무 만족도를 파악하기 위한 설문입니다.")
                 .version(1)
                 .build();

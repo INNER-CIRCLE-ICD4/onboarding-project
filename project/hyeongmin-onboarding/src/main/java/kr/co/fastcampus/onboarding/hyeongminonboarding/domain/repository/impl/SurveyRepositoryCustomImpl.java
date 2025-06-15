@@ -31,7 +31,7 @@ public class SurveyRepositoryCustomImpl implements SurveyRepositoryCustom {
     @Transactional
     public long updateNameById(Long id, String name) {
         return new JPAUpdateClause(em, qs)
-                .set(qs.name, name)
+                .set(qs.title, name)
                 .where(qs.id.eq(id))
                 .execute();
     }
