@@ -5,4 +5,6 @@ import fc.icd.baulonboarding.survey.model.dto.SurveyDto;
 public interface SurveyService {
 
     void registerSurvey(SurveyDto.RegisterSurveyRequest request);
+
+    void updateSurvey(SurveyDto.UpdateSurveyRequest request);
 }

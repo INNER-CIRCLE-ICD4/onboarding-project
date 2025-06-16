@@ -1,21 +1,18 @@
-package fc.icd.baulonboarding.survey.repository.store;
+package fc.icd.baulonboarding.survey.repository.reader;
 
 import fc.icd.baulonboarding.survey.model.entity.Survey;
 import fc.icd.baulonboarding.survey.repository.entity.SurveyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @RequiredArgsConstructor
-public class SurveyStoreImpl implements SurveyStore{
+public class SurveyReaderImpl implements SurveyReader{
 
     private final SurveyRepository surveyRepository;
-
     @Override
-    public Survey storeSurvey(Survey survey) {
-        return surveyRepository.save(survey);
+    public Survey getSurveyBy(Long id) {
+        return surveyRepository.findById(id)
+                .orElseThrow(RuntimeException::new);
     }
-
-
 }

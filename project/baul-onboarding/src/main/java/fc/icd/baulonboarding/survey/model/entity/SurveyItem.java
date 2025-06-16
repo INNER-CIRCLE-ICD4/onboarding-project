@@ -54,7 +54,22 @@ public class SurveyItem extends AbstractEntity {
         this.description = description;
         this.inputType = inputType;
         this.isRequired = isRequired;
-        this.isDeleted = false;
+        this.ordering = ordering;
+    }
+
+    public void applyChanges(
+            String name,
+            String description,
+            InputType inputType,
+            boolean isRequired,
+            boolean isDeleted,
+            Integer ordering
+            ){
+        this.name = name;
+        this.description = description;
+        this.inputType = inputType;
+        this.isRequired = isRequired;
+        this.isDeleted = isDeleted;
         this.ordering = ordering;
     }
 

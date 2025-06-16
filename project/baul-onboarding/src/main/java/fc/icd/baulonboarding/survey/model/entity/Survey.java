@@ -25,10 +25,15 @@ public class Survey extends AbstractEntity {
     private String description;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "survey", cascade = CascadeType.PERSIST)
-    private List<SurveyItem> surveyItemsList = new ArrayList<>();
+    private List<SurveyItem> surveyItemList = new ArrayList<>();
 
     @Builder
     public Survey(String name, String description){
+        this.name = name;
+        this.description = description;
+    }
+
+    public void applyChanges(String name, String description){
         this.name = name;
         this.description = description;
     }

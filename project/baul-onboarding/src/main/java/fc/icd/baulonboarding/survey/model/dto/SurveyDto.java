@@ -78,6 +78,75 @@ public class SurveyDto {
 
     }
 
+    @Getter
+    @Setter
+    public static class UpdateSurveyRequest{
+
+        private Long id;
+
+        private String name;
+
+        private String description;
+
+        private List<UpdateSurveyItemRequest> surveyItemList;
+
+    }
+
+    @Getter
+    @Setter
+    public static class UpdateSurveyItemRequest{
+
+        private Long id;
+
+        private String name;
+
+        private String description;
+
+        private InputType inputType;
+
+        private boolean isRequired;
+
+        private boolean isDeleted;
+
+        private Integer ordering;
+
+        private List<UpdateSurveyItemOptionRequest> surveyItemOptionList;
+
+        public SurveyItem toEntity(Survey survey){
+            return SurveyItem.builder()
+                    .survey(survey)
+                    .name(name)
+                    .description(description)
+                    .inputType(inputType)
+                    .isRequired(isRequired)
+                    .ordering(ordering)
+                    .build();
+        }
+
+    }
+
+    @Getter
+    @Setter
+    public static class UpdateSurveyItemOptionRequest{
+
+        private Long id;
+
+        private String content;
+
+        private Integer ordering;
+
+        private boolean isDeleted;
+
+        public SurveyItemOption toEntity(SurveyItem surveyItem){
+            return SurveyItemOption.builder()
+                    .surveyItem(surveyItem)
+                    .content(content)
+                    .ordering(ordering)
+                    .build();
+        }
+
+    }
+
 
 }
 

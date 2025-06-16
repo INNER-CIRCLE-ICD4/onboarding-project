@@ -18,7 +18,8 @@ public class SurveyApiController {
     }
 
     @PutMapping
-    public void 설문조사수정API(){
+    public void updateSurvey(@RequestBody SurveyDto.UpdateSurveyRequest request){
+        surveyService.updateSurvey(request);
 
     }
 

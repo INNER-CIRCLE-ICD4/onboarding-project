@@ -30,11 +30,19 @@ public class SurveyItemOption extends AbstractEntity {
     public SurveyItemOption(SurveyItem surveyItem,
                             String content,
                             Integer ordering
-                            ){
+    ){
         this.surveyItem = surveyItem;
         this.content = content;
         this.ordering = ordering;
-        this.isDeleted = false;
+    }
+
+    public void applyChanges(String content,
+                        Integer ordering,
+                        boolean isDeleted
+    ){
+        this.content = content;
+        this.ordering = ordering;
+        this.isDeleted = isDeleted;
     }
 
 }
