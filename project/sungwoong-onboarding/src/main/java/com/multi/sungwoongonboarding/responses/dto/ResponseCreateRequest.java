@@ -38,7 +38,7 @@ public class ResponseCreateRequest {
                 .userId(this.userId)
                 .createdAt(LocalDateTime.now());
 
-        if (this.answerCreateRequests != null && !this.answerCreateRequests.isEmpty()) {
+        if (this.answerCreateRequests != null) {
             responsesBuilder.answers(
                     this.answerCreateRequests.stream().map(AnswerCreateRequest::toDomain).toList());
         }

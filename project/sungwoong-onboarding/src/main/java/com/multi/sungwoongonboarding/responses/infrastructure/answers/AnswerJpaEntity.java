@@ -1,6 +1,7 @@
 package com.multi.sungwoongonboarding.responses.infrastructure.answers;
 
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
+import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.responses.domain.Answers;
 import com.multi.sungwoongonboarding.responses.infrastructure.responses.ResponseJpaEntity;
@@ -41,7 +42,8 @@ public class AnswerJpaEntity extends BaseEntity {
     private boolean originalQuestionIsRequired;
 
     @Column(name = "original_question_type", nullable = false)
-    private String originalQuestionType;
+    private Questions.QuestionType originalQuestionType;
+
 
     public static AnswerJpaEntity fromDomain(Answers answers) {
         AnswerJpaEntity answerJpaEntity = new AnswerJpaEntity();
@@ -52,7 +54,7 @@ public class AnswerJpaEntity extends BaseEntity {
         answerJpaEntity.originalQuestionText = answers.getOriginalQuestionText();
         answerJpaEntity.originalQuestionVersion = answers.getOriginalQuestionVersion();
         answerJpaEntity.originalQuestionIsRequired = answers.isOriginalQuestionIsRequired();
-        answerJpaEntity.originalQuestionType = answers.getOriginalQuestionType().name();
+        answerJpaEntity.originalQuestionType = answers.getOriginalQuestionType();
         return answerJpaEntity;
     }
 
@@ -63,17 +65,21 @@ public class AnswerJpaEntity extends BaseEntity {
         }
     }
 
+    public void setOptions(Options options) {
+        this.optionId = options.getId();
+        this.answerText = options.getOptionText();
+    }
+
     public Answers toDomain() {
         return Answers.builder()
                 .id(this.id)
                 .responseId(this.responseJpaEntity != null ? this.responseJpaEntity.getId() : null)
                 .questionId(this.questionId)
-                .optionId(this.optionId)
                 .answerText(this.answerText)
                 .originalQuestionText(this.originalQuestionText)
                 .originalQuestionVersion(this.originalQuestionVersion)
                 .originalQuestionIsRequired(this.originalQuestionIsRequired)
-                .originalQuestionType(Questions.QuestionType.valueOf(this.originalQuestionType))
+                .originalQuestionType(this.originalQuestionType)
                 .build();
     }
 }

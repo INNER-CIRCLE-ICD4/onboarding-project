@@ -85,6 +85,7 @@ public class ResponseCreateRequestTest {
         ResponseCreateRequest responses = ResponseCreateRequest.builder()
                 .formId(1L)
                 .userId("sungwoong")
+                .answerCreateRequests(List.of())
                 .build();
 
         responseRepository.save(responses.toDomain());
