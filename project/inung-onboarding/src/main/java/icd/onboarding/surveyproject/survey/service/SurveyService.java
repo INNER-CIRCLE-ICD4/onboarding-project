@@ -13,4 +13,14 @@ public class SurveyService {
 	public Survey createSurvey (Survey survey) {
 		return surveyRepository.save(survey);
 	}
+
+	public Survey updateSurvey (Survey existingSurvey) {
+		Survey updatedSurvey = existingSurvey.update(
+				existingSurvey.getTitle(),
+				existingSurvey.getDescription(),
+				existingSurvey.getQuestions()
+		);
+
+		return surveyRepository.save(updatedSurvey);
+	}
 }

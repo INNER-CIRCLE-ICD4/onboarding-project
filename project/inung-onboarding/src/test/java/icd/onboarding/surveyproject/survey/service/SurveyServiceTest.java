@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class SurveyServiceTest {
@@ -25,7 +25,7 @@ class SurveyServiceTest {
 	@Nested
 	class CreateSurvey {
 		@Test
-		@DisplayName("설문 조사를 생성할 수 있어야 한다.")
+		@DisplayName("설문 조사를 생성하고, ID를 반환 한다.")
 		void shouldCreateSurveyWithValidInput () {
 			// given
 			Survey survey = SurveyFixtures.basicSurvey();
@@ -38,12 +38,31 @@ class SurveyServiceTest {
 			assertEquals(survey.getId(), created.getId());
 			assertEquals(1, created.getVersion());
 			assertEquals(survey.getQuestions().size(), created.getQuestions().size());
+
+			Mockito.verify(surveyRepository, Mockito.times(1)).save(survey);
 		}
 	}
 
 	@Nested
 	class UpdateSurvey {
+		@Test
+		@DisplayName("설문 조사 수정 시 버전을 1씩 증가하고, 질문들과의 관계가 유지되어야 한다.")
+		void shouldUpdateSurveyThenIncreaseVersionAndRelatedQuestions () {
+			// given
+			Survey existingSurvey = SurveyFixtures.basicSurvey();
+			Survey updatedSurvey = SurveyFixtures.updatedSurvey(existingSurvey.getId(), existingSurvey.getVersion());
 
+			// when
+			Mockito.when(surveyRepository.save(updatedSurvey)).thenReturn(updatedSurvey);
+			Survey updated = sut.updateSurvey(existingSurvey);
+
+			// then
+			assertEquals(existingSurvey.getId(), updated.getId());
+			assertEquals(existingSurvey.getVersion() + 1, updated.getVersion());
+			assertFalse(updated.getQuestions().isEmpty());
+
+			Mockito.verify(surveyRepository, Mockito.times(1)).save(Mockito.any());
+		}
 	}
 
 	@Nested

@@ -9,4 +9,8 @@ public enum InputType {
 	public boolean isSelectType () {
 		return this == SINGLE_SELECT || this == MULTI_SELECT;
 	}
+
+	public boolean isTextType () {
+		return this == SHORT_TEXT || this == LONG_TEXT;
+	}
 }

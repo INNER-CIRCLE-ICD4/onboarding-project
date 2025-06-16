@@ -20,8 +20,6 @@ public class Question {
 
 	private final List<Option> options = new ArrayList<>();
 
-	private static final int MAX_OPTION_COUNT = 10;
-
 	private Question (String name, String description, InputType inputType, boolean required, Integer sortOrder, List<Option> inputOptions) {
 		this.name = name;
 		this.description = description;
@@ -30,17 +28,20 @@ public class Question {
 		this.sortOrder = sortOrder;
 		this.id = UUID.randomUUID();
 
-		for (Option option : inputOptions) {
-			options.add(option);
-			option.assignQuestion(this);
+		if (inputOptions != null) {
+			for (Option option : inputOptions) {
+				options.add(option);
+				option.assignQuestion(this);
+			}
 		}
 	}
 
-	public static Question create (String name, String description, InputType inputType, boolean required, Integer sortOrder, List<Option> options) {
-		Question question = new Question(name, description, inputType, required, sortOrder, options);
-		if (inputType.isSelectType() && options.isEmpty()) {
+	public static Question create (String name, String description, InputType inputType, boolean required, Integer sortOrder, List<Option> inputOptions) {
+		Question question = new Question(name, description, inputType, required, sortOrder, inputOptions);
+		if (inputType.isSelectType() && (inputOptions == null || inputOptions.isEmpty()))
 			throw new InSufficientOptionException();
-		}
+		if (inputType.isTextType() && !inputOptions.isEmpty())
+			throw new UnsupportedOptionException();
 
 		return question;
 	}
@@ -50,11 +51,11 @@ public class Question {
 	}
 
 	public void validateRequiredAnswer (List<Answer> answers) {
-		if (required) {
-			boolean hasAnswer = answers.stream().anyMatch(answer -> answer.getQuestionId().equals(this.id));
+		if (!required) return;
 
-			if (!hasAnswer)
-				throw new RequiredQuestionNotAnsweredException();
-		}
+		boolean hasAnswer = answers.stream().anyMatch(answer -> answer.getQuestionId().equals(this.id));
+
+		if (!hasAnswer)
+			throw new RequiredQuestionNotAnsweredException();
 	}
 }
