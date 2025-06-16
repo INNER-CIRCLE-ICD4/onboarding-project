@@ -1,0 +1,22 @@
+### 설문 생성 테스트
+POST http://localhost:8082/api/surveys
+Content-Type: application/json
+
+{
+  "title": "고객 만족도 설문",
+  "description": "서비스 품질을 개선하기 위한 설문입니다.",
+  "questions": [
+    {
+      "name": "가장 만족스러운 점은?",
+      "description": "중복 선택 가능",
+      "type": "MULTIPLE_CHOICE",
+      "required": true,
+      "options": ["가격", "속도", "친절도", "품질"]
+    },
+    {
+      "name": "개선할 점이 있다면?",
+      "type": "LONG_TEXT",
+      "required": false
+    }
+  ]
+}
