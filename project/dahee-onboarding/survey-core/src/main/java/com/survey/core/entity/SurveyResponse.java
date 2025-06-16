@@ -10,11 +10,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 /**
- * 응답 그룹화, 메타 정보 보관
- * submitted, responderId 필터, 페이징 가능
- *
- * 설문 제출 시점, 사용자 정보
- *
+ * 설문 응답 엔티티
+ * 익명 응답자(UUID 기준) 1회 응답 정보, 설문 버전과 연결
  */
 @Entity
 @Table(name = "survey_response")
@@ -27,27 +24,12 @@ public class SurveyResponse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** 어떤 버전의 Survey에 대한 응답인가? */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "survey_id", nullable = false)
-    private Survey survey;
+    @Column(nullable = false)
+    private Long surveyId;   // 설문 FK (Survey.id, 버전별 응답 구분)
+
+    @Column(nullable = false, updatable = false)
+    private String uuid;     // 익명 응답자 UUID (쿠키/LocalStorage 기반)
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime submittedAt = LocalDateTime.now();
-
-    /** 익명 또는 로그인 사용자 식별자 */
-    @Column(nullable = false)
-    private String responderId;
-
-    @OneToMany(
-            mappedBy = "response",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<SurveyResponseItem> answers = new ArrayList<>();
-
-    public void addAnswer(SurveyResponseItem item) {
-        item.setResponse(this);
-        this.answers.add(item);
-    }
 }

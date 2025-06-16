@@ -1,41 +1,33 @@
 package com.survey.core.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
- * 개별 응답: 어떤 문항에 답변했는지 FK 추적,
- * 질문 텍스트 복제(questionText), 실제 답변(answer)
+ * 문항별 응답 엔티티
+ * 하나의 응답(SurveyResponse)에서 각 문항(SurveyItem)에 대한 답변을 별도 저장
  */
 @Entity
 @Table(name = "survey_response_item")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class SurveyResponseItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** 어떤 SurveyResponse 소속인지 */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "response_id", nullable = false)
-    @Setter
-    private SurveyResponse response;
-
-    /** 원본 SurveyItem의 아이디(버전 N) */
     @Column(nullable = false)
-    private Long surveyItemId;
+    private Long responseId;     // 응답 FK (SurveyResponse.id)
 
-    /** 질문 텍스트 스냅샷 */
     @Column(nullable = false)
-    private String questionText;
+    private Long surveyItemId;   // 문항 FK (SurveyItem.id)
 
-    /** 사용자 답변(단답 or 선택지 값) */
     @Column(nullable = false)
-    private String answer;
+    private String questionText; // 응답 시점의 질문 스냅샷 (변경 이력 대비)
+
+    @Column(nullable = false)
+    private String answer;       // 실제 답변(텍스트/옵션)
 }
 

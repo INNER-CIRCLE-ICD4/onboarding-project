@@ -16,9 +16,12 @@ java {
 dependencies {
     implementation(project(":survey-service"))
     implementation(project(":survey-core"))
+    implementation(project(":common"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("com.h2database:h2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")  // IDE 인식 위해선 위 플러그인 必
     testImplementation("org.springframework.boot:spring-boot-starter-test")
