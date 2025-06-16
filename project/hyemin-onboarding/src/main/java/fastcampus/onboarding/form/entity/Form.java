@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+//설문지
 @Entity
 @Table(name = "form")
 @Getter

@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+//설문 문항 ex:주로 이용하는 서비스
 @Entity
 @Table(name = "item")
 @Getter

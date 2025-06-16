@@ -4,6 +4,7 @@ import fastcampus.onboarding.common.exception.CustomException;
 import fastcampus.onboarding.common.exception.ErrorCode;
 import fastcampus.onboarding.form.dto.request.FormCreateRequestDto;
 import fastcampus.onboarding.form.dto.request.FormUpdateRequestDto;
+import fastcampus.onboarding.form.dto.request.ItemUpdateRequestDto;
 import fastcampus.onboarding.form.entity.Form;
 import fastcampus.onboarding.form.entity.Item;
 import fastcampus.onboarding.form.entity.Option;
@@ -93,7 +94,7 @@ public class FormService {
                 .collect(Collectors.toMap(Item::getItemSeq, item -> item));
     }
 
-    private Item updateItem(FormUpdateRequestDto.ItemUpdateDto itemDto, Map<Long, Item> existingItemMap, Form form) {
+    private Item updateItem(ItemUpdateRequestDto itemDto, Map<Long, Item> existingItemMap, Form form) {
         Item item;
 
         if (itemDto.getItemSeq() != null && existingItemMap.containsKey(itemDto.getItemSeq())) {
@@ -113,7 +114,7 @@ public class FormService {
         return item;
     }
 
-    private void updateOptions(Item item, FormUpdateRequestDto.ItemUpdateDto itemDto) {
+    private void updateOptions(Item item, ItemUpdateRequestDto itemDto) {
         Map<Long, Option> existingOptionMap = item.getOptions().stream()
                 .collect(Collectors.toMap(Option::getOptionSeq, option -> option));
 

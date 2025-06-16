@@ -33,7 +33,7 @@ public class FormServiceTest {
     }
 
     @Test
-    @Rollback(false) // ★★★ 이 어노테이션을 추가하세요.
+    @Rollback(false)
     void shouldCreateFormWithItemsAndOptions() {
         // Given
         OptionRequestDto optionDto = OptionRequestDto.builder()
@@ -73,4 +73,14 @@ public class FormServiceTest {
         Option savedOption = savedItem.getOptions().get(0);
         assertThat(savedOption.getOptionContent()).isEqualTo("Option 1");
     }
+
+    @Test
+    @Rollback(false)
+    void shouldUpdateFormWithItemsAndOptions(){
+        //Given
+        OptionRequestDto optionDto = OptionRequestDto.builder()
+                .optionContent("Option 1")
+                .build();
+    }
+
 }

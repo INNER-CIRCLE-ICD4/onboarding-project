@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+//설문 문항의 옵션 ex: 주로 이용하는 서비스? 1. 웹, 2.앱 등등
 @Entity
 @Table(name = "option")
 @Getter
