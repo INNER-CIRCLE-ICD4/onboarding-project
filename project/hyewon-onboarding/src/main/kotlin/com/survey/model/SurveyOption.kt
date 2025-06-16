@@ -21,19 +21,23 @@ data class SurveyOption(
     val optionValue: String,
 
     @Column(name = "OPTION_ORDER", nullable = false)
-    val optionOrder: Int,
+    var optionOrder: Int,
+
+    @Column(name = "ACTIVE", nullable = false)
+    var active: Boolean = true,
 
     @Column(name = "CREATE_DT")
     val createDt: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "UPDATE_DT")
-    val updateDt: LocalDateTime = LocalDateTime.now()
+    var updateDt: LocalDateTime = LocalDateTime.now()
 ) {
     constructor(): this(
         id = UUID.randomUUID(),
         surveyItem = SurveyItem(),
         optionValue = "",
         optionOrder = 0,
+        active = true,
         createDt = LocalDateTime.now(),
         updateDt = LocalDateTime.now()
     )

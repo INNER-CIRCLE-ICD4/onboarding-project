@@ -3,7 +3,6 @@ package com.survey.controller
 import com.survey.dto.ResponseRequest
 import com.survey.dto.SurveyCreateRequest
 import com.survey.dto.SurveyItemRequest
-import com.survey.dto.SurveyOptionRequest
 import com.survey.model.Response
 import com.survey.model.Survey
 import com.survey.model.SurveyItem
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
@@ -38,8 +36,8 @@ class SurveyController(
     fun getAllSurveys(): List<Survey> = surveyService.getAllSurveys()
 
 //    모든 설문 항목 조회
-    @GetMapping("/items")
-    fun getAllSurveyItems(): List<SurveyItem> = surveyService.getAllSurveyItems()
+    @GetMapping("/items/{surveyId}")
+    fun getSurveyItemsBySurveyId(@PathVariable surveyId: UUID): List<SurveyItem> = surveyService.getSurveyItemsBySurveyId(surveyId)
 
 //    설문 항목 저장
     @PostMapping("/items")

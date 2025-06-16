@@ -63,7 +63,7 @@ class GlobalExceptionHandler {
     /**
      * 409에 해당하는 예외
      */
-    @ExceptionHandler(SurveyTypeConflictException::class)
+    @ExceptionHandler(SurveyTypeConflictException::class, SurveyOptionReactivationException::class)
     fun handleConflict(ex: RuntimeException, request: WebRequest): ResponseEntity<ApiErrorResponse> {
         return buildResponse(ex, HttpStatus.CONFLICT, request)
     }

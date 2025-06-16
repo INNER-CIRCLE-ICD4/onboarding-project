@@ -47,3 +47,10 @@ class ResponseSurveyNotFoundException : RuntimeException("존재하지 않는 �
 class SearchConditionInvalidException : RuntimeException("검색 조건 필드 또는 연산자가 올바르지 않습니다.")
 // EXCP12: 숫자 필드 아닌데 lt/gt 같은 범위 비교 조건
 class SearchOperatorTypeMismatchException : RuntimeException("비교 연산자는 숫자 필드에만 사용할 수 있습니다.")
+
+
+/**
+ * API07
+ */
+// EXCP 15: 비활성화된 옵션을 다시 활성화 하는 경우
+class SurveyOptionReactivationException: RuntimeException("비활성화된 옵션은 다시 활성화할 수 없습니다.")

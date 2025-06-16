@@ -29,8 +29,10 @@ data class SurveyItemRequest(
  * 설문 항목 옵션 DTO
  */
 data class SurveyOptionRequest(
+    val id: UUID? = null,
     val optionValue: String,
-    val optionOrder: Int
+    val optionOrder: Int,
+    val active: Boolean = true  // true → 표시, false → 비활성(삭제 또는 수정된)
 )
 
 /**
