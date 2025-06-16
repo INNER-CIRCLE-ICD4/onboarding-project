@@ -1,4 +1,4 @@
-package fastcampus.onboarding.config;
+package fastcampus.onboarding;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
