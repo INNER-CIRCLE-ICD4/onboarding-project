@@ -65,4 +65,13 @@ public class SurveyQuestion {
         this.inputType = inputType;
         this.isRequired = isRequired != null ? isRequired : false;
     }
+    
+    /**
+     * QuestionOption을 추가하는 헬퍼 메서드
+     * @param option 추가할 QuestionOption
+     */
+    public void addOption(QuestionOption option) {
+        this.options.add(option);
+        option.setQuestion(this);
+    }
 }
