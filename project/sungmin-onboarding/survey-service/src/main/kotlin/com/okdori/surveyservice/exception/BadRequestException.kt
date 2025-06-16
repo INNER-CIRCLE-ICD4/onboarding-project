@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus
 class BadRequestException : BootException {
     constructor() : super(HttpStatus.BAD_REQUEST)
     constructor(code: HttpStatus) : super(code)
+    constructor(errorCode: ErrorCode) : super(HttpStatus.BAD_REQUEST, errorCode.message)
     constructor(message: String?) : super(HttpStatus.BAD_REQUEST, message)
     constructor(className: Class<*>?) : super(HttpStatus.BAD_REQUEST, className)
     constructor(className: Class<*>?, message: String?) : super(HttpStatus.BAD_REQUEST, className, message)

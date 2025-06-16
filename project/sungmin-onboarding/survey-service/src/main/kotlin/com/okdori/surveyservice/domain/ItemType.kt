@@ -10,25 +10,21 @@ package com.okdori.surveyservice.domain
 enum class ItemType(
     val displayName: String,
     val description: String,
-    val limit: Int? = null,
     val allowMultiple: Boolean = false
 ) {
     SHORT_TEXT(
         displayName = "단답형",
         description = "짧은 텍스트 응답",
-        limit = 200
     ),
 
     LONG_TEXT(
         displayName = "장문형",
         description = "긴 텍스트 응답",
-        limit = 2000
     ),
 
     SINGLE_SELECT(
         displayName = "단일 선택 리스트",
         description = "선택지 중 하나만 선택",
-        limit = 1
     ),
 
     MULTIPLE_SELECT(

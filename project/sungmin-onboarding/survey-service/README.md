@@ -33,38 +33,40 @@
 
 ## 에러 코드 정의
 
-| HTTP 상태 | code | 에러 메시지 | 설명                                            |
-|-----------|------|-------------|-----------------------------------------------|
+| HTTP 상태 | code                        | 에러 메시지                       | 설명                                            |
+|-----------|-----------------------------|------------------------------|-----------------------------------------------|
 | **400 - Bad Request** |
-| 400 | INVALID_REQUEST_FORMAT | 잘못된 요청 데이터입니다 | 요청 형식이 올바르지 않음                                |
-| 400 | VALIDATION_FAILED | 유효성 검사에 실패했습니다 | 일반적인 유효성 검사 실패                                |
+| 400 | INVALID_REQUEST_FORMAT      | 잘못된 요청 데이터입니다                | 요청 형식이 올바르지 않음                                |
+| 400 | VALIDATION_FAILED           | 유효성 검사에 실패했습니다               | 일반적인 유효성 검사 실패                                |
 | **설문조사 생성/수정 관련** |
-| 400 | SURVEY_NAME_REQUIRED | 설문조사 이름은 필수입니다 | 설문조사 이름 누락                                    |
-| 400 | SURVEY_NAME_TOO_LONG | 설문조사 이름은 200자를 초과할 수 없습니다 | 설문조사 이름 길이 초과                                 |
-| 400 | SURVEY_DESCRIPTION_TOO_LONG | 설문조사 설명은 2000자를 초과할 수 없습니다 | 설문조사 설명 길이 초과                                 |
-| 400 | SURVEY_ITEMS_REQUIRED | 설문 항목은 최소 1개 이상 필요합니다 | 설문 항목 누락                                      |
-| 400 | SURVEY_ITEMS_LIMIT_EXCEEDED | 설문 항목은 최대 10개까지 가능합니다 | 설문 항목 개수 초과                                   |
-| 400 | ITEM_NAME_REQUIRED | 설문 항목 이름은 필수입니다 | 설문 항목 이름 누락                                   |
-| 400 | ITEM_NAME_TOO_LONG | 설문 항목 이름은 200자를 초과할 수 없습니다 | 설문 항목 이름 길이 초과                                |
-| 400 | ITEM_DESCRIPTION_TOO_LONG | 설문 항목 설명은 2000자를 초과할 수 없습니다 | 설문 항목 설명 길이 초과                                |
-| 400 | SELECT_OPTIONS_REQUIRED | 선택형 문항에는 선택지가 필요합니다 | SINGLE_SELECT, MULTIPLE_SELECT 타입에 options 누락 |
-| 400 | INVALID_ITEM_TYPE | 유효하지 않은 설문 항목 타입입니다 | 지원하지 않는 설문 항목 타입                              |
+| 400 | SURVEY_NAME_DUPLICATED        | 이미 등록된 설문조사 이름입니다            | 설문조사 이름 중복                                    |
+| 400 | SURVEY_NAME_REQUIRED        | 설문조사 이름은 필수입니다               | 설문조사 이름 누락                                    |
+| 400 | SURVEY_NAME_TOO_LONG        | 설문조사 이름은 200자를 초과할 수 없습니다    | 설문조사 이름 길이 초과                                 |
+| 400 | SURVEY_DESCRIPTION_TOO_LONG | 설문조사 설명은 2000자를 초과할 수 없습니다   | 설문조사 설명 길이 초과                                 |
+| 400 | SURVEY_ITEMS_INVALID        | 설문 항목은 1개 이상 10개 이하여야 합니다    | 설문 항목 누락 및 개수 초과                              |
+| 400 | ITEM_NAME_REQUIRED          | 설문 항목 이름은 필수입니다              | 설문 항목 이름 누락                                   |
+| 400 | ITEM_NAME_TOO_LONG          | 설문 항목 이름은 200자를 초과할 수 없습니다   | 설문 항목 이름 길이 초과                                |
+| 400 | ITEM_DESCRIPTION_TOO_LONG   | 설문 항목 설명은 2000자를 초과할 수 없습니다  | 설문 항목 설명 길이 초과                                |
+| 400 | OPTION_NAME_REQUIRED        | 항목 옵션 이름은 필수입니다              | 항목 옵션 이름 누락                                   |
+| 400 | OPTION_NAME_TOO_LONG        | 항목 옵션 이름은 200자를 초과할 수 없습니다   | 항목 옵션 이름 길이 초과                                |
+| 400 | SELECT_OPTIONS_REQUIRED     | 선택형 문항에는 선택지가 필요합니다          | SINGLE_SELECT, MULTIPLE_SELECT 타입에 options 누락 |
+| 400 | INVALID_ITEM_TYPE           | 유효하지 않은 설문 항목 타입입니다          | 지원하지 않는 설문 항목 타입                              |
 | **응답 제출 관련** |
-| 400 | REQUIRED_RESPONSE_MISSING | 필수 항목이 누락되었습니다 | 필수 응답 항목 미입력                                  |
-| 400 | INVALID_RESPONSE_FORMAT | 응답 형식이 올바르지 않습니다 | 응답이 문자열 배열이 아님                                |
-| 400 | SHORT_TEXT_TOO_LONG | 단답형 응답은 200자를 초과할 수 없습니다 | SHORT_TEXT 길이 초과                              |
-| 400 | LONG_TEXT_TOO_LONG | 장문형 응답은 2000자를 초과할 수 없습니다 | LONG_TEXT 길이 초과                               |
-| 400 | INVALID_SINGLE_SELECT | 단일 선택 항목에는 하나의 값만 선택할 수 있습니다 | SINGLE_SELECT에 여러 값 또는 잘못된 값                  |
-| 400 | INVALID_MULTIPLE_SELECT | 다중 선택 항목의 값이 유효하지 않습니다 | MULTIPLE_SELECT에 options에 없는 값                |
-| 400 | MULTIPLE_SELECT_REQUIRED | 다중 선택 항목에는 최소 하나의 값이 필요합니다 | MULTIPLE_SELECT에 빈 배열                         |
+| 400 | REQUIRED_RESPONSE_MISSING   | 필수 항목이 누락되었습니다               | 필수 응답 항목 미입력                                  |
+| 400 | INVALID_RESPONSE_FORMAT     | 응답 형식이 올바르지 않습니다             | 응답이 문자열 배열이 아님                                |
+| 400 | SHORT_TEXT_TOO_LONG         | 단답형 응답은 200자를 초과할 수 없습니다     | SHORT_TEXT 길이 초과                              |
+| 400 | LONG_TEXT_TOO_LONG          | 장문형 응답은 2000자를 초과할 수 없습니다    | LONG_TEXT 길이 초과                               |
+| 400 | INVALID_SINGLE_SELECT       | 단일 선택 항목에는 하나의 값만 선택할 수 있습니다 | SINGLE_SELECT에 여러 값 또는 잘못된 값                  |
+| 400 | INVALID_MULTIPLE_SELECT     | 다중 선택 항목의 값이 유효하지 않습니다       | MULTIPLE_SELECT에 options에 없는 값                |
+| 400 | MULTIPLE_SELECT_REQUIRED    | 다중 선택 항목에는 최소 하나의 값이 필요합니다   | MULTIPLE_SELECT에 빈 배열                         |
 | **403 - Forbidden** |
-| 403 | SURVEY_CLOSED | 마감된 설문조사입니다 | 설문이 종료됨                                       |
+| 403 | SURVEY_CLOSED               | 마감된 설문조사입니다                  | 설문이 종료됨                                       |
 | **404 - Not Found** |
-| 404 | NOT_FOUND_SURVEY | 설문조사를 찾을 수 없습니다 | 존재하지 않는 설문조사 ID                               |
-| 404 | NOT_FOUND_SURVEY_ITEM | 설문 항목을 찾을 수 없습니다 | 존재하지 않는 설문 항목 ID                              |
-| 404 | NOT_FOUND_RESPONSE | 응답을 찾을 수 없습니다 | 존재하지 않는 응답 ID                                 |
+| 404 | NOT_FOUND_SURVEY            | 설문조사를 찾을 수 없습니다              | 존재하지 않는 설문조사 ID                               |
+| 404 | NOT_FOUND_SURVEY_ITEM       | 설문 항목을 찾을 수 없습니다             | 존재하지 않는 설문 항목 ID                              |
+| 404 | NOT_FOUND_RESPONSE          | 응답을 찾을 수 없습니다                | 존재하지 않는 응답 ID                                 |
 | **500 - Internal Server Error** |
-| 500 | INTERNAL_SERVER_ERROR | 서버 내부 오류가 발생했습니다 | 예상치 못한 서버 오류                                  |
+| 500 | INTERNAL_SERVER_ERROR       | 서버 내부 오류가 발생했습니다             | 예상치 못한 서버 오류                                  |
 
 ---
 
