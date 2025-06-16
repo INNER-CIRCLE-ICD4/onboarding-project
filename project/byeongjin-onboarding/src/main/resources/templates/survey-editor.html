@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 25px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .survey-info, .question-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            background-color: #fcfcfc;
+        }
+
+        .editable {
+            min-height: 20px;
+            border: 1px solid #ddd;
+            padding: 8px;
+            background-color: #fff;
+        }
+
+        #surveyTitle, #surveyDescription {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .question-title {
+            display: block;
+            font-size: 19px;
+            font-weight: bold;
+            margin-top: 16px;
+            margin-bottom: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+        }
+
+        .question-header input {
+            margin: 0;
+        }
+
+        .drag-handle {
+            cursor: grab;
+            margin-right: 10px;
+            font-size: 19px;
+        }
+
+        .question-actions {
+            margin-left: 10px;
+        }
+
+        .question-actions button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .question-actions button:hover {
+            background-color: #c82333;
+        }
+
+        .item-config {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .item-config label {
+            font-weight: bold;
+        }
+
+        .item-config select, .item-config input[type="checkbox"] {
+            padding: 5px;
+        }
+
+        .form-item-options {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        .add-option-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            text-align: right;
+        }
+
+        .button-group button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .button-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .option-item .editable {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <input id="surveyId" th:value="${surveyData?.id ?: ''}" />
+    <div class="survey-info">
+        <input contenteditable="true" id="surveyTitle" class="editable" placeholder="설문조사 제목을 입력하세요" th:text="${surveyData?.name}"></input>
+        <br>
+        <input contenteditable="true" id="surveyDescription" class="editable" placeholder="설문조사에 대한 설명을 입력하세요" th:text="${surveyData?.description}"></input>
+    </div>
+
+    <div id="questionsContainer">
+        <div th:each="question, i : ${surveyData?.formItems}" class="question-section" th:data-item-id="${question.id}" th:data-display-order="${question.displayOrder}">
+            <div class="question-header">
+                <span class="drag-handle">☰</span>
+                <input contenteditable="true" class="question-title editable" placeholder="질문 내용을 입력하세요" th:text="${question.name}"/>
+                <div class="question-actions">
+                    <button type="button" onclick="removeQuestion(this)">-</button>
+                </div>
+            </div>
+
+            <div class="item-config">
+                <label for="itemType">입력 형태:</label>
+                <select class="item-type-select">
+                    <option value="SHORT_ANSWER" th:selected="${question.itemType.name() == 'SHORT_ANSWER'}">단답형</option>
+                    <option value="LONG_ANSWER" th:selected="${question.itemType.name() == 'LONG_ANSWER'}">장문형</option>
+                    <option value="SINGLE_CHOICE" th:selected="${question.itemType.name() == 'SINGLE_CHOICE'}">라디오박스 (단일 선택)</option>
+                    <option value="MULTI_CHOICE" th:selected="${question.itemType.name() == 'MULTI_CHOICE'}">체크박스 (다중 선택)</option>
+                </select>
+                <label>필수:</label>
+                <input type="checkbox" class="item-required-checkbox" th:checked="${question.required}">
+            </div>
+
+            <div class="form-item-options" th:style="${(question.itemType.name() == 'SINGLE_CHOICE' or question.itemType.name() == 'MULTI_CHOICE') ? 'display: block;' : 'display: none;'}">
+                <h4>선택 후보:</h4>
+                <div th:each="option, j : ${question.options}" class="option-item">
+                    <span class="drag-handle">☰</span>
+                    <div contenteditable="true" class="option-text editable" placeholder="옵션 내용을 입력하세요" th:text="${option}">옵션 [[${j.index + 1}]]</div>
+                    <button type="button" onclick="removeOption(this)">-</button>
+                </div>
+                <button type="button" class="add-option-btn" onclick="addOption(this)">+ 옵션 추가</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button type="button" onclick="addNewQuestion()">+ 새 질문 추가</button>
+        <button type="button" onclick="saveAllContent()">모든 내용 저장</button>
+        <button type="button" onclick="location.href='/survey/list'">목록으로</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.question-section').forEach(qSection => {
+            const itemTypeSelect = qSection.querySelector('.item-type-select');
+            toggleOptionsVisibility(itemTypeSelect);
+        });
+
+        document.querySelectorAll('.item-type-select').forEach(select => {
+            select.addEventListener('change', function() {
+                toggleOptionsVisibility(this);
+            });
+        });
+
+        // 질문 순서 변경
+        new Sortable(document.getElementById('questionsContainer'), {
+            animation: 150,
+            handle: '.drag-handle',
+            onEnd: function (evt) {
+                updateDisplayOrders();
+            }
+        });
+
+        // 옵션 순서 변경
+        document.querySelectorAll('.form-item-options').forEach(optionsContainer => {
+            new Sortable(optionsContainer, {
+                animation: 150,
+                handle: '.drag-handle',
+                onEnd: function (evt) {
+                    updateOptionDisplayOrders(evt.to);
+                }
+            });
+        });
+        updateDisplayOrders();
+    });
+
+    function toggleOptionsVisibility(selectElement) {
+        const questionSection = selectElement.closest('.question-section');
+        const optionsContainer = questionSection.querySelector('.form-item-options');
+        const selectedType = selectElement.value;
+        if (selectedType === 'SINGLE_CHOICE' || selectedType === 'MULTI_CHOICE') {
+            optionsContainer.style.display = 'block';
+        } else {
+            optionsContainer.style.display = 'none';
+        }
+    }
+
+    function addNewQuestion() {
+        const questionsContainer = document.getElementById('questionsContainer');
+        if (questionsContainer.children.length >= 10) {
+            showAlert('설문 항목은 최대 10개까지 추가할 수 있습니다.');
+            return;
+        }
+
+        const newQuestionHtml = `
+                <div class="question-section">
+                    <div class="question-header">
+                        <span class="drag-handle">☰</span>
+                        <input contenteditable="true" class="question-title editable" placeholder="질문 내용을 입력하세요"/>
+                        <div class="question-actions">
+                            <button type="button" onclick="removeQuestion(this)">-</button>
+                        </div>
+                    </div>
+                    <div class="item-config">
+                        <label for="itemType">입력 형태:</label>
+                        <select class="item-type-select">
+                            <option value="SHORT_ANSWER" selected>단답형</option>
+                            <option value="LONG_ANSWER">장문형</option>
+                            <option value="SINGLE_CHOICE">라디오박스 (단일 선택)</option>
+                            <option value="MULTI_CHOICE">체크박스 (다중 선택)</option>
+                        </select>
+                        <label>필수:</label>
+                        <input type="checkbox" class="item-required-checkbox">
+                    </div>
+                    <div class="form-item-options" style="display: none;">
+                        <h4>선택 후보:</h4>
+                        <button type="button" class="add-option-btn" onclick="addOption(this)">+ 옵션 추가</button>
+                    </div>
+                </div>
+            `;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newQuestionHtml.trim();
+        const newQuestionSection = tempDiv.firstChild;
+        questionsContainer.appendChild(newQuestionSection);
+
+        const itemTypeSelect = newQuestionSection.querySelector('.item-type-select');
+        itemTypeSelect.addEventListener('change', function () {
+            toggleOptionsVisibility(this);
+        });
+        new Sortable(newQuestionSection.querySelector('.form-item-options'), {
+            animation: 150,
+            handle: '.drag-handle',
+            onEnd: function (evt) {
+                updateOptionDisplayOrders(evt.to);
+            }
+        });
+        updateDisplayOrders();
+    }
+
+    function removeQuestion(button) {
+        const questionSection = button.closest('.question-section');
+        const questionsContainer = document.getElementById('questionsContainer');
+        if (questionsContainer.children.length <= 1) {
+            showAlert('설문 항목은 최소 1개 이상이어야 합니다.');
+            return;
+        }
+        if (confirm('이 질문을 삭제하시겠습니까?')) {
+            questionSection.remove();
+            updateDisplayOrders();
+        }
+    }
+
+    function addOption(button) {
+        const optionsContainer = button.closest('.form-item-options');
+        const newOptionHtml = `
+                <div class="option-item">
+                    <span class="drag-handle">☰</span>
+                    <div contenteditable="true" class="option-text editable" placeholder="옵션 내용을 입력하세요">새로운 옵션</div>
+                    <button type="button" onclick="removeOption(this)">-</button>
+                </div>
+            `;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = newOptionHtml.trim();
+        optionsContainer.insertBefore(tempDiv.firstChild, button);
+        updateOptionDisplayOrders(optionsContainer);
+    }
+
+    function removeOption(button) {
+        const optionItem = button.closest('.option-item');
+        const optionsContainer = button.closest('.form-item-options');
+        optionItem.remove();
+        updateOptionDisplayOrders(optionsContainer);
+    }
+
+    function updateDisplayOrders() {
+        document.querySelectorAll('#questionsContainer .question-section').forEach((qSection, index) => {
+            qSection.dataset.displayOrder = index;
+        });
+    }
+
+    function updateOptionDisplayOrders(optionsContainer) {
+        optionsContainer.querySelectorAll('.option-item').forEach((optItem, index) => {
+            optItem.dataset.displayOrder = index;
+        });
+    }
+
+    function showAlert(message) {
+        const alertDiv = document.getElementById('validationAlert');
+        alertDiv.textContent = message;
+        alertDiv.style.display = 'block';
+        setTimeout(() => {
+            alertDiv.style.display = 'none';
+        }, 3000);
+    }
+
+</script>
+</body>
+</html>
