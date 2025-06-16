@@ -2,4 +2,4 @@ server:
   port: 8081
 spring:
   application:
-    name: survey-read
+    name: survey-submit
