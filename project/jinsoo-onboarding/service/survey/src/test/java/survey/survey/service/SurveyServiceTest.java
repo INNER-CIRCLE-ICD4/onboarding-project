@@ -17,6 +17,7 @@ import survey.survey.entity.surveyquestion.CheckCandidate;
 import survey.survey.entity.surveyquestion.InputType;
 import survey.survey.entity.surveyquestion.SurveyQuestion;
 import survey.survey.repository.SurveyFormRepository;
+import survey.survey.repository.SurveyQuestionRepository;
 import survey.survey.service.response.SurveyFormResponse;
 
 import java.time.LocalDateTime;
@@ -27,20 +28,23 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("SurveyFormService 테스트")
-class SurveyFormServiceTest {
+@DisplayName("SurveyService 테스트")
+class SurveyServiceTest {
 
     @InjectMocks
-    private SurveyFormService surveyFormService;
+    private SurveyService surveyService;
 
     @Mock
     private SurveyFormRepository surveyFormRepository;
+
+    @Mock
+    private SurveyQuestionRepository surveyQuestionRepository;
 
     @Nested
     @DisplayName("설문지 생성 테스트")
@@ -52,18 +56,21 @@ class SurveyFormServiceTest {
             // given
             var request = givenValidSurveyFormRequest();
             var savedSurveyForm = givenSavedSurveyForm();
+            var savedQuestions = givenMockQuestions();
             given(surveyFormRepository.save(any(SurveyForm.class))).willReturn(savedSurveyForm);
+            given(surveyQuestionRepository.saveAll(anyList())).willReturn(savedQuestions);
 
             // when
-            SurveyFormResponse result = surveyFormService.create(request);
+            SurveyFormResponse result = surveyService.create(request);
 
             // then
             assertThat(result).isNotNull();
             assertThat(result.getSurveyId()).isEqualTo(12345L);
             assertThat(result.getTitle()).isEqualTo("테스트 설문지");
             assertThat(result.getDescription()).isEqualTo("테스트용 설문지입니다");
-            assertThat(result.getQuestions()).hasSize(2);
+            assertThat(result.getQuestionList()).hasSize(2);
             verify(surveyFormRepository).save(any(SurveyForm.class));
+            verify(surveyQuestionRepository).saveAll(anyList());
         }
 
         @Test
@@ -71,9 +78,12 @@ class SurveyFormServiceTest {
         void shouldThrowExceptionWhenQuestionCountBelowMinimum() {
             // given
             SurveyFormCreateRequest request = givenEmptyQuestionsRequest();
+            SurveyForm mockForm = mock(SurveyForm.class);
+            given(mockForm.getSurveyFormId()).willReturn(1234567890L);
+            given(surveyFormRepository.save(any(SurveyForm.class))).willReturn(mockForm);
 
             // when & then
-            assertThatThrownBy(() -> surveyFormService.create(request))
+            assertThatThrownBy(() -> surveyService.create(request))
                     .isInstanceOf(ApplicationException.class)
                     .matches(e -> ((ApplicationException) e).getErrorType() == ErrorType.MINIMUM_QUESTION);
         }
@@ -83,9 +93,12 @@ class SurveyFormServiceTest {
         void shouldThrowExceptionWhenQuestionCountAboveMaximum() {
             // given
             SurveyFormCreateRequest request = givenTooManyQuestionsRequest();
+            SurveyForm mockForm = mock(SurveyForm.class);
+            given(mockForm.getSurveyFormId()).willReturn(1234567890L);
+            given(surveyFormRepository.save(any(SurveyForm.class))).willReturn(mockForm);
 
             // when & then
-            assertThatThrownBy(() -> surveyFormService.create(request))
+            assertThatThrownBy(() -> surveyService.create(request))
                     .isInstanceOf(ApplicationException.class)
                     .matches(e -> ((ApplicationException) e).getErrorType() == ErrorType.MAXIMUM_QUESTION);
         }
@@ -95,9 +108,12 @@ class SurveyFormServiceTest {
         void shouldThrowExceptionWhenChoiceQuestionHasNoCandidates() {
             // given
             SurveyFormCreateRequest request = givenChoiceQuestionWithoutCandidatesRequest();
+            SurveyForm mockForm = mock(SurveyForm.class);
+            given(mockForm.getSurveyFormId()).willReturn(1234567890L);
+            given(surveyFormRepository.save(any(SurveyForm.class))).willReturn(mockForm);
 
             // when & then
-            assertThatThrownBy(() -> surveyFormService.create(request))
+            assertThatThrownBy(() -> surveyService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("선택형 질문에는 최소 하나 이상의 선택지가 필요합니다");
         }
@@ -107,9 +123,12 @@ class SurveyFormServiceTest {
         void shouldThrowExceptionWhenTextQuestionHasCandidates() {
             // given
             SurveyFormCreateRequest request = givenTextQuestionWithCandidatesRequest();
+            SurveyForm mockForm = mock(SurveyForm.class);
+            given(mockForm.getSurveyFormId()).willReturn(1234567890L);
+            given(surveyFormRepository.save(any(SurveyForm.class))).willReturn(mockForm);
 
             // when & then
-            assertThatThrownBy(() -> surveyFormService.create(request))
+            assertThatThrownBy(() -> surveyService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("질문에는 선택지를 추가할 수 없습니다");
         }
@@ -120,30 +139,38 @@ class SurveyFormServiceTest {
             // given
             SurveyFormCreateRequest request = givenValidSurveyFormRequest();
             given(surveyFormRepository.save(any(SurveyForm.class))).willAnswer(invocation -> invocation.getArgument(0));
+            given(surveyQuestionRepository.saveAll(anyList())).willAnswer(invocation -> invocation.getArgument(0));
 
             // when
-            surveyFormService.create(request);
+            surveyService.create(request);
 
             // then
             ArgumentCaptor<SurveyForm> formCaptor = ArgumentCaptor.forClass(SurveyForm.class);
             verify(surveyFormRepository).save(formCaptor.capture());
 
             SurveyForm capturedForm = formCaptor.getValue();
-            assertThat(capturedForm.getTitle()).isEqualTo(request.getTitle());
-            assertThat(capturedForm.getDescription()).isEqualTo(request.getDescription());
-            assertThat(capturedForm.getSurveyId()).isEqualTo(request.getSurveyId());
-            assertThat(capturedForm.getSurveyQuestionList()).hasSize(request.getQuestionList().size());
+            assertThat(capturedForm.getTitle()).isEqualTo(request.title());
+            assertThat(capturedForm.getDescription()).isEqualTo(request.description());
+            assertThat(capturedForm.getSurveyId()).isEqualTo(request.surveyId());
+
+            // 질문 확인
+            ArgumentCaptor<List<SurveyQuestion>> questionsCaptor = ArgumentCaptor.forClass(List.class);
+            verify(surveyQuestionRepository).saveAll(questionsCaptor.capture());
+
+            List<SurveyQuestion> capturedQuestions = questionsCaptor.getValue();
+            assertThat(capturedQuestions).hasSize(request.questionList().size());
 
             // 첫 번째 질문 확인
-            SurveyQuestion firstQuestion = capturedForm.getSurveyQuestionList().getFirst();
-            QuestionCreateRequest firstRequest = request.getQuestionList().getFirst();
-            assertThat(firstQuestion.getName()).isEqualTo(firstRequest.getName());
-            assertThat(firstQuestion.getDescription()).isEqualTo(firstRequest.getDescription());
-            assertThat(firstQuestion.getInputType()).isEqualTo(firstRequest.getInputType());
-            assertThat(firstQuestion.isRequired()).isEqualTo(firstRequest.isRequired());
+            SurveyQuestion firstQuestion = capturedQuestions.get(0);
+            QuestionCreateRequest firstRequest = request.questionList().get(0);
+            assertThat(firstQuestion.getName()).isEqualTo(firstRequest.name());
+            assertThat(firstQuestion.getDescription()).isEqualTo(firstRequest.description());
+            assertThat(firstQuestion.getInputType()).isEqualTo(firstRequest.inputType());
+            assertThat(firstQuestion.isRequired()).isEqualTo(firstRequest.required());
+            assertThat(firstQuestion.getSurveyFormId()).isEqualTo(capturedForm.getSurveyFormId());
 
             // 두 번째 질문의 후보자 확인
-            SurveyQuestion secondQuestion = capturedForm.getSurveyQuestionList().get(1);
+            SurveyQuestion secondQuestion = capturedQuestions.get(1);
             assertThat(secondQuestion.getCandidates()).hasSize(2);
         }
 
@@ -226,19 +253,15 @@ class SurveyFormServiceTest {
         private SurveyForm givenSavedSurveyForm() {
             // 모의 SurveyForm 객체 생성
             SurveyForm mockForm = mock(SurveyForm.class);
-            // 질문 리스트 생성
-            List<SurveyQuestion> questions = givenMockQuestions();
 
             // 필요한 메서드 스텁
-            given(mockForm.getSurveyFormId()).willReturn(mock(survey.survey.entity.surveyform.SurveyFormId.class));
-            given(mockForm.getSurveyFormId().getSurveyFormId()).willReturn(1234567890L);
-            given(mockForm.getSurveyFormId().getVersion()).willReturn(1L);
+            given(mockForm.getSurveyFormId()).willReturn(1234567890L);
+            given(mockForm.getVersion()).willReturn(1L);
             given(mockForm.getSurveyId()).willReturn(12345L);
             given(mockForm.getTitle()).willReturn("테스트 설문지");
             given(mockForm.getDescription()).willReturn("테스트용 설문지입니다");
             given(mockForm.getCreatedAt()).willReturn(LocalDateTime.now());
             given(mockForm.getModifiedAt()).willReturn(LocalDateTime.now());
-            given(mockForm.getSurveyQuestionList()).willReturn(questions);
 
             return mockForm;
         }
