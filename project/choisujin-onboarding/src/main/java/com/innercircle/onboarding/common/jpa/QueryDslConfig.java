@@ -1,15 +1,16 @@
-package com.innercircle.onboarding.common.config;
+package com.innercircle.onboarding.common.jpa;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
-
+@EnableJpaAuditing
 @Configuration
 public class QueryDslConfig {
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.innercircle.onboarding.common.exceptions.CommonException;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.util.ObjectUtils;
 
 public class ApiResponse {
 
@@ -42,6 +43,7 @@ public class ApiResponse {
         private String message;
         private String path;
         private String description;
+        private Object details;
 
         @Builder
         public Exception(String path, CommonException commonException) {
@@ -50,6 +52,7 @@ public class ApiResponse {
             this.message = commonException.getResponse().getMessage();
             this.path = path;
             this.description = commonException.getDescription();
+            this.details = commonException.getDetails();
         }
 
     }

@@ -22,4 +22,13 @@ public class JsonUtils {
         }
     }
 
+    // 3. Dto Object → Json String
+    public static String toJsonString(Object dto) {
+        try {
+            return objectMapper.writeValueAsString(dto);
+        } catch (Exception e) {
+            throw new CommonException(ResponseStatus.JSON_CONVERT_FAIL, "[toJsonString] : " + e.getMessage());
+        }
+    }
+
 }
