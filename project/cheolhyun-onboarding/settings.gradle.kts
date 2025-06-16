@@ -1,6 +1,5 @@
 rootProject.name = "cheolhyun-onboarding"
 
-include("core")
-include("app")
-include("core")
-include("infrastructure")
+include("survey-domain")
+include("survey-app")
+include("survey-infrastructure")
