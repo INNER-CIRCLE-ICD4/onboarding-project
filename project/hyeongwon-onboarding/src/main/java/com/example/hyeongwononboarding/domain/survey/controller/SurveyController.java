@@ -4,9 +4,11 @@ import com.example.hyeongwononboarding.domain.survey.dto.request.CreateSurveyReq
 import com.example.hyeongwononboarding.domain.survey.dto.response.SurveyResponse;
 import com.example.hyeongwononboarding.domain.survey.service.SurveyService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,5 +37,35 @@ public class SurveyController {
                 "data", response
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    /**
+     * 모든 설문조사 목록 조회 API
+     * @return 설문조사 목록 응답
+     */
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAllSurveys() {
+        List<SurveyResponse> responses = surveyService.getAllSurveys();
+        Map<String, Object> result = Map.of(
+                "success", true,
+                "data", responses
+        );
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * ID로 설문조사 단건 조회 API
+     * @param surveyId 조회할 설문조사 ID
+     * @return 설문조사 상세 응답
+     */
+    @GetMapping("/{surveyId}")
+    public ResponseEntity<Map<String, Object>> getSurveyById(
+            @PathVariable @NotBlank(message = "설문조사 ID는 필수입니다.") String surveyId) {
+        SurveyResponse response = surveyService.getSurveyById(surveyId);
+        Map<String, Object> result = Map.of(
+                "success", true,
+                "data", response
+        );
+        return ResponseEntity.ok(result);
     }
 }

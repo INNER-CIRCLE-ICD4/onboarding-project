@@ -4,6 +4,7 @@ import com.example.hyeongwononboarding.domain.survey.entity.SurveyVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.example.hyeongwononboarding.domain.survey.entity.Survey;
 import java.util.Optional;
 
 /**
@@ -13,4 +14,11 @@ import java.util.Optional;
 @Repository
 public interface SurveyVersionRepository extends JpaRepository<SurveyVersion, String> {
     Optional<SurveyVersion> findBySurveyIdAndVersion(String surveyId, Integer version);
+    
+    /**
+     * 설문의 최신 버전을 조회합니다.
+     * @param survey 설문 엔티티
+     * @return 최신 버전의 설문조사 버전 (없을 경우 Optional.empty())
+     */
+    Optional<SurveyVersion> findTopBySurveyOrderByVersionDesc(Survey survey);
 }

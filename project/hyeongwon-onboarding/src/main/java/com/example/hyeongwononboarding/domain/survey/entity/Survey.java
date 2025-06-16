@@ -46,10 +46,13 @@ public class Survey {
     private List<SurveyVersion> versions = new ArrayList<>();
 
     @Builder
-    public Survey(String id, String title, String description) {
+    public Survey(String id, String title, String description, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.description = description;
+        if (createdAt != null) {
+            this.createdAt = createdAt;
+        }
         this.currentVersion = 1;
     }
 

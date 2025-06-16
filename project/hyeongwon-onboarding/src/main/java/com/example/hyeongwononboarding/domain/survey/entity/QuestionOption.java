@@ -39,4 +39,13 @@ public class QuestionOption {
         this.optionOrder = optionOrder;
         this.optionText = optionText;
     }
+    
+    /**
+     * SurveyQuestion과의 양방향 관계를 설정합니다.
+     * @param question 연결할 SurveyQuestion
+     */
+    public void setQuestion(SurveyQuestion question) {
+        this.question = question;
+        this.questionId = question != null ? question.getId() : null;
+    }
 }

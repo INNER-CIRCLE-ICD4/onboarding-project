@@ -48,11 +48,12 @@ public class SurveyVersion {
     private List<SurveyQuestion> questions = new ArrayList<>();
 
     @Builder
-    public SurveyVersion(String id, String surveyId, Integer version, String title, String description) {
+    public SurveyVersion(String id, String surveyId, Integer version, String title, String description, LocalDateTime createdAt) {
         this.id = id;
         this.surveyId = surveyId;
         this.version = version;
         this.title = title;
         this.description = description;
+        this.createdAt = createdAt;
     }
 }

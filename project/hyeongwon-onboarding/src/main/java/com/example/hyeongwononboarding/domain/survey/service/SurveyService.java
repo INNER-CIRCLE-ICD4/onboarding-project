@@ -2,6 +2,7 @@ package com.example.hyeongwononboarding.domain.survey.service;
 
 import com.example.hyeongwononboarding.domain.survey.dto.request.CreateSurveyRequest;
 import com.example.hyeongwononboarding.domain.survey.dto.response.SurveyResponse;
+import java.util.List;
 
 /**
  * 설문조사 서비스 인터페이스
@@ -14,4 +15,17 @@ public interface SurveyService {
      * @return 생성된 설문조사 상세 응답 DTO
      */
     SurveyResponse createSurvey(CreateSurveyRequest request);
+
+    /**
+     * 모든 설문조사 목록 조회
+     * @return 설문조사 응답 DTO 목록
+     */
+    List<SurveyResponse> getAllSurveys();
+
+    /**
+     * ID로 설문조사 단건 조회
+     * @param surveyId 조회할 설문조사 ID
+     * @return 설문조사 응답 DTO
+     */
+    SurveyResponse getSurveyById(String surveyId);
 }
