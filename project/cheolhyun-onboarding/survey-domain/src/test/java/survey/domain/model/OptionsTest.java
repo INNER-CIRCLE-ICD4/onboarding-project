@@ -10,7 +10,7 @@ class OptionsTest {
 
     @Test
     @DisplayName("옵션 넣기")
-    void add() {
+    void 옵션_추가() {
         Options result1 = new Options("Option1");
         Options result2 = new Options();
 

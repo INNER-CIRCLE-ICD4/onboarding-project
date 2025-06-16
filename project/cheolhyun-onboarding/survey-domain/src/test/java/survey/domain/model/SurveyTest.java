@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SurveyTest {
     @Test
     @DisplayName("null과 빈값 유효성 검증")
-    void validEmpty() {
+    void 설문지_빈값_검증() {
         assertAll(
                 () -> assertThatThrownBy(() -> new Survey("")).isInstanceOf(IllegalArgumentException.class),
                 () -> assertThatThrownBy(() -> new Survey(null)).isInstanceOf(IllegalArgumentException.class)

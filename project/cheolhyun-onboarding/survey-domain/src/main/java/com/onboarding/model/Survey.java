@@ -8,6 +8,8 @@ import lombok.ToString;
 public class Survey {
     private static final String INVALID_TITLE = "설문조사 명이 유효하지 않습니다.";
 
+    private String id;
+
     private String title;
     private String description;
     private Questions questions;

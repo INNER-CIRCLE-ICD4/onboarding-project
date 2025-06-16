@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OptionTest {
     @Test
     @DisplayName("null과 빈값 유효성 검증")
-    void validEmpty() {
+    void 옵션_빈값_검증() {
         assertAll(
                 () -> assertThatThrownBy(() -> new Option("")).isInstanceOf(IllegalArgumentException.class),
                 () -> assertThatThrownBy(() -> new Option(null)).isInstanceOf(IllegalArgumentException.class)
