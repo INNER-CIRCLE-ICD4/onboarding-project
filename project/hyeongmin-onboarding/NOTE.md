@@ -39,7 +39,7 @@
 
 
 # 2025-06-11 [v0.0.2]
-## fixed
+## refactor
 - JPA 의 연관관게 (OneToMany) 사용하지 않도록 다시 모델링 작업함
 - 만든 모델링으로 전체적인 데이터 테이스 케이스 작성함
 - Snapshot 기반 데이터 체계 구현
@@ -50,3 +50,28 @@
   - 모든 Entity의 조립은 Assembler 에서 담당하도록 함
 - 설문조사 제출시, 각각의 응답에는 질문타입이 있으므로 타입별 validation 체크와 Entity 조립을 위해 AnswerHandler 인터페이스 추가
   - 추후 설문조사 응답에 타입이 추가되더라도 구현체를 하나 추가하면 되도록 함
+
+
+# 2025-06-15 [v0.0.3]
+## refactor
+- Assembler 를 범용적으로, Context 추가시 소스 변경 없이 사용 할 수 있도록 변경
+  - AssemblyContext :  DTO를 만들기 위해 필요한 모든 데이터(Entity, 값 객체 등)를 담는 컨테이너
+  - AssemblerFactory : 어떤 DTO를 조립할지 결정하고, 알맞은 Assembler를 찾아 실행
+  - ContextKey<T> : AssemblyContext 내부에서 값을 식별하고, 꺼낼 때 타입 캐스팅을 보장하기 위한 Key 클래스
+  - Assembler<D> : DTO 한 종류를 조립하는 책임을 가지는 전략 객체
+  ```
+     Survey survey = Survey.builder()
+                .title(req.getTitle())
+                .description(req.getDescription())
+                .version(1)
+                .build();
+
+        return assemblerFactory.assemble(SurveyResponseDto.class, assemblyContext -> {
+            assemblyContext.put(SURVEY_CONTEXT_KEY, survey);
+        });
+  ```
+# 2025-06-16 [v0.0.3]
+## refactor
+- Assembler 추가
+  - 설문조사 응답 조회를 위한 Assembler 추가
+- Assembler 를 활용한 시나리오 테스트

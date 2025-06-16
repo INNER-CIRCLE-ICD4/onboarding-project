@@ -12,10 +12,13 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class AnswerSnapshotSerializer {
 
     private final ObjectMapper objectMapper;
+
+    public AnswerSnapshotSerializer(ObjectMapper objectMapper){
+        this.objectMapper = objectMapper;
+    }
 
     public String serializeQuestion(Question question) {
         try {

@@ -21,8 +21,9 @@ public class SurveyWithAnswersResponseDto {
     @Data
     @Builder
     public static class SurveyAnswerResponseDto {
-        private Long respondentId;         // 또는 UUID 등
+        private Long respondentId;
         private LocalDateTime submittedAt;
+        private Integer surveyVersion;
         private List<AnswerDetailDto> answers;
     }
 
@@ -32,6 +33,7 @@ public class SurveyWithAnswersResponseDto {
         private Long questionId;
 
         private String questionTitle;                // 현재 질문 제목
+        private String questionDetail;                // 현재 질문 제목
         private QuestionType questionType;
         private Boolean required;
 

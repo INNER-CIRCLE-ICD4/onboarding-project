@@ -24,7 +24,7 @@ public class Survey extends BaseTimeEntity {
     @Id
     private Long id;
 
-    private String name;
+    private String title;
 
     @Column(columnDefinition = "TEXT")
     private String description;
