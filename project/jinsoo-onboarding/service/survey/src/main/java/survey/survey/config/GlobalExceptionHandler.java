@@ -12,6 +12,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import survey.common.exception.ApiException;
 import survey.survey.controller.response.ErrorResponse;
+import survey.survey.controller.response.SurveyErrorResponse;
 
 import java.util.stream.Collectors;
 
@@ -22,6 +23,11 @@ import static survey.common.exception.ErrorType.*;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<SurveyErrorResponse> handleApplicationException(ApplicationException e) {
+        log.error("Application Exception occurred. message={}, className={}", e.getMessage(), e.getClass().getName());
+        return ResponseEntity.status(e.getHttpStatus()).body(new SurveyErrorResponse(e.getMessage(), e.getErrorType()));
+    }
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ErrorResponse> handleApiException(ApiException e) {
