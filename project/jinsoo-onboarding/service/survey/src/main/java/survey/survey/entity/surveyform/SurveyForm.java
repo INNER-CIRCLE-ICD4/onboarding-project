@@ -4,20 +4,19 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import survey.survey.entity.surveyquestion.SurveyQuestion;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Table(name = "survey_form")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class SurveyForm {
-    @EmbeddedId
-    private SurveyFormId surveyFormId;
+    @Id
+    private Long surveyFormId;
+
+    @Version
+    private Long version;
 
     @Column(nullable = false)
     private String title;
@@ -28,16 +27,13 @@ public class SurveyForm {
     @Column(nullable = false)
     private Long surveyId;
 
-    @OneToMany(mappedBy = "surveyForm", cascade = CascadeType.ALL)
-    private List<SurveyQuestion> surveyQuestionList = new ArrayList<>();
-
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
-    public static SurveyForm create(SurveyFormId surveyFormId, String title, String description, Long surveyId) {
+    public static SurveyForm create(Long surveyFormId, String title, String description, Long surveyId) {
         SurveyForm surveyForm = new SurveyForm();
         surveyForm.surveyFormId = surveyFormId;
         surveyForm.title = title;
@@ -48,29 +44,19 @@ public class SurveyForm {
         return surveyForm;
     }
 
-    public void addQuestion(SurveyQuestion surveyQuestion) {
-        if (surveyQuestion == null || this.surveyQuestionList.contains(surveyQuestion)) {
-            return;
+    public void update(String title, String description, Long surveyId) {
+        this.title = title;
+        this.description = description;
+        this.surveyId = surveyId;
+    }
+
+    public void incrementVersion() {
+        if (this.version == null) {
+            this.version = 1L;
+        } else {
+            this.version++;
         }
-
-        addQuestionInternal(surveyQuestion);
+        this.modifiedAt = LocalDateTime.now();
     }
-
-    public void addAllQuestions(List<SurveyQuestion> questions) {
-        if (questions == null || questions.isEmpty()) {
-            return;
-        }
-
-        questions.stream()
-                .filter(Objects::nonNull)
-                .filter(question -> !this.surveyQuestionList.contains(question))
-                .forEach(this::addQuestionInternal);
-    }
-
-    private void addQuestionInternal(SurveyQuestion surveyQuestion) {
-        this.surveyQuestionList.add(surveyQuestion);
-        surveyQuestion.assignSurveyForm(this);
-    }
-
 
 }
