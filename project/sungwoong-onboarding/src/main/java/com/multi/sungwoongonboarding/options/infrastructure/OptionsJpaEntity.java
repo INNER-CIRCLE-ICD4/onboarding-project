@@ -1,6 +1,7 @@
 package com.multi.sungwoongonboarding.options.infrastructure;
 
 import com.multi.sungwoongonboarding.options.domain.Options;
+import com.multi.sungwoongonboarding.options.dto.OptionUpdateRequest;
 import com.multi.sungwoongonboarding.questions.infrastructure.QuestionJpaEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -34,6 +35,11 @@ public class OptionsJpaEntity {
 
     public Options toDomain() {
         return new Options(id, optionText, deleted);
+    }
+
+    public void update(Options options) {
+        this.optionText = options.getOptionText();
+        this.deleted = options.getDeleted();
     }
 
     public void mappingQuestionJpaEntity(QuestionJpaEntity questionJpaEntity) {

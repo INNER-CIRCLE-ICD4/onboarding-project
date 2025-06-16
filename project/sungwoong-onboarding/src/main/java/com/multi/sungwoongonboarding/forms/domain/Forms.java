@@ -17,6 +17,7 @@ public class Forms {
     private final Long id;
     private final String title;
     private final String description;
+    private final String questionType;
     private final List<Questions> questions;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;

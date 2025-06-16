@@ -2,6 +2,7 @@ package com.multi.sungwoongonboarding.questions.dto;
 
 import com.multi.sungwoongonboarding.common.valid.QuestionOptionValid;
 import com.multi.sungwoongonboarding.common.valid.ValidEnum;
+import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
 import com.multi.sungwoongonboarding.options.dto.OptionUpdateRequest;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import jakarta.validation.constraints.NotBlank;
@@ -11,6 +12,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.valueOf;
 
 @Getter
 @Builder
@@ -42,5 +46,21 @@ public class QuestionUpdateRequest implements OptionContainer {
     @Override
     public List<?> getOptions() {
         return this.options;
+    }
+
+    public Questions toDomain() {
+
+        Questions.QuestionsBuilder questionBuilder = Questions.builder()
+                .id(this.id)
+                .questionText(this.questionText)
+                .questionType(valueOf(this.getQuestionType().toUpperCase()))
+                .isRequired(this.isRequired);
+
+        if (this.options != null) {
+            questionBuilder.options(this.options.stream().map(OptionUpdateRequest::toDomain).collect(Collectors.toList()));
+        }
+
+        return questionBuilder.build();
+
     }
 }
