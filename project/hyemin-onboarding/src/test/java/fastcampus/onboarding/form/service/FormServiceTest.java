@@ -28,10 +28,7 @@ public class FormServiceTest {
     private FormRepository formRepository;
 
     @BeforeEach
-        // ★ 이 부분을 추가하세요
     void setUp() {
-        // 각 테스트 시작 전 데이터베이스를 깨끗하게 비웁니다.
-        // cascade 옵션 덕분에 Form을 삭제하면 Item과 Option도 함께 삭제됩니다.
         formRepository.deleteAll();
     }
 

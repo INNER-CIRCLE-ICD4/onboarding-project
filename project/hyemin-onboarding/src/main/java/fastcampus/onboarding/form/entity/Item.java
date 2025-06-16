@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ public class Item {
     @SequenceGenerator(name = "item_seq_gen", sequenceName = "item_seq", allocationSize = 1)
     private Long itemSeq;
 
+    // Form 연관관계 설정 메서드
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="form_seq", nullable = false)
     private Form form;
@@ -48,11 +51,6 @@ public class Item {
         this.itemContent = itemContent;
         this.itemType = itemType;
         this.isRequired = isRequired;
-    }
-
-    // Form 연관관계 설정 메서드
-    public void setForm(Form form) {
-        this.form = form;
     }
 
     // 옵션 추가 메서드

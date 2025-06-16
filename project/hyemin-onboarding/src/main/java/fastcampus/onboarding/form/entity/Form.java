@@ -57,10 +57,6 @@ public class Form {
         this.items.add(item);
         item.setForm(this);
     }
-
-    public void setItem(List<Item> itemList) {
-        this.items = itemList;
-    }
     public void setFormTitle(String formTitle) {
         this.formTitle = formTitle;
     }

@@ -1,13 +1,16 @@
 package fastcampus.onboarding.form.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "option")
 @Getter
+@Setter
 @NoArgsConstructor
 public class Option {
 
@@ -32,10 +35,5 @@ public class Option {
     // Item 연관관계 설정 메서드
     public void setItem(Item item) {
         this.item = item;
-    }
-
-    // 옵션 내용 업데이트 메서드
-    public void updateContent(String optionContent) {
-        this.optionContent = optionContent;
     }
 }
