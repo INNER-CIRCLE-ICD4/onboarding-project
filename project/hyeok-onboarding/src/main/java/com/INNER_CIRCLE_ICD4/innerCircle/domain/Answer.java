@@ -32,4 +32,9 @@ public class Answer {
         this.text = text;
         this.selectedOptions = selectedOptions;
     }
+
+    // ✅ 직접 추가: AnswerDto 에서 사용하기 위함
+    public UUID getQuestionId() {
+        return question.getId();
+    }
 }

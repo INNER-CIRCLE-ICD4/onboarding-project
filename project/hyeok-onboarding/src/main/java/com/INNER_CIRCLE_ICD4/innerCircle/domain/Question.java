@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,14 +17,12 @@ public class Question {
     private UUID id;
 
     private String title;
-
     private String description;
 
     @Enumerated(EnumType.STRING)
     private QuestionType type;
 
     private boolean required;
-
     private boolean isDeleted = false;
 
     private LocalDateTime createdAt;
@@ -66,5 +63,10 @@ public class Question {
         }
         choice.setQuestion(this);
         this.choices.add(choice);
+    }
+
+    // ✅ 테스트용 ID 설정 메서드
+    public void setId(UUID id) {
+        this.id = id;
     }
 }
