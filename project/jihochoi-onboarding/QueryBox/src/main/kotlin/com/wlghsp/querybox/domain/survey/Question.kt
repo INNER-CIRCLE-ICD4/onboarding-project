@@ -1,17 +1,17 @@
-package com.wlghsp.querybox.api.survey.domain
+package com.wlghsp.querybox.domain.survey
 
 import jakarta.persistence.*
 import support.domain.BaseRootEntity
 
 @Entity
 class Question(
-    var name: String,
-    var description: String,
+    var name: String, // 항목 이름
+    var description: String, // 항목 설명
 
     @Enumerated(EnumType.STRING)
-    var type: QuestionType,
+    var type: QuestionType, // 항목 입력 형태
 
-    var required: Boolean,
+    var required: Boolean, // 항목 필수 여부
 
     @ElementCollection
     @CollectionTable(name = "question_option", joinColumns = [JoinColumn(name = "question_id")])

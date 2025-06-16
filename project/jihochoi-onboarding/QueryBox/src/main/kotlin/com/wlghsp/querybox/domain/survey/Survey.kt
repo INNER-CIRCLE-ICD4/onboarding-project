@@ -1,4 +1,4 @@
-package com.wlghsp.querybox.api.survey.domain
+package com.wlghsp.querybox.domain.survey
 
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
@@ -8,12 +8,12 @@ import support.domain.BaseRootEntity
 
 @Entity
 class Survey(
-    var title: String,
-    var description: String,
+    var title: String, // 설문 조사 이름
+    var description: String, // 설문 조사 설명
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "survey_id", nullable = false)
-    val questions: MutableList<Question> = mutableListOf(),
+    val questions: MutableList<Question> = mutableListOf(), // 설문 받을 항목
     id: Long = 0L,
 ) : BaseRootEntity<Survey>(id) {
 

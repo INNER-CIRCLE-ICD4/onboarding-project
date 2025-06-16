@@ -1,4 +1,4 @@
-package com.wlghsp.querybox.api.survey.domain
+package com.wlghsp.querybox.domain.survey
 
 import jakarta.persistence.Embeddable
 
