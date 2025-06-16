@@ -1,6 +1,7 @@
 package com.innercircle.survey.infrastructure.repository;
 
 import com.innercircle.survey.domain.response.SurveyResponse;
+import com.innercircle.survey.infrastructure.repository.custom.SurveyResponseSearchRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +14,7 @@ import java.util.Optional;
  * 설문조사 응답 엔티티에 대한 데이터 액세스 인터페이스
  */
 @Repository
-public interface SurveyResponseRepository extends JpaRepository<SurveyResponse, String> {
+public interface SurveyResponseRepository extends JpaRepository<SurveyResponse, String>, SurveyResponseSearchRepository {
 
     /**
      * 설문조사 응답을 모든 답변과 함께 조회

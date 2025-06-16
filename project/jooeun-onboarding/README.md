@@ -28,7 +28,7 @@ survey-api → survey-infrastructure → survey-domain → survey-common
 |-----------|------|----------|---------|
 | **Spring Boot** | 3.2.0 | • 애플리케이션 기본 프레임워크<br>• 자동 설정을 통한 개발 생산성 향상 | ✅ 필수 |
 | **Spring Data JPA** | 3.2.0 | • 데이터베이스 접근 계층 추상화<br>• JPA 기반 데이터 처리 | ✅ 필수 |
-| **QueryDSL** | 5.0.0 | • 타입 안전한 동적 쿼리 생성<br>• Advanced 검색 기능 구현 | 🔍 Advanced |
+| **Spring Cache** | 3.2.0 | • 통계 데이터 캐싱<br>• 메모리 기반 캐시 관리 | 🔍 Advanced |
 
 ### **Database**
 | 라이브러리 | 버전 | 사용 목적 | 요구사항 |
@@ -295,7 +295,106 @@ new SurveyEvent(surveyId, SurveyEventType.RESPONSE_SUBMITTED, eventData, "respon
 | Method | Endpoint | 설명 |
 |--------|----------|------|
 | `POST` | `/api/surveys/{id}/responses` | **응답 제출** |
-| `GET` | `/api/surveys/{id}/responses` | 응답 조회 |
+| `GET` | `/api/surveys/{id}/responses` | 응답 목록 조회 |
+| `GET` | `/api/surveys/responses/{responseId}` | 개별 응답 상세 조회 |
+| `GET` | `/api/surveys/{id}/responses/count` | 응답 개수 조회 |
+
+### **고급 검색 및 통계 API** ⭐ 신규 추가
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| `GET` | `/api/surveys/{id}/search-responses` | **응답 고급 검색** |
+| `GET` | `/api/surveys/{id}/statistics` | **통계 분석** |
+| `GET` | `/api/surveys/{id}/summary` | 응답 요약 정보 |
+
+#### **🔍 고급 검색 API 상세**
+```http
+GET /api/surveys/{surveyId}/search-responses?questionKeyword=만족도&answerKeyword=매우&startDate=2024-01-01T00:00:00
+```
+
+**검색 조건:**
+- `questionKeyword`: 질문 제목 키워드 검색
+- `answerKeyword`: 응답 값 키워드 검색  
+- `respondentKeyword`: 응답자 정보 검색
+- `startDate`: 검색 시작일시
+- `endDate`: 검색 종료일시
+
+**응답 예시:**
+```json
+{
+  "totalCount": 25,
+  "searchCondition": {
+    "surveyId": "01HK123ABC456DEF789GHI012J",
+    "questionKeyword": "만족도",
+    "answerKeyword": "매우",
+    "startDate": "2024-01-01T00:00:00"
+  },
+  "responses": [
+    {
+      "responseId": "01HK456DEF789GHI012JKLM345N",
+      "respondentInfo": "user@company.com",
+      "submittedAt": "2024-01-15T14:30:00",
+      "answeredQuestionCount": 5,
+      "matchedAnswers": [
+        {
+          "questionId": "01HK789GHI012JKLM345NOPQ678",
+          "questionTitle": "서비스 만족도는 어떻습니까?",
+          "answerValues": ["매우 만족"],
+          "matchReasons": ["QUESTION_TITLE_MATCH", "ANSWER_VALUE_MATCH"]
+        }
+      ]
+    }
+  ],
+  "searchExecutedAt": "2024-01-15T15:00:00"
+}
+```
+
+#### **📊 통계 분석 API 상세**
+```http
+GET /api/surveys/{surveyId}/statistics
+```
+
+**응답 예시:**
+```json
+{
+  "surveyId": "01HK123ABC456DEF789GHI012J",
+  "surveyTitle": "2024년 고객 만족도 조사",
+  "totalResponseCount": 150,
+  "calculatedAt": "2024-01-15T15:00:00",
+  "questionStatistics": [
+    {
+      "questionId": "01HK123ABC456DEF789GHI012J",
+      "questionTitle": "서비스에 만족하십니까?",
+      "questionType": "SINGLE_CHOICE",
+      "responseCount": 148,
+      "responseRate": 98.67,
+      "choiceStatistics": [
+        {
+          "choiceText": "매우 만족",
+          "count": 75,
+          "percentage": 50.68,
+          "percentageOfTotal": 50.00
+        },
+        {
+          "choiceText": "만족",
+          "count": 45,
+          "percentage": 30.41,
+          "percentageOfTotal": 30.00
+        }
+      ]
+    }
+  ],
+  "responseTrend": {
+    "dailyResponseCount": {
+      "2024-01-01": 5,
+      "2024-01-02": 8,
+      "2024-01-03": 12
+    },
+    "averageResponsesLast7Days": 5.2,
+    "peakDate": "2024-01-15",
+    "peakCount": 23
+  }
+}
+```
 
 *상세한 API 명세는 Swagger UI에서 확인 가능합니다.*
 
@@ -304,10 +403,49 @@ new SurveyEvent(surveyId, SurveyEventType.RESPONSE_SUBMITTED, eventData, "respon
 
 ### **현재 적용된 최적화**
 - **ULID 기반 ID**: 분산 환경에서 충돌 없는 고유 ID 생성
-- **QueryDSL**: 복잡한 검색 조건의 동적 쿼리 최적화
+- **고급 검색 최적화**: 커스텀 JPQL로 복잡한 검색 조건 처리
 - **JPA 최적화**: Lazy Loading, Fetch Join 활용
+- **캐시 적용**: 통계 데이터 캐싱으로 반복 계산 방지
+- **데이터베이스 인덱싱**: 검색 성능 향상을 위한 복합 인덱스
+
+### **🚀 고급 검색 및 통계 성능 최적화**
+
+#### **검색 최적화**
+```java
+// 동적 JPQL로 불필요한 조인 최소화
+SELECT DISTINCT sr FROM SurveyResponse sr 
+LEFT JOIN FETCH sr.answers sa 
+WHERE sr.survey.id = :surveyId 
+AND EXISTS (
+  SELECT 1 FROM SurveyAnswer sa2 
+  WHERE sa2.surveyResponse = sr 
+  AND LOWER(sa2.questionTitle) LIKE LOWER(:questionKeyword)
+)
+```
+
+#### **통계 계산 캐싱**
+```java
+@Cacheable(value = "survey-statistics", key = "#surveyId")
+public SurveyStatisticsResult getSurveyStatistics(String surveyId) {
+    // 매번 SQL 조회 대신 캐시 활용
+    // 설문조사가 수정될 때만 캐시 무효화
+}
+```
+
+#### **데이터베이스 인덱스 전략**
+```sql
+-- 검색 성능 최적화 인덱스
+CREATE INDEX idx_survey_response_search ON survey_responses(survey_id, created_at);
+CREATE INDEX idx_answer_search ON survey_answers(response_id, question_title);
+CREATE INDEX idx_answer_values_search ON answer_values(answer_value);
+
+-- 통계 계산 최적화 인덱스  
+CREATE INDEX idx_response_survey_date ON survey_responses(survey_id, created_at);
+CREATE INDEX idx_answer_question_stats ON survey_answers(question_id, question_type);
+```
 
 ### **향후 적용 예정 최적화**
-- **데이터베이스 인덱싱**: 검색 컬럼 복합 인덱스
-- **Redis 캐싱**: 설문조사 메타데이터 캐시
+- **Redis 분산 캐싱**: 다중 인스턴스 환경에서 캐시 공유
+- **통계 계산 스케줄러**: 배치 작업으로 미리 계산된 통계 제공
 - **Connection Pool 튜닝**: HikariCP 설정 최적화
+- **읽기 전용 복제본**: 통계/검색용 읽기 전용 DB 분리

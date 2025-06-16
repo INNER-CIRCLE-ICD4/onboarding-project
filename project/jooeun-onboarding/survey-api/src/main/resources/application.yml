@@ -29,6 +29,14 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
+  # Cache 설정
+  cache:
+    type: simple # 개발환경에서는 simple, 운영환경에서는 redis 권장
+    cache-names:
+      - survey-statistics
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=1h
+
 # Swagger/OpenAPI
 springdoc:
   api-docs:

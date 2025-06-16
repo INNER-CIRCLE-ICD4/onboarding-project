@@ -15,6 +15,9 @@ dependencies {
     //JPA
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
+    // Cache - 통계 데이터 캐싱
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+
     // API 문서화 (Swagger/OpenAPI) - API 명세 제출 요구사항
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     
