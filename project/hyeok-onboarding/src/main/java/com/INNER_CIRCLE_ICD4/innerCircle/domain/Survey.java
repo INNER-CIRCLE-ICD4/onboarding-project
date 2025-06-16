@@ -68,4 +68,9 @@ public class Survey {
         this.questions.clear();
         newQuestions.forEach(this::addQuestion);
     }
+    // Survey.java 내에 아래 메서드를 추가하세요
+    public void clearQuestions() {
+        this.questions.clear();
+    }
+
 }
