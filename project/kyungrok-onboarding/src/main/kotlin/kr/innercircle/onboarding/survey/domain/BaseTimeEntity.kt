@@ -20,9 +20,10 @@ import java.time.LocalDateTime
 @MappedSuperclass
 class BaseTimeEntity {
     @CreatedDate
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     lateinit var createdAt: LocalDateTime
 
     @LastModifiedDate
+    @Column(nullable = false)
     lateinit var updatedAt: LocalDateTime
 }
