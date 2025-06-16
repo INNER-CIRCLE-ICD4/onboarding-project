@@ -25,8 +25,8 @@ import static survey.common.exception.ErrorType.*;
 public class GlobalExceptionHandler {
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<SurveyErrorResponse> handleApplicationException(ApplicationException e) {
-        log.error("Application Exception occurred. message={}, className={}", e.getMessage(), e.getClass().getName());
-        return ResponseEntity.status(e.getHttpStatus()).body(new SurveyErrorResponse(e.getMessage(), e.getErrorType()));
+        log.error("Application Exception occurred. message={}, className={}", e.getErrorType().getDescription(), e.getClass().getName());
+        return ResponseEntity.status(e.getHttpStatus()).body(new SurveyErrorResponse(e.getErrorType().getDescription(), e.getErrorType()));
     }
 
     @ExceptionHandler(ApiException.class)
@@ -39,14 +39,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBindException(BindException e) {
         log.error("Bind Exception occurred. message={}, className={}", e.getMessage(), e.getClass().getName());
         return ResponseEntity.status(BAD_REQUEST).body(new ErrorResponse(createMessage(e), INVALID_PARAMETER));
-    }
-
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error("Exception occurred. message={}, className={}", e.getMessage(), e.getClass().getName());
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ErrorResponse(UNKNOWN.getDescription(), UNKNOWN));
-
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
