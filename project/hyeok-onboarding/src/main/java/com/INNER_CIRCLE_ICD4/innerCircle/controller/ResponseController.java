@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import com.INNER_CIRCLE_ICD4.innerCircle.dto.ResponseDetail;
 
 @RestController
 @RequestMapping("/responses")
@@ -33,4 +34,10 @@ public class ResponseController {
         List<ResponseDto> dtos = responseService.findAll();
         return ResponseEntity.ok(dtos);
     }
+
+    @GetMapping("/surveys/{surveyId}/responses")
+    public ResponseEntity<List<ResponseDetail>> getResponses(@PathVariable UUID surveyId) {
+        return ResponseEntity.ok(responseService.getResponses(surveyId));
+    }
+
 }
