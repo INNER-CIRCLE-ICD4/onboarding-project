@@ -42,6 +42,9 @@ dependencies {
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
+    // validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
 
 
 }
