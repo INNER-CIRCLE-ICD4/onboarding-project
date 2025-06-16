@@ -52,7 +52,7 @@
   - 추후 설문조사 응답에 타입이 추가되더라도 구현체를 하나 추가하면 되도록 함
 
 
-# 2025-06-11 [v0.0.3]
+# 2025-06-15 [v0.0.3]
 ## refactor
 - Assembler 를 범용적으로, Context 추가시 소스 변경 없이 사용 할 수 있도록 변경
   - AssemblyContext :  DTO를 만들기 위해 필요한 모든 데이터(Entity, 값 객체 등)를 담는 컨테이너
@@ -70,3 +70,8 @@
             assemblyContext.put(SURVEY_CONTEXT_KEY, survey);
         });
   ```
+# 2025-06-16 [v0.0.3]
+## refactor
+- Assembler 추가
+  - 설문조사 응답 조회를 위한 Assembler 추가
+- Assembler 를 활용한 시나리오 테스트

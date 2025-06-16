@@ -19,4 +19,9 @@ public enum QuestionType {
      * 다중선택
      */
     MULTIPLE_CHOICE // 다중선택
+    ;
+
+    public boolean isChoiceType() {
+        return this == SINGLE_CHOICE || this == MULTIPLE_CHOICE;
+    }
 }
