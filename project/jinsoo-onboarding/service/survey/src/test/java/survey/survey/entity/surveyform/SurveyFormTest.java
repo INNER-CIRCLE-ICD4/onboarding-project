@@ -19,7 +19,7 @@ class SurveyFormTest {
     @Test
     void create_ShouldSetAllFieldsCorrectly() {
         // given
-        SurveyFormId surveyFormId = SurveyFormId.of(this.surveyFormId.nextId(), 1L);
+        SurveyFormId surveyFormId = SurveyFormId.create(this.surveyFormId.nextId());
         String title = "테스트 설문";
         String description = "테스트 설명";
         Long surveyId = 1L;
@@ -43,7 +43,7 @@ class SurveyFormTest {
     void addQuestion_ShouldSetBidirectionalRelationship() {
         // given
         SurveyForm surveyForm = SurveyForm.create(
-                SurveyFormId.of(this.surveyFormId.nextId(), 1L),
+                SurveyFormId.create(this.surveyFormId.nextId()),
                 "테스트 설문",
                 "테스트 설명",
                 1L
@@ -74,7 +74,7 @@ class SurveyFormTest {
     void addQuestion_ShouldAllowMultipleQuestions() {
         // given
         SurveyForm surveyForm = SurveyForm.create(
-                SurveyFormId.of(this.surveyFormId.nextId(), 1L),
+                SurveyFormId.create(this.surveyFormId.nextId()),
                 "테스트 설문",
                 "테스트 설명",
                 1L
@@ -110,7 +110,7 @@ class SurveyFormTest {
     void addQuestion_ShouldIgnoreDuplicates() {
         // given
         SurveyForm surveyForm = SurveyForm.create(
-                SurveyFormId.of(this.surveyFormId.nextId(), 1L),
+                SurveyFormId.create(this.surveyFormId.nextId()),
                 "테스트 설문",
                 "테스트 설명",
                 1L
