@@ -18,8 +18,9 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Survey survey;
+    private Long surveyId;
+
+    private int order;
 
     private String name;
 
@@ -30,27 +31,16 @@ public class Question {
 
     private boolean required;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Option> options = new ArrayList<>();
+    private boolean active;
 
     @Builder
-    private Question(Survey survey, String name, String description, QuestionType type, boolean required, List<Option> options) {
-        this.survey = survey;
+    public Question(Long surveyId, int order, String name, String description, QuestionType type, boolean required, boolean active) {
+        this.surveyId = surveyId;
+        this.order = order;
         this.name = name;
         this.description = description;
         this.type = type;
         this.required = required;
-        if (!ObjectUtils.isEmpty(options)) {
-            options.forEach(this::addOption);
-        }
-    }
-
-    private void addOption(Option option) {
-        option.linkToQuestion(this);
-        this.options.add(option);
-    }
-
-    public void linkToSurvey(Survey survey) {
-        this.survey = survey;
+        this.active = active;
     }
 }

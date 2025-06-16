@@ -19,18 +19,6 @@ public class QuestionDto {
         private QuestionType type;
         private boolean required;
         private List<OptionDto.Create> options;
-
-        public Question toEntity() {
-            return Question.builder()
-                    .name(name)
-                    .description(description)
-                    .type(type)
-                    .required(required)
-                    .options(ObjectUtils.isEmpty(options)
-                            ? Collections.emptyList()
-                            : options.stream().map(OptionDto.Create::toEntity).toList())
-                    .build();
-        }
     }
 
     @NoArgsConstructor
@@ -42,18 +30,6 @@ public class QuestionDto {
         private QuestionType type;
         private boolean required;
         private List<OptionDto.Update> options;
-
-        public Question toEntity() {
-            return Question.builder()
-                    .name(name)
-                    .description(description)
-                    .type(type)
-                    .required(required)
-                    .options(ObjectUtils.isEmpty(options)
-                            ? Collections.emptyList()
-                            : options.stream().map(OptionDto.Update::toEntity).toList())
-                    .build();
-        }
     }
 
     @NoArgsConstructor
@@ -76,9 +52,6 @@ public class QuestionDto {
                     .description(question.getDescription())
                     .type(question.getType())
                     .required(question.isRequired())
-                    .options(ObjectUtils.isEmpty(question.getOptions())
-                            ? Collections.emptyList()
-                            : question.getOptions().stream().map(OptionDto.Read::fromEntity).toList())
                     .build();
         }
     }

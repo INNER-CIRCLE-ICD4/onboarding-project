@@ -22,20 +22,9 @@ public class Survey {
 
     private String description;
 
-    @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions = new ArrayList<>();
-
     @Builder
-    public Survey(String name, String description, List<Question> questions) {
+    public Survey(String name, String description) {
         this.name = name;
         this.description = description;
-        if (!ObjectUtils.isEmpty(questions)) {
-            questions.forEach(this::addQuestion);
-        }
-    }
-
-    private void addQuestion(Question question) {
-        question.linkToSurvey(this);
-        this.questions.add(question);
     }
 }

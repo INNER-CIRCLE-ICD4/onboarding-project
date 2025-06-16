@@ -10,12 +10,6 @@ public class OptionDto {
     @Setter
     public static class Create {
         private String content;
-
-        public Option toEntity() {
-            return Option.builder()
-                    .content(content)
-                    .build();
-        }
     }
 
     @NoArgsConstructor
@@ -24,12 +18,6 @@ public class OptionDto {
     public static class Update {
         private Long id;
         private String content;
-
-        public Option toEntity() {
-            return Option.builder()
-                    .content(content)
-                    .build();
-        }
     }
 
     @NoArgsConstructor
