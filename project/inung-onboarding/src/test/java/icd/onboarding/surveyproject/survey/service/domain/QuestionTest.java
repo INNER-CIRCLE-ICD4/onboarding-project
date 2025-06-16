@@ -1,5 +1,6 @@
 package icd.onboarding.surveyproject.survey.service.domain;
 
+import icd.onboarding.surveyproject.survey.service.enums.InputType;
 import icd.onboarding.surveyproject.survey.service.exception.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,20 +19,10 @@ class QuestionTest {
 	final Boolean validRequired = true;
 	final List<Option> validOptions = List.of(Option.create("옵션 1", 1));
 
-	@Test
-	@DisplayName("입력 형태가 InputType Enum에 포함되지 않은 경우 예외를 발생")
-	void throwWhenQuestionInputTypeIsNotContains () {
-		// when & Then
-		assertThrows(
-				InvalidInputTypeException.class,
-				() -> Question.create(validName, validDescription, "INVALID_TYPE", validRequired, validSortOrder, validOptions)
-		);
-	}
-
 	@ParameterizedTest
 	@ValueSource(strings = {"SINGLE_SELECT", "MULTI_SELECT"})
 	@DisplayName("입력 형태가 SINGLE_SELECT, MULTI_SELECT인 경우 옵션이 존재하지 않으면 예외를 발생")
-	void throwWhenQuestionOptionsIsEmpty (String inputType) {
+	void throwWhenQuestionOptionsIsEmpty (InputType inputType) {
 		// given
 		List<Option> emptyOptions = Collections.emptyList();
 
@@ -47,7 +38,7 @@ class QuestionTest {
 	void throwExceptionWhenRequiredQuestionNotHasAnswers () {
 		// given
 		List<Answer> emptyAnswers = Collections.emptyList();
-		Question question = Question.create(validName, validDescription, "SHORT_TEXT", validRequired, validSortOrder, validOptions);
+		Question question = Question.create(validName, validDescription, InputType.SHORT_TEXT, validRequired, validSortOrder, validOptions);
 
 		// when & then
 		assertThrows(

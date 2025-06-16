@@ -2,8 +2,6 @@ package icd.onboarding.surveyproject.survey.service;
 
 import icd.onboarding.surveyproject.survey.fixtures.SurveyFixtures;
 import icd.onboarding.surveyproject.survey.repository.SurveyRepository;
-import icd.onboarding.surveyproject.survey.service.domain.Option;
-import icd.onboarding.surveyproject.survey.service.domain.Question;
 import icd.onboarding.surveyproject.survey.service.domain.Survey;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,10 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

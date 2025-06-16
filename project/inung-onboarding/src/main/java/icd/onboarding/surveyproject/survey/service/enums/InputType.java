@@ -6,17 +6,6 @@ public enum InputType {
 	SINGLE_SELECT,
 	MULTI_SELECT;
 
-	public static boolean contains (String name) {
-		if (name == null) return false;
-
-		for (InputType type : values()) {
-			if (type.name().equalsIgnoreCase(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public boolean isSelectType () {
 		return this == SINGLE_SELECT || this == MULTI_SELECT;
 	}

@@ -27,6 +27,8 @@ dependencies {
     // Spring Boot
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // Lombok
     compileOnly("org.projectlombok:lombok")
@@ -35,8 +37,7 @@ dependencies {
     // Jetbrains Annotations
     compileOnly("org.jetbrains:annotations:24.1.0")
 
-    // JPA + DB
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    // DB
     runtimeOnly("com.h2database:h2")
 
     // Test
