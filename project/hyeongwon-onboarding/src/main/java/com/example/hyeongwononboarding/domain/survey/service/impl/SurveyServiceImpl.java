@@ -3,7 +3,11 @@ package com.example.hyeongwononboarding.domain.survey.service.impl;
 import com.example.hyeongwononboarding.common.exception.NotFoundException;
 import com.example.hyeongwononboarding.common.util.UUIDGenerator;
 import com.example.hyeongwononboarding.domain.survey.dto.request.CreateQuestionRequest;
+import com.example.hyeongwononboarding.domain.survey.dto.request.QuestionOptionRequest;
+import com.example.hyeongwononboarding.domain.survey.dto.request.QuestionRequest;
+import com.example.hyeongwononboarding.domain.survey.dto.request.UpdateQuestionRequest;
 import com.example.hyeongwononboarding.domain.survey.dto.request.CreateSurveyRequest;
+import com.example.hyeongwononboarding.domain.survey.dto.request.UpdateSurveyRequest;
 import com.example.hyeongwononboarding.domain.survey.dto.response.QuestionResponse;
 import com.example.hyeongwononboarding.domain.survey.dto.response.SurveyResponse;
 import com.example.hyeongwononboarding.domain.survey.entity.*;
@@ -54,8 +58,7 @@ public class SurveyServiceImpl implements SurveyService {
                 .surveyId(survey.getId())
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .version(1) // 첫 버전은 1로 설정
-                .createdAt(now)
+                .versionNumber(1) // 첫 버전은 1로 설정
                 .build();
         surveyVersion = surveyVersionRepository.save(surveyVersion);
 
@@ -78,7 +81,7 @@ public class SurveyServiceImpl implements SurveyService {
                 .map(survey -> {
                     // 1. 각 설문의 최신 버전 조회
                     SurveyVersion latestVersion = surveyVersionRepository
-                            .findTopBySurveyOrderByVersionDesc(survey)
+                            .findTopBySurveyIdOrderByVersionNumberDesc(survey.getId())
                             .orElseThrow(() -> new NotFoundException("설문 버전을 찾을 수 없습니다."));
                     
                     // 2. 해당 버전의 질문 목록 조회 (순서대로 정렬)
@@ -102,13 +105,10 @@ public class SurveyServiceImpl implements SurveyService {
     @Transactional(readOnly = true)
     public SurveyResponse getSurveyById(String surveyId) {
         // 1. 설문 기본 정보 조회
-        Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(() -> new NotFoundException("설문을 찾을 수 없습니다: " + surveyId));
+        Survey survey = findSurveyById(surveyId);
         
         // 2. 최신 버전 조회
-        SurveyVersion latestVersion = surveyVersionRepository
-                .findTopBySurveyOrderByVersionDesc(survey)
-                .orElseThrow(() -> new NotFoundException("설문 버전을 찾을 수 없습니다."));
+        SurveyVersion latestVersion = getLatestSurveyVersion(survey);
         
         // 3. 질문 목록 조회 (순서대로 정렬)
         List<SurveyQuestion> questions = surveyQuestionRepository
@@ -116,6 +116,149 @@ public class SurveyServiceImpl implements SurveyService {
         
         // 4. 응답 DTO 생성 및 반환
         return buildSurveyResponse(survey, latestVersion, mapToQuestionResponses(questions));
+    }
+
+    /**
+     * 설문조사를 수정합니다.
+     *
+     * @param surveyId 수정할 설문조사 ID
+     * @param request 설문조사 수정 요청 DTO
+     * @return 수정된 설문조사 응답 DTO
+     * @throws NotFoundException 지정된 ID의 설문조사가 존재하지 않는 경우
+     */
+    @Override
+    @Transactional
+    public SurveyResponse updateSurvey(String surveyId, UpdateSurveyRequest request) {
+        // 1. 기존 설문 조회
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 설문조사 ID: " + surveyId));
+        
+        // 2. 기존 최신 버전 조회
+        SurveyVersion currentVersion = surveyVersionRepository
+                .findTopBySurveyIdOrderByVersionNumberDesc(surveyId)
+                .orElseThrow(() -> new IllegalStateException("설문에 버전이 존재하지 않습니다."));
+        
+        // 3. 새 버전 번호 계산 (현재 버전 + 1)
+        int newVersionNumber = currentVersion.getVersionNumber() + 1;
+        
+        // 4. 설문 기본 정보 업데이트
+        survey.update(request.getTitle(), request.getDescription());
+        
+        // 5. 새 버전 생성 (새로운 ID 부여)
+        SurveyVersion newVersion = SurveyVersion.builder()
+                .id(UUIDGenerator.generate())
+                .surveyId(surveyId)
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .versionNumber(newVersionNumber)
+                .build();
+        
+        // 6. 새 버전 저장
+        newVersion = surveyVersionRepository.save(newVersion);
+        
+        // 7. 기존 질문과 옵션을 새로운 버전으로 복사
+        List<QuestionResponse> questionResponses = new ArrayList<>();
+        
+        // 8. 요청된 질문들을 순회하면서 처리
+        for (UpdateQuestionRequest questionRequest : request.getQuestions()) {
+            // 8-1. 새 질문 생성 (항상 새로운 ID 생성)
+            String newQuestionId = UUIDGenerator.generate();
+                    
+            SurveyQuestion newQuestion = SurveyQuestion.builder()
+                    .id(newQuestionId)
+                    .surveyVersion(newVersion)
+                    .name(questionRequest.getName())
+                    .description(questionRequest.getDescription())
+                    .inputType(questionRequest.getInputType())
+                    .isRequired(questionRequest.getIsRequired())
+                    .questionOrder(questionRequest.getOrder())
+                    .build();
+            
+            // 8-2. 질문 저장
+            newQuestion = surveyQuestionRepository.save(newQuestion);
+            
+            // 8-3. 이전 버전의 질문 ID와 새 질문 ID 매핑 정보 저장
+            if (questionRequest.getId() != null) {
+                // 설문 응답과의 매핑을 위해 이전 질문 ID와 새 질문 ID 매핑 정보 저장
+                // (이 부분은 설문 응답을 처리하는 로직에서 활용)
+                // 예: questionMappingService.saveQuestionMapping(previousVersionId, questionRequest.getId(), newQuestionId);
+            }
+            
+            // 8-4. 옵션 처리
+            List<QuestionResponse.OptionResponse> optionResponses = new ArrayList<>();
+            if (questionRequest.getOptions() != null && !questionRequest.getOptions().isEmpty()) {
+                for (QuestionOptionRequest optionRequest : questionRequest.getOptions()) {
+                    // 새 옵션 생성 (항상 새로운 ID 생성)
+                    QuestionOption newOption = QuestionOption.builder()
+                            .id(UUIDGenerator.generate())
+                            .question(newQuestion)
+                            .optionText(optionRequest.getText())
+                            .optionOrder(optionRequest.getOrder() != null ? optionRequest.getOrder() : 0)
+                            .build();
+                    
+                    // 옵션 저장 (새로운 행으로 추가)
+                    newOption = questionOptionRepository.save(newOption);
+                    newQuestion.addOption(newOption);
+                    
+                    // 옵션 응답 DTO 생성
+                    optionResponses.add(QuestionResponse.OptionResponse.builder()
+                            .id(newOption.getId())
+                            .text(newOption.getOptionText())
+                            .order(newOption.getOptionOrder())
+                            .build());
+                    
+                    // 이전 버전의 옵션 ID와 새 옵션 ID 매핑 정보 저장 (필요한 경우)
+                    if (optionRequest.getId() != null) {
+                        // optionMappingService.saveOptionMapping(questionRequest.getId(), optionRequest.getId(), newOption.getId());
+                    }
+                }
+            }
+            
+            // 8-5. 질문 응답 DTO 생성
+            questionResponses.add(QuestionResponse.builder()
+                    .id(newQuestion.getId())
+                    .name(newQuestion.getName())
+                    .description(newQuestion.getDescription())
+                    .inputType(newQuestion.getInputType())
+                    .isRequired(newQuestion.getIsRequired())
+                    .order(newQuestion.getQuestionOrder())
+                    .options(optionResponses)
+                    .build());
+        }
+        
+        // 9. 설문의 현재 버전 번호 업데이트
+        survey.updateCurrentVersion(newVersionNumber);
+        
+        // 10. 업데이트된 설문 저장
+        survey = surveyRepository.save(survey);
+        
+        // 11. 응답 DTO 생성 및 반환
+        return buildSurveyResponse(survey, newVersion, questionResponses);
+    }
+
+    /**
+     * ID로 설문을 조회합니다.
+     *
+     * @param surveyId 조회할 설문 ID
+     * @return 조회된 설문 엔티티
+     * @throws NotFoundException 설문이 존재하지 않는 경우
+     */
+    private Survey findSurveyById(String surveyId) {
+        return surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new NotFoundException("요청하신 설문조사를 찾을 수 없습니다."));
+    }
+    
+    /**
+     * 설문의 최신 버전을 조회합니다.
+     *
+     * @param survey 설문 엔티티
+     * @return 최신 버전 엔티티
+     * @throws NotFoundException 버전이 존재하지 않는 경우
+     */
+    private SurveyVersion getLatestSurveyVersion(Survey survey) {
+        return surveyVersionRepository
+                .findTopBySurveyIdOrderByVersionNumberDesc(survey.getId())
+                .orElseThrow(() -> new NotFoundException("설문 버전을 찾을 수 없습니다."));
     }
 
     /**
@@ -127,37 +270,67 @@ public class SurveyServiceImpl implements SurveyService {
      */
     private List<QuestionResponse> createQuestionsAndOptions(
             SurveyVersion surveyVersion, 
-            List<CreateQuestionRequest> questionRequests) {
+            List<? extends QuestionRequest> questionRequests) {
         
         if (questionRequests == null || questionRequests.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<QuestionResponse> questionResponses = new ArrayList<>();
-        
-        for (CreateQuestionRequest questionRequest : questionRequests) {
-            // 1. 질문 엔티티 생성 및 저장
-            SurveyQuestion question = SurveyQuestion.builder()
-                    .id(UUIDGenerator.generate())
-                    .surveyVersionId(surveyVersion.getId())
-                    .name(questionRequest.getName())
-                    .description(questionRequest.getDescription())
-                    .inputType(questionRequest.getInputType())
-                    .isRequired(questionRequest.getIsRequired())
-                    .questionOrder(questionRequest.getOrder())
-                    .build();
-            
-            question = surveyQuestionRepository.save(question);
-            
-            // 2. 옵션 생성 (필요한 경우)
-            List<QuestionResponse.OptionResponse> optionResponses = 
-                    createOptionsForQuestion(question, questionRequest.getOptions());
-            
-            // 3. 질문 응답 DTO 생성
-            questionResponses.add(buildQuestionResponse(question, optionResponses));
-        }
-        
-        return questionResponses;
+        return questionRequests.stream()
+                .map(questionRequest -> {
+                    // Always generate new ID for new version
+                    String questionId = UUIDGenerator.generate();
+                    
+                    // Create new question with new ID
+                    SurveyQuestion question = SurveyQuestion.builder()
+                            .id(questionId)
+                            .surveyVersion(surveyVersion)
+                            .name(questionRequest.getName())
+                            .description(questionRequest.getDescription())
+                            .inputType(questionRequest.getInputType())
+                            .isRequired(questionRequest.getIsRequired())
+                            .questionOrder(questionRequest.getOrder())
+                            .build();
+                    
+                    // Save the new question
+                    question = surveyQuestionRepository.save(question);
+                    
+                    // Create options if any
+                    List<QuestionResponse.OptionResponse> optionResponses = List.of();
+                    if (questionRequest.getOptions() != null && !questionRequest.getOptions().isEmpty()) {
+                        if (questionRequest instanceof CreateQuestionRequest) {
+                            // Handle CreateQuestionRequest with List<String> options
+                            CreateQuestionRequest createRequest = (CreateQuestionRequest) questionRequest;
+                            List<QuestionOptionRequest> optionRequests = createRequest.getOptions().stream()
+                                    .map(text -> new QuestionOptionRequest() {
+                                        @Override
+                                        public String getId() {
+                                            return UUIDGenerator.generate();
+                                        }
+                                        @Override
+                                        public String getText() {
+                                            return text;
+                                        }
+                                        @Override
+                                        public Integer getOrder() {
+                                            return 0; // Default order
+                                        }
+                                    })
+                                    .collect(Collectors.toList());
+                            optionResponses = createOptionsForQuestion(question, optionRequests);
+                        } else {
+                            // Handle UpdateQuestionRequest with List<QuestionOptionRequest> options
+                            optionResponses = createOptionsForQuestion(question, 
+                                questionRequest.getOptions().stream()
+                                    .map(opt -> (QuestionOptionRequest) opt)
+                                    .collect(Collectors.toList()));
+                        }
+                    }
+                    
+                    // Build and return question response
+                    return buildQuestionResponse(question, optionResponses);
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -169,37 +342,41 @@ public class SurveyServiceImpl implements SurveyService {
      */
     private List<QuestionResponse.OptionResponse> createOptionsForQuestion(
             SurveyQuestion question,
-            List<String> optionTexts) {
+            List<QuestionOptionRequest> optionRequests) {
         
-        if (optionTexts == null || optionTexts.isEmpty()) {
+        if (optionRequests == null || optionRequests.isEmpty()) {
             return Collections.emptyList();
         }
-
-        List<QuestionResponse.OptionResponse> optionResponses = new ArrayList<>();
         
-        if (optionTexts != null) {
-            int order = 1;
-            for (String text : optionTexts) {
-                // 1. 옵션 엔티티 생성 및 저장
-                QuestionOption option = QuestionOption.builder()
-                        .id(UUIDGenerator.generate())
-                        .questionId(question.getId())
-                        .optionText(text)
-                        .optionOrder(order++)
-                        .build();
-                
-                option = questionOptionRepository.save(option);
-                
-                // 2. 옵션 응답 DTO 생성
-                optionResponses.add(QuestionResponse.OptionResponse.builder()
-                        .id(option.getId())
-                        .text(option.getOptionText())
-                        .order(option.getOptionOrder())
-                        .build());
-            }
-        }
-        
-        return optionResponses;
+        return optionRequests.stream()
+                .map(optionRequest -> {
+                    // Always generate new ID for new version
+                    String optionId = optionRequest.getId() != null ? 
+                            optionRequest.getId() : UUIDGenerator.generate();
+                    
+                    // Create new option with new ID
+                    QuestionOption option = QuestionOption.builder()
+                            .id(optionId)
+                            .question(question)
+                            .optionOrder(optionRequest.getOrder() != null ? 
+                                    optionRequest.getOrder() : 0) // Default order if not provided
+                            .optionText(optionRequest.getText())
+                            .build();
+                    
+                    // Save the new option
+                    option = questionOptionRepository.save(option);
+                    
+                    // Add option to question using the helper method
+                    question.addOption(option);
+                    
+                    // Build option response DTO
+                    return QuestionResponse.OptionResponse.builder()
+                            .id(option.getId())
+                            .text(option.getOptionText())
+                            .order(option.getOptionOrder())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -241,17 +418,14 @@ public class SurveyServiceImpl implements SurveyService {
      * @param questions 질문 응답 DTO 목록
      * @return 설문 응답 DTO
      */
-    private SurveyResponse buildSurveyResponse(
-            Survey survey,
-            SurveyVersion version,
-            List<QuestionResponse> questions) {
-        
+    private SurveyResponse buildSurveyResponse(Survey survey, SurveyVersion version, List<QuestionResponse> questions) {
         return SurveyResponse.builder()
                 .surveyId(survey.getId())
                 .title(version.getTitle())
                 .description(version.getDescription())
-                .version(version.getVersion())
-                .createdAt(survey.getCreatedAt())  // Survey 엔티티의 createdAt 사용
+                .version(version.getVersionNumber())
+                .createdAt(survey.getCreatedAt())
+                .updatedAt(version.getCreatedAt())
                 .questions(questions)
                 .build();
     }

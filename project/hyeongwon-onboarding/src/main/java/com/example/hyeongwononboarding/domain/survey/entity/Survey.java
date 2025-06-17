@@ -56,7 +56,18 @@ public class Survey {
         this.currentVersion = 1;
     }
 
-    public void updateCurrentVersion(Integer version) {
+    public void updateCurrentVersion(int version) {
         this.currentVersion = version;
+    }
+    
+    /**
+     * 설문 제목과 설명을 업데이트합니다.
+     *
+     * @param title 새 제목
+     * @param description 새 설명
+     */
+    public void update(String title, String description) {
+        this.title = title;
+        this.description = description;
     }
 }

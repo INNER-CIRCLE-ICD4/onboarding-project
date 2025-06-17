@@ -19,7 +19,7 @@ public class QuestionOption {
     @Column(name = "id", length = 36)
     private String id;
 
-    @Column(name = "question_id", length = 36, nullable = false)
+    @Column(name = "question_id", length = 36, nullable = false, insertable = false, updatable = false)
     private String questionId;
 
     @Column(name = "option_order", nullable = false)
@@ -29,13 +29,14 @@ public class QuestionOption {
     private String optionText;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", insertable = false, updatable = false)
+    @JoinColumn(name = "question_id", nullable = false)
     private SurveyQuestion question;
 
     @Builder
-    public QuestionOption(String id, String questionId, Integer optionOrder, String optionText) {
+    public QuestionOption(String id, SurveyQuestion question, Integer optionOrder, String optionText) {
         this.id = id;
-        this.questionId = questionId;
+        this.question = question;
+        this.questionId = question != null ? question.getId() : null;
         this.optionOrder = optionOrder;
         this.optionText = optionText;
     }

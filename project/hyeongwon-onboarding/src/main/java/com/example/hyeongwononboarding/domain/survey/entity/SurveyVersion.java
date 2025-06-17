@@ -16,7 +16,7 @@ import java.util.List;
  * 설문조사의 각 버전별 정보와 질문 목록을 관리합니다.
  */
 @Entity
-@Table(name = "survey_versions", uniqueConstraints = @UniqueConstraint(name = "uk_survey_version", columnNames = {"survey_id", "version"}))
+@Table(name = "survey_versions", uniqueConstraints = @UniqueConstraint(name = "uk_survey_version", columnNames = {"survey_id", "version_number"}))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SurveyVersion {
@@ -27,8 +27,8 @@ public class SurveyVersion {
     @Column(name = "survey_id", length = 36, nullable = false)
     private String surveyId;
 
-    @Column(name = "version", nullable = false)
-    private Integer version;
+    @Column(name = "version_number", nullable = false)
+    private Integer versionNumber;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -48,12 +48,11 @@ public class SurveyVersion {
     private List<SurveyQuestion> questions = new ArrayList<>();
 
     @Builder
-    public SurveyVersion(String id, String surveyId, Integer version, String title, String description, LocalDateTime createdAt) {
+    public SurveyVersion(String id, String surveyId, Integer versionNumber, String title, String description) {
         this.id = id;
         this.surveyId = surveyId;
-        this.version = version;
+        this.versionNumber = versionNumber;
         this.title = title;
         this.description = description;
-        this.createdAt = createdAt;
     }
 }
