@@ -6,7 +6,10 @@ import fastcampus_inner_circle.junbeom_onboarding.survey.answer.application.serv
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/answers")
@@ -20,9 +23,10 @@ public class AnswerController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{formId}")
-    public ResponseEntity<List<AnswerResponse>> getAnswers(@PathVariable Long formId) {
-        List<AnswerResponse> answers = answerService.getAnswers(formId);
-        return ResponseEntity.ok(answers);
+    @GetMapping("/{answerId}")
+    public ResponseEntity<AnswerResponse> getAnswerById(@PathVariable Long answerId) {
+        return answerService.getAnswerById(answerId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 } 

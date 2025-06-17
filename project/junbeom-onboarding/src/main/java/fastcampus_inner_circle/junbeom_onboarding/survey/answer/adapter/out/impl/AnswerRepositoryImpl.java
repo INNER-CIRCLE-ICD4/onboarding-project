@@ -1,6 +1,7 @@
 package fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.out.impl;
 
 import fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.out.entity.AnswerJpaEntity;
+import fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.out.mapper.AnswerToDomainMapper;
 import fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.out.mapper.AnswerToEntityMapper;
 import fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.out.repository.AnswerJpaRepository;
 import fastcampus_inner_circle.junbeom_onboarding.survey.answer.domain.model.Answer;
@@ -16,22 +17,16 @@ import java.util.Optional;
 public class AnswerRepositoryImpl implements AnswerRepository {
 
     private final AnswerJpaRepository answerJpaRepository;
-    private final AnswerToEntityMapper answerToEntityMapper;
 
     @Override
     public Answer save(Answer answer) {
-
-        AnswerJpaEntity entity = answerToEntityMapper.toEntity(answer);
-        AnswerJpaEntity save = answerJpaRepository.save(entity);
-
-
-
-
-        return save;
+        AnswerJpaEntity entity = AnswerToEntityMapper.toEntity(answer);
+        return AnswerToDomainMapper.toDomain(answerJpaRepository.save(entity));
     }
 
     @Override
     public Optional<Answer> findById(Long id) {
-        return Optional.empty();
+        return answerJpaRepository.findById(id)
+                .map(AnswerToDomainMapper::toDomain);
     }
 }
