@@ -328,11 +328,11 @@ CREATE TABLE answer
       "submittedAt": "2023-10-01T12:00:00Z",
       "answers": [
         {
-          "questionId": "질문 ID",
+          "questionName": "질문",
           "textValue": "응답 값"
         },
         {
-          "questionId": "질문 ID",
+          "questionName": "질문",
           "textValue": "응답 값"
         }
       ]

@@ -7,7 +7,8 @@ import icd.onboarding.surveyproject.survey.service.domain.Answer;
 import icd.onboarding.surveyproject.survey.service.domain.Question;
 import icd.onboarding.surveyproject.survey.service.domain.Response;
 import icd.onboarding.surveyproject.survey.service.domain.Survey;
-import icd.onboarding.surveyproject.survey.service.exception.RequiredQuestionNotAnsweredException;
+import icd.onboarding.surveyproject.survey.service.enums.InputType;
+import icd.onboarding.surveyproject.survey.service.exception.SurveyNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,11 +18,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,49 +83,28 @@ class SurveyServiceTest {
 	@Nested
 	class SubmitResponse {
 		@Test
-		@DisplayName("필수 질문에 응답하지 않으면 예외가 발생해야 한다.")
-		void shouldThrowWhenRequiredQuestionIsNotAnswered () {
+		@DisplayName("응답으로 제출한 설문이 존재하지 않으면 예외를 발생 시킨다.")
+		void throwExceptionWhenSurveyNotFound () {
 			// given
-			Survey survey = SurveyFixtures.basicSurveyWithRequiredQuestion(); // 필수 질문 포함
-			UUID surveyId = survey.getId();
-			int version = survey.getVersion();
-			Response response = Response.create(surveyId, version, Collections.emptyList());
+			UUID surveyId = UUID.randomUUID();
+			int version = 1;
+
+			Response response = Response.create(
+					surveyId,
+					version,
+					List.of(Answer.create("응답 1", UUID.randomUUID()))
+			);
 
 			// when
-			Mockito.when(surveyRepository.findByIdAndVersion(surveyId, version)).thenReturn(Optional.of(survey));
+			Mockito.when(surveyRepository.findByIdAndVersion(surveyId, version)).thenReturn(Optional.empty());
 
 			// when & then
 			assertThrows(
-					RequiredQuestionNotAnsweredException.class,
+					SurveyNotFoundException.class,
 					() -> sut.submitResponse(response)
 			);
 		}
 
-		@Test
-		@DisplayName("응답이 모든 필수 질문에 대해 포함된 경우 정상적으로 저장된다.")
-		void shouldSubmitResponseWhenAllRequiredQuestionsAreAnswered () {
-			// given
-			Survey survey = SurveyFixtures.basicSurveyWithRequiredQuestion();
-			UUID surveyId = survey.getId();
-			int surveyVersion = survey.getVersion();
-
-			List<Answer> partialAnswers = List.of(
-					Answer.create("응답 1", survey.getQuestions().get(1).getId())
-			);
-
-			Response response = Response.create(surveyId, surveyVersion, partialAnswers);
-
-			// when
-			Mockito.when(surveyRepository.findByIdAndVersion(surveyId, surveyVersion)).thenReturn(Optional.of(survey));
-
-			// then
-			assertThrows(
-					RequiredQuestionNotAnsweredException.class,
-					() -> sut.submitResponse(response)
-			);
-
-			Mockito.verify(surveyRepository).findByIdAndVersion(surveyId, surveyVersion);
-		}
 
 		@Test
 		@DisplayName("응답을 제출하고, 저장소에 저장되어야 한다.")
@@ -146,6 +127,41 @@ class SurveyServiceTest {
 			assertEquals(2, submitted.getAnswers().size());
 
 			Mockito.verify(responseRepository, Mockito.times(1)).save(response);
+		}
+	}
+
+	@Nested
+	class FindResponses {
+
+		@Test
+		@DisplayName("설문 ID와 버전으로 응답을 조회하면 질문명과 응답값을 반환한다.")
+		void shouldReturnAnswersWithQuestionNames () {
+			// given
+			UUID surveyId = UUID.randomUUID();
+			int version = 1;
+
+			Question q1 = Question.create("질문 1", "설명", InputType.SHORT_TEXT, true, 1, List.of());
+			Question q2 = Question.create("질문 2", "설명", InputType.SHORT_TEXT, false, 2, List.of());
+
+			Response response = Response.create(surveyId, version, List.of(
+					Answer.create("응답 1", q1.getId()),
+					Answer.create("응답 2", q2.getId())
+			));
+			Mockito.when(responseRepository.findBySurveyIdAndSurveyVersion(surveyId, version))
+				   .thenReturn(Optional.of(List.of(response)));
+
+			// when
+			List<Response> results = sut.findResponsesBySurvey(surveyId, version);
+
+			// then
+			assertEquals(1, results.size());
+			Response selectedResponse = results.get(0);
+			assertEquals(2, selectedResponse.getAnswers().size());
+
+			assertThat(selectedResponse.getAnswers()).extracting("questionId", "text").containsExactlyInAnyOrder(
+					tuple(q1.getId(), response.getAnswers().get(0).getText()),
+					tuple(q2.getId(), response.getAnswers().get(1).getText())
+			);
 		}
 	}
 }

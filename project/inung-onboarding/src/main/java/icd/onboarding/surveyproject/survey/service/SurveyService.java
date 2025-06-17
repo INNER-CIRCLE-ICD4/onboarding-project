@@ -5,11 +5,10 @@ import icd.onboarding.surveyproject.survey.repository.SurveyRepository;
 import icd.onboarding.surveyproject.survey.service.domain.Question;
 import icd.onboarding.surveyproject.survey.service.domain.Response;
 import icd.onboarding.surveyproject.survey.service.domain.Survey;
-import icd.onboarding.surveyproject.survey.service.exception.RequiredQuestionNotAnsweredException;
 import icd.onboarding.surveyproject.survey.service.exception.SurveyNotFoundException;
-import icd.onboarding.surveyproject.survey.service.exception.TooManyAnswersException;
+import icd.onboarding.surveyproject.survey.service.exception.SurveyResponseNotFoundException;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public class SurveyService {
@@ -19,6 +18,10 @@ public class SurveyService {
 	SurveyService (SurveyRepository surveyRepository, ResponseRepository responseRepository) {
 		this.surveyRepository = surveyRepository;
 		this.responseRepository = responseRepository;
+	}
+
+	public Survey findByIdAndVersion (UUID id, int version) {
+		return surveyRepository.findByIdAndVersion(id, version).orElseThrow(SurveyNotFoundException::new);
 	}
 
 	public Survey createSurvey (Survey survey) {
@@ -40,10 +43,11 @@ public class SurveyService {
 		response.validateRequiredAnswers(survey);
 		response.validateSingleSelectAnswers(survey);
 
-		for (Question question : survey.getQuestions()) {
-			question.validateRequiredAnswer(response.getAnswers());
-		}
-
 		return responseRepository.save(response);
+	}
+
+	public List<Response> findResponsesBySurvey (UUID surveyId, int version) {
+		return responseRepository.findBySurveyIdAndSurveyVersion(surveyId, version)
+								 .orElseThrow(SurveyResponseNotFoundException::new);
 	}
 }
