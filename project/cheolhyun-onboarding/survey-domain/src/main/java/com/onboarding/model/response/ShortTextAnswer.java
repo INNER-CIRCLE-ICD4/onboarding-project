@@ -1,4 +1,4 @@
-package com.onboarding.model;
+package com.onboarding.model.response;
 
 public class ShortTextAnswer extends Answer<String> {
     private ShortTextAnswer(String questionId, String answer) {

@@ -1,4 +1,4 @@
-package com.onboarding.model;
+package com.onboarding.model.survey;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

@@ -1,14 +1,14 @@
-package com.onboarding.model;
+package com.onboarding.model.response;
 
-public class LongTextAnswer extends Answer<String> {
-    private LongTextAnswer(String questionId, String answer) {
+public class SingleChoiceAnswer extends Answer<String> {
+
+    private SingleChoiceAnswer(String questionId, String answer) {
         super(questionId, answer);
     }
 
-    public static LongTextAnswer of(String questionId, String answer) {
+    public static SingleChoiceAnswer of(String questionId, String answer) {
         validate(questionId, answer);
-
-        return new LongTextAnswer(questionId, answer);
+        return new SingleChoiceAnswer(questionId, answer);
     }
 
     private static void validate(String questionId, String answer) {
@@ -23,8 +23,6 @@ public class LongTextAnswer extends Answer<String> {
         if(answer.isBlank()) {
             throw new IllegalArgumentException(INVALID_ANSWER);
         }
-
-        /* TODO 길이 검증!?!?도 가능 하도록 수정 */
     }
 
     @Override

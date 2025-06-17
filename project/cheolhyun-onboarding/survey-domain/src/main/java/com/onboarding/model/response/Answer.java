@@ -1,4 +1,4 @@
-package com.onboarding.model;
+package com.onboarding.model.response;
 
 public abstract class Answer<T> implements IAnswerValue<T> {
     protected static final String INVALID_INPUT = "필수 입력 값 중에 없는 값이 있습니다.";

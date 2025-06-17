@@ -1,5 +1,6 @@
-package com.onboarding.model;
+package com.onboarding.model.survey;
 
+import com.onboarding.model.QuestionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

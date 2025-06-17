@@ -1,4 +1,6 @@
-package com.onboarding.model;
+package com.onboarding.model.survey;
+
+import com.onboarding.model.QuestionType;
 
 import java.util.ArrayList;
 import java.util.List;
