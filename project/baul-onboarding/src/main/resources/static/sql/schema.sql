@@ -38,6 +38,8 @@ CREATE TABLE survey_item_options (
 CREATE TABLE answers(
      id BIGINT AUTO_INCREMENT PRIMARY KEY,
      survey_id BIGINT NOT NULL,
+     name VARCHAR(100) NOT NULL,
+     description VARCHAR(500),
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
      CONSTRAINT fk_answers_survey_id FOREIGN KEY (survey_id) REFERENCES surveys(id) ON DELETE CASCADE
 );

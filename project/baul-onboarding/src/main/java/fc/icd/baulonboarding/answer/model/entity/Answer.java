@@ -24,12 +24,18 @@ public class Answer extends AbstractEntity {
     @JoinColumn(name = "survey_id")
     private Survey survey;
 
+    private String name;
+
+    private String description;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "answer", cascade = CascadeType.PERSIST)
     private List<AnswerItem> answerItemList = new ArrayList<>();
 
     @Builder
     public Answer(Survey survey){
         this.survey = survey;
+        this.name = survey.getName();
+        this.description = survey.getDescription();
     }
 
 }

@@ -2,9 +2,12 @@ package fc.icd.baulonboarding.answer.service;
 
 import fc.icd.baulonboarding.answer.model.dto.AnswerDto;
 
+import fc.icd.baulonboarding.answer.model.dto.AnswerInfo;
 import fc.icd.baulonboarding.answer.model.entity.Answer;
 import fc.icd.baulonboarding.answer.model.entity.AnswerItem;
 import fc.icd.baulonboarding.answer.model.entity.AnswerItemOption;
+import fc.icd.baulonboarding.answer.model.mapper.AnswerInfoMapper;
+import fc.icd.baulonboarding.answer.repository.reader.AnswerReader;
 import fc.icd.baulonboarding.answer.repository.store.AnswerStore;
 import fc.icd.baulonboarding.survey.model.entity.Survey;
 import fc.icd.baulonboarding.survey.model.entity.SurveyItem;
@@ -22,6 +25,8 @@ public class AnswerServiceImpl implements AnswerService{
 
     private final AnswerStore answerStore;
     private final SurveyReader surveyReader;
+    private final AnswerReader answerReader;
+    private final AnswerInfoMapper answerInfoMapper;
 
     @Override
     public void registerAnswer(AnswerDto.RegisterAnswerRequest request) {
@@ -50,5 +55,11 @@ public class AnswerServiceImpl implements AnswerService{
         });
 
         answerStore.store(answer);
+    }
+
+    @Override
+    public AnswerInfo.Answer retrieveAnswer(Long answerId) {
+        Answer answer = answerReader.getAnswerBy(answerId);
+        return answerInfoMapper.of(answer);
     }
 }
