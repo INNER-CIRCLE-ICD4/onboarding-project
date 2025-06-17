@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.*;
 @Import({FormRepositoryImpl.class})
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@Transactional
 @EnableJpaAuditing
 public class FormRepositoryTest {
 
@@ -35,7 +36,6 @@ public class FormRepositoryTest {
 
     @Test
     @DisplayName("Forms 엔티티가 저장되고 조회되는지 테스트")
-    @Transactional
     public void formSave() {
 
         // Given
@@ -59,7 +59,6 @@ public class FormRepositoryTest {
 
     @Test
     @DisplayName("Form을 저장한다 - 질문 형식 (단문, 장문")
-    @Transactional
     public void saveFormWithQuestions() {
 
         // Given
@@ -94,7 +93,6 @@ public class FormRepositoryTest {
 
     @Test
     @DisplayName("Form을 저장한다 - 질문 형식 (단일 선택, 다중 선택)")
-    @Transactional
     public void saveFormWithQuestionsAndAnswers() {
         // Given
 
@@ -190,6 +188,7 @@ public class FormRepositoryTest {
                 .description("업데이트된 설문 설명")
                 .questions(새_질문_목록)
                 .build();
+        updatedFormData.versionUp();
 
         // When
         Forms result = formRepository.update(formId, updatedFormData);

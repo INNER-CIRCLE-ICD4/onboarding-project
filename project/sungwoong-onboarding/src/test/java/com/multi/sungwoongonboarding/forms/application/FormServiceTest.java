@@ -61,6 +61,7 @@ public class FormServiceTest {
 
     @Test
     @DisplayName("설문 조사 수정 테스트 - 성공")
+    @Transactional
     public void formServiceUpdate() {
         // Given
         // 설문 조사서 등록에 필요한 데이터 준비
