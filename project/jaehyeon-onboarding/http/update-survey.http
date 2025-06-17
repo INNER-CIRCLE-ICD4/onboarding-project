@@ -1,0 +1,31 @@
+# update survey
+PUT http://localhost:8080/v1/surveys/1
+Content-Type: application/json
+
+{
+    "name": "설문1-수정",
+    "description": "수정테스트",
+    "version": 2,
+    "questions": [
+        {
+            "label": "관심사(2)",
+            "description": "",
+            "input_type": "checkbox",
+            "required": true,
+            "options": ["독서", "TV시청", "여행", "기타"]
+        }
+        , {
+            "label": "어떤 경로로 알게 되셨나요?",
+            "description": "",
+            "input_type": "radio",
+            "required": true,
+            "options": ["웹 검색", "지인을 통해", "소셜미디어", "기타"]
+        }
+         ,{
+            "label": "성명을 입력해주세요.(2)",
+            "description": "",
+            "input_type": "text",
+            "required": true
+        }
+    ]
+}

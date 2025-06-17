@@ -30,20 +30,32 @@ public class Survey {
     @Column(nullable = false)
     private Integer latestVersion;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL)
     @OrderBy("version DESC")
     private List<QuestionGroup> questionGroups;
 
-    public static Survey create(String name, String description, Boolean isDeleted) {
+    public static Survey createForInsert(String name, String description) {
         Survey survey = new Survey();
         survey.setName(name);
         survey.setDescription(description);
-        survey.setIsDeleted(isDeleted);
+        survey.setIsDeleted(Boolean.FALSE);
         survey.setLatestVersion(1);
         survey.setCreatedAt(LocalDateTime.now());
+        return survey;
+    }
+
+    public static Survey createForUpdate(String name, String description, Integer latestVersion) {
+        Survey survey = new Survey();
+        survey.setName(name);
+        survey.setDescription(description);
+        survey.setIsDeleted(Boolean.FALSE);
+        survey.setLatestVersion(latestVersion);
+        survey.setUpdatedAt(LocalDateTime.now());
         return survey;
     }
 

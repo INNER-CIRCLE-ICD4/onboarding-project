@@ -18,10 +18,8 @@ public class SurveyCreateDTO {
             visible = true
     )
     @JsonSubTypes({
-            @JsonSubTypes.Type(value = SelectQuestionDTO.class, names = {"RADIO", "radio"}),
-            @JsonSubTypes.Type(value = SelectQuestionDTO.class, names = {"CHECKBOX", "checkbox"}),
-            @JsonSubTypes.Type(value = QuestionDTO.class, names = {"TEXT", "text"}),
-            @JsonSubTypes.Type(value = QuestionDTO.class, names = {"LONG_TEXT", "long_text"})
+            @JsonSubTypes.Type(value = SelectQuestionDTO.class, names = {"RADIO", "radio", "CHECKBOX", "checkbox"}),
+            @JsonSubTypes.Type(value = QuestionDTO.class, names = {"TEXT", "text", "LONG_TEXT", "long_text"}),
     })
     private List<QuestionDTO> questions;
 }

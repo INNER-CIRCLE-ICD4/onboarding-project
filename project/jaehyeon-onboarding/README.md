@@ -13,6 +13,7 @@ springboot version: 3.5.0
 | is_deleted     | BOOLEAN   | soft delete flag |
 | latest_version | INT       |                  |
 | created_at     | TIMESTAMP |                  |
+| updated_at    | TIMESTAMP |                  |
 
 
 ### 설문 항목 그룹(question_group)
@@ -134,6 +135,7 @@ PUT /v1/surveys/{surveyId}
 {
     "name": "설문1-수정",
     "description": "수정테스트",
+    "version": 1,
     "questions": [
          {
             "label": "성명을 입력해주세요.",

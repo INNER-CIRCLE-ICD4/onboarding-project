@@ -31,6 +31,7 @@ public class Question {
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private InputType inputType;
     @Column(nullable = false)
     private Boolean required;

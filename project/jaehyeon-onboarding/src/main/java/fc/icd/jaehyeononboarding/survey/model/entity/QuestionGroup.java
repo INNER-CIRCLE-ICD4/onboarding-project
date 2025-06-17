@@ -12,7 +12,12 @@ import java.util.List;
 @Setter
 @ToString(exclude = {"survey"})
 @Entity
-@Table(name = "question_group")
+@Table(
+    name = "question_group",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"survey_id", "version"})
+    }
+)
 public class QuestionGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
