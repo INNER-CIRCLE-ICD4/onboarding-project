@@ -32,14 +32,12 @@ public class AssemblerTest {
 
     @BeforeAll
     static void setUp() {
-        // 1) AssemblerFactory에 우리가 만든 두 개의 Assembler 등록
         List<Assembler<?>> assemblers = List.of(
                 new SurveyResponseDtoAssembler(),
                 new SurveyWithAnswersResponseDtoAssembler(new AnswerSnapshotSerializer(new ObjectMapper()))
         );
         factory = new AssemblerFactory(assemblers);
 
-        // 2) SubmitAnswerRequest 검증용 Validator 세팅
         ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
         validator = vf.getValidator();
     }
@@ -119,11 +117,11 @@ public class AssemblerTest {
         // --- given: SurveyUpdateRequest (id는 이미 존재한다고 가정)
         SurveyUpdateRequest.QuestionSurveyRequest uq =
                 new SurveyUpdateRequest.QuestionSurveyRequest(
-                        "업데이트Q", "업데이트D", QuestionType.SINGLE_CHOICE, true,
+                        null, "업데이트Q", "업데이트D", QuestionType.SINGLE_CHOICE, true,
                         List.of("O1", "O2", "O3"));
         SurveyUpdateRequest req = SurveyUpdateRequest.builder()
                 .id(1L)
-                .name("새설문제목")
+                .title("새설문제목")
                 .description("새설문설명")
                 .questions(List.of(uq))
                 .build();
@@ -131,7 +129,7 @@ public class AssemblerTest {
         // --- when: 기존 Survey Entity 로드 가정 + 요청 반영
         Survey survey = Survey.builder()
                 .id(req.getId())
-                .title(req.getName())
+                .title(req.getTitle())
                 .description(req.getDescription())
                 .version(2)  // 수정 시 버전 증가
                 .build();

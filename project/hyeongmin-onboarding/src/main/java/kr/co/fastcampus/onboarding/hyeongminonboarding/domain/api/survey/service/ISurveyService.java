@@ -2,7 +2,6 @@ package kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.servic
 
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SubmitSurveyAnswersRequest;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response.SurveyResponseDto;
-import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SubmitAnswerRequest;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SurveyCreateRequest;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SurveyUpdateRequest;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response.SurveyWithAnswersResponseDto;
@@ -46,5 +45,14 @@ public interface ISurveyService {
      * @param surveyId 조회할 설문조사 ID
      * @return 응답이 포함된 설문조사 상세 정보
      */
-    SurveyWithAnswersResponseDto getSurveyResponses(Long surveyId);
+    SurveyWithAnswersResponseDto getSurveyWithAnswerResponses(Long surveyId);
+
+
+    /**
+     * 설문조사 ID 를 통해 현재버전의 설문조사를 조회합니다.
+     *
+     * @param surveyId 조회할 설문조사 ID
+     * @return 설문조사 상세 정보
+     */
+    SurveyResponseDto getSurveyResponse(Long surveyId);
 }

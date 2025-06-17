@@ -50,10 +50,19 @@ public class SurveyController {
 
     // 4. 설문조사 응답 조회
     @GetMapping("/{surveyId}/responses")
-    public BaseResponse<SurveyWithAnswersResponseDto> getSurveyResponses(
+    public BaseResponse<SurveyWithAnswersResponseDto> getSurveyWithAnswerResponses(
             @PathVariable Long surveyId
     ) {
-        return BaseResponse.OK(this.surveyService.getSurveyResponses(surveyId));
+        return BaseResponse.OK(this.surveyService.getSurveyWithAnswerResponses(surveyId));
+    }
+
+
+    // 5. 설문조사 상세
+    @GetMapping("/{surveyId}")
+    public BaseResponse<SurveyResponseDto> getSurveyResponse(
+            @PathVariable Long surveyId
+    ) {
+        return BaseResponse.OK(this.surveyService.getSurveyResponse(surveyId));
     }
 
 
