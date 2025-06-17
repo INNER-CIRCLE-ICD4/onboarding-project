@@ -1,5 +1,6 @@
-package com.icd.seonghunlee_onboarding.answer.survey.answer;
+package com.icd.seonghunlee_onboarding.answer.survey.answer.vaildator;
 
+import com.icd.seonghunlee_onboarding.answer.survey.answer.AnswerValidator;
 import com.icd.seonghunlee_onboarding.answer.survey.answer.validator.ShortTextValidator;
 import org.junit.jupiter.api.Test;
 
