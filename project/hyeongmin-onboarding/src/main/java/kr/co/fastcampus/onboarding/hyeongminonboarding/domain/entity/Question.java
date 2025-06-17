@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.enums.QuestionType;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.global.entity.base.BaseTimeEntity;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.List;
 
@@ -20,6 +23,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE question SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Question extends BaseTimeEntity {
     @Id
     private Long id;
@@ -37,5 +42,9 @@ public class Question extends BaseTimeEntity {
     private QuestionType type;
 
     private boolean required;
+
+    @Column(name = "deleted", nullable = false)
+    @Builder.Default
+    private boolean deleted = false;
 
 }

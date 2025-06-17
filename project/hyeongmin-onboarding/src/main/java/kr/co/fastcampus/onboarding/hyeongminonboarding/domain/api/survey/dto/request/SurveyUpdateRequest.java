@@ -23,7 +23,7 @@ public class SurveyUpdateRequest {
     private Long id;
 
     @NotBlank
-    private String name;
+    private String title;
 
     private String description;
 
@@ -36,6 +36,8 @@ public class SurveyUpdateRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class QuestionSurveyRequest {
+
+        private Long id;            // 기존 질문이 있는 경우 재활용할 ID, 신규는 null
 
         @NotBlank
         private String title;

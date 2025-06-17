@@ -24,9 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -103,13 +102,104 @@ public class SurveyService implements ISurveyService {
     @Override
     @Transactional
     public SurveyResponseDto updateSurvey(Long surveyId, BaseRequest<SurveyUpdateRequest> request) {
-        return null;
+        SurveyUpdateRequest req = request.getBody();
+
+        // 기존 Survey 조회 및 업데이트
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new EntityNotFoundException("Survey not found: " + surveyId));
+        survey.setTitle(req.getTitle());
+        survey.setDescription(req.getDescription());
+        survey.setVersion(survey.getVersion() + 1);
+        survey = surveyRepository.save(survey);
+
+        // 기존 질문 조회
+        List<Question> existingQuestions =
+                questionRepository.findAllBySurveyId(surveyId);
+        Map<Long, Question> existingMap = existingQuestions.stream()
+                .collect(Collectors.toMap(Question::getId, q -> q));
+
+        List<Question> finalQuestions = new ArrayList<>();
+        List<QuestionOption> finalOptions = new ArrayList<>();
+
+        // 요청으로 넘어온 질문들 처리..!
+        for (SurveyUpdateRequest.QuestionSurveyRequest qr : req.getQuestions()) {
+            Question question;
+            if (qr.getId() != null && existingMap.containsKey(qr.getId())) {
+                // 수정: 기존 질문 재활용
+                question = existingMap.remove(qr.getId());
+                question.setTitle(qr.getTitle());
+                question.setDetail(qr.getDetail());
+                question.setType(qr.getType());
+                question.setRequired(qr.isRequired());
+                question = questionRepository.save(question);
+
+                // 옵션은 전부 삭제 후 재생성
+                questionOptionRepository.deleteAllByQuestion(question);
+            } else {
+                // 신규: insert
+                question = questionRepository.save(
+                        Question.builder()
+                                .survey(survey)
+                                .title(qr.getTitle())
+                                .detail(qr.getDetail())
+                                .type(qr.getType())
+                                .required(qr.isRequired())
+                                .build()
+                );
+            }
+            finalQuestions.add(question);
+
+            // 옵션 생성
+            if (qr.getType().isChoiceType() && qr.getOptions() != null) {
+                for (String val : qr.getOptions()) {
+                    finalOptions.add(
+                            QuestionOption.builder()
+                                    .question(question)
+                                    .optionValue(val)
+                                    .build()
+                    );
+                }
+            }
+        }
+
+        // 삭제 대상 질문들은 soft-delete
+        if (!existingMap.isEmpty()) {
+            List<Question> toDelete = new ArrayList<>(existingMap.values());
+            // 옵션 먼저 삭제
+            questionOptionRepository.deleteAllByQuestionIn(toDelete);
+            // 질문 soft-delete (@SQLDelete)
+            questionRepository.deleteAll(toDelete);
+        }
+
+        // 최종 옵션 일괄 저장
+        List<QuestionOption> savedOptions = questionOptionRepository.saveAll(finalOptions);
+
+        // DTO 조립 후 반환
+        Survey finalSurvey = survey;
+        return assemblerFactory.assemble(
+                SurveyResponseDto.class,
+                ctx -> {
+                    ctx.put(SurveyContextKey.SURVEY_CONTEXT_KEY, finalSurvey);
+                    ctx.put(SurveyContextKey.QUESTION_LIST_CONTEXT_KEY, finalQuestions);
+                    ctx.put(SurveyContextKey.QUESTION_OPTION_LIST_CONTEXT_KEY, savedOptions);
+                }
+        );
     }
 
     @Override
     @Transactional
     public void submitSurveyAnswer(Long surveyId, BaseRequest<SubmitSurveyAnswersRequest> request) {
         SubmitSurveyAnswersRequest req = request.getBody();
+
+        // --- 중복 질문 응답 체크
+        List<Long> questionIds = req.getAnswers().stream()
+                .map(SubmitAnswerRequest::getQuestionId)
+                .toList();
+
+        Set<Long> uniqueIds = new HashSet<>(questionIds);
+        if(questionIds.size() != uniqueIds.size()){
+            throw new SurveyException(ErrorCode.SURVEY_QUESTION_DUPLICATED);
+        }
 
         // 설문 조사 존재 확인
         Survey survey = surveyRepository.findById(surveyId)
@@ -123,6 +213,8 @@ public class SurveyService implements ISurveyService {
                         .submittedAt(LocalDateTime.now())
                         .build()
         );
+
+
 
         // 요청으로 넘어온 모든 답변 처리
         for (SubmitAnswerRequest ansReq : req.getAnswers()) {
@@ -164,7 +256,7 @@ public class SurveyService implements ISurveyService {
 
     @Override
     @Transactional(readOnly = true)
-    public SurveyWithAnswersResponseDto getSurveyResponses(Long surveyId) {
+    public SurveyWithAnswersResponseDto getSurveyWithAnswerResponses(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new EntityNotFoundException("Survey not found: " + surveyId));
 
@@ -179,6 +271,26 @@ public class SurveyService implements ISurveyService {
                     ctx.put(SurveyContextKey.SURVEY_CONTEXT_KEY, survey);
                     ctx.put(SurveyContextKey.SURVEY_RESPONSE_LIST_CONTEXT_KEY, responses);
                     ctx.put(SurveyContextKey.ANSWER_LIST_CONTEXT_KEY, answers);
+                }
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SurveyResponseDto getSurveyResponse(Long surveyId) {
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new EntityNotFoundException("Survey not found: " + surveyId));
+
+        List<Question> questions = questionRepository.findAllBySurveyId(surveyId);
+
+        List<QuestionOption> options = questionOptionRepository.findAllByQuestionIn(questions);
+
+        return assemblerFactory.assemble(
+                SurveyResponseDto.class,
+                ctx -> {
+                    ctx.put(SurveyContextKey.SURVEY_CONTEXT_KEY, survey);
+                    ctx.put(SurveyContextKey.QUESTION_LIST_CONTEXT_KEY, questions);
+                    ctx.put(SurveyContextKey.QUESTION_OPTION_LIST_CONTEXT_KEY, options);
                 }
         );
     }

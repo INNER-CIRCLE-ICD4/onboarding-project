@@ -94,4 +94,19 @@
 - JPAConfig 생성
   - createAt, updateAt 자동 삽입
 - QuestionSnapshotDto, QuestionOptionSnapshotDto 로 Assemble 하도록 수정
-  - JPA 관계 쿼리때문에 스냅샷으로 저장되는 데이터의 양이 커지므로 DTO를 사용하여 데이터를 만들도록 
+  - JPA 관계 쿼리때문에 스냅샷으로 저장되는 데이터의 양이 커지므로 DTO를 사용하여 데이터를 만들도록
+
+# 2025-06-17 [v0.0.5]
+## feat
+- API 개발
+  - @PutMapping("/{surveyId}")
+    - 설문조사 수정을 위해, Question 엔티티에 deleted 컬럼 추가
+    - 설문조사 수정 Request에서 각각의 Question ID를 있으면 받고 없으면 받지 않도록함
+    - Question ID 가 존재하면 soft-delete 로 deleted를 수정
+    - Question ID 가 존재하지 않으면 새로 생성
+    - Question Option은 Delete Insert 전략 사용
+  - @GetMapping("/{surveyId})
+    - 생성된 설문조사 1개의 양식을 최신상태로 조회하여 볼 수 있도록 새로 생성함
+## todo
+- Question 을 soft-delete 로 삭제하는 것으로 변경하니, QuestionSnapshot이 의미가 없어졌으므로 리팩토링에서 삭제해야 함
+- Assemble 에서 엔티티를 리스트형식으로만 받으니 순환조회하여 ID 값을 맵핑하므로 Map 형식으로 받도록 리팩토링해야 함
