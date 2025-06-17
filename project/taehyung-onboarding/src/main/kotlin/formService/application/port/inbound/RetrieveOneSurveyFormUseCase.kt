@@ -18,6 +18,7 @@ interface RetrieveOneSurveyFormUseCase {
         val description: String,
         val inputType: Question.QuestionInputType,
         val required: Boolean,
+        val isRemoved: Boolean,
         val options: List<RetrieveSurveyFormQuestionOption>,
     )
 
