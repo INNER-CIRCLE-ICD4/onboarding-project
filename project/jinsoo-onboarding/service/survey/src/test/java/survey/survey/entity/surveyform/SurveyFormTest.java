@@ -18,17 +18,15 @@ class SurveyFormTest {
         Long id = surveyFormId.nextId();
         String title = "테스트 설문";
         String description = "테스트 설명";
-        Long surveyId = 1L;
         LocalDateTime beforeCreate = LocalDateTime.now();
 
         // when
-        SurveyForm surveyForm = SurveyForm.create(id, title, description, surveyId);
+        SurveyForm surveyForm = SurveyForm.create(id, title, description);
 
         // then
         assertThat(surveyForm.getSurveyFormId()).isEqualTo(id);
         assertThat(surveyForm.getTitle()).isEqualTo(title);
         assertThat(surveyForm.getDescription()).isEqualTo(description);
-        assertThat(surveyForm.getSurveyId()).isEqualTo(surveyId);
         assertThat(surveyForm.getCreatedAt()).isAfter(beforeCreate);
         assertThat(surveyForm.getModifiedAt()).isEqualTo(surveyForm.getCreatedAt());
     }
@@ -41,21 +39,18 @@ class SurveyFormTest {
         SurveyForm surveyForm = SurveyForm.create(
                 id,
                 "원래 제목",
-                "원래 설명",
-                1L
+                "원래 설명"
         );
 
         String newTitle = "새 제목";
         String newDescription = "새 설명";
-        Long newSurveyId = 2L;
 
         // when
-        surveyForm.update(newTitle, newDescription, newSurveyId);
+        surveyForm.update(newTitle, newDescription);
 
         // then
         assertThat(surveyForm.getTitle()).isEqualTo(newTitle);
         assertThat(surveyForm.getDescription()).isEqualTo(newDescription);
-        assertThat(surveyForm.getSurveyId()).isEqualTo(newSurveyId);
     }
 
     @Test
@@ -66,8 +61,7 @@ class SurveyFormTest {
         SurveyForm surveyForm = SurveyForm.create(
                 id,
                 "테스트 설문",
-                "테스트 설명",
-                1L
+                "테스트 설명"
         );
         LocalDateTime initialModifiedAt = surveyForm.getModifiedAt();
 
