@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, Long> {
-    List<AnswerJpaEntity> findByFormId(Long formId);
+
 } 

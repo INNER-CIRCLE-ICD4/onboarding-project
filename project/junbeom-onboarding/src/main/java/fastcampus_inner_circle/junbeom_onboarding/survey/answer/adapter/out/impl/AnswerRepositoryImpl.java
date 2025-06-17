@@ -1,0 +1,37 @@
+package fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.out.impl;
+
+import fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.out.entity.AnswerJpaEntity;
+import fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.out.mapper.AnswerToEntityMapper;
+import fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.out.repository.AnswerJpaRepository;
+import fastcampus_inner_circle.junbeom_onboarding.survey.answer.domain.model.Answer;
+import fastcampus_inner_circle.junbeom_onboarding.survey.answer.domain.repository.AnswerRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+@RequiredArgsConstructor
+public class AnswerRepositoryImpl implements AnswerRepository {
+
+    private final AnswerJpaRepository answerJpaRepository;
+    private final AnswerToEntityMapper answerToEntityMapper;
+
+    @Override
+    public Answer save(Answer answer) {
+
+        AnswerJpaEntity entity = answerToEntityMapper.toEntity(answer);
+        AnswerJpaEntity save = answerJpaRepository.save(entity);
+
+
+
+
+        return save;
+    }
+
+    @Override
+    public Optional<Answer> findById(Long id) {
+        return Optional.empty();
+    }
+}
