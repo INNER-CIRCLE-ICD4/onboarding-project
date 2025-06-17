@@ -30,14 +30,16 @@ public class SurveyServiceImpl implements SurveyService{
             SurveyItem surveyItem = requestSurveyItem.toEntity(survey);
             survey.getSurveyItemList().add(surveyItem);
 
-            requestSurveyItem.getSurveyItemOptionList().forEach(requestSurveyItemOption -> {
-                SurveyItemOption option = requestSurveyItemOption.toEntity(surveyItem);
-                surveyItem.getSurveyItemOptionList().add(option);
-            });
+            if (surveyItem.isSelectableType()) {
+                requestSurveyItem.getSurveyItemOptionList().forEach(requestSurveyItemOption -> {
+                    SurveyItemOption option = requestSurveyItemOption.toEntity(surveyItem);
+                    surveyItem.getSurveyItemOptionList().add(option);
+                });
+            }
 
         });
 
-        surveyStore.storeSurvey(survey);
+        surveyStore.store(survey);
     }
 
     @Override
@@ -50,7 +52,8 @@ public class SurveyServiceImpl implements SurveyService{
                 .collect(Collectors.toMap(SurveyItem::getId, item -> item));
 
         for (SurveyDto.UpdateSurveyItemRequest requestSurveyItem : request.getSurveyItemList()) {
-            SurveyItem item = requestSurveyItem.getId() != null ? existingItemMap.get(requestSurveyItem.getId()) : null;
+            SurveyItem item = requestSurveyItem.getId() != null
+                    ? existingItemMap.get(requestSurveyItem.getId()) : null;
 
             if (item != null) {
                 item.applyChanges(
@@ -66,12 +69,12 @@ public class SurveyServiceImpl implements SurveyService{
                 survey.getSurveyItemList().add(item);
             }
 
-            Map<Long, SurveyItemOption> existingOptions = item.getSurveyItemOptionList().stream()
-                    .collect(Collectors.toMap(SurveyItemOption::getId, o -> o));
+            Map<Long, SurveyItemOption> existingOptionMap = item.getSurveyItemOptionList().stream()
+                    .collect(Collectors.toMap(SurveyItemOption::getId, option -> option));
 
             for (SurveyDto.UpdateSurveyItemOptionRequest requestSurveyItemOption : requestSurveyItem.getSurveyItemOptionList()) {
                 SurveyItemOption option = requestSurveyItemOption.getId() != null
-                        ? existingOptions.get(requestSurveyItemOption.getId()) : null;
+                        ? existingOptionMap.get(requestSurveyItemOption.getId()) : null;
 
                 if (option != null) {
                     option.applyChanges(

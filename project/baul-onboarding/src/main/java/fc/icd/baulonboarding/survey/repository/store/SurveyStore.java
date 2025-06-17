@@ -4,6 +4,6 @@ import fc.icd.baulonboarding.survey.model.entity.Survey;
 
 public interface SurveyStore {
 
-    Survey storeSurvey(Survey survey);
+    Survey store(Survey survey);
 
 }

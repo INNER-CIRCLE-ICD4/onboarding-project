@@ -3,6 +3,7 @@ package fc.icd.baulonboarding.answer.model.entity;
 import fc.icd.baulonboarding.common.model.entity.AbstractEntity;
 import fc.icd.baulonboarding.survey.model.entity.Survey;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,8 +13,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "survey_responses")
-public class SurveyResponse extends AbstractEntity {
+@Table(name = "answers")
+public class Answer extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,12 @@ public class SurveyResponse extends AbstractEntity {
     @JoinColumn(name = "survey_id")
     private Survey survey;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyResponse", cascade = CascadeType.PERSIST)
-    private List<SurveyAnswer> surveyAnswerList = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "answer", cascade = CascadeType.PERSIST)
+    private List<AnswerItem> answerItemList = new ArrayList<>();
+
+    @Builder
+    public Answer(Survey survey){
+        this.survey = survey;
+    }
 
 }

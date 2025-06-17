@@ -13,7 +13,7 @@ public class SurveyStoreImpl implements SurveyStore{
     private final SurveyRepository surveyRepository;
 
     @Override
-    public Survey storeSurvey(Survey survey) {
+    public Survey store(Survey survey) {
         return surveyRepository.save(survey);
     }
 

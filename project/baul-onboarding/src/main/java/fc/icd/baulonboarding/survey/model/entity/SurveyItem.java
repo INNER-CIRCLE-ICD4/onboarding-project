@@ -73,5 +73,9 @@ public class SurveyItem extends AbstractEntity {
         this.ordering = ordering;
     }
 
+    public boolean isSelectableType(){
+        return inputType == InputType.SINGLE_CHOICE || inputType == InputType.MULTI_CHOICE;
+    }
+
 
 }
