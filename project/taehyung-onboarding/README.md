@@ -86,29 +86,77 @@
 |-----------|--------|---------------------|------------------| 
 | 설문지 생성    | POST   | /api/v1/survey      | application/json |
 | 설문지 단건 조회 | GET    | /api/v1/survey/{id} | application/json |
+| 설문지 수정    | PUT    | /api/v1/survey/{id} | application/json |
 
 
 ### 설문지 생성
 
 **RequestBody**
 
-| name                          | type                                                     | nullable | 설명           | 
-|-------------------------------|----------------------------------------------------------|----------|--------------| 
-| surveyName                    | String                                                   | false    | 설문지 이름       |
-| description                   | String                                                   | false    | 설문지 설명       |
-| questions                     | List                                                     | false    | 설문 항목 목록     |
-| questions[*].name             | String                                                   | false    | 설문 항목 이름     |
-| questions[*].description      | String                                                   | false    | 설문 항목 설명     |
-| questions[*].inputType        | Enum(SHORT_TEXT, LONG_TEXT, SINGLE_CHOICE, MULTI_CHOICE) | false    | 설문 항목 유형     |
-| questions[*].required         | Boolean                                                  | false    | 설문 항목 필수 여부  |
-| questions[*].options          | List                                                     | true     | 설문 항목 선택지 목록 |
-| questions[*].options[*].value | String                                                   | false    | 설문 항목 선택지 값  |
+```json
+{
+  "surveyName": "String",
+  "description": "String",
+  "questions": [
+    {
+      "name": "String",
+      "description": "String",
+      "inputType": "Enum(SHORT_TEXT, LONG_TEXT, SINGLE_CHOICE, MULTI_CHOICE)",
+      "required": "Boolean",
+      "options": [
+        {
+          "value": "String"
+        }
+      ] // nullable
+    }
+  ]
+}
+```
 
 **Response**
 ```json
 {
   "message": "success",
   "status": "CREATED",
+  "data": {
+    "id": "0M0XQCYK2669Q"
+  }
+}
+
+```
+
+### 설문지 수정
+
+**RequestBody**
+
+```json
+{
+  "surveyName": "String",
+  "description": "String",
+  "questions": [
+    {
+      "id": "Number",
+      "name": "String",
+      "description": "String",
+      "inputType": "Enum(SHORT_TEXT, LONG_TEXT, SINGLE_CHOICE, MULTI_CHOICE)",
+      "required": "Boolean",
+      "isRemoved": "Boolean", // 삭제 여부
+      "options": [
+        {
+          "id": "Number",
+          "value": "String"
+        }
+      ] // nullable
+    }
+  ]
+}
+```
+
+**Response**
+```json
+{
+  "message": "success",
+  "status": "OK",
   "data": {
     "id": "0M0XQCYK2669Q"
   }
