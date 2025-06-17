@@ -29,11 +29,8 @@ public class DomainModelTest {
     
     @Test
     void 설문_저장_테스트() {
-        Survey survey = new Survey();
-        survey.setDescription("설명");
-        survey.setLatestVersion(1);
-        survey.setIsDeleted(false);
 
+        Survey survey = Survey.createForInsert("설문", "설문 설명");
         Survey saved = surveyRepository.save(survey);
 
         Survey found = surveyRepository.findById(saved.getId()).orElse(null);
@@ -49,8 +46,7 @@ public class DomainModelTest {
 
     @Test
     void 설문항목그룹_저장_테스트() {
-        QuestionGroup group = new QuestionGroup();
-        group.setVersion(1);
+        QuestionGroup group = QuestionGroup.create(1);
         group.setCreatedAt(LocalDateTime.now());
         QuestionGroup saved = questionGroupRepository.save(group);
         QuestionGroup found = questionGroupRepository.findById(saved.getId()).orElse(null);
@@ -63,11 +59,8 @@ public class DomainModelTest {
 
     @Test
     void 설문항목_저장_테스트() {
-        Question question = new Question();
-        question.setLabel("테스트 문항");
-        question.setInputType(InputType.TEXT);
-        question.setRequired(true);
-        question.setCreatedAt(LocalDateTime.now());
+        Question question = Question.create(1, "테스트 문항-TEXT", null, InputType.TEXT, true, null);
+
         Question saved = questionRepository.save(question);
         Question found = questionRepository.findById(saved.getId()).orElse(null);
         System.out.println("saved : " + saved);
@@ -83,7 +76,7 @@ public class DomainModelTest {
     void 설문_전체_저장_테스트() {
         Survey survey = Survey.createForInsert("테스트 설문", "테스트 설문 설명");
 
-        QuestionGroup group = QuestionGroup.create(1);
+        QuestionGroup group = QuestionGroup.create(100);
         survey.setQuestionGroups(List.of(group));
         group.setSurvey(survey);
 

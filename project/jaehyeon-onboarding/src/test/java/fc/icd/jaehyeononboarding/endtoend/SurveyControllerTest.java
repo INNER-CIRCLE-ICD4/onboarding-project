@@ -33,11 +33,11 @@ public class SurveyControllerTest {
 
         SurveyCreateDTO dto = objectMapper.readValue(data, SurveyCreateDTO.class);
 
-        mockMvc.perform(post("/api/v1/surveys")
+        mockMvc.perform(post("/v1/surveys")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(data))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResultCodes.RC_10000));
+                .andExpect(jsonPath("$.code").value(ResultCodes.RC_10000.getCode()));
     }
 
 }
