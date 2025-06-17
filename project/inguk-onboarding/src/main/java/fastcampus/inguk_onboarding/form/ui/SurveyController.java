@@ -9,10 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/survey")
@@ -27,9 +25,11 @@ public class SurveyController {
         return ResponseEntity.ok(ApiResponse.success(surveyResponse));
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<SurveyResponseDto>> updateSurvey(@Valid @RequestBody UpdateSurveyRequestDto dto){
-        SurveyResponseDto surveyResponse = surveyService.updateSurvey(dto);
+    @PatchMapping("/{surveyId}")
+    public ResponseEntity<ApiResponse<SurveyResponseDto>> updateSurvey(
+            @PathVariable Long surveyId,
+            @Valid @RequestBody UpdateSurveyRequestDto dto) {
+        SurveyResponseDto surveyResponse = surveyService.updateSurvey(surveyId, dto);
         return ResponseEntity.ok(ApiResponse.success(surveyResponse));
     }
 

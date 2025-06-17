@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class SurveyEntity extends TimeBaseEntity {
     private String description;
 
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<SurveyVersionEntity> versions = new ArrayList<>();
 
     protected SurveyEntity() {}
@@ -43,5 +45,13 @@ public class SurveyEntity extends TimeBaseEntity {
     public void removeVersion(SurveyVersionEntity version) {
         versions.remove(version);
         version.setSurvey(null);
+    }
+    
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

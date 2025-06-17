@@ -99,7 +99,7 @@ class SurveyServiceTest {
         // when & then
         assertThatThrownBy(() -> surveyService.createSurvey(dto))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("설문조사 이름은 필수입니다.");
+                .hasMessage("이름은 필수입니다.");
 
         verify(surveyRepository, never()).save(any(SurveyEntity.class));
     }

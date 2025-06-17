@@ -4,6 +4,7 @@ import fastcampus.inguk_onboarding.common.repository.entity.TimeBaseEntity;
 import fastcampus.inguk_onboarding.form.post.domain.Surveys.InputType;
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class SurveyItemEntity extends TimeBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_version_id", nullable = false)
+    @JsonBackReference
     private SurveyVersionEntity surveyVersion;
 
     @Column(nullable = false, length = 200)
@@ -37,7 +39,7 @@ public class SurveyItemEntity extends TimeBaseEntity {
     @Column(name = "item_order", nullable = false)
     private Integer order;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "survey_item_options", joinColumns = @JoinColumn(name = "survey_item_id"))
     @Column(name = "option_value")
     private List<String> options;

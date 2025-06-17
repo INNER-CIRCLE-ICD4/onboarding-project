@@ -18,5 +18,5 @@ public record CreateSurveyRequestDto(
         @Size(min=1, max=10, message="설문 받을 항목은 1개 ~ 10개 까지 포함할 수 있습니다.")
         List<CreateSurveyItemRequestDto> items
 
-        ){
+        ) implements SurveyRequestDto {
 }
