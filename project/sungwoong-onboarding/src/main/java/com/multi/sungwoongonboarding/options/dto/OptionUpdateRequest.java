@@ -15,9 +15,6 @@ public class OptionUpdateRequest {
     @NotBlank(message = "옵션 내용은 필수 입력 항목입니다.")
     private final String optionText;
 
-    @NotNull(message = "삭제 여부를 입력해주세요.")
-    private final Boolean deleted;
-
     public Options toDomain() {
         return Options.builder()
                 .optionText(this.optionText)

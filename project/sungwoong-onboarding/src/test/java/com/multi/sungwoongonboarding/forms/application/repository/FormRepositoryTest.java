@@ -3,7 +3,6 @@ package com.multi.sungwoongonboarding.forms.application.repository;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import com.multi.sungwoongonboarding.options.domain.Options;
-import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaEntity;
 import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import org.junit.jupiter.api.DisplayName;

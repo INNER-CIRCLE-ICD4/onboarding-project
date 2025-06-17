@@ -6,8 +6,13 @@ import com.multi.sungwoongonboarding.forms.application.repository.FormRepository
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
 import com.multi.sungwoongonboarding.forms.dto.FormResponse;
+import com.multi.sungwoongonboarding.forms.dto.FormUpdateRequest;
 import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
+import com.multi.sungwoongonboarding.options.dto.OptionUpdateRequest;
 import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
+import com.multi.sungwoongonboarding.questions.dto.QuestionUpdateRequest;
+import jakarta.persistence.EntityManager;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +27,6 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EnableJpaAuditing
-@Transactional
 public class FormServiceTest {
 
 
@@ -33,9 +36,13 @@ public class FormServiceTest {
     @Autowired
     FormRepository formRepository;
 
+    @Autowired
+    EntityManager entityManager;
+
     @Test
-    @DisplayName("설문 조사서 등록 테스트")
-    public void testCreateForm() throws JsonProcessingException {
+    @DisplayName("설문 조사서 등록 테스트 - 성공")
+    @Transactional
+    public void testCreateForm() {
         // Given
         // 설문 조사서 등록에 필요한 데이터 준비
         FormCreateRequest formCreateRequest = createAllQuestionTypesFormRequest();
@@ -52,7 +59,45 @@ public class FormServiceTest {
         assertThat(all.get(0).getQuestions().size()).isEqualTo(4);
     }
 
+    @Test
+    @DisplayName("설문 조사 수정 테스트 - 성공")
+    public void formServiceUpdate() {
+        // Given
+        // 설문 조사서 등록에 필요한 데이터 준비
+        FormCreateRequest formCreateRequest = createAllQuestionTypesFormRequest();
+        FormResponse forms = formService.createForms(formCreateRequest);
+
+        FormUpdateRequest updateForm = FormUpdateRequest.builder()
+                .id(forms.id())
+                .title("모든 질문 유형 테스트")
+                .description("모든 질문 유형을 테스트합니다.")
+                .questions(List.of(
+                        QuestionUpdateRequest.builder()
+                                .questionText("복수 선택 질문")
+                                .questionType("MULTIPLE_CHOICE")
+                                .isRequired(false)
+                                .options(List.of(
+                                        new OptionUpdateRequest("옵션 1"),
+                                        new OptionUpdateRequest("옵션 2")
+                                ))
+                                .build()
+                ))
+                .build();
+
+
+        //When
+        FormResponse formResponse = formService.updateForms(forms.id(), updateForm);
+
+        //Then
+        assertThat(formResponse.id()).isEqualTo(forms.id());
+        // 논리삭제된 질문과 추가된 질문을 포함한 개수
+        assertThat(formResponse.questionResponses().size()).isEqualTo(5);
+        // 논리삭제된 질문을 제거한 개수
+        assertThat(formResponse.questionResponses().stream().filter(q -> !q.deleted()).toList().size()).isEqualTo(1);
+    }
+
     private FormCreateRequest createAllQuestionTypesFormRequest() {
+
         return FormCreateRequest.builder()
                 .title("모든 질문 유형 테스트")
                 .description("모든 질문 유형을 테스트합니다.")
