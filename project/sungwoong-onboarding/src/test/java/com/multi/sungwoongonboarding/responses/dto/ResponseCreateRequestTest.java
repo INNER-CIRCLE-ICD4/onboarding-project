@@ -5,6 +5,7 @@ import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.responses.application.repository.ResponseRepository;
+import com.multi.sungwoongonboarding.responses.domain.Responses;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +33,10 @@ public class ResponseCreateRequestTest {
 
     @Autowired
     ResponseRepository responseRepository;
+
+    Forms 더미_설문지;
+
+    Responses 더미_응답지;
 
     @BeforeEach
     public void setUp() {
@@ -76,15 +81,15 @@ public class ResponseCreateRequestTest {
                 .description("설문 설명")
                 .questions(List.of(단일_선택_질문, 다중_선택_질문, 단문_질문))
                 .build();
-        formRepository.save(formsDomain);
+        더미_설문지 = formRepository.save(formsDomain);
 
         ResponseCreateRequest responses = ResponseCreateRequest.builder()
-                .formId(1L)
+                .formId(더미_설문지.getId())
                 .userId("sungwoong")
                 .answerCreateRequests(List.of())
                 .build();
 
-        responseRepository.save(responses.toDomain());
+        더미_응답지 = responseRepository.save(responses.toDomain());
     }
 
     @Test
@@ -112,9 +117,9 @@ public class ResponseCreateRequestTest {
                 1L,
                 "sungwoong",
                 List.of(
-                        new AnswerCreateRequest(1L, 1L, null), // 단일 선택 질문에 대한 응답
-                        new AnswerCreateRequest(2L, 3L, null), // 다중 선택 질문에 대한 응답
-                        new AnswerCreateRequest(2L, 4L, null) // 다중 선택 질문에 대한 응답
+                        new AnswerCreateRequest(더미_설문지.getQuestions().get(0).getId(), 더미_설문지.getQuestions().get(0).getOptions().get(0).getId(), null), // 단일 선택 질문에 대한 응답
+                        new AnswerCreateRequest(더미_설문지.getQuestions().get(1).getId(), 더미_설문지.getQuestions().get(1).getOptions().get(1).getId(), null), // 다중 선택 질문에 대한 응답
+                        new AnswerCreateRequest(더미_설문지.getQuestions().get(1).getId(), 더미_설문지.getQuestions().get(1).getOptions().get(1).getId(), null) // 다중 선택 질문에 대한 응답
                 ));
 
         ResponseCreateRequest 유효하지_않은_요청값_필수질문의응답이빠짐 = new ResponseCreateRequest(1L, "sungwoong", List.of());

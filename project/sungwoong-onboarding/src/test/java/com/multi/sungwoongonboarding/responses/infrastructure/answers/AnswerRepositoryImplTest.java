@@ -8,13 +8,13 @@ import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.responses.application.repository.AnswerRepository;
 import com.multi.sungwoongonboarding.responses.application.repository.ResponseRepository;
 import com.multi.sungwoongonboarding.responses.domain.Answers;
+import com.multi.sungwoongonboarding.responses.domain.Responses;
 import com.multi.sungwoongonboarding.responses.dto.AnswerCreateRequest;
 import com.multi.sungwoongonboarding.responses.dto.ResponseCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +42,9 @@ public class AnswerRepositoryImplTest {
     @Autowired
     ResponseRepository responseRepository;
 
+    Responses 더미_응답지;
 
+    Forms 더미_설문지;
 
     @BeforeEach
     public void setUp() {
@@ -76,38 +78,37 @@ public class AnswerRepositoryImplTest {
                 .description("설문 설명")
                 .questions(List.of(단일_선택_질문, 다중_선택_질문))
                 .build();
-        formRepository.save(formsDomain);
+        더미_설문지 = formRepository.save(formsDomain);
 
         ResponseCreateRequest responses = ResponseCreateRequest.builder()
-                .formId(1L)
+                .formId(더미_설문지.getId())
                 .userId("sungwoong")
                 .answerCreateRequests(List.of())
                 .build();
 
-        responseRepository.save(responses.toDomain());
+        더미_응답지 = responseRepository.save(responses.toDomain());
     }
 
     @Test
-    @Transactional
     public void testAnswersRepository() {
 
         // 현재는 단순히 setUp이 잘 작동하는지 확인하는 용도로 사용
         //Given
         List<AnswerCreateRequest> ansReq = List.of(
                 AnswerCreateRequest.builder()
-                        .questionId(1L)
+                        .questionId(더미_설문지.getQuestions().get(0).getId())
                         .answerText("단일 선택 답변")
-                        .optionId(1L)
+                        .optionId(더미_설문지.getQuestions().get(0).getOptions().get(0).getId())
                         .build(),
                 AnswerCreateRequest.builder()
-                        .questionId(2L)
+                        .questionId(더미_설문지.getQuestions().get(1).getId())
                         .answerText("다중 선택 답변")
-                        .optionId(3L)
+                        .optionId(더미_설문지.getQuestions().get(0).getOptions().get(1).getId())
                         .build(),
                 AnswerCreateRequest.builder()
-                        .questionId(2L)
+                        .questionId(더미_설문지.getQuestions().get(1).getId())
                         .answerText("다중 선택 답변")
-                        .optionId(4L)
+                        .optionId(더미_설문지.getQuestions().get(1).getOptions().get(1).getId())
                         .build()
         );
 
