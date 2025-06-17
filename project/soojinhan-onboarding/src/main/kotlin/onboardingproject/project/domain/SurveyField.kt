@@ -1,6 +1,7 @@
 package onboardingproject.project.domain
 
 import jakarta.persistence.*
+import onboardingproject.project.common.domain.BaseEntity
 import java.util.*
 
 /**
@@ -8,7 +9,7 @@ import java.util.*
  * fileName    : SurveyField
  * author      : hsj
  * date        : 2025. 6. 14.
- * description :
+ * description : 설문 받을 항목
  */
 @Entity
 class SurveyField(
@@ -28,6 +29,7 @@ class SurveyField(
     var description: String?,
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     var type: FieldType,
 
     @Column(nullable = false)

@@ -1,6 +1,7 @@
 package onboardingproject.project.domain
 
 import jakarta.persistence.*
+import onboardingproject.project.common.domain.BaseEntity
 import java.util.*
 
 /**
@@ -8,7 +9,7 @@ import java.util.*
  * fileName    : FieldOption
  * author      : hsj
  * date        : 2025. 6. 14.
- * description :
+ * description : 선택형 항목의 후보
  */
 @Entity
 class FieldOption(

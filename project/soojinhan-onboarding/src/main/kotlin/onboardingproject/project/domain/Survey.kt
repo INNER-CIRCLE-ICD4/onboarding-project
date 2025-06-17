@@ -3,6 +3,7 @@ package onboardingproject.project.domain
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import onboardingproject.project.common.domain.BaseEntity
 import java.util.*
 
 /**
@@ -10,7 +11,7 @@ import java.util.*
  * fileName    : Survey
  * author      : hsj
  * date        : 2025. 6. 14.
- * description :
+ * description : 설문조사
  */
 @Entity
 class Survey(

@@ -1,6 +1,7 @@
 package onboardingproject.project.domain
 
 import jakarta.persistence.*
+import onboardingproject.project.common.domain.BaseEntity
 import java.util.*
 
 /**
@@ -8,7 +9,7 @@ import java.util.*
  * fileName    : SurveyVersion
  * author      : hsj
  * date        : 2025. 6. 14.
- * description :
+ * description : 설문조사 버전
  */
 @Entity
 class SurveyVersion(
@@ -16,7 +17,7 @@ class SurveyVersion(
     val id: String = UUID.randomUUID().toString(),
 
     @Column(nullable = false)
-    val version: Int = 1,
+    val version: Int = 1, // 수정될때마다 1씩 증가
 
     @Column(nullable = false)
     val title: String,
