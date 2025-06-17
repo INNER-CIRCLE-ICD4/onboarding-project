@@ -1,6 +1,7 @@
 package com.example.hyeongwononboarding.domain.survey.controller;
 
 import com.example.hyeongwononboarding.domain.survey.dto.request.CreateSurveyRequest;
+import com.example.hyeongwononboarding.domain.survey.dto.request.UpdateSurveyRequest;
 import com.example.hyeongwononboarding.domain.survey.dto.response.SurveyResponse;
 import com.example.hyeongwononboarding.domain.survey.service.SurveyService;
 import jakarta.validation.Valid;
@@ -62,6 +63,24 @@ public class SurveyController {
     public ResponseEntity<Map<String, Object>> getSurveyById(
             @PathVariable @NotBlank(message = "설문조사 ID는 필수입니다.") String surveyId) {
         SurveyResponse response = surveyService.getSurveyById(surveyId);
+        Map<String, Object> result = Map.of(
+                "success", true,
+                "data", response
+        );
+        return ResponseEntity.ok(result);
+    }
+    
+    /**
+     * 설문조사 수정 API
+     * @param surveyId 수정할 설문조사 ID
+     * @param request 설문조사 수정 요청 DTO
+     * @return 수정된 설문조사 응답
+     */
+    @PutMapping("/{surveyId}")
+    public ResponseEntity<Map<String, Object>> updateSurvey(
+            @PathVariable @NotBlank(message = "설문조사 ID는 필수입니다.") String surveyId,
+            @Valid @RequestBody UpdateSurveyRequest request) {
+        SurveyResponse response = surveyService.updateSurvey(surveyId, request);
         Map<String, Object> result = Map.of(
                 "success", true,
                 "data", response

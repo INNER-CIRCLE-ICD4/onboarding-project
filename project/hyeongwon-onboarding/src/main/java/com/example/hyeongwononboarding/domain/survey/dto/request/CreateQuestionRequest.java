@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Getter
 @NoArgsConstructor
-public class CreateQuestionRequest {
+public class CreateQuestionRequest implements QuestionRequest {
     @NotBlank(message = "질문명은 필수입니다.")
     @Size(max = 255, message = "질문명은 255자를 초과할 수 없습니다.")
     private String name;
@@ -41,5 +41,10 @@ public class CreateQuestionRequest {
         this.isRequired = isRequired != null ? isRequired : false;
         this.order = order;
         this.options = options;
+    }
+    
+    @Override
+    public List<String> getOptions() {
+        return options != null ? options : List.of();
     }
 }

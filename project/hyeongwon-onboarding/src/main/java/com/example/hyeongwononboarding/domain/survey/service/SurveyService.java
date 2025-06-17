@@ -1,12 +1,13 @@
 package com.example.hyeongwononboarding.domain.survey.service;
 
 import com.example.hyeongwononboarding.domain.survey.dto.request.CreateSurveyRequest;
+import com.example.hyeongwononboarding.domain.survey.dto.request.UpdateSurveyRequest;
 import com.example.hyeongwononboarding.domain.survey.dto.response.SurveyResponse;
 import java.util.List;
 
 /**
  * 설문조사 서비스 인터페이스
- * 설문 생성, 조회 등 핵심 비즈니스 로직을 정의합니다.
+ * 설문 생성, 조회, 수정 등 핵심 비즈니스 로직을 정의합니다.
  */
 public interface SurveyService {
     /** 
@@ -28,4 +29,12 @@ public interface SurveyService {
      * @return 설문조사 응답 DTO
      */
     SurveyResponse getSurveyById(String surveyId);
+    
+    /**
+     * 설문조사 수정
+     * @param surveyId 수정할 설문조사 ID
+     * @param request 설문조사 수정 요청 DTO
+     * @return 수정된 설문조사 응답 DTO
+     */
+    SurveyResponse updateSurvey(String surveyId, UpdateSurveyRequest request);
 }

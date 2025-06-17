@@ -21,4 +21,12 @@ public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, 
      * @return 질문 목록 (질문 순서대로 정렬)
      */
     List<SurveyQuestion> findBySurveyVersionOrderByQuestionOrderAsc(SurveyVersion surveyVersion);
+    
+    /**
+     * 설문 버전 ID로 모든 질문을 삭제합니다.
+     *
+     * @param surveyVersionId 삭제할 질문들의 설문 버전 ID
+     * @return 삭제된 레코드 수
+     */
+    long deleteBySurveyVersionId(String surveyVersionId);
 }

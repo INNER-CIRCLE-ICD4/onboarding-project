@@ -24,8 +24,9 @@ public class SurveyQuestion {
     @Column(name = "id", length = 36)
     private String id;
 
-    @Column(name = "survey_version_id", length = 36, nullable = false)
-    private String surveyVersionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "survey_version_id", nullable = false)
+    private SurveyVersion surveyVersion;
 
     @Column(name = "question_order", nullable = false)
     private Integer questionOrder;
@@ -47,23 +48,26 @@ public class SurveyQuestion {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "survey_version_id", insertable = false, updatable = false)
-    private SurveyVersion surveyVersion;
-
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("optionOrder ASC")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionOption> options = new ArrayList<>();
 
     @Builder
-    public SurveyQuestion(String id, String surveyVersionId, Integer questionOrder, String name, String description, QuestionInputType inputType, Boolean isRequired) {
+    public SurveyQuestion(String id, SurveyVersion surveyVersion, Integer questionOrder, String name, String description, QuestionInputType inputType, Boolean isRequired) {
         this.id = id;
-        this.surveyVersionId = surveyVersionId;
+        this.surveyVersion = surveyVersion;
         this.questionOrder = questionOrder;
         this.name = name;
         this.description = description;
         this.inputType = inputType;
         this.isRequired = isRequired != null ? isRequired : false;
+    }
+    
+    /**
+     * SurveyVersion과의 양방향 관계를 설정합니다.
+     * @param surveyVersion 연결할 SurveyVersion
+     */
+    public void setSurveyVersion(SurveyVersion surveyVersion) {
+        this.surveyVersion = surveyVersion;
     }
     
     /**

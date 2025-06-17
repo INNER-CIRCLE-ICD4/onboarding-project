@@ -13,12 +13,19 @@ import java.util.Optional;
  */
 @Repository
 public interface SurveyVersionRepository extends JpaRepository<SurveyVersion, String> {
-    Optional<SurveyVersion> findBySurveyIdAndVersion(String surveyId, Integer version);
+    Optional<SurveyVersion> findBySurveyIdAndVersionNumber(String surveyId, Integer versionNumber);
     
     /**
      * 설문의 최신 버전을 조회합니다.
      * @param survey 설문 엔티티
      * @return 최신 버전의 설문조사 버전 (없을 경우 Optional.empty())
      */
-    Optional<SurveyVersion> findTopBySurveyOrderByVersionDesc(Survey survey);
+    Optional<SurveyVersion> findTopBySurveyOrderByVersionNumberDesc(Survey survey);
+    
+    /**
+     * 설문 ID로 최신 버전을 조회합니다.
+     * @param surveyId 설문 ID
+     * @return 최신 버전의 설문조사 버전 (없을 경우 Optional.empty())
+     */
+    Optional<SurveyVersion> findTopBySurveyIdOrderByVersionNumberDesc(String surveyId);
 }
