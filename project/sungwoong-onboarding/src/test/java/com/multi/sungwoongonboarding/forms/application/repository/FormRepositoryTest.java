@@ -1,6 +1,7 @@
 package com.multi.sungwoongonboarding.forms.application.repository;
 
 import com.multi.sungwoongonboarding.forms.domain.Forms;
+import com.multi.sungwoongonboarding.forms.infrastructure.FormHistoryJpaRepository;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaRepository;
@@ -32,7 +33,7 @@ public class FormRepositoryTest {
     FormRepository formRepository;
 
     @Autowired
-    OptionsJpaRepository optionsJpaRepository;
+    FormHistoryJpaRepository formHistoryJpaRepository;
 
     @Test
     @DisplayName("Forms 엔티티가 저장되고 조회되는지 테스트")
@@ -223,5 +224,12 @@ public class FormRepositoryTest {
         assertThat(updatedFormInDb.getDescription()).isEqualTo("업데이트된 설문 설명");
         assertThat(updatedFormInDb.getQuestions().size()).isEqualTo(3);
         assertThat(updatedFormInDb.getQuestions().stream().filter(q -> !q.isDeleted()).toList().size()).isEqualTo(2);
+
+        // 이력 조회
+        assertThat(formHistoryJpaRepository.findById(1L).isPresent()).isTrue();
+        assertThat(formHistoryJpaRepository.findById(1L).get().getVersion()).isLessThan(result.getVersion());
+        assertThat(formHistoryJpaRepository.findById(1L).get().getTitle()).isEqualTo("원본 설문 제목");
+        assertThat(formHistoryJpaRepository.findById(1L).get().getQuestionCount()).isEqualTo(originalForm.getQuestions().size());
+
     }
 }
