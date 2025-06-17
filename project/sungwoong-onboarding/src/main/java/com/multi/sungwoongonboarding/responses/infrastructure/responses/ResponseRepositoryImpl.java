@@ -1,8 +1,11 @@
 package com.multi.sungwoongonboarding.responses.infrastructure.responses;
 
+import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
+import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.options.application.repository.OptionsRepository;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.application.repository.QuestionRepository;
+import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.responses.domain.Answers;
 import com.multi.sungwoongonboarding.responses.domain.Responses;
 import com.multi.sungwoongonboarding.responses.application.repository.ResponseRepository;
@@ -23,23 +26,26 @@ public class ResponseRepositoryImpl implements ResponseRepository {
 
     private final OptionsRepository optionsRepository;
 
+    private final FormRepository formRepository;
+
     private final QuestionRepository questionRepository;
+
 
     @Override
     @Transactional
     public Responses save(Responses responses) {
 
+        Forms forms = formRepository.findById(responses.getFormId());
+
         ResponseJpaEntity responseJpaEntity = ResponseJpaEntity.fromDomain(responses);
+        responseJpaEntity.setFormVersion(forms.getVersion());
 
         for (Answers answer : responses.getAnswers()) {
-
-            answer.setOriginalQuestion(questionRepository.findById(answer.getQuestionId()));
-
             AnswerJpaEntity answerJpaEntity = AnswerJpaEntity.fromDomain(answer);
-
             answerJpaEntity.setResponseJpaEntity(responseJpaEntity);
+            Questions question = questionRepository.findById(answer.getQuestionId());
 
-            if (answer.getOriginalQuestionType().isChoiceType()) {
+            if (question.getQuestionType().isChoiceType()) {
                 Options options = optionsRepository.findById(answer.getOptionId());
                 answerJpaEntity.setOptions(options);
             }

@@ -31,19 +31,6 @@ public class AnswerJpaEntity extends BaseEntity {
     @Column(name = "answer_text")
     private String answerText;
 
-    // 질문 스냅샷 데이터
-    @Column(name = "original_question_text", nullable = false)
-    private String originalQuestionText;
-
-    @Column(name = "original_question_version", nullable = false)
-    private int originalQuestionVersion;
-
-    @Column(name = "original_question_is_required", nullable = false)
-    private boolean originalQuestionIsRequired;
-
-    @Column(name = "original_question_type", nullable = false)
-    private Questions.QuestionType originalQuestionType;
-
 
     public static AnswerJpaEntity fromDomain(Answers answers) {
         AnswerJpaEntity answerJpaEntity = new AnswerJpaEntity();
@@ -51,10 +38,6 @@ public class AnswerJpaEntity extends BaseEntity {
         answerJpaEntity.questionId = answers.getQuestionId();
         answerJpaEntity.optionId = answers.getOptionId();
         answerJpaEntity.answerText = answers.getAnswerText();
-        answerJpaEntity.originalQuestionText = answers.getOriginalQuestionText();
-        answerJpaEntity.originalQuestionVersion = answers.getOriginalQuestionVersion();
-        answerJpaEntity.originalQuestionIsRequired = answers.isOriginalQuestionIsRequired();
-        answerJpaEntity.originalQuestionType = answers.getOriginalQuestionType();
         return answerJpaEntity;
     }
 
@@ -76,10 +59,6 @@ public class AnswerJpaEntity extends BaseEntity {
                 .responseId(this.responseJpaEntity != null ? this.responseJpaEntity.getId() : null)
                 .questionId(this.questionId)
                 .answerText(this.answerText)
-                .originalQuestionText(this.originalQuestionText)
-                .originalQuestionVersion(this.originalQuestionVersion)
-                .originalQuestionIsRequired(this.originalQuestionIsRequired)
-                .originalQuestionType(this.originalQuestionType)
                 .build();
     }
 }

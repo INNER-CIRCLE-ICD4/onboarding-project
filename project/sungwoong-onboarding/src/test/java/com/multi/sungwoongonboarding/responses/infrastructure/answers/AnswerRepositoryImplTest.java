@@ -118,7 +118,6 @@ public class AnswerRepositoryImplTest {
 
             Questions originalQuestion = questionRepository.findById(answerRequest.getQuestionId());
             Answers answer = answerRequest.toDomain();
-            answer.setOriginalQuestion(originalQuestion);
             answers.add(answer);
         }
 
@@ -129,9 +128,6 @@ public class AnswerRepositoryImplTest {
 
         // Then
         assertThat(all.size()).isEqualTo(3);
-        assertThat(all.get(0).getOriginalQuestionType()).isEqualTo(SINGLE_CHOICE);
-        assertThat(all.get(1).getOriginalQuestionType()).isEqualTo(MULTIPLE_CHOICE);
-        assertThat(all.get(2).getOriginalQuestionType()).isEqualTo(MULTIPLE_CHOICE);
 
 
     }

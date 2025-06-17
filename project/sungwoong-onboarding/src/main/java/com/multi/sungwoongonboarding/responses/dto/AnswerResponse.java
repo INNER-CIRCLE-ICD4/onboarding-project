@@ -12,13 +12,9 @@ public class AnswerResponse {
     private final Long questionId;
     private final Long optionId;
     private final String answerText;
-    private final String originalQuestionText;
-    private final int originalQuestionVersion;
-    private final boolean originalQuestionIsRequired;
-    private final String originalQuestionType;
 
     public static AnswerResponse fromDomain(Answers answers) {
-        return new AnswerResponse(answers.getId(), answers.getQuestionId(), answers.getOptionId(), answers.getAnswerText(), answers.getOriginalQuestionText(), answers.getOriginalQuestionVersion(), answers.isOriginalQuestionIsRequired(), answers.getOriginalQuestionType().name());
+        return new AnswerResponse(answers.getId(), answers.getQuestionId(), answers.getOptionId(), answers.getAnswerText());
     }
 
 }

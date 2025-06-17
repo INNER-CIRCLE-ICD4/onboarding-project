@@ -93,10 +93,5 @@ class ResponseServiceTest {
         Assertions.assertThat(byId.isPresent()).isTrue();
         Assertions.assertThat(byId.get().getId()).isEqualTo(1L);
         Assertions.assertThat(byId.get().getAnswers().size()).isEqualTo(4L);
-        Assertions.assertThat(byId.get().getAnswers().get(0).getOriginalQuestionType()).isEqualTo(Questions.QuestionType.SINGLE_CHOICE);
-        Assertions.assertThat(byId.get().getAnswers().get(1).getOriginalQuestionType()).isEqualTo(Questions.QuestionType.MULTIPLE_CHOICE);
-        Assertions.assertThat(byId.get().getAnswers().get(1).getOriginalQuestionType()).isEqualTo(Questions.QuestionType.MULTIPLE_CHOICE);
-        Assertions.assertThat(byId.get().getAnswers().get(2).getOriginalQuestionType()).isEqualTo(Questions.QuestionType.MULTIPLE_CHOICE);
-        Assertions.assertThat(byId.get().getAnswers().get(3).getOriginalQuestionType()).isEqualTo(Questions.QuestionType.SHORT_ANSWER);
     }
 }
