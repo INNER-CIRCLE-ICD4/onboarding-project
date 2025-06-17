@@ -4,7 +4,12 @@ import com.innercircle.survey.api.dto.request.SubmitSurveyResponseRequest;
 import com.innercircle.survey.api.dto.response.SurveyResponseDetail;
 import com.innercircle.survey.api.dto.response.SurveyResponseListResult;
 import com.innercircle.survey.api.dto.response.SurveyResponseSubmissionResult;
+import com.innercircle.survey.api.exception.DuplicateResponseException;
+import com.innercircle.survey.api.exception.RequiredAnswerMissingException;
+import com.innercircle.survey.api.exception.ResponseNotFoundException;
 import com.innercircle.survey.api.exception.SurveyNotFoundException;
+import com.innercircle.survey.common.exception.BusinessException;
+import com.innercircle.survey.common.exception.ErrorCode;
 import com.innercircle.survey.domain.response.SurveyAnswer;
 import com.innercircle.survey.domain.response.SurveyResponse;
 import com.innercircle.survey.domain.survey.Survey;
@@ -86,16 +91,17 @@ public class SurveyResponseService {
         }
     }
 
-    /**
-     * 설문조사 응답 가능 여부 검증
-     */
     private void validateSurveyForResponse(Survey survey) {
         if (!survey.isActive()) {
-            throw new IllegalArgumentException("비활성화된 설문조사입니다.");
+            throw new BusinessException(ErrorCode.SURVEY_NOT_ANSWERABLE,
+                    String.format("비활성화된 설문조사입니다: %s", survey.getId()),
+                    Map.of("surveyId", survey.getId(), "active", false));
         }
 
         if (!survey.isAnswerable()) {
-            throw new IllegalArgumentException("응답할 수 없는 설문조사입니다. (질문이 없음)");
+            throw new BusinessException(ErrorCode.SURVEY_NOT_ANSWERABLE,
+                    String.format("응답할 수 없는 설문조사입니다: %s (질문이 없음)", survey.getId()),
+                    Map.of("surveyId", survey.getId(), "activeQuestionCount", survey.getActiveQuestions().size()));
         }
     }
 
@@ -108,7 +114,7 @@ public class SurveyResponseService {
                     .existsBySurveyIdAndRespondentInfo(surveyId, respondentInfo.trim());
             
             if (alreadyResponded) {
-                throw new IllegalArgumentException("이미 응답을 제출한 응답자입니다: " + respondentInfo);
+                throw new DuplicateResponseException(surveyId, respondentInfo.trim());
             }
         }
     }
@@ -130,7 +136,9 @@ public class SurveyResponseService {
                 .collect(Collectors.toSet());
         
         if (!invalidQuestionIds.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 질문 ID가 포함되어 있습니다: " + invalidQuestionIds);
+            throw new BusinessException(ErrorCode.QUESTION_NOT_FOUND,
+                    String.format("존재하지 않는 질문 ID가 포함되어 있습니다: %s", invalidQuestionIds),
+                    Map.of("invalidQuestionIds", invalidQuestionIds, "surveyId", survey.getId()));
         }
 
         // 2. 필수 질문 응답 체크
@@ -144,13 +152,20 @@ public class SurveyResponseService {
                 .toList();
         
         if (!missingRequiredQuestions.isEmpty()) {
-            throw new IllegalArgumentException("필수 질문에 대한 응답이 누락되었습니다: " + String.join(", ", missingRequiredQuestions));
+            throw new RequiredAnswerMissingException(missingRequiredQuestions);
         }
 
         // 3. 응답 값 검증 및 SurveyAnswer 생성
         return request.getAnswers().stream()
                 .map(answerRequest -> {
                     SurveyQuestion question = questionMap.get(answerRequest.getQuestionId());
+                    
+                    // 응답 값이 비어있는지 확인
+                    if (answerRequest.getAnswerValues() == null || answerRequest.getAnswerValues().isEmpty()) {
+                        throw new BusinessException(ErrorCode.RESPONSE_EMPTY_ANSWER,
+                                String.format("질문 '%s'에 대한 응답이 비어있습니다.", question.getTitle()),
+                                Map.of("questionId", question.getId(), "questionTitle", question.getTitle()));
+                    }
                     
                     // 질문 타입별 응답 검증
                     validateAnswerForQuestionType(question, answerRequest.getAnswerValues());
@@ -202,11 +217,11 @@ public class SurveyResponseService {
             return new SurveyResponseListResult(surveyId, survey.getTitle(), responses);
 
         } catch (SurveyNotFoundException e) {
-            log.warn("설문조사 응답 조회 실패 - 설문조사를 찾을 수 없음: {}", surveyId);
             throw e;
         } catch (Exception e) {
             log.error("설문조사 응답 조회 실패 - 설문조사 ID: {}, 오류: {}", surveyId, e.getMessage(), e);
-            throw new RuntimeException("설문조사 응답 조회에 실패했습니다: " + e.getMessage(), e);
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR,
+                    "설문조사 응답 조회 중 예상치 못한 오류가 발생했습니다.", e);
         }
     }
 
@@ -221,19 +236,19 @@ public class SurveyResponseService {
 
         try {
             SurveyResponse response = surveyResponseRepository.findByIdWithAnswers(responseId)
-                    .orElseThrow(() -> new IllegalArgumentException("응답을 찾을 수 없습니다: " + responseId));
+                    .orElseThrow(() -> new ResponseNotFoundException(responseId));
 
             log.info("개별 응답 상세 조회 완료 - 응답 ID: {}, 답변 개수: {}", 
                     responseId, response.getAnsweredQuestionCount());
 
             return new SurveyResponseDetail(response);
 
-        } catch (IllegalArgumentException e) {
-            log.warn("개별 응답 조회 실패: {}", e.getMessage());
+        } catch (ResponseNotFoundException e) {
             throw e;
         } catch (Exception e) {
             log.error("개별 응답 조회 실패 - 응답 ID: {}, 오류: {}", responseId, e.getMessage(), e);
-            throw new RuntimeException("응답 조회에 실패했습니다: " + e.getMessage(), e);
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR,
+                    "응답 조회 중 예상치 못한 오류가 발생했습니다.", e);
         }
     }
 
@@ -259,11 +274,11 @@ public class SurveyResponseService {
             return count;
 
         } catch (SurveyNotFoundException e) {
-            log.warn("설문조사 응답 개수 조회 실패 - 설문조사를 찾을 수 없음: {}", surveyId);
             throw e;
         } catch (Exception e) {
             log.error("설문조사 응답 개수 조회 실패 - 설문조사 ID: {}, 오류: {}", surveyId, e.getMessage(), e);
-            throw new RuntimeException("응답 개수 조회에 실패했습니다: " + e.getMessage(), e);
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR,
+                    "응답 개수 조회 중 예상치 못한 오류가 발생했습니다.", e);
         }
     }
 
@@ -274,15 +289,18 @@ public class SurveyResponseService {
         switch (question.getQuestionType()) {
             case SHORT_TEXT, LONG_TEXT, SINGLE_CHOICE -> {
                 if (answerValues.size() > 1) {
-                    throw new IllegalArgumentException(
-                            String.format("질문 '%s'은(는) 단일 응답만 허용됩니다.", question.getTitle()));
+                    throw new BusinessException(ErrorCode.RESPONSE_TOO_MANY_CHOICES,
+                            String.format("질문 '%s'은(는) 단일 응답만 허용됩니다.", question.getTitle()),
+                            Map.of("questionId", question.getId(), "questionTitle", question.getTitle(), 
+                                   "answerCount", answerValues.size()));
                 }
             }
             case MULTIPLE_CHOICE -> {
                 // 다중 선택은 여러 응답 허용
                 if (answerValues.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            String.format("질문 '%s'에 대한 응답이 없습니다.", question.getTitle()));
+                    throw new BusinessException(ErrorCode.RESPONSE_EMPTY_ANSWER,
+                            String.format("질문 '%s'에 대한 응답이 없습니다.", question.getTitle()),
+                            Map.of("questionId", question.getId(), "questionTitle", question.getTitle()));
                 }
             }
         }
@@ -299,9 +317,12 @@ public class SurveyResponseService {
                 .toList();
         
         if (!invalidChoices.isEmpty()) {
-            throw new IllegalArgumentException(
-                    String.format("질문 '%s'에 유효하지 않은 선택지가 포함되어 있습니다: %s", 
-                            question.getTitle(), invalidChoices));
+            throw new BusinessException(ErrorCode.RESPONSE_INVALID_CHOICE,
+                    String.format("질문 '%s'에 유효하지 않은 선택지가 포함되어 있습니다.", question.getTitle()),
+                    Map.of("questionId", question.getId(), 
+                           "questionTitle", question.getTitle(),
+                           "invalidChoices", invalidChoices,
+                           "validOptions", validOptions));
         }
     }
 }

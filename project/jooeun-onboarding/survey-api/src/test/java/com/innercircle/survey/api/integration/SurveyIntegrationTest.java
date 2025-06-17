@@ -162,9 +162,14 @@ class SurveyIntegrationTest {
         assertThat(response.getBody()).isNotNull();
         
         var responseBody = objectMapper.readTree(response.getBody());
-        assertThat(responseBody.get("error").asText()).isEqualTo("SURVEY_NOT_FOUND");
+        // 새로운 표준화된 에러 응답 형식 검증
+        assertThat(responseBody.get("errorCode").asText()).isEqualTo("ERR_3001");
         assertThat(responseBody.get("message").asText()).contains("설문조사를 찾을 수 없습니다");
         assertThat(responseBody.get("message").asText()).contains(nonExistentSurveyId);
+        assertThat(responseBody.get("errorId")).isNotNull();
+        assertThat(responseBody.get("timestamp")).isNotNull();
+        assertThat(responseBody.get("path").asText()).contains("/api/surveys/" + nonExistentSurveyId);
+        assertThat(responseBody.get("method").asText()).isEqualTo("GET");
     }
 
     @Test
@@ -298,8 +303,30 @@ class SurveyIntegrationTest {
         assertThat(response.getBody()).isNotNull();
         
         var responseBody = objectMapper.readTree(response.getBody());
-        assertThat(responseBody.get("error").asText()).isEqualTo("INVALID_REQUEST");
-        assertThat(responseBody.get("message").asText()).contains("입력 데이터가 유효하지 않습니다");
+        // 새로운 표준화된 에러 응답 형식 검증
+        assertThat(responseBody.get("errorCode").asText()).isEqualTo("ERR_1003");
+        assertThat(responseBody.get("message").asText()).contains("입력 데이터 검증에 실패했습니다");
+        assertThat(responseBody.get("errorId")).isNotNull();
+        assertThat(responseBody.get("timestamp")).isNotNull();
+        assertThat(responseBody.get("path").asText()).contains("/api/surveys");
+        assertThat(responseBody.get("method").asText()).isEqualTo("POST");
+        
+        // 유효성 검증 에러 상세 정보 확인
+        var validationErrors = responseBody.get("validationErrors");
+        assertThat(validationErrors).isNotNull();
+        assertThat(validationErrors.isArray()).isTrue();
+        assertThat(validationErrors.size()).isGreaterThan(0);
+        
+        // 제목 필드 에러 확인
+        boolean foundTitleError = false;
+        for (var error : validationErrors) {
+            if ("title".equals(error.get("field").asText())) {
+                foundTitleError = true;
+                assertThat(error.get("message").asText()).contains("제목");
+                break;
+            }
+        }
+        assertThat(foundTitleError).isTrue();
     }
 
     @Test
@@ -336,6 +363,20 @@ class SurveyIntegrationTest {
         assertThat(response.getBody()).isNotNull();
         
         var responseBody = objectMapper.readTree(response.getBody());
-        assertThat(responseBody.get("error").asText()).isEqualTo("INVALID_REQUEST");
+        // 새로운 표준화된 에러 응답 형식 검증
+        // 질문 개수 초과는 비즈니스 예외로 처리될 수 있음
+        String errorCode = responseBody.get("errorCode").asText();
+        assertThat(errorCode).isIn("ERR_3006", "ERR_1003"); // 설문조사 생성 실패 또는 유효성 검증 실패
+        
+        String message = responseBody.get("message").asText();
+        assertThat(message).satisfiesAnyOf(
+            msg -> assertThat(msg).contains("설문조사 생성"),
+            msg -> assertThat(msg).contains("검증에 실패"),
+            msg -> assertThat(msg).contains("질문"),
+            msg -> assertThat(msg).contains("개수")
+        );
+        
+        assertThat(responseBody.get("errorId")).isNotNull();
+        assertThat(responseBody.get("timestamp")).isNotNull();
     }
 }

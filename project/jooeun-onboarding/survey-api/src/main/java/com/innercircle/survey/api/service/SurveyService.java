@@ -6,6 +6,8 @@ import com.innercircle.survey.api.dto.request.UpdateSurveyRequest;
 import com.innercircle.survey.api.dto.response.SurveyResponse;
 import com.innercircle.survey.api.exception.AccessDeniedException;
 import com.innercircle.survey.api.exception.SurveyNotFoundException;
+import com.innercircle.survey.common.exception.BusinessException;
+import com.innercircle.survey.common.exception.ErrorCode;
 import com.innercircle.survey.domain.survey.Survey;
 import com.innercircle.survey.domain.survey.SurveyQuestion;
 import com.innercircle.survey.infrastructure.repository.SurveyRepository;
@@ -16,11 +18,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 설문조사 서비스
  *
  * 설문조사 관련 비즈니스 로직을 처리합니다.
+ * 
+ * 예외 처리 원칙:
+ * - 모든 비즈니스 예외는 BusinessException 계열 사용
+ * - RuntimeException이므로 트랜잭션 자동 롤백
+ * - 컨트롤러에서 try-catch 없이 GlobalExceptionHandler에서 일괄 처리
  */
 @Slf4j
 @Service
@@ -42,7 +50,7 @@ public class SurveyService {
 
         try {
             // 1. 설문조사 기본 정보 생성
-            Survey survey = new Survey(request.getTitle(), request.getDescription());
+            Survey survey = new Survey(request.getTitle(), request.getDescription(), request.getCreatedBy());
 
             // 2. 설문 항목들 생성 및 추가
             List<SurveyQuestion> questions = createQuestions(request.getQuestions());
@@ -57,9 +65,15 @@ public class SurveyService {
 
             return new SurveyResponse(savedSurvey);
 
+        } catch (IllegalArgumentException e) {
+            // 비즈니스 규칙 위반을 명확한 예외로 변환
+            log.warn("설문조사 생성 중 비즈니스 규칙 위반 - 제목: {}, 오류: {}", request.getTitle(), e.getMessage());
+            throw new BusinessException(ErrorCode.SURVEY_CREATION_FAILED, e.getMessage(), 
+                    Map.of("title", request.getTitle(), "questionsCount", request.getQuestions().size()));
         } catch (Exception e) {
             log.error("설문조사 생성 실패 - 제목: {}, 오류: {}", request.getTitle(), e.getMessage(), e);
-            throw new RuntimeException("설문조사 생성에 실패했습니다: " + e.getMessage(), e);
+            throw new BusinessException(ErrorCode.SURVEY_CREATION_FAILED, 
+                    "설문조사 생성 중 예상치 못한 오류가 발생했습니다.", e);
         }
     }
 
@@ -96,17 +110,24 @@ public class SurveyService {
 
             // 2. 생성자 권한 확인
             if (!survey.isCreatedBy(request.getModifiedBy())) {
-                throw new AccessDeniedException("설문조사 수정 권한이 없습니다.");
+                throw new AccessDeniedException(surveyId, request.getModifiedBy());
             }
 
-            // 3. 기본 정보 수정
+            // 3. 비활성화된 설문조사 수정 방지
+            if (!survey.isActive()) {
+                throw new BusinessException(ErrorCode.SURVEY_ALREADY_INACTIVE,
+                        String.format("비활성화된 설문조사는 수정할 수 없습니다: %s", surveyId),
+                        Map.of("surveyId", surveyId, "active", false));
+            }
+
+            // 4. 기본 정보 수정
             survey.updateInfo(request.getTitle(), request.getDescription());
 
-            // 4. 질문 수정 (기존 응답 보존을 위해 기존 질문은 비활성화하고 새 질문 추가)
+            // 5. 질문 수정 (기존 응답 보존을 위해 기존 질문은 비활성화하고 새 질문 추가)
             List<SurveyQuestion> newQuestions = createQuestions(request.getQuestions());
             survey.updateQuestions(newQuestions);
 
-            // 5. 저장
+            // 6. 저장
             Survey updatedSurvey = surveyRepository.save(survey);
 
             log.info("설문조사 수정 완료 - ID: {}, 새로운 질문 수: {}", surveyId, newQuestions.size());
@@ -114,14 +135,21 @@ public class SurveyService {
             return new SurveyResponse(updatedSurvey);
 
         } catch (OptimisticLockingFailureException e) {
-            log.warn("설문조사 수정 중 낙관적 락 충돌 - ID: {}", surveyId);
-            throw e; // 글로벌 예외 핸들러에서 처리
-        } catch (SurveyNotFoundException | AccessDeniedException e) {
+            // JPA 낙관적 락 충돌 - GlobalExceptionHandler에서 처리
+            log.warn("설문조사 수정 중 낙관적 락 충돌 - ID: {}", surveyId, e);
+            throw e;
+        } catch (BusinessException e) {
             // 이미 적절한 예외 타입이므로 그대로 전파
             throw e;
+        } catch (IllegalArgumentException e) {
+            // 비즈니스 규칙 위반
+            log.warn("설문조사 수정 중 비즈니스 규칙 위반 - ID: {}, 오류: {}", surveyId, e.getMessage());
+            throw new BusinessException(ErrorCode.SURVEY_UPDATE_FAILED, e.getMessage(),
+                    Map.of("surveyId", surveyId, "modifiedBy", request.getModifiedBy()));
         } catch (Exception e) {
             log.error("설문조사 수정 실패 - ID: {}, 오류: {}", surveyId, e.getMessage(), e);
-            throw new RuntimeException("설문조사 수정에 실패했습니다: " + e.getMessage(), e);
+            throw new BusinessException(ErrorCode.SURVEY_UPDATE_FAILED,
+                    "설문조사 수정 중 예상치 못한 오류가 발생했습니다.", e);
         }
     }
 
@@ -142,23 +170,31 @@ public class SurveyService {
 
             // 2. 생성자 권한 확인
             if (!survey.isCreatedBy(requestedBy)) {
-                throw new AccessDeniedException("설문조사 비활성화 권한이 없습니다.");
+                throw new AccessDeniedException(surveyId, requestedBy);
             }
 
-            // 3. 비활성화
+            // 3. 이미 비활성화된 설문조사 체크
+            if (!survey.isActive()) {
+                throw new BusinessException(ErrorCode.SURVEY_ALREADY_INACTIVE,
+                        String.format("이미 비활성화된 설문조사입니다: %s", surveyId),
+                        Map.of("surveyId", surveyId, "active", false));
+            }
+
+            // 4. 비활성화
             survey.deactivate();
 
-            // 4. 저장
+            // 5. 저장
             surveyRepository.save(survey);
 
             log.info("설문조사 비활성화 완료 - ID: {}", surveyId);
 
-        } catch (SurveyNotFoundException | AccessDeniedException e) {
+        } catch (BusinessException e) {
             // 이미 적절한 예외 타입이므로 그대로 전파
             throw e;
         } catch (Exception e) {
             log.error("설문조사 비활성화 실패 - ID: {}, 오류: {}", surveyId, e.getMessage(), e);
-            throw new RuntimeException("설문조사 비활성화에 실패했습니다: " + e.getMessage(), e);
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR,
+                    "설문조사 비활성화 중 예상치 못한 오류가 발생했습니다.", e);
         }
     }
 
@@ -169,40 +205,64 @@ public class SurveyService {
      * @return 존재 여부
      */
     public boolean existsSurvey(String surveyId) {
-        return surveyRepository.existsById(surveyId);
+        try {
+            return surveyRepository.existsById(surveyId);
+        } catch (Exception e) {
+            log.warn("설문조사 존재 확인 중 오류 - ID: {}, 오류: {}", surveyId, e.getMessage(), e);
+            // 존재 확인 실패는 존재하지 않는 것으로 간주
+            return false;
+        }
     }
 
     /**
      * 요청 DTO로부터 설문 항목들 생성
      */
     private List<SurveyQuestion> createQuestions(List<CreateQuestionRequest> questionRequests) {
-        return questionRequests.stream()
-                .map(this::createQuestion)
-                .toList();
+        try {
+            return questionRequests.stream()
+                    .map(this::createQuestion)
+                    .toList();
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.QUESTION_OPTIONS_INVALID,
+                    "설문 질문 생성 중 오류가 발생했습니다: " + e.getMessage(), e);
+        }
     }
 
     /**
      * 개별 설문 항목 생성
      */
     private SurveyQuestion createQuestion(CreateQuestionRequest request) {
-        // 선택 옵션 검증
-        request.validateOptions();
-        
-        if (request.getQuestionType().isChoiceType()) {
-            return new SurveyQuestion(
-                    request.getTitle(),
-                    request.getDescription(),
-                    request.getQuestionType(),
-                    request.isRequired(),
-                    request.getOptions()
-            );
-        } else {
-            return new SurveyQuestion(
-                    request.getTitle(),
-                    request.getDescription(),
-                    request.getQuestionType(),
-                    request.isRequired()
-            );
+        try {
+            // 선택 옵션 검증
+            request.validateOptions();
+            
+            if (request.getQuestionType().isChoiceType()) {
+                // 선택지가 없는 선택형 질문 검증
+                if (request.getOptions() == null || request.getOptions().isEmpty()) {
+                    throw new BusinessException(ErrorCode.QUESTION_OPTIONS_REQUIRED,
+                            String.format("선택형 질문에는 선택지가 필요합니다: %s", request.getTitle()));
+                }
+                
+                return new SurveyQuestion(
+                        request.getTitle(),
+                        request.getDescription(),
+                        request.getQuestionType(),
+                        request.isRequired(),
+                        request.getOptions()
+                );
+            } else {
+                return new SurveyQuestion(
+                        request.getTitle(),
+                        request.getDescription(),
+                        request.getQuestionType(),
+                        request.isRequired()
+                );
+            }
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.QUESTION_TYPE_INVALID,
+                    String.format("질문 생성 중 오류가 발생했습니다: %s", request.getTitle()), e);
         }
     }
 }
