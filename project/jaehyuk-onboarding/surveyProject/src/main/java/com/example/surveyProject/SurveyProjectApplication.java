@@ -9,6 +9,7 @@ public class SurveyProjectApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SurveyProjectApplication.class, args);
+
 	}
 
 }
