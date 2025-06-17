@@ -26,6 +26,9 @@ public class FormsJpaEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "form_version")
+    private int version = 1;
+
     @Column(name = "user_id")
     private String userId;
 
@@ -38,14 +41,9 @@ public class FormsJpaEntity extends BaseEntity {
         formsJpaEntity.id = form.getId();
         formsJpaEntity.title = form.getTitle();
         formsJpaEntity.description = form.getDescription();
+        formsJpaEntity.version = form.getVersion();
 
-        if (form.getQuestions() != null && !form.getQuestions().isEmpty()) {
-            form.getQuestions().forEach(question -> {
-
-                QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
-                questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
-            });
-        }
+        mappingEntityFromDomain(form, formsJpaEntity);
 
         return formsJpaEntity;
     }
@@ -55,26 +53,25 @@ public class FormsJpaEntity extends BaseEntity {
         this.id = form.getId();
         this.title = form.getTitle();
         this.description = form.getDescription();
-
-        if (form.getQuestions() != null && !form.getQuestions().isEmpty()) {
-            form.getQuestions().forEach(question -> {
-                Optional<QuestionJpaEntity> hasQuestion = this.questions.stream().filter(q -> q.getId().equals(question.getId())).findFirst();
-
-                hasQuestion.ifPresentOrElse(questionJpaEntity -> questionJpaEntity.update(question), () -> {
-
-                    QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
-                    questionJpaEntity.mappingFormJpaEntity(this);
-
-                });
-            });
-        }
-
+        //버전 업
+        this.version++;
+        // 질문 모두 삭제 처리
+        this.questions.forEach(QuestionJpaEntity::delete);
+        // 도메인 > 엔티티 매핑
+        mappingEntityFromDomain(form, this);
         return this;
     }
 
-    public void setQuestionList(List<QuestionJpaEntity> questions) {
-        this.questions = questions;
+    private static void mappingEntityFromDomain(Forms form, FormsJpaEntity formsJpaEntity) {
+        if (form.getQuestions() != null && !form.getQuestions().isEmpty()) {
+            form.getQuestions().forEach(question -> {
+
+                QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
+                questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
+            });
+        }
     }
+
 
     public Forms toDomain() {
         return Forms.builder()
@@ -82,6 +79,7 @@ public class FormsJpaEntity extends BaseEntity {
                 .title(this.title)
                 .description(this.description)
                 .questions(this.questions.stream().map(QuestionJpaEntity::toDomain).toList())
+                .version(this.version)
                 .createdAt(this.getCreatedAt())
                 .createdAt(this.getUpdatedAt())
                 .userId(this.userId)

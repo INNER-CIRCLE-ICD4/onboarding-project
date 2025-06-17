@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OptionUpdateRequest {
 
-    private final Long id;
     @NotBlank(message = "옵션 내용은 필수 입력 항목입니다.")
     private final String optionText;
 
@@ -21,9 +20,7 @@ public class OptionUpdateRequest {
 
     public Options toDomain() {
         return Options.builder()
-                .id(this.id)
                 .optionText(this.optionText)
-                .deleted(this.deleted)
                 .build();
 
     }

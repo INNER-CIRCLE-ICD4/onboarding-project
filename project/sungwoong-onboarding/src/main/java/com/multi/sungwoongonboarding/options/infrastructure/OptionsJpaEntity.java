@@ -19,9 +19,6 @@ public class OptionsJpaEntity {
     @Column(name = "option_text", nullable = false)
     private String optionText;
 
-    @Column(name = "deleted", nullable = false)
-    private Boolean deleted = false;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private QuestionJpaEntity questionJpaEntity;
@@ -34,12 +31,11 @@ public class OptionsJpaEntity {
     }
 
     public Options toDomain() {
-        return new Options(id, optionText, deleted);
+        return new Options(id, optionText);
     }
 
     public void update(Options options) {
         this.optionText = options.getOptionText();
-        this.deleted = options.getDeleted();
     }
 
     public void mappingQuestionJpaEntity(QuestionJpaEntity questionJpaEntity) {
