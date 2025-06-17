@@ -161,8 +161,6 @@
     "surveyId": "SUR1234567890",
     "surveyName": "고객 만족도 조사",
     "surveyDescription": "서비스 개선을 위한 고객 만족도 조사입니다.",
-    "createdDate": "2025-06-14T10:30:00",
-    "lastModifiedDate": "2025-06-14T10:30:00",
     "items": [
       {
         "itemId": "ITM1234567890",
@@ -268,8 +266,6 @@
     "surveyId": "SUR1234567890",
     "surveyName": "수정된 고객 만족도 조사",
     "surveyDescription": "업데이트된 서비스 개선을 위한 고객 만족도 조사입니다.",
-    "createdDate": "2025-06-14T10:30:00",
-    "lastModifiedDate": "2025-06-14T11:15:00",
     "items": [
       // 수정된 항목들
     ]

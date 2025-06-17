@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size
 
 /**
  * packageName    : com.okdori.surveyservice.dto
- * fileName       : SurveyCreateDto
+ * fileName       : SurveyCreate
  * author         : okdori
  * date           : 2025. 6. 16.
  * description    :
@@ -33,7 +33,7 @@ data class ItemCreateDto(
     val itemType: ItemType,
     val isRequired: Boolean = false,
     val hasOtherOption: Boolean = false,
-    val options: List<OptionCreateDto>,
+    val options: List<OptionCreateDto> = emptyList(),
 ) {
     init {
         if (isSelectType(itemType)) {
