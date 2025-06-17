@@ -23,15 +23,13 @@ import java.util.List;
 @Builder
 public class SurveyResponse extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_id", nullable = false)
     private Survey survey;
 
-    private LocalDateTime submittedAt;
+    private int surveyVersion;
 
-    @OneToMany(mappedBy = "response", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers;
+    private LocalDateTime submittedAt;
 }

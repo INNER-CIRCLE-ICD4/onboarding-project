@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.enums.QuestionType;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.global.entity.base.BaseTimeEntity;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.Where;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,9 +23,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE question SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Question extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,14 +41,10 @@ public class Question extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private QuestionType type;
 
-    private boolean required; // 필수 여부
+    private boolean required;
 
-    /**
-     * 하나의 질문에는 여러개 질문 옵션이 있을 수 있다. (Optional)
-     * QuestionType
-     *  -  SINGLE_CHOICE
-     *  -  MULTIPLE_CHOICE
-     */
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionOption> options;
+    @Column(name = "deleted", nullable = false)
+    @Builder.Default
+    private boolean deleted = false;
+
 }
