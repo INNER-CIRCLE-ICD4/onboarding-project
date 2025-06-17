@@ -1,9 +1,7 @@
 package fastcampus.inguk_onboarding.form.post.repository.entity.post;
 
 import fastcampus.inguk_onboarding.common.repository.entity.TimeBaseEntity;
-import fastcampus.inguk_onboarding.form.post.domain.Survey;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,15 +28,9 @@ public class SurveyEntity extends TimeBaseEntity {
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<SurveyItemEntity> items = new ArrayList<>();
 
+    protected SurveyEntity() {}
 
-    public SurveyEntity(Survey survey) {
-        this.description = survey.getDescription();
-        this.id = survey.getId();
-        this.items = (List<SurveyItemEntity>) survey.getItem();
-        this.title = survey.getTitle();
-    }
-
-    public SurveyEntity( String title, String description) {
+    public SurveyEntity(String title, String description) {
        this.title = title;
        this.description = description;
     }
@@ -52,14 +44,5 @@ public class SurveyEntity extends TimeBaseEntity {
     public void removeItem(SurveyItemEntity item) {
         items.remove(item);
         item.setSurvey(null);
-    }
-
-    public Survey toSurvey() {
-        return Survey.builder()
-                .id(id)
-                .title(title)
-                .description(description)
-                .item((SurveyItemEntity) items)
-                .build();
     }
 }
