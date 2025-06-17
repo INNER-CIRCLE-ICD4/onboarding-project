@@ -4,6 +4,7 @@ import fastcampus.inguk_onboarding.common.response.ApiResponse;
 import fastcampus.inguk_onboarding.form.post.application.SurveyService;
 import fastcampus.inguk_onboarding.form.post.application.dto.CreateSurveyRequestDto;
 import fastcampus.inguk_onboarding.form.post.application.dto.SurveyResponseDto;
+import fastcampus.inguk_onboarding.form.post.application.dto.UpdateSurveyRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,4 +26,11 @@ public class SurveyController {
         SurveyResponseDto surveyResponse = surveyService.createSurvey(dto);
         return ResponseEntity.ok(ApiResponse.success(surveyResponse));
     }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<SurveyResponseDto>> updateSurvey(@Valid @RequestBody UpdateSurveyRequestDto dto){
+        SurveyResponseDto surveyResponse = surveyService.updateSurvey(dto);
+        return ResponseEntity.ok(ApiResponse.success(surveyResponse));
+    }
+
 }

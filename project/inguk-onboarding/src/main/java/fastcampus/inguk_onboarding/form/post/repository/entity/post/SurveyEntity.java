@@ -26,7 +26,7 @@ public class SurveyEntity extends TimeBaseEntity {
     private String description;
 
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<SurveyItemEntity> items = new ArrayList<>();
+    private List<SurveyVersionEntity> versions = new ArrayList<>();
 
     protected SurveyEntity() {}
 
@@ -35,14 +35,13 @@ public class SurveyEntity extends TimeBaseEntity {
        this.description = description;
     }
 
-
-    public void addItem(SurveyItemEntity item) {
-        items.add(item);
-        item.setSurvey(this);
+    public void addVersion(SurveyVersionEntity version) {
+        versions.add(version);
+        version.setSurvey(this);
     }
 
-    public void removeItem(SurveyItemEntity item) {
-        items.remove(item);
-        item.setSurvey(null);
+    public void removeVersion(SurveyVersionEntity version) {
+        versions.remove(version);
+        version.setSurvey(null);
     }
 }

@@ -18,8 +18,8 @@ public class SurveyItemEntity extends TimeBaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "survey_id", nullable = false)
-    private SurveyEntity survey;
+    @JoinColumn(name = "survey_version_id", nullable = false)
+    private SurveyVersionEntity surveyVersion;
 
     @Column(nullable = false, length = 200)
     private String title;
@@ -43,6 +43,7 @@ public class SurveyItemEntity extends TimeBaseEntity {
     private List<String> options;
 
 
+
     protected SurveyItemEntity() {}
 
     public SurveyItemEntity(String title, String description, InputType inputType, Boolean required, Integer order) {
@@ -53,11 +54,7 @@ public class SurveyItemEntity extends TimeBaseEntity {
         this.order = order;
     }
 
-    public SurveyItemEntity(List<SurveyItemEntity> items) {
-        super();
-    }
-
-    public void setSurvey(SurveyEntity survey) {
-        this.survey = survey;
+    public void setSurveyVersion(SurveyVersionEntity surveyVersion) {
+        this.surveyVersion = surveyVersion;
     }
 }

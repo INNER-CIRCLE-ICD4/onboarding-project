@@ -14,9 +14,9 @@ public interface JpaSurveyRepository extends JpaRepository<SurveyEntity, Long> {
     @Modifying
     @Query(value="UPDATE SurveyEntity p " +
             "SET p.description = :#{#surveyEntity.getDescription()}," +
-            "p.title = :#{#surveyEntity.title()}," +
+            "p.title = :#{#surveyEntity.getTitle()}," +
             "p.updatedAt = now()" +
-            "WHERE p.id = :#{#surveyEntity.id} ")
+            "WHERE p.id = :#{#surveyEntity.getId()} ")
     void updateSurveyEntity(SurveyEntity surveyEntity);
 
 
