@@ -1,6 +1,7 @@
 package com.multi.sungwoongonboarding.forms.application.repository;
 
 import com.multi.sungwoongonboarding.forms.domain.Forms;
+import com.multi.sungwoongonboarding.forms.infrastructure.FormHistoryJpaEntity;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormHistoryJpaRepository;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import com.multi.sungwoongonboarding.options.domain.Options;
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.*;
 import static org.assertj.core.api.Assertions.*;
@@ -226,10 +228,11 @@ public class FormRepositoryTest {
         assertThat(updatedFormInDb.getQuestions().stream().filter(q -> !q.isDeleted()).toList().size()).isEqualTo(2);
 
         // 이력 조회
-        assertThat(formHistoryJpaRepository.findById(1L).isPresent()).isTrue();
-        assertThat(formHistoryJpaRepository.findById(1L).get().getVersion()).isLessThan(result.getVersion());
-        assertThat(formHistoryJpaRepository.findById(1L).get().getTitle()).isEqualTo("원본 설문 제목");
-        assertThat(formHistoryJpaRepository.findById(1L).get().getQuestionCount()).isEqualTo(originalForm.getQuestions().size());
+        Optional<FormHistoryJpaEntity> history = formHistoryJpaRepository.findById(1L);
+        assertThat(history.isPresent()).isTrue();
+        assertThat(history.get().getVersion()).isLessThan(result.getVersion());
+        assertThat(history.get().getTitle()).isEqualTo("원본 설문 제목");
+        assertThat(history.get().getQuestionCount()).isEqualTo(originalForm.getQuestions().size());
 
     }
 }
