@@ -39,4 +39,58 @@ public class SurveyFixtures {
 		ReflectionTestUtils.setField(survey, "version", version + 1);
 		return survey;
 	}
+
+	public static Survey basicSurveyWithRequiredQuestion () {
+		Question requiredQuestion = Question.create(
+				"필수 질문",
+				"이 질문은 반드시 응답해야 합니다.",
+				InputType.SHORT_TEXT,
+				true, // 필수
+				1,
+				List.of()
+		);
+
+		Question optionalQuestion = Question.create(
+				"선택 질문",
+				"이 질문은 응답하지 않아도 됩니다.",
+				InputType.SHORT_TEXT,
+				false, // 선택
+				2,
+				List.of()
+		);
+
+		return Survey.create(
+				"설문 제목",
+				"설문 설명",
+				List.of(requiredQuestion, optionalQuestion)
+		);
+	}
+
+	public static Survey basicSurveyWithSingleSelectQuestion () {
+		Question requiredQuestion = Question.create(
+				"필수 질문",
+				"이 질문은 반드시 응답해야 합니다.",
+				InputType.SINGLE_SELECT,
+				true, // 필수
+				1,
+				List.of(
+						Option.create("옵션 1", 1)
+				)
+		);
+
+		Question optionalQuestion = Question.create(
+				"선택 질문",
+				"이 질문은 응답하지 않아도 됩니다.",
+				InputType.SHORT_TEXT,
+				false, // 선택
+				2,
+				List.of()
+		);
+
+		return Survey.create(
+				"설문 제목",
+				"설문 설명",
+				List.of(requiredQuestion, optionalQuestion)
+		);
+	}
 }

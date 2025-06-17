@@ -5,7 +5,10 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode(of = {"id", "version"})
@@ -41,5 +44,12 @@ public class Survey {
 				description,
 				updatedQuestions
 		);
+	}
+
+	public Set<UUID> extractQuestionIdsCondition (Predicate<Question> condition) {
+		return questions.stream()
+						.filter(condition)
+						.map(Question::getId)
+						.collect(Collectors.toSet());
 	}
 }
