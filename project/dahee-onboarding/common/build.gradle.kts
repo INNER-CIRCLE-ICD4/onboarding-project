@@ -1,4 +1,4 @@
-// survey-common/build.gradle.kts
+// common/build.gradle.kts
 plugins {
     `java-library`
 }
@@ -8,10 +8,8 @@ repositories {
 }
 
 dependencies {
-    // 공통 DTO 검증용
     api("jakarta.validation:jakarta.validation-api:3.0.2")
-
-    // Lombok
+    implementation("org.springframework:spring-web:6.0.11")   // 사용 중인 Spring Boot 3.5.x 에 맞는 버전
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 }
