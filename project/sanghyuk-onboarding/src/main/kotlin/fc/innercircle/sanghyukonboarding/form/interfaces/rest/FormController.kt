@@ -1,7 +1,6 @@
 package fc.innercircle.sanghyukonboarding.form.interfaces.rest
 
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCreateCommand
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormUpdateCommand
+import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 import fc.innercircle.sanghyukonboarding.form.interfaces.rest.dto.response.FormResponse
 import fc.innercircle.sanghyukonboarding.form.interfaces.rest.port.FormService
@@ -19,7 +18,7 @@ import java.net.URI
 class FormController(private val formService: FormService) {
 
     @PostMapping("/api/v1/forms", consumes = ["application/json"], produces = ["application/json"])
-    fun createForm(@RequestBody command: FormCreateCommand): ResponseEntity<FormResponse> {
+    fun createForm(@RequestBody command: FormCommand): ResponseEntity<FormResponse> {
         val form: Form = formService.create(command)
         val response: FormResponse = FormResponse.from(form)
         val location: URI = fromCurrentRequest()
@@ -41,7 +40,7 @@ class FormController(private val formService: FormService) {
     @PutMapping("/api/v1/forms/{formId}", consumes = ["application/json"], produces = ["application/json"])
     fun updateForm(
         @PathVariable formId: String,
-        @RequestBody command: FormUpdateCommand
+        @RequestBody command: FormCommand
     ): ResponseEntity<FormResponse> {
         val form: Form = formService.update(formId, command)
         val response: FormResponse = FormResponse.from(form)

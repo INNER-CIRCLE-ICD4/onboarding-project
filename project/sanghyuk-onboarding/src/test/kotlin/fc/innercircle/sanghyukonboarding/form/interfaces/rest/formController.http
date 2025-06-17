@@ -3,23 +3,90 @@ POST http://localhost:8080/api/v1/forms
 Content-Type: application/json
 
 {
-  "title": "",
-  "description": "",
+  "title": "티셔츠 신청",
+  "description": "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요.",
   "questions": [
-
+    {
+      "title": "이름",
+      "description": "반드시 본명을 입력해주세요.",
+      "type": "TEXT",
+      "required": true,
+      "version": 0,
+      "selectableOptions": []
+    },
+    {
+      "title": "티셔츠 사이즈",
+      "description": "",
+      "type": "RADIO",
+      "required": false,
+      "version": 0,
+      "selectableOptions": [
+        {
+          "text": "XS"
+        },
+        {
+          "text": "S"
+        },
+        {
+          "text": "M"
+        },
+        {
+          "text": "L"
+        },
+        {
+          "text": "XL"
+        }
+      ]
+    },
+    {
+      "title": "기타 의견",
+      "description": "",
+      "type": "LONG_TEXT",
+      "required": false,
+      "version": 0,
+      "selectableOptions": []
+    }
   ]
 }
 
 > {%
-    console.log(`headers: ${JSON.stringify(request.headers.all())}`)
-    console.log(`request body: ${JSON.stringify(request.body)}`)
+    // response.headers는 일반 객체이므로 all(), warn() 같은 메서드는 없습니다.
+    console.log('response headers:', response.headers);
+    const formId = response.headers.formid;
+    if (formId) {
+        client.global.set('formId', formId);
+        console.log(`> Saved global variable formId = ${formId}`);
+    } else {
+        // console.warn() 대신 console.log() 또는 console.error()를 사용하세요.
+        console.log('> formId 헤더가 없습니다.');
+    }
 %}
 
 ### Get Form by ID
-GET http://localhost:8080/api/v1/forms/01JXSRHTXFYHGFDA6XGMZH8F0C
+GET http://localhost:8080/api/v1/forms/01JXYZJJBG23SP8NQ779TNTJPQ
 Accept: application/json
 
 > {%
     console.log(`headers: ${JSON.stringify(request.headers.all())}`)
     console.log(`request body: ${JSON.stringify(request.body)}`)
 %}
+
+### Update Form by ID
+PUT http://localhost:8080/api/v1/forms/01JXYZE7ZNW5YFT45Y9DK6HQFV
+Content-Type: application/json
+
+{
+  "title": "티셔츠 신청 (수정)",
+  "description": "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요. (수정됨)",
+  "questions": [
+    {
+      "questionTemplateId": "01JXYZJJBMNHB8CXSMGFNS6ADM",
+      "title": "이름 (수정)",
+      "description": "반드시 본명을 선택해주세요. (수정됨)",
+      "type": "TEXT",
+      "required": true,
+      "version": 0,
+      "selectableOptions": []
+    }
+  ]
+}

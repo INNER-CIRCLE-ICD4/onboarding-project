@@ -24,7 +24,7 @@ open class FormEntity(
         unique = true,
         columnDefinition = "char(26) not null comment 'ID'"
     )
-    private var id: String? = null,
+    private var id: String = "",
     @Column(nullable = false, length = 255, columnDefinition = "varchar(255) comment '설문 제목'")
     val title: String,
     @Column(nullable = false, length = 1000, columnDefinition = "varchar(1000) comment '설문 설명'")
@@ -43,7 +43,7 @@ open class FormEntity(
 
     fun toDomain(questionTemplates: List<QuestionTemplate>): Form {
         return Form(
-            id = id!!,
+            id = id,
             title = title,
             description = description,
             questionTemplates = questionTemplates.filter { it.formId == id }
@@ -51,16 +51,16 @@ open class FormEntity(
     }
 
     override fun getId(): String {
-        return id ?: throw IllegalStateException("cannot get ID before persist")
+        return id
     }
 
     override fun isNew(): Boolean {
-        return id == null
+        return id.isBlank()
     }
 
     @PrePersist
     fun prePersist() {
-        if (id == null) {
+        if (id.isBlank()) {
             id = IdGenerator.next()
         }
     }
@@ -70,6 +70,7 @@ open class FormEntity(
             domain: Form,
         ): FormEntity {
             return FormEntity(
+                id = domain.id,
                 title = domain.title,
                 description = domain.description,
             )

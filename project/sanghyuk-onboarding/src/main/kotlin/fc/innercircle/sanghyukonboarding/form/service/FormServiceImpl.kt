@@ -1,9 +1,6 @@
 package fc.innercircle.sanghyukonboarding.form.service
 
-import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
-import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCreateCommand
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormUpdateCommand
+import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 import fc.innercircle.sanghyukonboarding.form.interfaces.rest.port.FormService
 import fc.innercircle.sanghyukonboarding.form.service.port.FormReader
@@ -20,22 +17,21 @@ class FormServiceImpl(
 
     @Transactional
     override fun create(
-        formCreateCommand: FormCreateCommand,
+        command: FormCommand
     ): Form {
-        val form = Form.from(formCreateCommand)
+        val form = Form.from(command)
         val id = writer.insertOrUpdate(form)
         return getById(id)
     }
 
     override fun getById(id: String): Form {
-        return reader.findById(id)
-            ?: throw CustomException(ErrorCode.FORM_NOT_FOUND.withArgs(id))
+        return reader.getById(id)
     }
 
     @Transactional
     override fun update(
         formId: String,
-        command: FormUpdateCommand,
+        command: FormCommand,
     ): Form {
         val form: Form = this.getById(formId)
         val updatedForm = form.updated(command)

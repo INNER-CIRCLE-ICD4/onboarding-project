@@ -30,7 +30,7 @@ open class SelectableOptionEntity(
         unique = true,
         columnDefinition = "char(26) comment 'ID'"
     )
-    private var id: String? = null,
+    private var id: String = "",
     @Column(name = "text", nullable = false, length = 50, columnDefinition = "varchar(50) not null comment '질문 선택 옵션'")
     val text: String,
     @Column(nullable = false, columnDefinition = "int default 0 not null comment '항목 순서'")
@@ -59,7 +59,7 @@ open class SelectableOptionEntity(
 
     fun toDomain(): SelectableOption {
         return SelectableOption(
-            id = id!!,
+            id = id,
             text = text,
             displayOrder = displayOrder,
             questionSnapshotId = questionSnapshotEntity.id,
@@ -67,20 +67,19 @@ open class SelectableOptionEntity(
     }
 
     override fun getId(): String {
-        return id ?: throw IllegalStateException("cannot get ID before persist")
+        return id
     }
 
     override fun isNew(): Boolean {
-        return id == null
+        return id.isBlank()
     }
 
     @PrePersist
     fun prePersist() {
-        if (id == null) {
+        if (id.isBlank()) {
             id = IdGenerator.next()
         }
     }
-
     companion object {
         fun from(
             selectableOption: SelectableOption,

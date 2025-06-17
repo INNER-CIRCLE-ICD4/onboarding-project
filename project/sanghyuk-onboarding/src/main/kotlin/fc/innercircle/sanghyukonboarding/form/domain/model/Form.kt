@@ -2,8 +2,7 @@ package fc.innercircle.sanghyukonboarding.form.domain.model
 
 import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCreateCommand
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormUpdateCommand
+import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.QuestionTemplates
 import fc.innercircle.sanghyukonboarding.form.domain.validator.FormValidator
 
@@ -52,32 +51,50 @@ open class Form(
         )
     }
 
-    fun updated(cmd: FormUpdateCommand): Form {
+    fun updated(cmd: FormCommand): Form {
+
+        val createdOrUpdatedQuestionTemplates: List<QuestionTemplate> =
+            cmd.questions.mapIndexed { idx, questionCmd ->
+                when {
+                    questionCmd.questionTemplateId.isEmpty() -> {
+                        // ID가 비어 있으면 새 질문 생성
+                        QuestionTemplate.of(
+                            cmd = questionCmd,
+                            displayOrder = idx
+                        )
+                    }
+                    else -> {
+                        // 기존 질문 조회
+                        val questionTemplate =
+                            this.questionTemplates.getById(questionCmd.questionTemplateId)
+
+                        // 수정 사항이 있으면 updated, 없으면 원본 그대로
+                        if (questionTemplate.isModified(questionCmd, idx)) {
+                            questionTemplate.updated(
+                                cmd = questionCmd,
+                                displayOrder = idx
+                            )
+                        } else {
+                            questionTemplate
+                        }
+                    }
+                }
+            }
+
+        val deletedQuestionTemplates: List<QuestionTemplate> = this.questionTemplates.list()
+            // 기존 질문 중에서 새 요청에 포함되지 않은 질문들을 찾아 삭제 처리
+            .filter { it -> !createdOrUpdatedQuestionTemplates.contains(it) }
+            .map { it.deleted() }
+
         return this.copy(
             title = cmd.title,
             description = cmd.description,
-            questionTemplates = cmd.questions.mapIndexed { idx, questionCmd ->
-                val questionTemplate: QuestionTemplate = this.questionTemplates.getById(questionCmd.questionTemplateId)
-                replaceIfModified(questionTemplate, questionCmd, idx)
-            }
+            questionTemplates = createdOrUpdatedQuestionTemplates + deletedQuestionTemplates
         )
-    }
-
-    private fun replaceIfModified(
-        questionTemplate: QuestionTemplate,
-        questionCmd: FormUpdateCommand.Question,
-        idx: Int,
-    ): QuestionTemplate = if (questionTemplate.isModified(questionCmd)) {
-        questionTemplate.updatedNewVersion(
-            cmd = questionCmd,
-            displayOrder = idx
-        )
-    } else {
-        questionTemplate
     }
 
     companion object {
-        fun from(cmd: FormCreateCommand): Form {
+        fun from(cmd: FormCommand): Form {
             val questionTemplates: List<QuestionTemplate> = cmd.questions.mapIndexed { idx, it ->
                 QuestionTemplate.of(
                     cmd = it,

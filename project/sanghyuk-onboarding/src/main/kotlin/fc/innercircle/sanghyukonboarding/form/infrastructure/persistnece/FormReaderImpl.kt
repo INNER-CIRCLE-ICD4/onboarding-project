@@ -1,5 +1,7 @@
 package fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece
 
+import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
+import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionSnapshot
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.FormJpaRepository
@@ -19,11 +21,8 @@ class FormReaderImpl(
     private val questionSnapshotJpaRepository: QuestionSnapshotJpaRepository,
     private val selectableOptionJpaRepository: SelectableOptionJpaRepository,
 ): FormReader {
-    
-    /**
-     * 폼 ID로 폼을 조회합니다.
-     */
-    override fun findById(id: String): Form? =
+
+    override fun getById(id: String): Form =
         formJpaRepository.findById(id)
             .map { formEntity ->
                 // 1) 템플릿 조회
@@ -52,5 +51,7 @@ class FormReaderImpl(
                 // 6) 도메인 변환: 폼
                 formEntity.toDomain(templates)
             }
-            .orElse(null)
+            .orElseThrow {
+                throw CustomException(ErrorCode.FORM_NOT_FOUND.withArgs(id))
+            }
 }

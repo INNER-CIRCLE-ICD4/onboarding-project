@@ -29,7 +29,7 @@ open class QuestionTemplateEntity(
         unique = true,
         columnDefinition = "char(26) not null comment 'ID'"
     )
-    private var id: String? = null,
+    private var id: String = "",
     @Column(nullable = false, columnDefinition = "bigint default 0 not null comment '버전'")
     val version: Long,
     @Column(nullable = false, columnDefinition = "boolean default false comment '필수 여부'")
@@ -58,7 +58,7 @@ open class QuestionTemplateEntity(
 
     fun toDomain(questionSnapshots: List<QuestionSnapshot>): QuestionTemplate {
         return QuestionTemplate(
-            id = id!!,
+            id = id,
             version = version,
             required = required,
             displayOrder = displayOrder,
@@ -68,16 +68,16 @@ open class QuestionTemplateEntity(
     }
 
     override fun getId(): String {
-        return id ?: throw IllegalStateException("cannot get ID before persist")
+        return id
     }
 
     override fun isNew(): Boolean {
-        return id == null
+        return id.isBlank()
     }
 
     @PrePersist
     fun prePersist() {
-        if (id == null) {
+        if (id.isBlank()) {
             id = IdGenerator.next()
         }
     }
