@@ -13,23 +13,16 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Survey {
-    @Id
-    private Long surveyId;
+public class Survey extends BaseEntity {
 
-    private Long surveyFormId;
-    private LocalDateTime startAt;
-    private LocalDateTime endAt;
+    private Long surveyFormVersion;
 
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public static Survey create(Long surveyId, Long surveyFormId, LocalDateTime startAt, LocalDateTime endAt) {
+    public static Survey create(Long surveyFormVersion) {
         Survey survey = new Survey();
-        survey.surveyId = surveyId;
-        survey.surveyFormId = surveyFormId;
-        survey.startAt = startAt;
-        survey.endAt = endAt;
+        survey.surveyFormVersion = surveyFormVersion;
         survey.createdAt = LocalDateTime.now();
         survey.modifiedAt = survey.createdAt;
         return survey;

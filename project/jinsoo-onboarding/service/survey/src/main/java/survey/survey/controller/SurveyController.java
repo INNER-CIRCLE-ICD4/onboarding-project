@@ -4,11 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import survey.survey.controller.request.SurveyFormUpdateRequest;
+import survey.survey.controller.request.survey.update.SurveyFormUpdateRequest;
+import survey.survey.controller.request.survey.create.SurveyCreateRequest;
 import survey.survey.service.SurveyService;
-import survey.survey.controller.request.SurveyFormCreateRequest;
-import survey.survey.service.response.SurveyFormResponse;
-import survey.survey.service.response.SurveyFormUpdateResponse;
+import survey.survey.service.response.SurveyResponse;
 
 @RestController
 @RequestMapping("/api/v1/survey")
@@ -17,15 +16,15 @@ public class SurveyController {
     private final SurveyService surveyService;
 
     @PostMapping
-    public ResponseEntity<SurveyFormResponse> create(@Valid @RequestBody SurveyFormCreateRequest request) {
-        SurveyFormResponse response = surveyService.create(request);
+    public ResponseEntity<SurveyResponse> create(@Valid @RequestBody SurveyCreateRequest request) {
+        SurveyResponse response = surveyService.create(request);
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{surveyFormId}")
-    public ResponseEntity<SurveyFormUpdateResponse> update(@Valid @RequestBody SurveyFormUpdateRequest request,
-                                                                    @PathVariable Long surveyFormId) {
-        SurveyFormUpdateResponse response = surveyService.update(request, surveyFormId);
+    @PutMapping
+    public ResponseEntity<SurveyResponse> update(@Valid @RequestBody SurveyFormUpdateRequest request) {
+//        SurveyFormResponse response = surveyService.update(request);
+        SurveyResponse response = null;
         return ResponseEntity.ok(response);
 
     }

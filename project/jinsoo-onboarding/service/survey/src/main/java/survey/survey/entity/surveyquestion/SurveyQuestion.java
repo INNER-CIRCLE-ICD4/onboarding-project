@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import survey.survey.entity.BaseEntity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,13 +15,7 @@ import java.util.List;
 @Table(name = "survey_questions")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SurveyQuestion {
-    @Id
-    private Long questionId;
-
-    @Version
-    private Long version;
-
+public class SurveyQuestion extends BaseEntity {
     private int questionIndex;
 
     private String name;
@@ -48,22 +43,16 @@ public class SurveyQuestion {
             joinColumns = @JoinColumn(name = "question_id")
     )
     @OrderColumn(name = "index")
+//    @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
     private List<CheckCandidate> candidates = new ArrayList<>();
 
-    private SurveyQuestion(String name, String description, InputType inputType, boolean required, Long surveyFormId) {
-        this.name = name;
-        this.description = description;
-        this.inputType = inputType;
-        this.required = required;
-        this.surveyFormId = surveyFormId;
-    }
-
-    public static SurveyQuestion create(Long surveyFormId, Long questionId, int index, String name, String description,
+    public static SurveyQuestion create(
+                                        int index,
+                                        String name,
+                                        String description,
                                         InputType inputType,
                                         boolean required) {
         SurveyQuestion surveyQuestion = new SurveyQuestion();
-        surveyQuestion.surveyFormId = surveyFormId;
-        surveyQuestion.questionId = questionId;
         surveyQuestion.questionIndex = index;
         surveyQuestion.name = name;
         surveyQuestion.description = description;
@@ -81,7 +70,6 @@ public class SurveyQuestion {
         this.description = description;
         this.inputType = inputType;
         this.required = required;
-//        this.modifiedAt = LocalDateTime.now();
     }
 
     public void addCandidates(List<CheckCandidate> candidates) {
@@ -106,9 +94,6 @@ public class SurveyQuestion {
         if (changed) {
             this.candidates.clear();
             this.candidates.addAll(safeNewCandidates);
-
-            this.version++;
-
             this.modifiedAt = LocalDateTime.now();
         }
     }
