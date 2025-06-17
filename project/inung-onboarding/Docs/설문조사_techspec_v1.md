@@ -267,7 +267,7 @@ CREATE TABLE answer
 
 #### 요청
 
-- URL : `/api/v1/survey/{id}/response`
+- URL : `/api/v1/survey/{id}/versions/{version}/response`
 - Method : `POST`
 - 설명 : 설문 조사에 대한 응답을 제출합니다.
 
@@ -275,8 +275,6 @@ CREATE TABLE answer
 
 ```json
 {
-  "surveyId": "설문 조사 ID",
-  "surveyVersion": 1,
   "respondentId": "응답자 ID",
   "answers": [
     {
@@ -307,7 +305,7 @@ CREATE TABLE answer
 
 #### 요청
 
-- URL : `/api/v1/survey/{id}/response`
+- URL : `/api/v1/survey/{id}/versions/{version}/response`
 - Method : `GET`
 - 설명 : 특정 설문 조사에 대한 응답 결과를 조회합니다.
 - 쿼리 파라미터에는 질문과 옵션을 포함한 응답 결과를 필터링할 수 있습니다.
@@ -330,11 +328,11 @@ CREATE TABLE answer
       "submittedAt": "2023-10-01T12:00:00Z",
       "answers": [
         {
-          "questionId": "질문 ID",
+          "questionName": "질문",
           "textValue": "응답 값"
         },
         {
-          "questionId": "질문 ID",
+          "questionName": "질문",
           "textValue": "응답 값"
         }
       ]
