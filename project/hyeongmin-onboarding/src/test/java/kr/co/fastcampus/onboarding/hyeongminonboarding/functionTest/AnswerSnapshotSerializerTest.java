@@ -1,6 +1,7 @@
 package kr.co.fastcampus.onboarding.hyeongminonboarding.functionTest;
 
 
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response.SurveyWithAnswersResponseDto;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.util.AnswerSnapshotSerializer;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.Question;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.QuestionOption;
@@ -41,8 +42,8 @@ public class AnswerSnapshotSerializerTest {
         String questionJson = serializer.serializeQuestion(question);
         String optionJson = serializer.serializeOptions(options);
 
-        Question restoredQuestion = serializer.deserializeQuestion(questionJson);
-        List<QuestionOption> restoredOptions = serializer.deserializeOptions(optionJson);
+        SurveyWithAnswersResponseDto.QuestionSnapshotDto restoredQuestion = serializer.deserializeQuestion(questionJson);
+        List<SurveyWithAnswersResponseDto.QuestionOptionSnapshotDto> restoredOptions = serializer.deserializeOptions(optionJson);
 
         // then
         assertEquals(question.getTitle(), restoredQuestion.getTitle());

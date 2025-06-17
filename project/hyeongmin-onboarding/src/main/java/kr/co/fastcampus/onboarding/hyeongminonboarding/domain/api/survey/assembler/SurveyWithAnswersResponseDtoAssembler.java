@@ -2,7 +2,9 @@ package kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.assemb
 
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response.SurveyWithAnswersResponseDto;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.util.AnswerSnapshotSerializer;
-import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.*;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.Answer;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.Survey;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.SurveyResponse;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.global.dto.accembler.Assembler;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.global.dto.accembler.impl.AssemblyContext;
 import lombok.RequiredArgsConstructor;
@@ -34,29 +36,18 @@ public class SurveyWithAnswersResponseDtoAssembler implements Assembler<SurveyWi
                             .answers(answers.stream().filter(
                                     f-> Objects.equals(f.getResponse().getId(), surveyResponse.getId()))
                                     .map(answer -> {
-                                        Question question = serializer.deserializeQuestion(answer.getQuestionSnapshotJson());
-                                        List<QuestionOption> options = serializer.deserializeOptions(answer.getOptionSnapshotJson());
+                                        SurveyWithAnswersResponseDto.QuestionSnapshotDto question = serializer.deserializeQuestion(answer.getQuestionSnapshotJson());
+                                        List<SurveyWithAnswersResponseDto.QuestionOptionSnapshotDto> options = serializer.deserializeOptions(answer.getOptionSnapshotJson());
                                         return SurveyWithAnswersResponseDto.AnswerDetailDto.builder()
                                                 .answerText(answer.getAnswerText())
                                                 .selectedOptionIds(answer.getSelectedOptionIds())
                                                 .questionId(answer.getQuestion().getId())
-                                                .required(question.isRequired())
+                                                .required(question.getRequired())
                                                 .questionType(question.getType())
                                                 .questionTitle(question.getTitle())
                                                 .questionDetail(question.getDetail())
-                                                .questionSnapshot(SurveyWithAnswersResponseDto.QuestionSnapshotDto.builder()
-                                                        .type(question.getType())
-                                                        .detail(question.getDetail())
-                                                        .title(question.getTitle())
-                                                        .required(question.isRequired())
-                                                        .build())
-                                                .optionSnapshot(options.stream().map(optionSnaps->{
-                                                    return SurveyWithAnswersResponseDto.QuestionOptionSnapshotDto.builder()
-                                                            .id(optionSnaps.getId())
-                                                            .optionValue(optionSnaps.getOptionValue())
-                                                            .build();
-                                                }).collect(Collectors.toList()))
-
+                                                .questionSnapshot(question)
+                                                .optionSnapshot(options)
                                                 .build();
 
                             }).collect(Collectors.toList()))

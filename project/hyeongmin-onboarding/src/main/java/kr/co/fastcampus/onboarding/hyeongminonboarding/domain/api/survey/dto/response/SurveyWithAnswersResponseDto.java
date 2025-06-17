@@ -1,8 +1,10 @@
 package kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response;
 
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.enums.QuestionType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,15 +49,21 @@ public class SurveyWithAnswersResponseDto {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class QuestionSnapshotDto {
         private String title;
         private QuestionType type;
         private Boolean required;
         private String detail;
+
+
     }
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class QuestionOptionSnapshotDto {
         private Long id;
         private String optionValue;

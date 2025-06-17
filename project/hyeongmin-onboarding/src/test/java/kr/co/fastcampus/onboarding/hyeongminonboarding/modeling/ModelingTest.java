@@ -4,12 +4,13 @@ package kr.co.fastcampus.onboarding.hyeongminonboarding.modeling;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.NotSupportedException;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SubmitAnswerRequest;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response.SurveyWithAnswersResponseDto;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.handler.AnswerHandler;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.handler.AnswerHandlerFactory;
-import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SubmitAnswerRequest;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.util.AnswerSnapshotSerializer;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.*;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.entity.enums.QuestionType;
-import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.util.AnswerSnapshotSerializer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -241,8 +242,8 @@ public class ModelingTest {
         );
 
         // 스냅샷 역직렬화
-        Question snapshotQuestion = snapshotSerializer.deserializeQuestion(answer.getQuestionSnapshotJson());
-        List<QuestionOption> snapshotOptions = snapshotSerializer.deserializeOptions(answer.getOptionSnapshotJson());
+        SurveyWithAnswersResponseDto.QuestionSnapshotDto snapshotQuestion = snapshotSerializer.deserializeQuestion(answer.getQuestionSnapshotJson());
+        List<SurveyWithAnswersResponseDto.QuestionOptionSnapshotDto> snapshotOptions = snapshotSerializer.deserializeOptions(answer.getOptionSnapshotJson());
 
         // 검증
         assertEquals("성별을 선택하세요", snapshotQuestion.getTitle());

@@ -100,7 +100,7 @@ public class AssemblerTest {
                 ctx -> {
                     ctx.put(SurveyContextKey.SURVEY_CONTEXT_KEY, survey);
                     ctx.put(SurveyContextKey.QUESTION_LIST_CONTEXT_KEY, questions);
-                    ctx.put(SurveyContextKey.QUESTION_OPTION_CONTEXT_KEY, options);
+                    ctx.put(SurveyContextKey.QUESTION_OPTION_LIST_CONTEXT_KEY, options);
                 }
         );
 
@@ -162,7 +162,7 @@ public class AssemblerTest {
                 ctx -> {
                     ctx.put(SurveyContextKey.SURVEY_CONTEXT_KEY, survey);
                     ctx.put(SurveyContextKey.QUESTION_LIST_CONTEXT_KEY, questions);
-                    ctx.put(SurveyContextKey.QUESTION_OPTION_CONTEXT_KEY, options);
+                    ctx.put(SurveyContextKey.QUESTION_OPTION_LIST_CONTEXT_KEY, options);
                 }
         );
         assertEquals(1, dto.getQuestions().size());
@@ -261,7 +261,7 @@ public class AssemblerTest {
                 ctx -> {
                     ctx.put(SurveyContextKey.SURVEY_CONTEXT_KEY, survey);
                     ctx.put(SurveyContextKey.QUESTION_LIST_CONTEXT_KEY, questions);
-                    ctx.put(SurveyContextKey.QUESTION_OPTION_CONTEXT_KEY, options);
+                    ctx.put(SurveyContextKey.QUESTION_OPTION_LIST_CONTEXT_KEY, options);
                 }
         );
         long elapsed = System.currentTimeMillis() - start;
@@ -290,7 +290,7 @@ public class AssemblerTest {
                 ctx -> {
                     ctx.put(SurveyContextKey.SURVEY_CONTEXT_KEY, survey);
                     ctx.put(SurveyContextKey.QUESTION_LIST_CONTEXT_KEY, questions);
-                    ctx.put(SurveyContextKey.QUESTION_OPTION_CONTEXT_KEY, options);
+                    ctx.put(SurveyContextKey.QUESTION_OPTION_LIST_CONTEXT_KEY, options);
                 }
         );
 
@@ -372,7 +372,7 @@ public class AssemblerTest {
                 ctx -> {
                     ctx.put(SurveyContextKey.SURVEY_CONTEXT_KEY, survey);
                     ctx.put(SurveyContextKey.QUESTION_LIST_CONTEXT_KEY, qs);
-                    ctx.put(SurveyContextKey.QUESTION_OPTION_CONTEXT_KEY, opts);
+                    ctx.put(SurveyContextKey.QUESTION_OPTION_LIST_CONTEXT_KEY, opts);
                 }
         );
         long durationMs = (System.nanoTime() - t0) / 1_000_000;
