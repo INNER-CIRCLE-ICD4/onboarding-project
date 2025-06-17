@@ -46,5 +46,7 @@ public class SurveyItem {
 
     @Column(nullable = false)
     private boolean isDeleted = false; // 소프트 삭제 (표시/미표시 제어)
+
+
 }
 

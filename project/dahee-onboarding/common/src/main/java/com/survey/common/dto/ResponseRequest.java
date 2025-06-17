@@ -8,6 +8,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 설문 응답 제출시(클라이언트 → 서버) 요청 DTO
+ */
 @Getter @Setter
 public class ResponseRequest {
     @NotBlank

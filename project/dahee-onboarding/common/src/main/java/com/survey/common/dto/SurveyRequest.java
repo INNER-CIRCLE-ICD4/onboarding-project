@@ -9,6 +9,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 설문 생성/수정시 클라이언트 → 서버로 보내는 요청 DTO
+ */
 @Getter
 @Setter
 public class SurveyRequest {

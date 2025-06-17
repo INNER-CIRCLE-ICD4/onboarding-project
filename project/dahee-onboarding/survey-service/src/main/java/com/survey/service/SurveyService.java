@@ -1,10 +1,9 @@
 package com.survey.service;
 
 
-import com.survey.common.dto.ResponseDto;
-import com.survey.common.dto.ResponseRequest;
-import com.survey.common.dto.SurveyRequest;
-import com.survey.common.dto.SurveyResponseDto;
+import com.survey.common.dto.*;
+
+import java.util.List;
 
 public interface SurveyService {
     /**
@@ -21,4 +20,11 @@ public interface SurveyService {
      * @return 저장된 응답 정보 DTO
      */
     ResponseDto submitResponse(Long surveyId, ResponseRequest request);
+
+    /**
+     * 설문 조회
+     * @param surveyId
+     * @return
+     */
+    List<SurveyAnswerResponseDto> getSurveyResponses(Long surveyId);
 }
