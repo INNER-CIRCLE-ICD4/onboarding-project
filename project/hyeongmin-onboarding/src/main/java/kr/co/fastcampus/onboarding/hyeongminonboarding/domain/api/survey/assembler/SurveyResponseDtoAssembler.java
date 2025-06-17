@@ -22,7 +22,7 @@ public class SurveyResponseDtoAssembler implements Assembler<SurveyResponseDto> 
     public SurveyResponseDto assemble(AssemblyContext context) {
         Survey survey = context.get(SURVEY_CONTEXT_KEY);
         List<Question> questions = context.get(QUESTION_LIST_CONTEXT_KEY);
-        List<QuestionOption> questionOptions = context.get(QUESTION_OPTION_CONTEXT_KEY); // TODO : questionOptions 는 리스트가 아니라 Map 형태로 넣어야 할듯
+        List<QuestionOption> questionOptions = context.get(QUESTION_OPTION_LIST_CONTEXT_KEY); // TODO : questionOptions 는 리스트가 아니라 Map 형태로 넣어야 할듯
         List<SurveyResponseDto.QuestionResponseDto> questionResponseDtos =
                 questions.stream().map(question -> {
 

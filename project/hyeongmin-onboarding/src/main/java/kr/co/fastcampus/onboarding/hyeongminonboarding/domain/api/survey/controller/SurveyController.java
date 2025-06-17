@@ -2,10 +2,10 @@ package kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.contro
 
 
 import jakarta.validation.Valid;
-import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response.SurveyResponseDto;
-import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SubmitAnswerRequest;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SubmitSurveyAnswersRequest;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SurveyCreateRequest;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SurveyUpdateRequest;
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response.SurveyResponseDto;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response.SurveyWithAnswersResponseDto;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.service.ISurveyService;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.global.dto.request.BaseRequest;
@@ -42,14 +42,14 @@ public class SurveyController {
     @PostMapping("/{surveyId}/submit")
     public BaseResponse<Void> submitSurveyAnswers(
             @PathVariable Long surveyId,
-            @Valid @RequestBody BaseRequest<SubmitAnswerRequest> request
+            @Valid @RequestBody BaseRequest<SubmitSurveyAnswersRequest> request
     ) {
         this.surveyService.submitSurveyAnswer(surveyId, request);
         return BaseResponse.OK();
     }
 
     // 4. 설문조사 응답 조회
-    @GetMapping("/{surveyId}/response")
+    @GetMapping("/{surveyId}/responses")
     public BaseResponse<SurveyWithAnswersResponseDto> getSurveyResponses(
             @PathVariable Long surveyId
     ) {

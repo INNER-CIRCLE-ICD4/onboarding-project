@@ -1,5 +1,6 @@
 package kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.service;
 
+import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SubmitSurveyAnswersRequest;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.response.SurveyResponseDto;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SubmitAnswerRequest;
 import kr.co.fastcampus.onboarding.hyeongminonboarding.domain.api.survey.dto.request.SurveyCreateRequest;
@@ -36,7 +37,7 @@ public interface ISurveyService {
      * @param surveyId 응답할 설문조사 ID
      * @param request 응답 제출 요청 정보
      */
-    void submitSurveyAnswer(Long surveyId, BaseRequest<SubmitAnswerRequest> request);
+    void submitSurveyAnswer(Long surveyId, BaseRequest<SubmitSurveyAnswersRequest> request);
 
     /**
      * 설문조사에 제출된 전체 응답을 조회합니다.

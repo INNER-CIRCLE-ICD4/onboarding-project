@@ -1,0 +1,89 @@
+### Create Survey
+POST http://localhost:8080/api/survey/createSurvey
+Content-Type: application/json
+
+{
+  "body": {
+    "title": "서비스 만족도 조사",
+    "description": "우리 서비스에 대한 전반적인 만족도를 조사합니다.",
+    "questions": [
+      {
+        "title": "서비스를 어떻게 알게 되었나요?",
+        "detail": "예: 친구 추천, 검색 등",
+        "type": "SHORT_TEXT",
+        "required": true
+      },
+      {
+        "title": "가장 만족한 기능은 무엇인가요?",
+        "detail": null,
+        "type": "LONG_TEXT",
+        "required": false
+      },
+      {
+        "title": "향후 개선되었으면 하는 부분을 선택해주세요.",
+        "detail": null,
+        "type": "MULTIPLE_CHOICE",
+        "required": true,
+        "options": [
+          "UI/UX",
+          "성능",
+          "고객지원",
+          "기능 추가"
+        ]
+      },
+      {
+        "title": "당신의 성별을 선택해 주세요.",
+        "detail": null,
+        "type": "SINGLE_CHOICE",
+        "required": true,
+        "options": [
+          "남자",
+          "여자"
+        ]
+      }
+    ]
+  }
+}
+
+
+
+### Submit Survey Answers
+POST http://localhost:8080/api/survey/1934603757543362560/submit
+Content-Type: application/json
+
+{
+  "body": {
+    "answers": [
+      {
+        "questionId": 1934603757585305600,
+        "answerText": "친구 추천",
+        "selectedOptionIds": null
+      },
+      {
+        "questionId": 1934603757585305600,
+        "answerText": "검색엔진에서 발견했습니다.",
+        "selectedOptionIds": null
+      },
+      {
+        "questionId": 1934603757593694209,
+        "answerText": null,
+        "selectedOptionIds": [
+          1934603757597888512,
+          1934603757597888513
+        ]
+      },
+      {
+        "questionId": 1934603757593694210,
+        "answerText": null,
+        "selectedOptionIds": [
+          1934603757597888516
+        ]
+      }
+    ]
+  }
+}
+
+
+### Get Survey Responses
+GET http://localhost:8080/api/survey/1934603757543362560/responses
+Accept: application/json

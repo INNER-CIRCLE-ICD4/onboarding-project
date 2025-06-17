@@ -15,6 +15,6 @@ public class SurveyContextKey {
     public static final ContextKey<List<Question>> QUESTION_LIST_CONTEXT_KEY =
             new ContextKey<>("questionList", List.class); // List<Question>는 선언 쪽에서만 유지됨
 
-    public static final ContextKey<List<QuestionOption>> QUESTION_OPTION_CONTEXT_KEY =
+    public static final ContextKey<List<QuestionOption>> QUESTION_OPTION_LIST_CONTEXT_KEY =
             new ContextKey<>("questionOptionList", List.class);
 }
