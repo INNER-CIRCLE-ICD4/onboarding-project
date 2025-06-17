@@ -4,7 +4,6 @@ import fastcampus.inguk_onboarding.common.response.ApiResponse;
 import fastcampus.inguk_onboarding.form.post.application.SurveyService;
 import fastcampus.inguk_onboarding.form.post.application.dto.CreateSurveyRequestDto;
 import fastcampus.inguk_onboarding.form.post.application.dto.SurveyResponseDto;
-import fastcampus.inguk_onboarding.form.post.domain.Survey;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
