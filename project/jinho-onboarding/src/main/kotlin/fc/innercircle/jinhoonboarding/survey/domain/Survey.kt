@@ -16,15 +16,34 @@ class Survey(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
-    val title: String,
+    var title: String,
     var description: String,
 
     @OneToMany(mappedBy = "survey", cascade = [CascadeType.ALL])
-    val questions: MutableList<Question> = mutableListOf(),
+    val questions: MutableSet<Question> = linkedSetOf(),
 ): BaseEntity() {
 
-    fun updateDescription(description: String) {
-        this.description = description
+
+    fun updateTitle(newTitle: String) {
+        this.title = newTitle
     }
+
+    fun updateDescription(newDescription: String) {
+        this.description = newDescription
+    }
+
+    fun updateQuestions(newQuestions: MutableSet<Question>) {
+        //삭제된
+        val remove = questions subtract newQuestions
+        // 추가된
+        val add = newQuestions subtract questions
+
+        questions.removeAll(remove)
+        add.forEach { it.survey = this }
+
+
+    }
+
+
 
 }
