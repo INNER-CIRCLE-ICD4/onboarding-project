@@ -54,7 +54,7 @@ public class FormsJpaEntity extends BaseEntity {
         this.title = form.getTitle();
         this.description = form.getDescription();
         //버전 업
-        this.version++;
+        this.version = form.getVersion();
         // 질문 모두 삭제 처리
         this.questions.forEach(QuestionJpaEntity::delete);
         // 도메인 > 엔티티 매핑
