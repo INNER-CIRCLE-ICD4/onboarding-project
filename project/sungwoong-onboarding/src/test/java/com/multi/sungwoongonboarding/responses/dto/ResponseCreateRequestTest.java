@@ -109,12 +109,12 @@ public class ResponseCreateRequestTest {
 
 
     @Test
-    @DisplayName("ResponseCreateRequest 요청 객체 유효성 검사 - 응답 내용은 질문의 유형과 .")
+    @DisplayName("ResponseCreateRequest 요청 객체 유효성 검사 - 응답 내용은 질문의 유형과 필수여부인 데이터만 검증한다.")
     public void testResponseCreateRequestValidation2() {
 
         // Given
         ResponseCreateRequest 유효한_응답지_요청값 = new ResponseCreateRequest(
-                1L,
+                더미_설문지.getId(),
                 "sungwoong",
                 List.of(
                         new AnswerCreateRequest(더미_설문지.getQuestions().get(0).getId(), 더미_설문지.getQuestions().get(0).getOptions().get(0).getId(), null), // 단일 선택 질문에 대한 응답
