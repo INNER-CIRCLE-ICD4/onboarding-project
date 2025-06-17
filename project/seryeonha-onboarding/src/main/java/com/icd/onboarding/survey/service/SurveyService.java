@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -23,12 +22,27 @@ public class SurveyService {
 
     public void createSurvey(SurveyDto.Create req) {
         log.info("SurveyService.createSurvey req : {}", req);
-//        Survey survey = surveyRepository.save(req.toEntity());
-//        Long surveyId = survey.getId();
 
-//        List<Question> questions = req.getQuestions().stream().map(question -> question.toEntity()).collect(Collectors.toList());
+        Survey survey = Survey.builder()
+                .name(req.getName())
+                .description(req.getDescription())
+                .build();
+        surveyRepository.save(survey);
 
-//        questionRepository.saveAll()
+        Long surveyId = survey.getId();
+        List<Question> questions = req.getQuestions().stream().map(q -> Question.builder()
+                                                                                .surveyId(surveyId)
+                                                                                .order(q.getOrder())
+                                                                                .name(q.getName())
+                                                                                .description(q.getDescription())
+                                                                                .type(q.getType())
+                                                                                .required(q.isRequired())
+                                                                                .active(q.isActive())
+                                                                                .build()).toList();
+
+        questionRepository.saveAll(questions);
+        // todo option은 어떻게
+
     }
 
     public SurveyDto.Read getSurvey(Long id) {

@@ -3,9 +3,7 @@ package com.icd.onboarding.survey.dto;
 import com.icd.onboarding.survey.domain.Question;
 import com.icd.onboarding.survey.domain.QuestionType;
 import lombok.*;
-import org.springframework.util.ObjectUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 public class QuestionDto {
@@ -14,10 +12,12 @@ public class QuestionDto {
     @Getter
     @Setter
     public static class Create {
+        private int order;
         private String name;
         private String description;
         private QuestionType type;
         private boolean required;
+        private boolean active;
         private List<OptionDto.Create> options;
     }
 
