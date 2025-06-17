@@ -24,7 +24,6 @@ import java.util.Optional;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EnableJpaAuditing
 @Sql(scripts = "/sql/form_insert_data.sql")
 @Transactional
 class ResponseServiceTest {

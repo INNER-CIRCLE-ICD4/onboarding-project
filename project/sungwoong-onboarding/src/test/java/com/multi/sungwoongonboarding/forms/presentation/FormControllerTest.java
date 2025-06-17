@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@EnableJpaAuditing
 @ActiveProfiles("test")
 @Transactional
 class FormControllerTest {

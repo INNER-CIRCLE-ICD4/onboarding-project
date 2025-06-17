@@ -5,16 +5,12 @@ import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.responses.application.repository.ResponseRepository;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EnableJpaAuditing
+@Transactional
 public class ResponseCreateRequestTest {
 
     @Autowired

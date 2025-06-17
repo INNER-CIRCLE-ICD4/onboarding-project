@@ -1,14 +1,13 @@
 package com.multi.sungwoongonboarding.responses.infrastructure.responses;
 
 import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
+import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
-import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
 import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import com.multi.sungwoongonboarding.responses.application.repository.ResponseRepository;
 import com.multi.sungwoongonboarding.responses.domain.Responses;
 import com.multi.sungwoongonboarding.responses.dto.AnswerCreateRequest;
 import com.multi.sungwoongonboarding.responses.dto.ResponseCreateRequest;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,11 +20,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional
 class ResponseRepositoryImplTest {
 
     @Autowired
@@ -36,6 +33,8 @@ class ResponseRepositoryImplTest {
 
     @Autowired
     ResponsesJpaRepository responsesJpaRepository;
+
+    private Forms forms;
 
     @BeforeEach
     public void setUp() {
@@ -59,28 +58,29 @@ class ResponseRepositoryImplTest {
                 ))
                 .build();
 
-        formRepository.save(form.toDomain());
+        forms = formRepository.save(form.toDomain());
     }
 
     @Test
     @DisplayName("응답을 저장한다. - 성공")
+    @Transactional
     public void save_response() {
 
         //Given
         ResponseCreateRequest 응답지_요청_값 = ResponseCreateRequest.builder()
-                .formId(1L)
+                .formId(forms.getId())
                 .userId("sungwoong")
                 .answerCreateRequests(
                         List.of(
-                                new AnswerCreateRequest(1L, null, "답변 테스트"),
-                                new AnswerCreateRequest(2L, null, "답변 테스트222")
+                                new AnswerCreateRequest(forms.getQuestions().get(0).getId(), null, "답변 테스트"),
+                                new AnswerCreateRequest(forms.getQuestions().get(1).getId(), null, "답변 테스트222")
                         )
                 )
                 .build();
 
         //When
         Responses 응답지_저장 = responseRepository.save(응답지_요청_값.toDomain());
-        Optional<ResponseJpaEntity> 응답지_조회_1 = responsesJpaRepository.findById(1L);
+        Optional<ResponseJpaEntity> 응답지_조회_1 = responsesJpaRepository.findById(응답지_저장.getId());
 
         //Then
         assertThat(응답지_조회_1.isPresent()).isTrue();

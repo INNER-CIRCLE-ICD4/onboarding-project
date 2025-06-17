@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EnableJpaAuditing
 @Transactional
 public class AnswerRepositoryImplTest {
 
