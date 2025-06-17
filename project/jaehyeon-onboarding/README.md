@@ -172,46 +172,52 @@ PUT /v1/surveys/{surveyId}
 - uri: /v1/surveys/{surveyId}/answers
 - method: POST
 
-| field                    | type             | required | description                             |
-|--------------------------|------------------|----------|-----------------------------------------|
-| question_group_id        | BIGINT           | Y        | 항목 그룹 ID                                |
-| questions                | List\<Question\> | Y | 설문 항목 리스트                               |
-| - question.label         | STRING           | Y        | 항목 표시 문구                                |
-| - question.description   | STRING           | N        | 항목 설명                                   |
-| - question.input_type    | ENUM             | Y        | 입력 타입(text, long_text, radio, checkbox) |
-| - question.required      | BOOLEAN          | Y        | 필수 여부                                   |
-| - question.options       | List\<String\>   | N | 선택지(json array)                         |
-| - question.answer        | List\<Answer\>   | Y | 설문 응답 내용                                |
-| - qustion.answer.content | STRING           | Y        | 설문 응답 내용                                |
+| field                                  | type             | required | description                             |
+|----------------------------------------|------------------|----------|-----------------------------------------|
 
 ```curl
 # Request
 POST /v1/surveys/{surveyId}/answers
 {
     "question_group_id": 2,
-    "questions": [
+    "answers_with_question": [
         {
-            "label": "성명을 입력해주세요.",
-            "description": "",
-            "input_type": "text",
-            "required": true,
-            "answer":  {"content": "김재현" }
+            "content": "김재현",
+            "question": {
+              "label": "성명을 입력해주세요.",
+              "description": "",
+              "input_type": "text",
+              "required": true
+            }
         }
         , {
-            "label": "어떤 경로로 알게 되셨나요?",
-            "description": "",
-            "input_type": "radio",
-            "required": false,
-            "options": ["웹 검색", "지인을 통해", "소셜미디어", "기타"],
-            "answer": { "content" : "웹 검색" }
+            "content": null,
+            "question": {
+              "label": "자기소개",
+              "description": "",
+              "input_type": "long_text",
+              "required": false
+            }
         }
         , {
-            "label": "관심사",
-            "description": "",
-            "input_type": "checkbox",
-            "required": false,
-            "options": ["독서", "TV시청", "게임", "영화", "여행", "기타"],
-            "answer": { "content" :["영화", "여행", "기타:누워있기"] }
+            "content" : "웹 검색",
+            "question": {
+              "label": "어떤 경로로 알게 되셨나요?",
+              "description": "",
+              "input_type": "radio",
+              "required": false,
+              "options": ["웹 검색", "지인을 통해", "소셜미디어", "기타"]              
+            } 
+        }
+        , {
+            "content" :["영화", "여행", "기타:누워있기"],
+            "question": {
+              "label": "관심사",
+              "description": "",
+              "input_type": "checkbox",
+              "required": false,
+              "options": ["독서", "TV시청", "게임", "영화", "여행", "기타"]
+            }
         }
     ]
 }
