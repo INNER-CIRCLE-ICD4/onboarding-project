@@ -14,4 +14,6 @@ data class SelectableOptions(
             values = values.filter(predicate)
         )
     }
+
+    fun size(): Long = values.size.toLong()
 }

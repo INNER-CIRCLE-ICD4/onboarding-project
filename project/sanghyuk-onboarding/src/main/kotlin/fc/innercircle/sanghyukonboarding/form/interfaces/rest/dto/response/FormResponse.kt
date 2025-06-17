@@ -4,37 +4,39 @@ import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionTemplate
 
 data class FormResponse(
-    val id: String,
+    val formId: String,
     val title: String,
     val description: String,
     val questions: List<Question>
 ) {
     data class Question(
-        val id: String,
+        val questionTemplateId: String,
         val title: String,
         val description: String,
         val type: String,
         val required: Boolean,
-        val selectable: List<Selectable>,
+        val version: Long,
+        val selectableOptions: List<SelectableOption>,
     ) {
-        data class Selectable(
-            val optionId: String,
-            val value: String,
+        data class SelectableOption(
+            val selectableOptionId: String,
+            val text: String,
         )
 
         companion object {
             fun from(questionTemplate: QuestionTemplate): Question {
                 val questionSnapshot = questionTemplate.getLatestSnapshot()
                 return Question(
-                    id = questionSnapshot.id,
+                    questionTemplateId = questionSnapshot.id,
                     title = questionSnapshot.title,
                     description = questionSnapshot.description,
                     type = questionSnapshot.type.name,
                     required = questionTemplate.required,
-                    selectable = questionSnapshot.selectableOptions.list().map { option ->
-                        Selectable(
-                            optionId = option.id,
-                            value = option.text
+                    version = questionSnapshot.version,
+                    selectableOptions = questionSnapshot.selectableOptions.list().map { option ->
+                        SelectableOption(
+                            selectableOptionId = option.id,
+                            text = option.text
                         )
                     }
                 )
@@ -45,7 +47,7 @@ data class FormResponse(
     companion object {
         fun from(form: Form): FormResponse {
             return FormResponse(
-                id = form.id,
+                formId = form.id,
                 title = form.title,
                 description = form.description,
                 questions = form.questionTemplates.list().map { Question.from(it) }

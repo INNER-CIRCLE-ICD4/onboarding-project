@@ -1,6 +1,7 @@
 package fc.innercircle.sanghyukonboarding.form.domain.model
 
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
+import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCreateCommand
+import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormUpdateCommand
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.InputType
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.SelectableOptions
 import fc.innercircle.sanghyukonboarding.form.domain.validator.QuestionSnapshotValidator
@@ -29,8 +30,19 @@ open class QuestionSnapshot(
         QuestionSnapshotValidator.validateVersion(version)
     }
 
+    fun isModified(cmd: FormUpdateCommand.Question): Boolean {
+        return title != cmd.title ||
+                description != cmd.description ||
+                type != InputType.valueOrThrows(cmd.type) ||
+                selectableOptions.list().size != cmd.selectableOptions.size ||
+                selectableOptions.list().mapIndexed { idx, option ->
+                    option.text != cmd.selectableOptions[idx].text ||
+                    option.displayOrder != idx
+                }.any { it }
+    }
+
     companion object {
-        fun from(cmd: FormCommand.Question): QuestionSnapshot {
+        fun of(cmd: FormCreateCommand.Question): QuestionSnapshot {
             val selectableOptions: List<SelectableOption> = cmd.selectableOptions.mapIndexed { idx, option ->
                 SelectableOption.of(
                     value = option.text,
@@ -41,8 +53,25 @@ open class QuestionSnapshot(
                 title = cmd.title,
                 description = cmd.description,
                 type = InputType.valueOrThrows(cmd.type),
-                version = cmd.version,
+                version = 0L,
                 selectableOptions = selectableOptions,
+            )
+        }
+
+        fun of(cmd: FormUpdateCommand.Question, newVersion: Long): QuestionSnapshot {
+            val selectableOptions: List<SelectableOption> = cmd.selectableOptions.mapIndexed { idx, option ->
+                SelectableOption.of(
+                    value = option.text,
+                    displayOrder = idx,
+                )
+            }
+            return QuestionSnapshot(
+                title = cmd.title,
+                description = cmd.description,
+                type = InputType.valueOrThrows(cmd.type),
+                version = newVersion,
+                selectableOptions = selectableOptions,
+                questionTemplateId = cmd.questionTemplateId,
             )
         }
     }

@@ -4,4 +4,5 @@ import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 
 interface FormWriter {
     fun insertOrUpdate(form: Form): String
+    fun deleteAll()
 }

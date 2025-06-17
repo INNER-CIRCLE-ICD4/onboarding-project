@@ -2,7 +2,8 @@ package fc.innercircle.sanghyukonboarding.form.domain.model
 
 import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
+import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCreateCommand
+import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormUpdateCommand
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.QuestionTemplates
 import fc.innercircle.sanghyukonboarding.form.domain.validator.FormValidator
 
@@ -10,7 +11,7 @@ open class Form(
     val id: String = "",
     val title: String,
     val description: String,
-    questionTemplates: List<QuestionTemplate>
+    questionTemplates: List<QuestionTemplate>,
 ) {
 
     val questionTemplates: QuestionTemplates = QuestionTemplates(
@@ -37,8 +38,46 @@ open class Form(
         }
     }
 
+    private fun copy(
+        id: String = this.id,
+        title: String = this.title,
+        description: String = this.description,
+        questionTemplates: List<QuestionTemplate> = this.questionTemplates.list()
+    ): Form {
+        return Form(
+            id = id,
+            title = title,
+            description = description,
+            questionTemplates = questionTemplates
+        )
+    }
+
+    fun updated(cmd: FormUpdateCommand): Form {
+        return this.copy(
+            title = cmd.title,
+            description = cmd.description,
+            questionTemplates = cmd.questions.mapIndexed { idx, questionCmd ->
+                val questionTemplate: QuestionTemplate = this.questionTemplates.getById(questionCmd.questionTemplateId)
+                replaceIfModified(questionTemplate, questionCmd, idx)
+            }
+        )
+    }
+
+    private fun replaceIfModified(
+        questionTemplate: QuestionTemplate,
+        questionCmd: FormUpdateCommand.Question,
+        idx: Int,
+    ): QuestionTemplate = if (questionTemplate.isModified(questionCmd)) {
+        questionTemplate.updatedNewVersion(
+            cmd = questionCmd,
+            displayOrder = idx
+        )
+    } else {
+        questionTemplate
+    }
+
     companion object {
-        fun from(cmd: FormCommand): Form {
+        fun from(cmd: FormCreateCommand): Form {
             val questionTemplates: List<QuestionTemplate> = cmd.questions.mapIndexed { idx, it ->
                 QuestionTemplate.of(
                     cmd = it,

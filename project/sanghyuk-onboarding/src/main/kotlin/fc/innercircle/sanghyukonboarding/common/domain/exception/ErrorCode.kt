@@ -9,6 +9,8 @@ enum class ErrorCode(
     val template: String,
 ) {
     // 클라이언트의 잘못된 요청에 대한 에러코드 (400)
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "요청 형식이 잘못되어 처리할 수 없습니다. 요청 본문을 확인해주세요."),
+
     // 설문 입력값 유효성 검사 에러코드
     INVALID_FORM_TITLE(HttpStatus.BAD_REQUEST, "설문 제목이 유효하지 않습니다. 제목은 1글자 이상 255자 이하이어야 합니다. (현재 입력값: {0})"),
     INVALID_FORM_DESCRIPTION(HttpStatus.BAD_REQUEST, "설문 설명이 유효하지 않습니다. 설명은 1글자 이상 1000자 이하이어야 합니다. (현재 입력값: {0})"),
@@ -47,9 +49,13 @@ enum class ErrorCode(
 
     // 리소스를 찾을 수 없는 에러코드 (404)
     FORM_NOT_FOUND(HttpStatus.NOT_FOUND, "설문을 찾을 수 없습니다. [설문 ID]: {0}"),
+    QUESTION_TEMPLATE_NOT_FOUND(HttpStatus.NOT_FOUND, "질문 템플릿을 찾을 수 없습니다. [질문 템플릿 ID]: {0}"),
+    QUESTION_VERSION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 질문 버전을 찾을 수 없습니다. [버전]: {1}"),
 
-    // 비즈니스 로직 에러 코드
+    // 비즈니스 로직 에러 코드 (409)
     EXCEEDS_MAX_QUESTION_COUNT(HttpStatus.CONFLICT, "설문은 최대 10개의 질문을 포함할 수 있습니다. (현재 입력값: {0})"),
+    DUPLICATE_QUESTION_SNAPSHOT_VERSION(HttpStatus.CONFLICT, "해당 질문 버전은 이미 존재합니다. [버전]: {1}"),
+    NOT_MODIFIABLE_QUESTION_TEMPLATE_VERSION(HttpStatus.CONFLICT, "현재 버전과 일치하는 질문 템플릿만 수정할 수 있습니다. [요청 버전]: {0}, [현재 버전]: {1}"),
 
     // 서버 에러 코드 (500)
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 알 수 없는 오류가 발생했습니다.")

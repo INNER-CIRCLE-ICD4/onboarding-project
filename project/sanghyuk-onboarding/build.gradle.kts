@@ -39,11 +39,14 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.8.1")
     testImplementation("io.kotest:kotest-extensions-spring:4.4.3")
 
-    // ULID ID numbering
+    // ulid id numbering
     implementation("com.github.f4b6a3:ulid-creator:5.2.3")
 
     // mysql
     runtimeOnly("com.mysql:mysql-connector-j")
+
+    // 통합 테스트를 위한 Testcontainers
+    testImplementation("org.testcontainers:mysql:1.19.0")
 }
 
 allOpen {

@@ -39,6 +39,11 @@ class FormWriterImpl(
         return formId
     }
 
+    override fun deleteAll() {
+        // DB의 모든 항목을 초기화
+        formJpaRepository.deleteAll()
+    }
+
     private fun saveForm(form: Form): FormEntity {
         return formJpaRepository.save(FormEntity.fromDomain(form))
     }
