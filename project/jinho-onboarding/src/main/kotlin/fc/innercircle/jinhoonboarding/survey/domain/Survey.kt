@@ -20,7 +20,7 @@ class Survey(
     var description: String,
 
     @OneToMany(mappedBy = "survey", cascade = [CascadeType.ALL])
-    val questions: MutableSet<Question> = linkedSetOf(),
+    var questions: MutableSet<Question> = linkedSetOf(),
 ): BaseEntity() {
 
 
