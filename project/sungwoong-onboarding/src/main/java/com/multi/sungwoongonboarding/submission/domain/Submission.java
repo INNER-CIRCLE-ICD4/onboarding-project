@@ -22,9 +22,4 @@ public class Submission {
     private LocalDateTime createdAt;
     private List<Answers> answers;
     private String userId;
-
-    public void setForms(String formTitle, String formDescription) {
-        this.formTitle = formTitle;
-        this.formDescription = formDescription;
-    }
 }
