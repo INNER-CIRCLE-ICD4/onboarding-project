@@ -92,7 +92,8 @@ open class QuestionTemplateEntity(
     companion object {
         fun from(questionTemplate: QuestionTemplate, formEntity: FormEntity): QuestionTemplateEntity {
             return QuestionTemplateEntity(
-                version = 0,
+                id = questionTemplate.id,
+                version = questionTemplate.version,
                 required = questionTemplate.required,
                 displayOrder = questionTemplate.displayOrder,
                 formEntity = formEntity,

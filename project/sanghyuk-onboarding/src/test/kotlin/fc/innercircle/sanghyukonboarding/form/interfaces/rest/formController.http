@@ -77,13 +77,11 @@ Content-Type: application/json
   "description": "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요. (수정됨)",
   "questions": [
     {
-      "questionTemplateId": "01JY0JARC9WSN6BSX5PH6Q8V4F",
-      "title": "이름 (수정)",
-      "description": "반드시 본명을 선택해주세요. (수정됨)",
-      "type": "TEXT",
-      "required": true,
-      "version": 0,
-      "selectableOptions": []
+      "questionTemplateId": "01JY1MKEQS1B1HRV4BGSG8NB3V",
+      "title": "귀하의 신장은 몇 cm인가요?",
+      "description": "",
+      "type": "CHECKBOX",
+      "required": false
     }
   ]
 }

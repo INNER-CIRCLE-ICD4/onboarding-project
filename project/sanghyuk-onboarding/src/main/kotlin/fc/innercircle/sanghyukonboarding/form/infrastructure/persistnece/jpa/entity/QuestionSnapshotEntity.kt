@@ -99,6 +99,7 @@ open class QuestionSnapshotEntity(
     companion object {
         fun from(snapshot: QuestionSnapshot, questionTemplateEntity: QuestionTemplateEntity): QuestionSnapshotEntity {
             return QuestionSnapshotEntity(
+                id = snapshot.id,
                 title = snapshot.title,
                 description = snapshot.description,
                 type = snapshot.type,

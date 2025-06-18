@@ -27,7 +27,7 @@ data class FormResponse(
             fun from(questionTemplate: QuestionTemplate): Question {
                 val questionSnapshot = questionTemplate.getLatestSnapshot()
                 return Question(
-                    questionTemplateId = questionSnapshot.id,
+                    questionTemplateId = questionTemplate.id,
                     title = questionSnapshot.title,
                     description = questionSnapshot.description,
                     type = questionSnapshot.type.name,

@@ -10,7 +10,6 @@ data class FormCommand(
         val title: String,
         val description: String = "",
         val type: String,
-        val version: Long = 0L,
         val required: Boolean,
         val selectableOptions: List<SelectableOption> = emptyList(),
     ) {

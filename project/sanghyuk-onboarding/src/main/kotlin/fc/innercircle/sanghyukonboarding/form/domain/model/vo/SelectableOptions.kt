@@ -8,6 +8,19 @@ class SelectableOptions(
 
     private val values: List<SelectableOption> = values.sortedBy { it.displayOrder }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SelectableOptions
+
+        return values == other.values
+    }
+
+    override fun hashCode(): Int {
+        return values.hashCode()
+    }
+
     fun list(): List<SelectableOption> {
         return values.sortedBy { it.displayOrder }
     }

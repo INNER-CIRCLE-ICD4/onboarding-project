@@ -2,7 +2,7 @@ package fc.innercircle.sanghyukonboarding.form.domain.model
 
 import fc.innercircle.sanghyukonboarding.form.domain.validator.SelectableOptionsValidator
 
-open class SelectableOption(
+class SelectableOption(
     val id: String = "",
     val text: String,
     val displayOrder: Int,
@@ -11,6 +11,14 @@ open class SelectableOption(
 
     init {
         validateRequiredFields()
+    }
+
+    fun isNew(): Boolean {
+        return id.isBlank()
+    }
+
+    fun isSelectableOptionOf(snapshot: QuestionSnapshot): Boolean {
+        return this.questionSnapshotId == snapshot.id
     }
 
     private fun validateRequiredFields() {
@@ -40,12 +48,16 @@ open class SelectableOption(
 
     companion object {
         fun of(
-            value: String,
+            id: String = "",
+            text: String,
             displayOrder: Int,
+            questionSnapshotId: String = "",
         ): SelectableOption {
             return SelectableOption(
-                text = value,
+                id = id,
+                text = text,
                 displayOrder = displayOrder,
+                questionSnapshotId = questionSnapshotId,
             )
         }
     }

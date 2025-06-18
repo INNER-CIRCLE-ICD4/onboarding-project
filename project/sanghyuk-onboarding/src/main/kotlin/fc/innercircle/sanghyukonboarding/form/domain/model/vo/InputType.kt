@@ -26,4 +26,12 @@ enum class InputType {
             )
         }
     }
+
+    fun isSelectableType(): Boolean {
+        return this == SELECT || this == RADIO || this == CHECKBOX
+    }
+
+    fun isTextType(): Boolean {
+        return this == TEXT || this == LONG_TEXT
+    }
 }

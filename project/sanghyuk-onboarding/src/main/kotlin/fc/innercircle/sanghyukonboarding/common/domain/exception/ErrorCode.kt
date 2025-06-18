@@ -56,6 +56,8 @@ enum class ErrorCode(
     EXCEEDS_MAX_QUESTION_COUNT(HttpStatus.CONFLICT, "설문은 최대 10개의 질문을 포함할 수 있습니다. (현재 입력값: {0})"),
     DUPLICATE_QUESTION_SNAPSHOT_VERSION(HttpStatus.CONFLICT, "해당 질문 버전은 이미 존재합니다. [버전]: {1}"),
     NOT_MODIFIABLE_QUESTION_TEMPLATE_VERSION(HttpStatus.CONFLICT, "현재 버전과 일치하는 질문 템플릿만 수정할 수 있습니다. [요청 버전]: {0}, [현재 버전]: {1}"),
+    TEXT_TYPE_INPUT_ERROR(HttpStatus.CONFLICT, "단답형 또는 장문형 질문에는 선택 가능한 옵션을 설정할 수 없습니다. [오류 질문 제목]: {0}"),
+    SELECTABLE_TYPE_INPUT_ERROR(HttpStatus.CONFLICT, "선택형 질문에는 선택 가능한 옵션을 반드시 설정해야 합니다. [오류 질문 제목]: {0}"),
 
     // 서버 에러 코드 (500)
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 알 수 없는 오류가 발생했습니다.")

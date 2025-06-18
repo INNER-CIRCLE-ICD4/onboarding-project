@@ -15,7 +15,7 @@ class Form(
 
     val questionTemplates: QuestionTemplates = QuestionTemplates(
         values = questionTemplates.filter { it ->
-            it.formId.isEmpty() || it.formId == id
+            it.isNew() || it.isQuestionOf(this)
         }
     )
 
@@ -54,45 +54,34 @@ class Form(
     }
 
     fun updated(cmd: FormCommand): Form {
-
-        val createdOrUpdatedQuestionTemplates: List<QuestionTemplate> =
-            cmd.questions.mapIndexed { idx, questionCmd ->
-                when {
-                    questionCmd.questionTemplateId.isEmpty() -> {
-                        // ID가 비어 있으면 새 질문 생성
-                        QuestionTemplate.of(
-                            cmd = questionCmd,
-                            displayOrder = idx,
-                            formId = this.id,
-                        )
-                    }
-                    else -> {
-                        // 기존 질문 조회
-                        val questionTemplate =
-                            this.questionTemplates.getById(questionCmd.questionTemplateId)
-
-                        // 수정 사항이 있으면 updated, 없으면 원본 그대로
-                        if (questionTemplate.isModified(questionCmd, idx)) {
-                            questionTemplate.updated(
-                                cmd = questionCmd,
-                                displayOrder = idx
-                            )
-                        } else {
-                            questionTemplate
-                        }
-                    }
-                }
+        // 1) 생성 혹은 업데이트된 템플릿 모으기
+        val updatedTemplates = cmd.questions.mapIndexed { idx, questionCmd ->
+            when {
+                questionCmd.questionTemplateId.isBlank() ->
+                    // 새 질문
+                    QuestionTemplate.of(
+                        cmd = questionCmd,
+                        displayOrder = idx,
+                        formId = this.id
+                    )
+                else ->
+                    // 기존 질문 업데이트
+                    this.questionTemplates
+                        .getById(questionCmd.questionTemplateId)
+                        .updated(questionCmd, idx)
             }
-        val createdOrUpdatedQuestionTemplateIds: List<String> = createdOrUpdatedQuestionTemplates.map { it.id }
-        val deletedQuestionTemplates: List<QuestionTemplate> = this.questionTemplates.list()
-            // 기존 질문 중에서 새 요청에 포함되지 않은 질문들을 찾아 삭제 처리
-            .filter { it -> !createdOrUpdatedQuestionTemplateIds.contains(it.id) }
-            .map { it.deleted() }
+        }
 
-        return this.copy(
+        // 2) cmd에 없는 기존 질문은 삭제 처리
+        val deletedTemplates = this.questionTemplates.list().filter { template ->
+            !updatedTemplates.any { it.id == template.id }
+        }.map { it.deleted() }
+
+        // 3) 새로운 질문 리스트 + 삭제된 질문 리스트 합쳐서 copy
+        return copy(
             title = cmd.title,
             description = cmd.description,
-            questionTemplates = createdOrUpdatedQuestionTemplates + deletedQuestionTemplates
+            questionTemplates = updatedTemplates + deletedTemplates
         )
     }
 

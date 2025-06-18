@@ -24,9 +24,10 @@ class FormReaderImpl(
 
     override fun getById(id: String): Form =
         formJpaRepository.findById(id)
+
             .map { formEntity ->
                 // 1) 템플릿 조회
-                val templateEntities = questionTemplateJpaRepository.findAllByFormEntity(formEntity).toSet()
+                val templateEntities = questionTemplateJpaRepository.findAllByDeletedAndFormEntity(false, formEntity).toSet()
 
                 // 2) 스냅샷 조회
                 val snapshotEntities =
@@ -38,7 +39,9 @@ class FormReaderImpl(
 
                 // 4) 도메인 변환: 스냅샷
                 val snapshots: List<QuestionSnapshot> = snapshotEntities.map { snapshot ->
-                    snapshot.toDomain(selectableOptions.filter { it.questionSnapshotId == snapshot.id })
+                    snapshot.toDomain(selectableOptions.filter {
+                        it.questionSnapshotId == snapshot.id
+                    })
                 }
 
                 // 4) 도메인 변환: 템플릿

@@ -86,6 +86,7 @@ open class SelectableOptionEntity(
             questionSnapshotEntity: QuestionSnapshotEntity,
         ): SelectableOptionEntity {
             return SelectableOptionEntity(
+                id = selectableOption.id,
                 text = selectableOption.text,
                 displayOrder = selectableOption.displayOrder,
                 questionSnapshotEntity = questionSnapshotEntity,

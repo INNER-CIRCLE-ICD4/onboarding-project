@@ -18,12 +18,20 @@ class QuestionTemplate(
 
     val snapshots: QuestionSnapshots = QuestionSnapshots(
         values = snapshots.filter { it ->
-            it.questionTemplateId.isNotEmpty() && it.questionTemplateId == id
+            it.isNew() || it.isSnapshotOf(this)
         }
     )
 
     init {
         validateRequiredFields()
+    }
+
+    fun isNew(): Boolean {
+        return id.isBlank()
+    }
+
+    fun isQuestionOf(form: Form): Boolean {
+        return this.formId == form.id
     }
 
     private fun validateRequiredFields() {
@@ -62,30 +70,22 @@ class QuestionTemplate(
             ?: throw IllegalStateException("No snapshots available for question template with id: $id")
     }
 
-    fun getSnapshotByVersion(version: Long): QuestionSnapshot {
-        return snapshots.getByVersion(version)
-    }
-
-    fun isModified(questionCmd: FormCommand.Question, displayOrder: Int): Boolean {
-        val questionTemplate: QuestionTemplate = QuestionTemplate.of(questionCmd, displayOrder)
-        return this != questionTemplate
-    }
-
     fun updated(cmd: FormCommand.Question, displayOrder: Int): QuestionTemplate {
-        isLatestVersionOrThrows(cmd.version)
-        val currentVersion: Long = cmd.version
-        val snapshot: QuestionSnapshot = this.getSnapshotByVersion(currentVersion)
-        if (snapshot.isModified(cmd)) {
-            val newVersion: Long = currentVersion + 1
-            val newSnapshot: QuestionSnapshot = QuestionSnapshot.of(cmd, newVersion)
-            return this.copy(
+        if (this.getLatestSnapshot().isModified(cmd)) {
+            val newVersion: Long = version + 1
+            val newSnapshot: QuestionSnapshot = QuestionSnapshot.of(
+                cmd = cmd,
+                version = newVersion
+            )
+            val copy: QuestionTemplate = this.copy(
                 version = newVersion,
                 required = cmd.required,
                 displayOrder = displayOrder,
                 snapshots = snapshots.add(newSnapshot)
             )
+            return copy
         }
-        return this
+        return this.copy(displayOrder = displayOrder)
     }
 
     fun deleted(): QuestionTemplate {
@@ -131,7 +131,7 @@ class QuestionTemplate(
     companion object {
         fun of(cmd: FormCommand.Question, displayOrder: Int, formId: String = ""): QuestionTemplate {
             val questionSnapshots: List<QuestionSnapshot> = listOf(
-                QuestionSnapshot.of(cmd)
+                QuestionSnapshot.of(cmd = cmd)
             )
             return QuestionTemplate(
                 version = 0L,
