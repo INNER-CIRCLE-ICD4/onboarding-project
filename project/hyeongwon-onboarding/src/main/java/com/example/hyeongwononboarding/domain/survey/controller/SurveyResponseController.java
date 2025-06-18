@@ -13,7 +13,7 @@ import jakarta.validation.Valid;
  * 설문 응답 제출 API 컨트롤러
  */
 @RestController
-@RequestMapping("/api/surveys/{surveyId}/responses")
+@RequestMapping("/api/v1/surveys/{surveyId}/responses")
 @RequiredArgsConstructor
 public class SurveyResponseController {
     private final SurveyResponseService surveyResponseService;
