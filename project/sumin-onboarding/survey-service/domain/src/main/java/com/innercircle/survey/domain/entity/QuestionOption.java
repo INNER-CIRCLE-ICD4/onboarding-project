@@ -1,10 +1,18 @@
 package com.innercircle.survey.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class QuestionOption {
     //선택 리스트 ID(PK)
     @Id @GeneratedValue
@@ -28,5 +36,9 @@ public class QuestionOption {
     //선택 리스트 수정시간
     private LocalDateTime updatedAt;
 
+    public QuestionOption(String option, Question question) {
+        this.option = option;
+        this.question = question;
+    }
 
 }
