@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import survey.common.exception.ApiException;
-import survey.survey.controller.response.ErrorResponse;
-import survey.survey.controller.response.SurveyErrorResponse;
+import survey.survey.config.response.ErrorResponse;
+import survey.survey.config.response.SurveyErrorResponse;
 
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static survey.common.exception.ErrorType.*;
 
 @Slf4j
