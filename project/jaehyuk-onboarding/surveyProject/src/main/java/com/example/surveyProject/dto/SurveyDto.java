@@ -15,9 +15,10 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SurveyCreateRequestDto {
-
+public class SurveyDto {
+    private Long Id;
     private String title;
     private String description;
-    private List<SurveyItemCreateRequestDto> items;
+    private List<SurveyItemDto> items;
+    private String status;     //설문 삭제 유무   0: 일반, 1: 삭제
 }

@@ -24,7 +24,7 @@ public class SurveyItemEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String itemName;
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -38,5 +38,7 @@ public class SurveyItemEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_id")
     private SurveyEntity survey;
+
+    private String status;
 
 }

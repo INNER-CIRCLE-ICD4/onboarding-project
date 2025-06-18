@@ -1,7 +1,8 @@
 package com.example.surveyProject.controller;
 
-import com.example.surveyProject.dto.SurveyCreateRequestDto;
-import com.example.surveyProject.service.SurveyService;
+import com.example.surveyProject.dto.SurveyDto;
+import com.example.surveyProject.service.SurveyCreateService;
+import com.example.surveyProject.service.SurveyUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SurveyController {
 
-    private final SurveyService surveyService;
+    private final SurveyCreateService surveyCreateService;
+    private final SurveyUpdateService surveyUpdateService;
 
     @PostMapping("/create")
-    public ResponseEntity<Long> createSurvey(@RequestBody SurveyCreateRequestDto request) {
-        Long id = surveyService.createSurvey(request);
+    public ResponseEntity<?> createSurvey(@RequestBody SurveyDto request) {
+        Long id = surveyCreateService.createSurvey(request);
+        return ResponseEntity.ok(id);
+    }
+
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateSurvey(@RequestBody SurveyDto request) {
+        Long id = surveyUpdateService.updateSurvey(request);
         return ResponseEntity.ok(id);
     }
 

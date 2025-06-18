@@ -30,6 +30,8 @@ public class SurveyEntity {
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SurveyItemEntity> items;
 
-    // getter, setter
+
+    private String status;
+
 
 }

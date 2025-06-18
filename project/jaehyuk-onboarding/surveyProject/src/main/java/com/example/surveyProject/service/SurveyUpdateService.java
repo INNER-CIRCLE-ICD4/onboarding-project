@@ -2,8 +2,7 @@ package com.example.surveyProject.service;
 
 import com.example.surveyProject.common.SurveyInputType;
 import com.example.surveyProject.common.repository.SurveyRepository;
-import com.example.surveyProject.dto.SurveyCreateRequestDto;
-import com.example.surveyProject.dto.SurveyItemCreateRequestDto;
+import com.example.surveyProject.dto.SurveyDto;
 import com.example.surveyProject.entity.SurveyEntity;
 import com.example.surveyProject.entity.SurveyItemEntity;
 import lombok.RequiredArgsConstructor;
@@ -12,21 +11,28 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 설문조사 질문 생성
+ * 설문 조사 수정Service
  *
  * @author Jpark
- * @date 2025-06-16
- * @Calss SurveyService
+ * @date 2025-06-18
+ * @Calss
  */
+
 @Service
 @RequiredArgsConstructor
-public class SurveyService {
+public class SurveyUpdateService {
 
     private final SurveyRepository surveyRepository;
 
-    public Long createSurvey(SurveyCreateRequestDto request) {
-        if (request.getItems() == null || request.getItems().size() < 1 || request.getItems().size() > 10) {
-            throw new IllegalArgumentException("항목은 1개 이상 10개 이하로 입력해야 합니다.");
+    public Long updateSurvey(SurveyDto request) {
+
+        Long listCount = request.getItems().stream()
+                .filter(item -> "0".equals(item.getStatus()))
+                .count();
+
+
+        if (listCount == null || listCount < 1 || listCount > 10) {
+            throw new IllegalArgumentException("10개 이상 넣으면 앙대요.");
         }
 
         SurveyEntity survey = new SurveyEntity();
@@ -40,7 +46,7 @@ public class SurveyService {
             }
 
             SurveyItemEntity entity = new SurveyItemEntity();
-            entity.setName(item.getName());
+            entity.setItemName(item.getItemName());
             entity.setDescription(item.getDescription());
             entity.setInputType(item.getInputType());
             entity.setRequired(item.isRequired());
@@ -53,4 +59,3 @@ public class SurveyService {
         return surveyRepository.save(survey).getId();
     }
 }
-

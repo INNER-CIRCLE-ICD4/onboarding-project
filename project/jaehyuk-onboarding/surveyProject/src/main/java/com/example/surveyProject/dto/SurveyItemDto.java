@@ -16,11 +16,12 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SurveyItemCreateRequestDto {
-
-    private String name;
+public class SurveyItemDto {
+    private Long Id;
+    private String itemName;
     private String description;
     private SurveyInputType inputType;
     private boolean required;
     private List<String> options; // 선택형인 경우만 값이 있음
+    private String status;       //설문 삭제 유무
 }
