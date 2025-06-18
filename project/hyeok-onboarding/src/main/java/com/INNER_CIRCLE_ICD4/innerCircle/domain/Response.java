@@ -2,6 +2,7 @@ package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +26,17 @@ public class Response {
     )
     private List<Answer> answers = new ArrayList<>();
 
-    public Response(Survey survey) {
+    @Lob
+    @Column(nullable = false)
+    private String surveySnapshot; // 응답 시점의 설문 스냅샷 (JSON)
+
+    public Response(Survey survey, String surveySnapshot) {
         this.survey = survey;
+        this.surveySnapshot = surveySnapshot;
+    }
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+        answer.setResponse(this);
     }
 }

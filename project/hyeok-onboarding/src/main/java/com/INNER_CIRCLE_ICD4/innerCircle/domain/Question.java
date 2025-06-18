@@ -1,5 +1,7 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,10 +33,12 @@ public class Question {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_id")
+    @JsonBackReference // ✅ 순환 참조 방지
     private Survey survey;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderColumn(name = "choice_order")
+    @JsonManagedReference // ✅ 순환 참조 방지
     private List<Choice> choices = new ArrayList<>();
 
     public Question(String title, String description, QuestionType type, boolean required) {
@@ -65,7 +70,6 @@ public class Question {
         this.choices.add(choice);
     }
 
-    // ✅ 테스트용 ID 설정 메서드
     public void setId(UUID id) {
         this.id = id;
     }
