@@ -4,7 +4,7 @@ import com.icd.seonghunlee_onboarding.answer.survey.answer.AnswerValidator;
 
 import java.util.regex.Pattern;
 
-public class ShortTextValidator implements AnswerValidator {
+public class ShortTextValidator implements AnswerValidator<String> {
 
     private static final int MAX_LENGTH = 10;
 
