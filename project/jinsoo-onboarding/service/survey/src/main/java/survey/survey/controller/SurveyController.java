@@ -27,4 +27,9 @@ public class SurveyController {
         SurveyResponse response = surveyService.update(request);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/fetch/{surveyId}")
+    public Long fetchSurveyFormId(@PathVariable Long surveyId) {
+        return surveyService.fetchSurveyFormId(surveyId);
+    }
 }
