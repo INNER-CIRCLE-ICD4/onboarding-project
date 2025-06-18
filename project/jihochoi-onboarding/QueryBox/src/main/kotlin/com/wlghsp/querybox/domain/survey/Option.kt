@@ -4,24 +4,22 @@ import jakarta.persistence.Embeddable
 
 @Embeddable
 class Option(
-    val value: String,
+    val text: String,
 )  {
 
     init {
-        require(value.isNotBlank()) { "옵션 값은 비어 있을 수 없습니다." }
+        require(text.isNotBlank()) { "옵션 값은 비어 있을 수 없습니다." }
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-
         other as Option
-
-        return value == other.value
+        return text == other.text
     }
 
     override fun hashCode(): Int {
-        return value.hashCode()
+        return text.hashCode()
     }
 
 }
