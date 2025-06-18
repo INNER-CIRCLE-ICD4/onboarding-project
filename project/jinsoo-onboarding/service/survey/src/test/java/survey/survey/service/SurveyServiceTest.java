@@ -10,15 +10,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import survey.survey.config.ApplicationException;
 import survey.survey.config.ErrorType;
-import survey.survey.controller.request.SurveyFormCreateRequest;
-import survey.survey.controller.request.SurveyFormCreateRequest.QuestionCreateRequest;
 import survey.survey.entity.surveyform.SurveyForm;
 import survey.survey.entity.surveyquestion.CheckCandidate;
 import survey.survey.entity.surveyquestion.InputType;
 import survey.survey.entity.surveyquestion.SurveyQuestion;
 import survey.survey.repository.SurveyFormRepository;
 import survey.survey.repository.SurveyQuestionRepository;
-import survey.survey.service.response.SurveyFormResponse;
+import survey.survey.service.response.SurveyResponse;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -61,7 +59,7 @@ class SurveyServiceTest {
             given(surveyQuestionRepository.saveAll(anyList())).willReturn(savedQuestions);
 
             // when
-            SurveyFormResponse result = surveyService.create(request);
+            SurveyResponse result = surveyService.create(request);
 
             // then
             assertThat(result).isNotNull();

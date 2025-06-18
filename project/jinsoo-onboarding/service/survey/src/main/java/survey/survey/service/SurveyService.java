@@ -3,274 +3,156 @@ package survey.survey.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import survey.common.snowflake.Snowflake;
 import survey.survey.config.ApplicationException;
-import survey.survey.controller.request.SurveyFormCreateRequest;
-import survey.survey.controller.request.SurveyFormCreateRequest.QuestionCreateRequest;
-import survey.survey.controller.request.SurveyFormUpdateRequest;
-import survey.survey.controller.request.SurveyFormUpdateRequest.QuestionUpdateRequest;
+import survey.survey.controller.request.survey.create.SurveyCreateRequest;
+import survey.survey.controller.request.survey.update.SurveyFormUpdateRequest;
+import survey.survey.controller.request.survey.update.SurveyUpdateRequest;
+import survey.survey.entity.Survey;
 import survey.survey.entity.surveyform.SurveyForm;
-import survey.survey.entity.surveyquestion.CheckCandidate;
-import survey.survey.entity.surveyquestion.SurveyQuestion;
-import survey.survey.repository.SurveyFormRepository;
-import survey.survey.repository.SurveyQuestionRepository;
-import survey.survey.service.response.SurveyFormResponse;
-import survey.survey.service.response.SurveyFormUpdateResponse;
+import survey.survey.repository.SurveyRepository;
+import survey.survey.service.response.SurveyResponse;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static survey.survey.config.ErrorType.*;
+import static survey.survey.config.ErrorType.SURVEY_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class SurveyService {
-    private static final int MIN_QUESTIONS = 1;
-    private static final int MAX_QUESTIONS = 10;
+    private final SurveyRepository surveyRepository;
+    private final SurveyFormService surveyFormService;
+    private final SurveyQuestionService surveyQuestionService;
 
-    private final Snowflake surveyFormId = new Snowflake();
-    private final Snowflake questionId = new Snowflake();
-    private final SurveyFormRepository surveyFormRepository;
-    private final SurveyQuestionRepository surveyQuestionRepository;
-
-
+    /**
+     * 새로운 설문을 생성합니다.
+     *
+     * @param request 설문 생성 요청
+     * @return 생성된 설문 응답
+     */
     @Transactional
-    public SurveyFormResponse create(SurveyFormCreateRequest request) {
-        SurveyForm surveyForm = createSurveyForm(request);
-        SurveyForm savedSurveyForm = surveyFormRepository.save(surveyForm);
+    public SurveyResponse create(SurveyCreateRequest request) {
+        Long surveyFormVersion = 1L;
 
-        List<SurveyQuestion> questions = createQuestionsFromRequest(request.questionList(), savedSurveyForm.getSurveyFormId());
-        validateQuestionsCount(questions);
-        List<SurveyQuestion> savedQuestions = surveyQuestionRepository.saveAll(questions);
+        Survey savedSurvey = Survey.create(surveyFormVersion);
 
-        return SurveyFormResponse.from(savedSurveyForm, savedQuestions);
-    }
-
-
-    @Transactional
-    public SurveyFormUpdateResponse update(SurveyFormUpdateRequest request, Long surveyFormId) {
-        SurveyForm surveyForm = findSurveyFormById(surveyFormId);
-
-        boolean formChanged = updateSurveyForm(surveyForm, request);
-        boolean questionsChanged = updateSurveyQuestions(surveyFormId, request.questionList());
-
-        if (questionsChanged && !formChanged) {
-            surveyForm.incrementVersion();
-        }
-
-        List<SurveyQuestion> updatedQuestions = surveyQuestionRepository
-                .findSurveyQuestionBySurveyFormIdAndDeletedFalse(surveyFormId);
-
-        return new SurveyFormUpdateResponse(
-                surveyFormId,
-                formChanged || questionsChanged
+        SurveyForm savedSurveyForm = surveyFormService.create(
+                savedSurvey.getId(),
+                surveyFormVersion,
+                request.surveyFormCreateRequest()
         );
+
+        surveyQuestionService.createQuestionList(
+                savedSurveyForm.getId(),
+                request.surveyFormCreateRequest().questionList()
+        );
+
+        return SurveyResponse.from(surveyRepository.save(savedSurvey));
     }
 
+    /**
+     * 설문을 업데이트합니다.
+     *
+     * @param request 설문 업데이트 요청
+     * @return 업데이트된 설문 응답
+     */
+    @Transactional
+    public SurveyResponse update(SurveyUpdateRequest request) {
+        Survey survey = findSurveyById(request.surveyId());
+        Long oldSurveyFormId = request.surveyFormUpdateRequest().surveyFormId();
 
-    private SurveyForm findSurveyFormById(Long surveyFormId) {
-        return surveyFormRepository.findById(surveyFormId)
-                .orElseThrow(() -> new ApplicationException(SURVEY_NOT_FOUND));
-    }
+        SurveyForm updatedForm = handleFormContentChanges(
+                survey.getId(),
+                oldSurveyFormId,
+                request.surveyFormUpdateRequest()
+        );
 
-    private boolean updateSurveyForm(SurveyForm surveyForm, SurveyFormUpdateRequest request) {
-        boolean formInfoChanged = !Objects.equals(surveyForm.getTitle(), request.title()) ||
-                !Objects.equals(surveyForm.getDescription(), request.description()) ||
-                !Objects.equals(surveyForm.getSurveyId(), request.surveyId());
+        Long newSurveyFormId = updatedForm.getId();
+        boolean surveyFormChanged = !oldSurveyFormId.equals(newSurveyFormId);
 
-        if (formInfoChanged) {
-            surveyForm.update(
-                    request.title(),
-                    request.description(),
-                    request.surveyId());
+        boolean questionsChanged = handleQuestionChanges(
+                survey.getId(),
+                oldSurveyFormId,
+                newSurveyFormId,
+                surveyFormChanged,
+                request.surveyFormUpdateRequest()
+        );
+
+        if (surveyFormChanged || questionsChanged) {
+            survey.increaseVersion(survey.getSurveyFormVersion() + 1);
         }
 
-        return formInfoChanged;
+        return SurveyResponse.from(survey);
     }
 
-    private boolean updateSurveyQuestions(Long surveyFormId, List<QuestionUpdateRequest> requestQuestions) {
-        List<SurveyQuestion> existingQuestions = surveyQuestionRepository.findSurveyQuestionBySurveyFormId(surveyFormId);
-        return processQuestionUpdates(existingQuestions, requestQuestions, surveyFormId);
-    }
+    /**
+     * 폼 내용 변경을 처리합니다.
+     * 
+     * @param surveyId 설문 ID
+     * @param oldSurveyFormId 이전 설문 폼 ID
+     * @param updateRequest 업데이트 요청
+     * @return 업데이트된 설문 폼
+     */
+    private SurveyForm handleFormContentChanges(
+            Long surveyId, 
+            Long oldSurveyFormId, 
+            SurveyFormUpdateRequest updateRequest
+    ) {
+        boolean formContentChanged = surveyFormService.isFormContentChanged(
+                oldSurveyFormId,
+                updateRequest.title(),
+                updateRequest.description()
+        );
 
-    private boolean processQuestionUpdates(
-            List<SurveyQuestion> existingQuestions,
-            List<QuestionUpdateRequest> requestQuestions,
-            Long surveyFormId) {
-
-        boolean changed = false;
-        Map<Integer, SurveyQuestion> existingQuestionMap = mapExistingQuestions(existingQuestions);
-
-        Set<Integer> requestIndices = getRequestIndices(requestQuestions);
-        changed |= processQuestionDeletions(existingQuestions, requestIndices);
-        changed |= processQuestionUpdatesAndAdditions(existingQuestionMap, requestQuestions, surveyFormId);
-
-        return changed;
-    }
-
-    private Map<Integer, SurveyQuestion> mapExistingQuestions(List<SurveyQuestion> existingQuestions) {
-        return existingQuestions.stream()
-                .filter(q -> !q.isDeleted())
-                .collect(Collectors.toMap(SurveyQuestion::getQuestionIndex, q -> q));
-    }
-
-    private Set<Integer> getRequestIndices(List<QuestionUpdateRequest> requestQuestions) {
-        return requestQuestions.stream()
-                .map(QuestionUpdateRequest::questionIndex)
-                .collect(Collectors.toSet());
-    }
-
-    private boolean processQuestionDeletions(List<SurveyQuestion> existingQuestions, Set<Integer> requestIndices) {
-        boolean changed = false;
-
-        for (SurveyQuestion question : existingQuestions) {
-            if (!question.isDeleted() && !requestIndices.contains(question.getQuestionIndex())) {
-                question.delete();
-                changed = true;
-            }
+        if (formContentChanged) {
+            return surveyFormService.update(surveyId, updateRequest);
+        } else {
+            return surveyFormService.findById(oldSurveyFormId);
         }
-
-        return changed;
     }
 
-    private boolean processQuestionUpdatesAndAdditions(
-            Map<Integer, SurveyQuestion> existingQuestionMap,
-            List<QuestionUpdateRequest> requestQuestions,
-            Long surveyFormId) {
+    private boolean handleQuestionChanges(
+            Long surveyId,
+            Long oldSurveyFormId,
+            Long newSurveyFormId,
+            boolean surveyFormChanged,
+            SurveyFormUpdateRequest updateRequest
+    ) {
+        boolean questionsChanged = false;
 
-        boolean changed = false;
-
-        for (QuestionUpdateRequest request : requestQuestions) {
-            int index = request.questionIndex();
-
-            if (existingQuestionMap.containsKey(index)) {
-                boolean questionChanged = updateExistingQuestion(existingQuestionMap.get(index), request);
-                changed |= questionChanged;
-            } else {
-                createAndSaveNewQuestion(surveyFormId, request);
-                changed = true;
-            }
-        }
-
-        return changed;
-    }
-
-    private boolean updateExistingQuestion(SurveyQuestion question, QuestionUpdateRequest request) {
-        boolean infoChanged = isQuestionInfoChanged(question, request);
-
-        if (infoChanged) {
-            question.update(
-                    request.name(),
-                    request.questionIndex(),
-                    request.description(),
-                    request.inputType(),
-                    request.required()
+        if (surveyFormChanged) {
+            questionsChanged = surveyQuestionService.saveQuestionList(
+                    newSurveyFormId,
+                    oldSurveyFormId,
+                    updateRequest.questionList()
             );
+        } else {
+            questionsChanged = surveyQuestionService.isQuestionsChanged(
+                    oldSurveyFormId,
+                    updateRequest.questionList()
+            );
+
+            if (questionsChanged) {
+                SurveyForm updatedForm = surveyFormService.createNewVersion(surveyId, oldSurveyFormId);
+                Long updatedFormId = updatedForm.getId();
+
+                surveyQuestionService.saveQuestionList(
+                        updatedFormId,
+                        oldSurveyFormId,
+                        updateRequest.questionList()
+                );
+            }
         }
 
-        boolean candidatesChanged = updateQuestionCandidates(question, request);
-        return infoChanged || candidatesChanged;
+        return questionsChanged;
     }
 
-    private boolean isQuestionInfoChanged(SurveyQuestion question, QuestionUpdateRequest request) {
-        return !Objects.equals(question.getName(), request.name()) ||
-                question.getQuestionIndex() != request.questionIndex() ||
-                !Objects.equals(question.getDescription(), request.description()) ||
-                question.getInputType() != request.inputType() ||
-                question.isRequired() != request.required();
-    }
-
-    private boolean updateQuestionCandidates(SurveyQuestion question, QuestionUpdateRequest request) {
-        List<CheckCandidate> candidates = convertToCandidates(request.candidates());
-
-        Long beforeVersion = question.getVersion();
-        question.updateCandidates(candidates);
-
-        return !Objects.equals(beforeVersion, question.getVersion());
-    }
-
-    private void createAndSaveNewQuestion(Long surveyFormId, QuestionUpdateRequest request) {
-        SurveyQuestion newQuestion = SurveyQuestion.create(
-                surveyFormId,
-                questionId.nextId(),
-                request.questionIndex(),
-                request.name(),
-                request.description(),
-                request.inputType(),
-                request.required()
-        );
-
-        List<CheckCandidate> candidates = convertToCandidates(request.candidates());
-        newQuestion.updateCandidates(candidates);
-
-        surveyQuestionRepository.save(newQuestion);
-    }
-
-    private List<CheckCandidate> convertToCandidates(List<QuestionUpdateRequest.CandidateUpdateRequest> requests) {
-        if (requests == null || requests.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        return requests.stream()
-                .map(request -> CheckCandidate.of(request.checkCandidateIndex(), request.name()))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private List<CheckCandidate> convertCandidates(List<QuestionCreateRequest.CandidateCreateRequest> candidateRequests) {
-        if (candidateRequests == null || candidateRequests.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        return candidateRequests.stream()
-                .map(request -> CheckCandidate.of(
-                        request.checkCandidateIndex(),
-                        request.name()
-                ))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private SurveyForm createSurveyForm(SurveyFormCreateRequest request) {
-        return SurveyForm.create(
-                surveyFormId.nextId(),
-                request.title(),
-                request.description(),
-                request.surveyId()
-        );
-    }
-
-    private List<SurveyQuestion> createQuestionsFromRequest(List<QuestionCreateRequest> questionRequests, Long surveyFormId) {
-        return questionRequests.stream()
-                .map(request -> createQuestionFromRequest(request, surveyFormId))
-                .collect(Collectors.toList());
-    }
-
-    private SurveyQuestion createQuestionFromRequest(QuestionCreateRequest request, Long surveyFormId) {
-        SurveyQuestion question = SurveyQuestion.create(
-                surveyFormId,
-                questionId.nextId(),
-                request.questionIndex(),
-                request.name(),
-                request.description(),
-                request.inputType(),
-                request.required()
-        );
-
-        List<CheckCandidate> candidates = convertCandidates(request.candidates());
-        question.addCandidates(candidates);
-
-        return question;
-    }
-
-    private void validateQuestionsCount(List<SurveyQuestion> questions) {
-        long activeQuestionsCount = questions.stream()
-                .filter(q -> !q.isDeleted())
-                .count();
-
-        if (activeQuestionsCount < MIN_QUESTIONS) {
-            throw new ApplicationException(MINIMUM_QUESTION);
-        }
-        if (activeQuestionsCount > MAX_QUESTIONS) {
-            throw new ApplicationException(MAXIMUM_QUESTION);
-        }
+    /**
+     * ID로 설문을 조회합니다.
+     *
+     * @param surveyId 설문 ID
+     * @return 조회된 설문
+     * @throws ApplicationException 설문이 존재하지 않는 경우
+     */
+    private Survey findSurveyById(Long surveyId) {
+        return surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new ApplicationException(SURVEY_NOT_FOUND));
     }
 }
