@@ -348,35 +348,27 @@ public class SurveyServiceImpl implements SurveyService {
             return Collections.emptyList();
         }
         
-        return optionRequests.stream()
-                .map(optionRequest -> {
-                    // Always generate new ID for new version
-                    String optionId = optionRequest.getId() != null ? 
-                            optionRequest.getId() : UUIDGenerator.generate();
-                    
-                    // Create new option with new ID
-                    QuestionOption option = QuestionOption.builder()
-                            .id(optionId)
-                            .question(question)
-                            .optionOrder(optionRequest.getOrder() != null ? 
-                                    optionRequest.getOrder() : 0) // Default order if not provided
-                            .optionText(optionRequest.getText())
-                            .build();
-                    
-                    // Save the new option
-                    option = questionOptionRepository.save(option);
-                    
-                    // Add option to question using the helper method
-                    question.addOption(option);
-                    
-                    // Build option response DTO
-                    return QuestionResponse.OptionResponse.builder()
-                            .id(option.getId())
-                            .text(option.getOptionText())
-                            .order(option.getOptionOrder())
-                            .build();
-                })
-                .collect(Collectors.toList());
+        List<QuestionResponse.OptionResponse> optionResponses = new ArrayList<>();
+        for (int i = 0; i < optionRequests.size(); i++) {
+            QuestionOptionRequest optionRequest = optionRequests.get(i);
+            String optionId = optionRequest.getId() != null ? optionRequest.getId() : UUIDGenerator.generate();
+            int optionOrder = (optionRequest.getOrder() != null && optionRequest.getOrder() > 0) ? optionRequest.getOrder() : i + 1;
+
+            QuestionOption option = QuestionOption.builder()
+                    .id(optionId)
+                    .question(question)
+                    .optionOrder(optionOrder)
+                    .optionText(optionRequest.getText())
+                    .build();
+            option = questionOptionRepository.save(option);
+            question.addOption(option);
+            optionResponses.add(QuestionResponse.OptionResponse.builder()
+                    .id(option.getId())
+                    .text(option.getOptionText())
+                    .order(option.getOptionOrder())
+                    .build());
+        }
+        return optionResponses;
     }
 
     /**
