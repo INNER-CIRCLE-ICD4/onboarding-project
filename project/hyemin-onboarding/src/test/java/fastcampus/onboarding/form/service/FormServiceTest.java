@@ -1,12 +1,10 @@
 package fastcampus.onboarding.form.service;
 
-import fastcampus.onboarding.form.dto.request.FormCreateRequestDto;
+import fastcampus.onboarding.form.dto.request.*;
 import fastcampus.onboarding.form.entity.Form;
 import fastcampus.onboarding.form.entity.Item;
 import fastcampus.onboarding.form.entity.ItemType;
 import fastcampus.onboarding.form.entity.Option;
-import fastcampus.onboarding.form.dto.request.ItemRequestDto;
-import fastcampus.onboarding.form.dto.request.OptionRequestDto;
 import fastcampus.onboarding.form.repository.FormRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,15 +70,6 @@ public class FormServiceTest {
 
         Option savedOption = savedItem.getOptions().get(0);
         assertThat(savedOption.getOptionContent()).isEqualTo("Option 1");
-    }
-
-    @Test
-    @Rollback(false)
-    void shouldUpdateFormWithItemsAndOptions(){
-        //Given
-        OptionRequestDto optionDto = OptionRequestDto.builder()
-                .optionContent("Option 1")
-                .build();
     }
 
 }

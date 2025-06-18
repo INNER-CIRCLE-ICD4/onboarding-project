@@ -17,10 +17,7 @@ import java.util.List;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_seq_gen")
-    @SequenceGenerator(name = "item_seq_gen", sequenceName = "item_seq", allocationSize = 1)
-    private Long itemSeq;
-
+    private Integer itemSeq;
     // Form 연관관계 설정 메서드
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,7 +44,9 @@ public class Item {
     private List<ItemResponse> responses = new ArrayList<>();
 
     @Builder
-    public Item(String itemTitle, String itemContent, ItemType itemType, boolean isRequired) {
+    public Item(Form form, Integer itemSeq,String itemTitle, String itemContent, ItemType itemType, boolean isRequired) {
+        this.form = form;
+        this.itemSeq = itemSeq;
         this.itemTitle = itemTitle;
         this.itemContent = itemContent;
         this.itemType = itemType;

@@ -16,10 +16,8 @@ import lombok.Setter;
 public class Option {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "option_seq_gen")
-    @SequenceGenerator(name = "option_seq_gen", sequenceName = "option_seq", allocationSize = 1)
     @Column(name="option_seq")
-    private Long optionSeq;
+    private Integer optionSeq;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="item_seq")
@@ -29,7 +27,9 @@ public class Option {
     private String optionContent;
 
     @Builder
-    public Option(String optionContent) {
+    public Option(Item item, Integer optionSeq, String optionContent) {
+        this.item = item;
+        this.optionSeq = optionSeq;
         this.optionContent = optionContent;
     }
 

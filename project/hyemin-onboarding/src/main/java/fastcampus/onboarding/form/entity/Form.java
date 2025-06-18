@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.Id;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,13 +15,14 @@ import java.util.List;
 @Entity
 @Table(name = "form")
 @Getter
+@Setter
 @NoArgsConstructor
 public class Form {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "form_seq_gen")
     @SequenceGenerator(name = "form_seq_gen", sequenceName = "form_seq", allocationSize = 1)
-    private Long form_seq;
+    private Long formSeq;
 
     @Column(name="form_title", nullable = false, length = 200)
     private String formTitle; // 설문조사 이름
@@ -57,8 +59,5 @@ public class Form {
     public void addItem(Item item) {
         this.items.add(item);
         item.setForm(this);
-    }
-    public void setFormTitle(String formTitle) {
-        this.formTitle = formTitle;
     }
 }
