@@ -6,6 +6,8 @@ import com.okdori.surveyservice.dto.SurveyResponseDto
 import com.okdori.surveyservice.service.SurveyService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -34,6 +36,19 @@ class SurveyController(
             "설문조사가 생성되었습니다.",
             request.servletPath,
             surveyService.createSurvey(surveyCreateDto)
+        )
+    }
+
+    @GetMapping("/{surveyId}")
+    fun getSurvey(
+        @PathVariable surveyId: String,
+        request: HttpServletRequest,
+    ): Payload<SurveyResponseDto> {
+        return Payload(
+            HttpStatus.OK,
+            "설문조사 항목 조회가 완료되었습니다.",
+            request.servletPath,
+            surveyService.getSurvey(surveyId)
         )
     }
 }

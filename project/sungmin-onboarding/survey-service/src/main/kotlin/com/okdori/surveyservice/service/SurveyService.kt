@@ -75,11 +75,11 @@ class SurveyService(
             surveyItemOptionRepository.saveAll(allOptions)
         }
 
-        return findSurveyWithItemsAndOptions(survey.id!!)
+        return getSurvey(survey.id!!)
     }
 
     @Transactional(readOnly = true)
-    fun findSurveyWithItemsAndOptions(surveyId: String): SurveyResponseDto {
+    fun getSurvey(surveyId: String): SurveyResponseDto {
         val survey = queryFactory
             .selectFrom(survey)
             .where(survey.id.eq(surveyId))
