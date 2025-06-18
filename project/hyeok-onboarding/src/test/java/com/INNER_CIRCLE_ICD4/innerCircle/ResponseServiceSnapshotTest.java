@@ -37,24 +37,27 @@ public class ResponseServiceSnapshotTest {
         Survey survey = new Survey("title", "desc");
         Question q1 = new Question("q1", "q1 desc", QuestionType.SHORT, true);
 
-        // 관계 설정
-        q1.setSurvey(survey); // 양방향 연관관계 설정
-        survey.setQuestions(List.of(q1)); // cascade 설정 전제
-
-        surveyRepository.save(survey); // 여기서 question도 저장되어야 함
-
-        // 응답 생성
-        AnswerRequest answer = new AnswerRequest(q1.getId(), "응답입니다", null);
-        ResponseRequest req = new ResponseRequest(survey.getId(), List.of(answer));
+        // 양방향 연관관계 설정 (setSurvey 포함)
+        survey.replaceQuestions(List.of(q1)); // 내부적으로 setSurvey 호출됨
 
         // 저장
+        surveyRepository.save(survey); // CascadeType.ALL 로 인해 question도 저장됨
+
+        // 저장 후 question ID 조회
+        UUID questionId = survey.getQuestions().get(0).getId();
+
+        // 응답 생성
+        AnswerRequest answer = new AnswerRequest(questionId, "응답입니다", null);
+        ResponseRequest req = new ResponseRequest(survey.getId(), List.of(answer));
+
+        // 응답 저장
         UUID savedId = responseService.saveResponse(req);
 
-        // 검증
+        // 저장된 응답 검증
         Response saved = responseRepository.findById(savedId).orElseThrow();
         String snapshotJson = saved.getSurveySnapshot();
 
+        // Snapshot 내용에 설문 제목, 설명, 질문 제목이 포함되어야 함
         assertThat(snapshotJson).contains("title", "desc", "q1");
     }
-
 }
