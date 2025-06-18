@@ -30,8 +30,13 @@ public class FormRepositoryImpl implements FormRepository {
     public Forms findById(Long id) {
 
         FormsJpaEntity formsJpaEntity = formJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Form not found with id: " + id));
+        List<FormHistoryJpaEntity> formHistoryEntities = formHistoryJpaRepository.findByForm_Id(id);
 
-        return formsJpaEntity.toDomain();
+//        form.setFormsHistory(formHistoryEntities.stream().map(FormHistoryJpaEntity::toDomain).toList());
+
+        return formsJpaEntity.toDomainWithHistories(
+                formHistoryEntities.stream().map(FormHistoryJpaEntity::toDomain).toList()
+        );
     }
 
     @Override

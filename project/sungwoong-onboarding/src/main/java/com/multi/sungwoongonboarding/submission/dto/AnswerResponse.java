@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AnswerResponse {
 
+    // todo 질문_답변 구조 수정 필요 - 질문 내용
     private final Long id;
     private final Long questionId;
     private final Long optionId;

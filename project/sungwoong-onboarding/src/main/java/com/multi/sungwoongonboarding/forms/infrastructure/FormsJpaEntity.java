@@ -2,6 +2,7 @@ package com.multi.sungwoongonboarding.forms.infrastructure;
 
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
+import com.multi.sungwoongonboarding.forms.domain.FormsHistory;
 import com.multi.sungwoongonboarding.questions.infrastructure.QuestionJpaEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -65,7 +66,6 @@ public class FormsJpaEntity extends BaseEntity {
     private static void mappingEntityFromDomain(Forms form, FormsJpaEntity formsJpaEntity) {
         if (form.getQuestions() != null && !form.getQuestions().isEmpty()) {
             form.getQuestions().forEach(question -> {
-
                 QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
                 questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
             });
@@ -74,6 +74,17 @@ public class FormsJpaEntity extends BaseEntity {
 
 
     public Forms toDomain() {
+        return getFormsBuilder()
+                .build();
+    }
+
+    public Forms toDomainWithHistories(List<FormsHistory> formsHistory) {
+        return getFormsBuilder()
+                .formsHistories(formsHistory)
+                .build();
+    }
+
+    private Forms.FormsBuilder getFormsBuilder() {
         return Forms.builder()
                 .id(this.id)
                 .title(this.title)
@@ -82,8 +93,7 @@ public class FormsJpaEntity extends BaseEntity {
                 .version(this.version)
                 .createdAt(this.getCreatedAt())
                 .createdAt(this.getUpdatedAt())
-                .userId(this.userId)
-                .build();
+                .userId(this.userId);
     }
 
 }

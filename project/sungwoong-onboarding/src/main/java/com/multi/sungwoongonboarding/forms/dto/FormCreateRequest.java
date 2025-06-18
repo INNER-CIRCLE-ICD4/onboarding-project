@@ -22,7 +22,6 @@ public class FormCreateRequest {
     @Valid
     @NotNull(message = "질문 목록은 필수 입력 항목입니다.")
     @Size(min = 1, max = 10, message = "질문은 최소 1개에서 최대 10개까지 입력할 수 있습니다.")
-    //todo 질문 수정 요청 값은 삭제하려는 질문 목록도 있으므로 삭제 요청을 제외한 질문이 10개 이하인지 체크 해줘야 한다.
     private List<QuestionCreateRequest> questionCreateRequests;
 
 

@@ -70,8 +70,8 @@ public class FormServiceTest {
 
         FormUpdateRequest updateForm = FormUpdateRequest.builder()
                 .id(forms.id())
-                .title("모든 질문 유형 테스트")
-                .description("모든 질문 유형을 테스트합니다.")
+                .title("모든 질문 유형 테스트_변경")
+                .description("모든 질문 유형을 테스트합니다_변경")
                 .questions(List.of(
                         QuestionUpdateRequest.builder()
                                 .questionText("복수 선택 질문")
@@ -91,6 +91,7 @@ public class FormServiceTest {
 
         //Then
         assertThat(formResponse.id()).isEqualTo(forms.id());
+        assertThat(formResponse.title()).isEqualTo("모든 질문 유형 테스트_변경");
         // 논리삭제된 질문과 추가된 질문을 포함한 개수
         assertThat(formResponse.questionResponses().size()).isEqualTo(5);
         // 논리삭제된 질문을 제거한 개수

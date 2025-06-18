@@ -40,7 +40,7 @@ public class AnswerJpaEntity extends BaseEntity {
         return answerJpaEntity;
     }
 
-    public void setSubmissionJpaEntity(SubmissionJpaEntity submissionJpaEntity) {
+    public void mappingSubmissionJpaEntity(SubmissionJpaEntity submissionJpaEntity) {
         this.submissionJpaEntity = submissionJpaEntity;
         if (!submissionJpaEntity.getAnswers().contains(this)) {
             submissionJpaEntity.getAnswers().add(this);

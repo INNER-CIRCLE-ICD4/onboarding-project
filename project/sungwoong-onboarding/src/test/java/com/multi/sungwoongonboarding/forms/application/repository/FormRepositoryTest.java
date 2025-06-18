@@ -228,11 +228,14 @@ public class FormRepositoryTest {
         assertThat(updatedFormInDb.getQuestions().stream().filter(q -> !q.isDeleted()).toList().size()).isEqualTo(2);
 
         // 이력 조회
+        Forms byId = formRepository.findById(savedForm.getId());
         Optional<FormHistoryJpaEntity> history = formHistoryJpaRepository.findById(1L);
         assertThat(history.isPresent()).isTrue();
         assertThat(history.get().getVersion()).isLessThan(result.getVersion());
         assertThat(history.get().getTitle()).isEqualTo("원본 설문 제목");
         assertThat(history.get().getQuestionCount()).isEqualTo(originalForm.getQuestions().size());
-
+        assertThat(byId.getFormsHistory().size()).isEqualTo(1);
     }
+
+
 }

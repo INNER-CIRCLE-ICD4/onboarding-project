@@ -9,7 +9,6 @@ public record QuestionResponse(Long id,
                                String questionText,
                                Questions.QuestionType questionType,
                                boolean isRequired,
-                               int version,
                                boolean deleted,
                                List<OptionResponse> optionResponses) {
 
@@ -19,7 +18,6 @@ public record QuestionResponse(Long id,
                 question.getQuestionText(),
                 question.getQuestionType(),
                 question.isRequired(),
-                question.getVersion(),
                 question.isDeleted(),
                 question.getOptions().stream().map(OptionResponse::fromDomain).toList()
         );

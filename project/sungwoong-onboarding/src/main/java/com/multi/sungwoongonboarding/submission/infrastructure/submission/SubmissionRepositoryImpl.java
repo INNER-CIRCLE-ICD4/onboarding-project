@@ -38,11 +38,13 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
         Forms forms = formRepository.findById(submission.getFormId());
 
         SubmissionJpaEntity submissionJpaEntity = SubmissionJpaEntity.fromDomain(submission);
+
         submissionJpaEntity.setFormVersion(forms.getVersion());
 
         for (Answers answer : submission.getAnswers()) {
+
             AnswerJpaEntity answerJpaEntity = AnswerJpaEntity.fromDomain(answer);
-            answerJpaEntity.setSubmissionJpaEntity(submissionJpaEntity);
+            answerJpaEntity.mappingSubmissionJpaEntity(submissionJpaEntity);
             Questions question = questionRepository.findById(answer.getQuestionId());
 
             if (question.getQuestionType().isChoiceType()) {
@@ -66,5 +68,15 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
         Optional<SubmissionJpaEntity> byId = submissionJpaRepository.findById(id);
         return byId.map(SubmissionJpaEntity::toDomain).orElse(null);
 
+    }
+
+    @Override
+    public List<Submission> findByFormId(Long formId) {
+
+        // 제출지 entity 목록 조회
+        List<SubmissionJpaEntity> submissionJpaEntities = submissionJpaRepository.findByFormId(formId);
+
+        // 도메인 형태로 반환
+        return submissionJpaEntities.stream().map(SubmissionJpaEntity::toDomain).toList();
     }
 }

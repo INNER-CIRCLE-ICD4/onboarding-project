@@ -11,4 +11,6 @@ public interface SubmissionRepository {
     List<Submission> findAll();
 
     Submission findById(Long id);
+
+    List<Submission> findByFormId(Long formId);
 }

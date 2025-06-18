@@ -22,11 +22,9 @@ public class Questions {
         public boolean isSingleChoice() {
             return this == SINGLE_CHOICE;
         }
-
         public boolean isChoiceType() {
             return isSingleChoice() || isMultipleChoice();
         }
-
         public boolean isTextType() {
             return this == SHORT_ANSWER || this == LONG_ANSWER;
         }
@@ -38,7 +36,6 @@ public class Questions {
     private final String questionText;
     private final QuestionType questionType;
     private final boolean isRequired;
-    private final int version;
     private final boolean deleted;
     private final List<Options> options;
 }
