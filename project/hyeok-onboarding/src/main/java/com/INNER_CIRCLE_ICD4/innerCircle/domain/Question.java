@@ -26,6 +26,7 @@ public class Question {
     private QuestionType type;
 
     private boolean required;
+
     private boolean isDeleted = false;
 
     private LocalDateTime createdAt;
@@ -33,14 +34,15 @@ public class Question {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_id")
-    @JsonBackReference // ✅ 순환 참조 방지
+    @JsonBackReference // \uD83D\uDD01 순환 참조 방지 (Survey \u2192 Question)
     private Survey survey;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderColumn(name = "choice_order")
-    @JsonManagedReference // ✅ 순환 참조 방지
+    @JsonManagedReference // \uD83D\uDD01 순환 참조 방지 (Question \u2192 Choice)
     private List<Choice> choices = new ArrayList<>();
 
+    // 생성자
     public Question(String title, String description, QuestionType type, boolean required) {
         this.title = title;
         this.description = description;
@@ -50,6 +52,7 @@ public class Question {
         this.updatedAt = LocalDateTime.now();
     }
 
+    // 엔티티 수정 메서드
     public void update(String title, String description, QuestionType type, boolean required) {
         this.title = title;
         this.description = description;
@@ -58,10 +61,12 @@ public class Question {
         this.updatedAt = LocalDateTime.now();
     }
 
+    // Survey 연관관계 설정
     public void setSurvey(Survey survey) {
         this.survey = survey;
     }
 
+    // 선택지 추가 메서드
     public void addChoice(Choice choice) {
         if (choices.size() >= 20) {
             throw new IllegalStateException("선택지는 최대 20개까지만 허용됩니다.");
@@ -70,7 +75,21 @@ public class Question {
         this.choices.add(choice);
     }
 
+    // 테스트 및 직렬화 용도: ID 수동 설정
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    // 시간 자동 설정 (JPA 라이프사이클 콜백)
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
