@@ -74,7 +74,8 @@ public class ResponseServiceTest {
         Survey survey = new Survey("title", "desc");
         Question question = new Question("q1", "desc", QuestionType.SHORT, true);
 
-        // 👇 직접 ID 세팅 (핵심)
+        // 👇 직접 ID 세팅
+        ReflectionTestUtils.setField(survey, "id", surveyId);
         ReflectionTestUtils.setField(question, "id", questionId);
 
         survey.addQuestion(question);
@@ -100,5 +101,6 @@ public class ResponseServiceTest {
 
         // then - 예외 없이 통과되면 성공
     }
+
 
 }
