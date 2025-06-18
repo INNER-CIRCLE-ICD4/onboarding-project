@@ -4,6 +4,7 @@ import fc.icd.baulonboarding.answer.model.dto.AnswerDto;
 import fc.icd.baulonboarding.answer.model.dto.AnswerInfo;
 import fc.icd.baulonboarding.answer.service.AnswerService;
 import fc.icd.baulonboarding.common.reponse.CommonResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ public class AnswerApiController {
     private final AnswerService answerService;
 
     @PostMapping
-    public void registerAnswer(@RequestBody AnswerDto.RegisterAnswerRequest request){
+    public void registerAnswer(@RequestBody @Valid AnswerDto.RegisterAnswerRequest request){
         answerService.registerAnswer(request);
     }
 

@@ -60,8 +60,8 @@ public class SurveyServiceImpl implements SurveyService{
                         requestSurveyItem.getName(),
                         requestSurveyItem.getDescription(),
                         requestSurveyItem.getInputType(),
-                        requestSurveyItem.isRequired(),
-                        requestSurveyItem.isDeleted(),
+                        requestSurveyItem.getIsRequired(),
+                        requestSurveyItem.getIsDeleted(),
                         requestSurveyItem.getOrdering()
                 );
             } else {
@@ -80,7 +80,7 @@ public class SurveyServiceImpl implements SurveyService{
                     option.applyChanges(
                             requestSurveyItemOption.getContent(),
                             requestSurveyItemOption.getOrdering(),
-                            requestSurveyItemOption.isDeleted()
+                            requestSurveyItemOption.getIsDeleted()
                     );
                 } else {
                     SurveyItemOption newOption = requestSurveyItemOption.toEntity(item);
