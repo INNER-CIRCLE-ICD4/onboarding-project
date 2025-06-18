@@ -1,0 +1,29 @@
+#spring:
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
+#  datasource:
+#    url: jdbc:h2:mem:onboarding
+#    driver-class-name: org.h2.Driver
+#    username: boram
+#    password: boram
+#  sql:
+#    init:
+#      schema-locations: classpath:db/schema.sql
+#      data-locations: classpath:db/data.sql
+
+spring:
+  h2:
+    console:
+      enabled: true      # H2 콘솔 활성화
+      path: /h2-console  # 콘솔 접속 경로
+  datasource:
+    url: jdbc:h2:mem:onboarding  # 인메모리 모드
+    driver-class-name: org.h2.Driver
+    username: boram         # 기본 계정
+    password: boram      # 비밀번호 (기본은 없음)
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create   # 시작 시 테이블 생성
