@@ -24,12 +24,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
     private final SubmissionJpaRepository submissionJpaRepository;
 
-    private final OptionsRepository optionsRepository;
-
     private final FormRepository formRepository;
-
-    private final QuestionRepository questionRepository;
-
 
     @Override
     @Transactional
@@ -37,21 +32,8 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
         Forms forms = formRepository.findById(submission.getFormId());
 
-        SubmissionJpaEntity submissionJpaEntity = SubmissionJpaEntity.fromDomain(submission);
+        SubmissionJpaEntity submissionJpaEntity = SubmissionJpaEntity.fromDomainWithFormVersion(submission, forms.getVersion());
 
-        submissionJpaEntity.setFormVersion(forms.getVersion());
-
-        for (Answers answer : submission.getAnswers()) {
-
-            AnswerJpaEntity answerJpaEntity = AnswerJpaEntity.fromDomain(answer);
-            answerJpaEntity.mappingSubmissionJpaEntity(submissionJpaEntity);
-            Questions question = questionRepository.findById(answer.getQuestionId());
-
-            if (question.getQuestionType().isChoiceType()) {
-                Options options = optionsRepository.findById(answer.getOptionId());
-                answerJpaEntity.setOptions(options);
-            }
-        }
         submissionJpaRepository.save(submissionJpaEntity);
 
         return submissionJpaEntity.toDomain();
@@ -67,7 +49,6 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
         Optional<SubmissionJpaEntity> byId = submissionJpaRepository.findById(id);
         return byId.map(SubmissionJpaEntity::toDomain).orElse(null);
-
     }
 
     @Override

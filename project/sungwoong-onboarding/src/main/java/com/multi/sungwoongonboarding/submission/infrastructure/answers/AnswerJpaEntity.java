@@ -40,6 +40,12 @@ public class AnswerJpaEntity extends BaseEntity {
         return answerJpaEntity;
     }
 
+    public static AnswerJpaEntity fromDomainAndMapping(Answers answers, SubmissionJpaEntity submissionJpaEntity) {
+        AnswerJpaEntity answerJpaEntity = fromDomain(answers);
+        answerJpaEntity.mappingSubmissionJpaEntity(submissionJpaEntity);
+        return answerJpaEntity;
+    }
+
     public void mappingSubmissionJpaEntity(SubmissionJpaEntity submissionJpaEntity) {
         this.submissionJpaEntity = submissionJpaEntity;
         if (!submissionJpaEntity.getAnswers().contains(this)) {

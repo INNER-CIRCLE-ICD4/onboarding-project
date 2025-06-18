@@ -1,19 +1,19 @@
 package com.multi.sungwoongonboarding.submission.application;
 
-import com.multi.sungwoongonboarding.forms.application.FormService;
 import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.submission.domain.Submission;
 import com.multi.sungwoongonboarding.submission.application.repository.SubmissionRepository;
 import com.multi.sungwoongonboarding.submission.dto.SubmissionCreateRequest;
 import com.multi.sungwoongonboarding.submission.dto.SubmissionResponse;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
+@Builder
 @Service
 @RequiredArgsConstructor
 public class SubmissionService {
