@@ -1,4 +1,4 @@
-package com.icd.seonghunlee_onboarding.answer.survey.answer;
+package com.icd.seonghunlee_onboarding.survey.answer;
 
 public interface AnswerValidator<T> {
     boolean isValid(T answer);

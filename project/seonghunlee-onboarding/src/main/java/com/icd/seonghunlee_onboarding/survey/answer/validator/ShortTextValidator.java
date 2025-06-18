@@ -1,6 +1,6 @@
-package com.icd.seonghunlee_onboarding.answer.survey.answer.validator;
+package com.icd.seonghunlee_onboarding.survey.answer.validator;
 
-import com.icd.seonghunlee_onboarding.answer.survey.answer.AnswerValidator;
+import com.icd.seonghunlee_onboarding.survey.answer.AnswerValidator;
 
 import java.util.regex.Pattern;
 
