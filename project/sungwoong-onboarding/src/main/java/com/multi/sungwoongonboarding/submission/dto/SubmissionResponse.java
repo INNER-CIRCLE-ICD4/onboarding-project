@@ -21,6 +21,21 @@ public class SubmissionResponse {
     private List<AnswerResponse> answerResponses;
 
     public static SubmissionResponse fromDomain(Submission submission) {
+        return getSubmissionResponseBuilder(submission)
+                .build();
+    }
+
+
+    public static SubmissionResponse fromDomainWithForm(Submission submission, Forms form) {
+        return getSubmissionResponseBuilder(submission)
+                .formTitle(form.getTitle())
+                .formDescription(form.getDescription())
+                .build();
+    }
+
+
+
+    private static SubmissionResponseBuilder getSubmissionResponseBuilder(Submission submission) {
         return SubmissionResponse.builder()
                 .id(submission.getId())
                 .formId(submission.getFormId())
@@ -28,12 +43,6 @@ public class SubmissionResponse {
                 .formTitle(submission.getFormTitle())
                 .formDescription(submission.getFormDescription())
                 .formVersion(submission.getFormVersion())
-                .answerResponses(submission.getAnswers().stream().map(AnswerResponse::fromDomain).toList())
-                .build();
-    }
-
-    public void setFormVersion(Forms form) {
-        this.formTitle = form.getTitle();
-        this.formDescription = form.getDescription();
+                .answerResponses(submission.getAnswers().stream().map(AnswerResponse::fromDomain).toList());
     }
 }

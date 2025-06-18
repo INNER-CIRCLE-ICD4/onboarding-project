@@ -26,7 +26,6 @@ public class SubmissionJpaEntity extends BaseEntity {
     @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Setter
     @Column(name = "form_version", nullable = false)
     private int formVersion;
 
