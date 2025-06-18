@@ -57,6 +57,7 @@ public class SurveyService {
 
     public SurveyDto.Read getSurvey(Long id) {
         Survey survey = surveyRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Survey not found"));
+
         List<Question> questions = questionRepository.findAllBySurveyIdAndSurveyVersion(survey.getId(), survey.getVersion());
         List<Long> questionIds = questions.stream().map(Question::getId).toList();
         List<Option> options = optionRepository.findAllByQuestionIdIn(questionIds);

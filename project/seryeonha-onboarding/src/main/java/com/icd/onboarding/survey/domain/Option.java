@@ -13,7 +13,12 @@ public class Option {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "question_id")
     private Long questionId;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id", insertable = false, updatable = false)
+    private Question question;
 
     private Integer orderNum;
 
