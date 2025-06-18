@@ -1,0 +1,8 @@
+= Quidev API
+:toc:
+
+== [GET] /api/survey
+
+include::{snippets}/index/http-request.adoc[]
+include::{snippets}/index/http-response.adoc[]
+include::{snippets}/index/response-body.adoc[]
