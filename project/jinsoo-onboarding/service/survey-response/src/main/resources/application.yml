@@ -1,0 +1,31 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: survey-submit
+  datasource:
+    url: jdbc:h2:mem:survey-response
+    hikari:
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+
+endpoints:
+  survey-service:
+    url: http://localhost:8080

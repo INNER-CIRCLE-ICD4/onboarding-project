@@ -1,7 +1,7 @@
-package survey.survey.controller.response;
+package survey.surveyresponse.config.response;
 
 
-import survey.survey.config.ErrorType;
+import survey.surveyresponse.config.ErrorType;
 
 public record SurveyErrorResponse(
         String errorMessage,
