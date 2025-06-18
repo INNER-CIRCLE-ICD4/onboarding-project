@@ -15,7 +15,9 @@ public class Question {
 
     private Long surveyId;
 
-    private int order;
+    private Integer surveyVersion;
+
+    private Integer orderNum;
 
     private String name;
 
@@ -27,4 +29,7 @@ public class Question {
     private boolean required;
 
     private boolean active;
+
+    @Transient
+    private Integer tempId;
 }

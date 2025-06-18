@@ -16,4 +16,6 @@ public class Survey {
     private String name;
 
     private String description;
+
+    private Integer version;
 }
