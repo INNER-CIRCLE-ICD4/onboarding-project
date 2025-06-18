@@ -21,18 +21,11 @@ public class SurveyService {
     private final SurveyFormService surveyFormService;
     private final SurveyQuestionService surveyQuestionService;
 
-    /**
-     * 새로운 설문을 생성합니다.
-     *
-     * @param request 설문 생성 요청
-     * @return 생성된 설문 응답
-     */
     @Transactional
     public SurveyResponse create(SurveyCreateRequest request) {
         Long surveyFormVersion = 1L;
 
         Survey savedSurvey = Survey.create(surveyFormVersion);
-
         SurveyForm savedSurveyForm = surveyFormService.create(
                 savedSurvey.getId(),
                 surveyFormVersion,
@@ -47,12 +40,6 @@ public class SurveyService {
         return SurveyResponse.from(surveyRepository.save(savedSurvey));
     }
 
-    /**
-     * 설문을 업데이트합니다.
-     *
-     * @param request 설문 업데이트 요청
-     * @return 업데이트된 설문 응답
-     */
     @Transactional
     public SurveyResponse update(SurveyUpdateRequest request) {
         Survey survey = findSurveyById(request.surveyId());
@@ -78,21 +65,16 @@ public class SurveyService {
         if (surveyFormChanged || questionsChanged) {
             survey.increaseVersion(survey.getSurveyFormVersion() + 1);
         }
-
         return SurveyResponse.from(survey);
     }
 
-    /**
-     * 폼 내용 변경을 처리합니다.
-     * 
-     * @param surveyId 설문 ID
-     * @param oldSurveyFormId 이전 설문 폼 ID
-     * @param updateRequest 업데이트 요청
-     * @return 업데이트된 설문 폼
-     */
+    public Long fetchSurveyFormId(Long surveyId) {
+        return surveyFormService.fetchSurveyFormId(surveyId);
+    }
+
     private SurveyForm handleFormContentChanges(
-            Long surveyId, 
-            Long oldSurveyFormId, 
+            Long surveyId,
+            Long oldSurveyFormId,
             SurveyFormUpdateRequest updateRequest
     ) {
         boolean formContentChanged = surveyFormService.isFormContentChanged(
@@ -140,17 +122,9 @@ public class SurveyService {
                 );
             }
         }
-
         return questionsChanged;
     }
 
-    /**
-     * ID로 설문을 조회합니다.
-     *
-     * @param surveyId 설문 ID
-     * @return 조회된 설문
-     * @throws ApplicationException 설문이 존재하지 않는 경우
-     */
     private Survey findSurveyById(Long surveyId) {
         return surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new ApplicationException(SURVEY_NOT_FOUND));
