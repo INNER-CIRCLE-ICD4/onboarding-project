@@ -1,6 +1,5 @@
-package survey.domain.model;
+package com.onboarding.model.survey;
 
-import com.onboarding.model.Option;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
