@@ -1,5 +1,6 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,9 @@ public class Answer {
     @GeneratedValue
     private UUID id;
 
+    @Setter
     @ManyToOne(optional = false)
+    @JsonBackReference // ✅ 순환 참조 방지: Response → Answer 방향 직렬화만 허용
     private Response response;
 
     @ManyToOne(optional = false)
@@ -33,7 +36,6 @@ public class Answer {
         this.selectedOptions = selectedOptions;
     }
 
-    // ✅ 직접 추가: AnswerDto 에서 사용하기 위함
     public UUID getQuestionId() {
         return question.getId();
     }

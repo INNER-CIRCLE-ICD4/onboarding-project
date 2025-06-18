@@ -1,6 +1,6 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,7 +33,7 @@ public class Survey {
             orphanRemoval = true
     )
     @OrderColumn(name = "question_order")
-    @JsonIgnore
+    @JsonManagedReference // ✅ 순환 참조 방지
     private List<Question> questions = new ArrayList<>();
 
     public Survey(String title, String description) {
@@ -68,9 +68,15 @@ public class Survey {
         this.questions.clear();
         newQuestions.forEach(this::addQuestion);
     }
-    // Survey.java 내에 아래 메서드를 추가하세요
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+        for (Question question : questions) {
+            question.setSurvey(this); // 양방향 연관관계 설정
+        }
+    }
+
     public void clearQuestions() {
         this.questions.clear();
     }
-
 }
