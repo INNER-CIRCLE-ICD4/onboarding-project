@@ -2,7 +2,7 @@ package com.icd.seonghunlee_onboarding.answer.survey.answer.validator;
 
 import com.icd.seonghunlee_onboarding.answer.survey.answer.AnswerValidator;
 
-public class LongTextValidator implements AnswerValidator {
+public class LongTextValidator implements AnswerValidator<String> {
 
     private static final int MIN_LENGTH = 20;
     private static final int MAX_LENGTH = 100;

@@ -21,6 +21,10 @@ public class SingleChoiceValidator implements AnswerValidator<String> {
 
         if (input == null) return true;
 
+        if (validChoices == null || validChoices.isEmpty()) {
+            return true; // 선택지가 없으면 어떤 값도 허용
+        }
+
         return validChoices.contains(input);
     }
 
