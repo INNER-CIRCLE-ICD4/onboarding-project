@@ -17,7 +17,7 @@ public class AnswerToResponseDtoMapper {
         List<AnswerResponse.AnswerDetailDto> details = domain.getDetails().stream().map(detail -> {
             AnswerResponse.AnswerDetailDto d = new AnswerResponse.AnswerDetailDto();
             d.setContentId(detail.getContentId());
-            d.setOptionId(detail.getOptionId());
+            d.setOptionIds(detail.getOptionIds());
             d.setAnswerValue(detail.getAnswerValue());
             return d;
         }).collect(Collectors.toList());

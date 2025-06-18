@@ -20,7 +20,7 @@ public class AnswerToDomainMapper {
                 .stream()
                 .map(detailDto -> AnswerDetail.builder()
                         .contentId(detailDto.getContentId())
-                        .optionId(detailDto.getOptionId())
+                        .optionIds(detailDto.getOptionIds())
                         .answerValue(detailDto.getAnswerValue())
                         .build()
         ).collect(Collectors.toList());

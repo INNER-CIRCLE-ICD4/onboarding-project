@@ -14,7 +14,7 @@ public class AnswerResponse {
     @Data
     public static class AnswerDetailDto {
         private Long contentId;
-        private Long optionId;
+        private List<Long> optionIds;
         private String answerValue;
     }
 } 

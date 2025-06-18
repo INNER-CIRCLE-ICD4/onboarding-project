@@ -103,7 +103,7 @@ class SurveyFormServiceTest {
                 .describe("귀하의 성함을 입력해 주세요.")
                 .type("short_answer")
                 .isRequired(true)
-                .options(null)
+                .options(Arrays.asList("조준범"))
                 .build());
         contents.add(InsertContentRequest.builder()
                 .name("만족도")
@@ -117,7 +117,7 @@ class SurveyFormServiceTest {
                 .describe("서비스 개선을 위한 의견을 작성해 주세요.")
                 .type("long_answer")
                 .isRequired(false)
-                .options(null)
+                .options(Arrays.asList("너무 좋은 서비스입니다."))
                 .build());
         contents.add(InsertContentRequest.builder()
                 .name("선호 기능")

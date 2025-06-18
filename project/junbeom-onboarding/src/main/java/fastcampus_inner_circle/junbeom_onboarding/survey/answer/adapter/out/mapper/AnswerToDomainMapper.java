@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 public class AnswerToDomainMapper {
 
     public static Answer toDomain(AnswerJpaEntity entity) {
-        List<AnswerDetail> details = entity.getDetails() == null ? Collections.emptyList() :
+        /*List<AnswerDetail> details = entity.getDetails() == null ? Collections.emptyList() :
                 entity.getDetails().stream()
                         .map(detailDto -> AnswerDetail.builder()
                                 .contentId(detailDto.getContentId())
-                                .optionId(detailDto.getOptionId())
+                                .optionsId(detailDto.getOptionId())
                                 .answerValue(detailDto.getAnswerValue())
                                 .build()
                         ).collect(Collectors.toList());
@@ -26,6 +26,13 @@ public class AnswerToDomainMapper {
                 .formId(entity.getFormId())
                 .submittedAt(entity.getSubmittedAt()) // DB 값 사용
                 .details(details)
-                .build();
+                .build();*/
+        Answer.builder()
+                .formId(entity.getFormId())
+                .submittedAt(entity.getSubmittedAt())
+                .details()
+
+
+        return new Answer();
     }
 }

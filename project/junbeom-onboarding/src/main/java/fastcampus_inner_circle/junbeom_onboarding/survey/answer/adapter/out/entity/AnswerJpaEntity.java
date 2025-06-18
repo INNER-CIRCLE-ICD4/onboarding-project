@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "answer")
+@Table(name = "survey_answer")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,4 +27,8 @@ public class AnswerJpaEntity {
 
     @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerDetailJpaEntity> details;
+
+    public void setDetails(List<AnswerDetailJpaEntity> details) {
+        this.details = details;
+    }
 } 

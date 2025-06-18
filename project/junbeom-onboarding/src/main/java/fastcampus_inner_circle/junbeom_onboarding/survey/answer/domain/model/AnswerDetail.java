@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -12,6 +13,7 @@ import lombok.Builder;
 public class AnswerDetail {
     private Long id;
     private Long contentId;
-    private Long optionId;
+    private List<AnswerDetailOption> optionIds;
     private String answerValue;
+    private String questionContent;
 } 

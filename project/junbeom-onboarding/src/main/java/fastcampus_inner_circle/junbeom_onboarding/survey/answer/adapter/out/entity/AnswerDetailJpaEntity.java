@@ -5,9 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import java.util.List;
 
 @Entity
-@Table(name = "answer_detail")
+@Table(name = "survey_answer_detail")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +25,16 @@ public class AnswerDetailJpaEntity {
     @Column(nullable = false)
     private Long contentId;
 
-    private Long optionId;
-
+    @Column(length = 255)
     private String answerValue;
+
+    @Column(length = 255)
+    private String questionContent;
+
+    @OneToMany(mappedBy = "answerDetail", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnswerDetailOptionJpaEntity> options;
+
+    public void setOptions(List<AnswerDetailOptionJpaEntity> options) {
+        this.options = options;
+    }
 } 
