@@ -11,6 +11,7 @@ import com.okdori.surveyservice.dto.SurveyCreateDto
 import com.okdori.surveyservice.dto.SurveyResponseDto
 import com.okdori.surveyservice.exception.BadRequestException
 import com.okdori.surveyservice.exception.ErrorCode.*
+import com.okdori.surveyservice.exception.NotFoundException
 import com.okdori.surveyservice.repository.SurveyItemOptionRepository
 import com.okdori.surveyservice.repository.SurveyItemRepository
 import com.okdori.surveyservice.repository.SurveyRepository
@@ -82,7 +83,7 @@ class SurveyService(
         val survey = queryFactory
             .selectFrom(survey)
             .where(survey.id.eq(surveyId))
-            .fetchOne() ?: throw NoSuchElementException()
+            .fetchOne() ?: throw NotFoundException(NOT_FOUND_SURVEY)
 
         val itemOptionsMap = queryFactory
             .select(

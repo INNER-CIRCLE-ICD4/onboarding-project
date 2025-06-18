@@ -5,7 +5,7 @@ server:
       charset: UTF-8
       enabled: true
       force: true
-    context-path: /survey-service/api
+    context-path: /survey-service
 
 spring:
   application:

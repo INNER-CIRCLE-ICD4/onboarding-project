@@ -28,6 +28,7 @@ data class SurveyResponseDto(
 
 data class ItemResponseDto(
     var itemId: String,
+    var itemName: String,
     var itemDescription: String?,
     var itemType: ItemType,
     var isRequired: Boolean,
@@ -36,6 +37,7 @@ data class ItemResponseDto(
 ) {
     constructor(item: SurveyItem, options: List<SurveyItemOption>) : this(
         itemId = item.id!!,
+        itemName = item.itemName,
         itemDescription = item.itemDescription,
         itemType = item.itemType,
         isRequired = item.isRequired,

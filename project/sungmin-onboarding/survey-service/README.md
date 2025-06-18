@@ -168,6 +168,69 @@
         "itemDescription": "귀하의 성함을 입력해주세요",
         "itemType": "SHORT_TEXT",
         "isRequired": true,
+        "hasOtherOption": false,
+        "options": []
+      },
+      {
+        "itemId": "ITM1234567891",
+        "itemName": "연령대",
+        "itemDescription": "귀하의 연령대를 선택해주세요",
+        "itemType": "SINGLE_SELECT",
+        "isRequired": true,
+        "hasOtherOption": false,
+        "options": [
+          {
+            "optionId": "OPT1234567890",
+            "optionName": "10대"
+          },
+          {
+            "optionId": "OPT1234567891",
+            "optionName": "20대"
+          },
+          {
+            "optionId": "OPT1234567892",
+            "optionName": "30대"
+          }
+        ]
+      }
+      // ... 나머지 항목들
+    ]
+  }
+}
+```
+
+---
+
+## 2. 설문조사 조회 API
+
+### `GET /api/surveys/{surveyId}`
+
+특정 설문조사 항목을 조회합니다.
+
+#### Path Parameters
+| 파라미터 | 타입 | 설명 |
+|----------|------|------|
+| `surveyId` | string | 설문조사 ID (CHAR(13)) |
+
+#### Response (성공)
+```json
+{
+  "status": 200,
+  "message": "설문조사 항목 조회가 완료되었습니다.",
+  "path": "/api/surveys/SUR1234567890",
+  "timestamp": "2025-06-14T15:00:00",
+  "error": null,
+  "data": {
+    "surveyId": "SUR1234567890",
+    "surveyName": "고객 만족도 조사",
+    "surveyDescription": "서비스 개선을 위한 고객 만족도 조사입니다.",
+    "items": [
+      {
+        "itemId": "ITM1234567890",
+        "itemName": "이름",
+        "itemDescription": "귀하의 성함을 입력해주세요",
+        "itemType": "SHORT_TEXT",
+        "isRequired": true,
         "isDeleted": false,
         "hasOtherOption": false,
         "options": []
@@ -206,7 +269,7 @@
 
 ---
 
-## 2. 설문조사 수정 API
+## 3. 설문조사 수정 API
 
 ### `PUT /api/surveys/{surveyId}`
 
@@ -275,7 +338,7 @@
 
 ---
 
-## 3. 설문조사 응답 제출 API
+## 4. 설문조사 응답 제출 API
 
 ### `POST /api/surveys/{surveyId}/responses`
 
@@ -358,7 +421,7 @@
 
 ---
 
-## 4. 설문조사 응답 조회 API
+## 5. 설문조사 응답 조회 API
 
 ### `GET /api/surveys/{surveyId}/responses`
 
