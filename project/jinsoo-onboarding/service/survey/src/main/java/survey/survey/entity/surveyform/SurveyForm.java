@@ -43,9 +43,15 @@ public class SurveyForm extends BaseEntity {
         return surveyForm;
     }
 
-    public void update(String title, String description) {
-        this.title = title;
-        this.description = description;
+    public static SurveyForm update(Long version, String title, String description, Long surveyId) {
+        SurveyForm surveyForm = new SurveyForm();
+        surveyForm.version = version;
+        surveyForm.title = title;
+        surveyForm.description = description;
+        surveyForm.surveyId = surveyId;
+        surveyForm.createdAt = LocalDateTime.now();
+        surveyForm.modifiedAt = surveyForm.createdAt;
+        return surveyForm;
     }
 
     public void incrementVersion() {

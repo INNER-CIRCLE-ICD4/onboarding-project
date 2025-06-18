@@ -1,7 +1,6 @@
 package survey.survey.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,5 +25,10 @@ public class Survey extends BaseEntity {
         survey.createdAt = LocalDateTime.now();
         survey.modifiedAt = survey.createdAt;
         return survey;
+    }
+
+    public void increaseVersion(Long surveyFormVersion) {
+        this.surveyFormVersion = surveyFormVersion;
+        this.modifiedAt = LocalDateTime.now();
     }
 }
