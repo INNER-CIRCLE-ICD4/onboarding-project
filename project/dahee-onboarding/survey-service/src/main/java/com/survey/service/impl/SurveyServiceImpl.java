@@ -1,6 +1,8 @@
 package com.survey.service.impl;
 
 import com.survey.common.dto.*;
+import com.survey.common.exception.ApplicationException;
+import com.survey.common.exception.ErrorCode;
 import com.survey.core.entity.Survey;
 import com.survey.core.entity.SurveyItem;
 import com.survey.core.entity.SurveyResponse;
@@ -44,7 +46,7 @@ public class SurveyServiceImpl implements SurveyService {
         // [1-1] 항목 개수 검증
         List<SurveyRequest.Item> items = request.getItems();
         if (items == null || items.size() < 1 || items.size() > 10) {
-            throw new IllegalArgumentException("설문 항목 개수는 1개 이상 10개 이하만 허용됩니다.");
+            throw new ApplicationException(ErrorCode.INVALID_ITEM_COUNT);
         }
 
         // [1-2] 각 항목 유형별로 보기 개수 제한
@@ -99,55 +101,69 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     @Transactional
     public ResponseDto submitResponse(Long surveyId, ResponseRequest request) {
-        // [2-1] 중복 응답 체크
+        // [1] 중복 응답 체크
         if (responseRepo.existsBySurveyIdAndUuid(surveyId, request.getUuid())) {
-            throw new IllegalStateException("이미 응답하셨습니다.");
+            throw new ApplicationException(ErrorCode.DUPLICATE_RESPONSE);
         }
 
-        // [2-2] 설문 항목 전체 조회
-        List<SurveyItem> items = itemRepo.findBySurveyId(surveyId);
+        // [2] 설문 항목 전체 조회 (isDeleted false만 체크 필요시 추가)
+        List<SurveyItem> items = itemRepo.findBySurveyIdAndIsDeletedFalse(surveyId);
+        if (items == null || items.isEmpty()) {
+            throw new ApplicationException(ErrorCode.NOT_FOUND, "응답 대상 설문 문항이 존재하지 않습니다.");
+        }
         Map<Long, SurveyItem> itemMap = items.stream()
                 .collect(Collectors.toMap(SurveyItem::getId, Function.identity()));
 
-        // [2-3] 필수 문항 응답 누락 체크
+        // [3] 필수 문항 응답 누락 체크
         for (SurveyItem item : items) {
             if (item.isRequired()) {
                 boolean answered = request.getAnswers().stream()
                         .anyMatch(a -> a.getItemId().equals(item.getId())
                                 && a.getAnswer() != null && !a.getAnswer().toString().trim().isEmpty());
                 if (!answered) {
-                    throw new IllegalArgumentException("필수 문항이 누락되었습니다: " + item.getQuestion());
+                    throw new ApplicationException(
+                            ErrorCode.VALIDATION_FAIL,
+                            "필수 문항이 누락되었습니다: " + item.getQuestion()
+                    );
                 }
             }
         }
 
-        // [2-4] 각 응답 항목이 설문 문항과 매칭/유효성 체크
+        // [4] 각 응답 항목이 설문 문항과 매칭/유효성 체크
         for (ResponseRequest.Answer answer : request.getAnswers()) {
             SurveyItem item = itemMap.get(answer.getItemId());
             if (item == null) {
-                throw new IllegalArgumentException("존재하지 않는 문항(itemId=" + answer.getItemId() + ")에 응답했습니다.");
+                throw new ApplicationException(ErrorCode.INVALID_ITEM_ID, answer.getItemId());
             }
             QuestionType type = item.getType();
             String value = answer.getAnswer();
             List<String> options = item.getOptions();
             if (type == QuestionType.SINGLE_CHOICE) {
                 if (options == null || !options.contains(value)) {
-                    throw new IllegalArgumentException("선택형 문항에 허용되지 않은 값입니다: " + value);
+                    throw new ApplicationException(
+                            ErrorCode.VALIDATION_FAIL,
+                            "선택형 문항에 허용되지 않은 값입니다: " + value
+                    );
                 }
             } else if (type == QuestionType.MULTI_CHOICE) {
-                // 여러 값은 ","로 구분한다고 가정
                 if (options == null) {
-                    throw new IllegalArgumentException("문항 설정 오류: 선택지가 존재하지 않습니다.");
+                    throw new ApplicationException(
+                            ErrorCode.VALIDATION_FAIL,
+                            "문항 설정 오류: 선택지가 존재하지 않습니다."
+                    );
                 }
                 for (String v : value.split(",")) {
                     if (!options.contains(v.trim())) {
-                        throw new IllegalArgumentException("선택형 문항에 허용되지 않은 값입니다: " + v);
+                        throw new ApplicationException(
+                                ErrorCode.VALIDATION_FAIL,
+                                "선택형 문항에 허용되지 않은 값입니다: " + v
+                        );
                     }
                 }
             }
         }
 
-        // [2-5] 응답 저장
+        // [5] 응답 저장
         SurveyResponse resp = SurveyResponse.builder()
                 .surveyId(surveyId)
                 .uuid(request.getUuid())
@@ -173,6 +189,7 @@ public class SurveyServiceImpl implements SurveyService {
                 .build();
     }
 
+
     // 임시 시리즈 조회 (TODO: 실제 구현 필요)
     private Long lookupSeriesId(String code) {
         // TODO: SurveySeries 리포지토리에서 code로 조회
@@ -184,8 +201,8 @@ public class SurveyServiceImpl implements SurveyService {
     @Transactional(readOnly = true)
     public SurveyRequest getSurveyItems(Long surveyId, Integer version) {
         Survey survey = (Survey) ((version == null)
-                        ? surveyRepo.findTopByIdOrderByVersionDesc(surveyId).orElseThrow() //최신 버전 조회
-                        : surveyRepo.findByIdAndVersion(surveyId, version).orElseThrow()); // 특정 버전 조회
+                        ? surveyRepo.findTopByIdOrderByVersionDesc(surveyId).orElseThrow(() -> new ApplicationException(ErrorCode.SURVEY_NOT_FOUND, surveyId)) //최신 버전 조회
+                        : surveyRepo.findByIdAndVersion(surveyId, version).orElseThrow(() -> new ApplicationException(ErrorCode.SURVEY_NOT_FOUND, surveyId)));// 특정 버전 조회
 
         List<SurveyItem> items = itemRepo.findBySurveyIdAndIsDeletedFalse(survey.getId());
         // SurveyRequest.Item 변환
@@ -214,38 +231,47 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<SurveyAnswerResponseDto> getSurveyResponses(
-            Long surveyId,
-            Integer version,
-            Long itemId,
-            String answer,
-            Pageable pageable) {
+    public Page<SurveyAnswerResponseDto> getSurveyResponses(ResponseSearchCondition cond, Pageable pageable) {
+        Long surveyId = cond.getSurveyId();
+        Integer version = cond.getVersion();
+        Long itemId = cond.getItemId();
+        String answer = cond.getAnswer();
 
-        Page<SurveyResponse> responses = (Page<SurveyResponse>) responseRepo.findBySurveyId(surveyId, pageable);
+        // [1] SurveyId 기반 응답 페이징
+        Page<SurveyResponse> responses = responseRepo.findBySurveyId(surveyId, pageable);
 
-        // 1. SurveyResponse들의 surveyId 모으기
-        Set<Long> surveyIds = responses.stream()
-                .map(SurveyResponse::getSurveyId)
-                .collect(Collectors.toSet());
+        if (responses.isEmpty()) {
+            throw new ApplicationException(ErrorCode.NOT_FOUND, "해당 설문 응답이 존재하지 않습니다.");
+        }
 
-        // 2. SurveyId로 Survey 모두 조회 → (surveyId → version) 맵핑
+        Set<Long> surveyIds = responses.stream().map(SurveyResponse::getSurveyId).collect(Collectors.toSet());
+
         Map<Long, Integer> surveyVersionMap = surveyRepo.findAllById(surveyIds)
                 .stream()
                 .collect(Collectors.toMap(Survey::getId, Survey::getVersion));
 
-        // 3. 응답아이템 처리 (itemId/answer Advanced 필터)
         List<Long> responseIds = responses.stream().map(SurveyResponse::getId).toList();
         List<SurveyResponseItem> responseItems = responseItemRepo.findByResponseIdIn(responseIds);
+
+        if (responseItems.isEmpty()) {
+            throw new ApplicationException(ErrorCode.NOT_FOUND, "응답 항목 데이터가 없습니다.");
+        }
+
+        // Advanced 필터링 (itemId, answer)
         if (itemId != null || answer != null) {
             responseItems = responseItems.stream()
                     .filter(item -> (itemId == null || item.getSurveyItemId().equals(itemId)) &&
                             (answer == null || answer.equals(item.getAnswer())))
                     .toList();
+
+            if (responseItems.isEmpty()) {
+                throw new ApplicationException(ErrorCode.NOT_FOUND, "필터 조건에 맞는 응답이 없습니다.");
+            }
         }
+
         Map<Long, List<SurveyResponseItem>> responseItemMap =
                 responseItems.stream().collect(Collectors.groupingBy(SurveyResponseItem::getResponseId));
 
-        // 4. 응답 DTO 변환 (surveyId로 version 매핑)
         List<SurveyAnswerResponseDto> dtos = responses.stream().map(resp -> {
             List<SurveyResponseItem> items = responseItemMap.getOrDefault(resp.getId(), List.of());
             List<SurveyAnswerResponseDto.Answer> answers = items.stream().map(item ->
@@ -255,7 +281,7 @@ public class SurveyServiceImpl implements SurveyService {
                             item.getAnswer()
                     )).toList();
 
-            Integer respVersion = surveyVersionMap.getOrDefault(resp.getSurveyId(), 1); // 진짜 version!
+            Integer respVersion = surveyVersionMap.getOrDefault(resp.getSurveyId(), 1);
 
             return SurveyAnswerResponseDto.builder()
                     .responseId(resp.getId())
@@ -267,10 +293,12 @@ public class SurveyServiceImpl implements SurveyService {
                     .build();
         }).toList();
 
+        if (dtos.isEmpty()) {
+            throw new ApplicationException(ErrorCode.NOT_FOUND, "응답 결과 데이터가 없습니다.");
+        }
+
         return new PageImpl<>(dtos, pageable, responses.getTotalElements());
     }
-
-
 
 
 
@@ -279,7 +307,7 @@ public class SurveyServiceImpl implements SurveyService {
     public SurveyResponseDto updateSurvey(Long surveyId, SurveyRequest request) {
         // 1. 기존 설문, 기존 문항 목록 조회
         Survey oldSurvey = surveyRepo.findById(surveyId)
-                .orElseThrow(() -> new IllegalArgumentException("설문 없음"));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND));
         List<SurveyItem> oldItems = itemRepo.findBySurveyId(surveyId);
 
         // 2. 요청에서 온 최종 문항 목록

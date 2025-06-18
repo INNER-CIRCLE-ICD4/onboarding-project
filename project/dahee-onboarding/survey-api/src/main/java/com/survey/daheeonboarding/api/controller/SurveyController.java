@@ -53,24 +53,38 @@ public class SurveyController {
     /**
      * 설문 조회 API - 응답
      *  /api/surveys/1/responses?version=2&page=0&size=20&itemId=5&answer=Yes
+     *  /api/surveys/{surveyId}/responses?itemName=이름&answer=다히&page=0&size=20
+     *
      */
+//    @GetMapping("/{surveyId}/responses")
+//    public Page<SurveyAnswerResponseDto> getSurveyResponses(
+//            @PathVariable Long surveyId,
+//            @RequestParam(required = false) Integer version,
+//            @RequestParam(required = false) Long itemId,
+//            @RequestParam(required = false) String answer,
+//            @ParameterObject
+//            @PageableDefault(page = 0, size = 20)
+//            @SortDefault.SortDefaults({
+//                    @SortDefault(sort = "submittedAt", direction = Sort.Direction.DESC),
+//                    @SortDefault(sort = "id", direction = Sort.Direction.ASC)
+//            }) Pageable pageable
+//    ) {
+//        return surveyService.getSurveyResponses(surveyId, version, itemId, answer, pageable);
+//    }
+
     @GetMapping("/{surveyId}/responses")
     public Page<SurveyAnswerResponseDto> getSurveyResponses(
             @PathVariable Long surveyId,
-            @RequestParam(required = false) Integer version,
-            @RequestParam(required = false) Long itemId,
-            @RequestParam(required = false) String answer,
-
-            // ■ 페이징 기본값 0,20 + 기본 정렬 submittedAt(desc), itemId(asc)
+            @ModelAttribute ResponseSearchCondition cond, // DTO로!
             @ParameterObject
             @PageableDefault(page = 0, size = 20)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "submittedAt", direction = Sort.Direction.DESC),
-                    @SortDefault(sort = "itemId",       direction = Sort.Direction.ASC)
-            })
-            Pageable pageable
+                    @SortDefault(sort = "id", direction = Sort.Direction.ASC)
+            }) Pageable pageable
     ) {
-        return surveyService.getSurveyResponses(surveyId, version, itemId, answer, pageable);
+        cond.setSurveyId(surveyId);
+        return surveyService.getSurveyResponses(cond, pageable);
     }
 
     /**

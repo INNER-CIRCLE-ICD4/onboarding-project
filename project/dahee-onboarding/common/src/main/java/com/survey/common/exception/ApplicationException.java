@@ -1,14 +1,14 @@
 package com.survey.common.exception;
 
 public class ApplicationException extends RuntimeException {
-    private final ErrorCode code;
+    private final ErrorCode errorCode;
 
-    public ApplicationException(ErrorCode code, Object... args) {
-        super(code.format(args));
-        this.code = code;
+    public ApplicationException(ErrorCode errorCode, Object... args) {
+        super(errorCode.format(args)); // 동적 메시지 적용
+        this.errorCode = errorCode;
     }
 
-    public ErrorCode getCode() {
-        return code;
+    public ErrorCode getErrorCode() {
+        return errorCode;
     }
 }

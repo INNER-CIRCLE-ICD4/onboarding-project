@@ -37,7 +37,7 @@ public interface SurveyService {
      * @param surveyId
      * @return
      */
-    Page<SurveyAnswerResponseDto> getSurveyResponses(Long surveyId, Integer version, Long itemId, String answer, Pageable pageable);
+//    Page<SurveyAnswerResponseDto> getSurveyResponses(Long surveyId, Integer version, Long itemId, String answer, Pageable pageable);
     
     /**
      * 설문 수정
@@ -46,4 +46,6 @@ public interface SurveyService {
      * @return
      */
     SurveyResponseDto updateSurvey(Long surveyId, SurveyRequest request);
+
+    Page<SurveyAnswerResponseDto> getSurveyResponses(ResponseSearchCondition cond, Pageable pageable);
 }
