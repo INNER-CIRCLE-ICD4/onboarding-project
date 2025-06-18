@@ -19,7 +19,8 @@ class FormController(private val formService: FormService) {
 
     @PostMapping("/api/v1/forms", consumes = ["application/json"], produces = ["application/json"])
     fun createForm(@RequestBody command: FormCommand): ResponseEntity<FormResponse> {
-        val form: Form = formService.create(command)
+        val formId: String = formService.create(command)
+        val form: Form = formService.getById(formId)
         val response: FormResponse = FormResponse.from(form)
         val location: URI = fromCurrentRequest()
             .path("/{id}")
@@ -42,7 +43,8 @@ class FormController(private val formService: FormService) {
         @PathVariable formId: String,
         @RequestBody command: FormCommand
     ): ResponseEntity<FormResponse> {
-        val form: Form = formService.update(formId, command)
+        val formId: String = formService.update(formId, command)
+        val form: Form = formService.getById(formId)
         val response: FormResponse = FormResponse.from(form)
         return ResponseEntity.ok(response)
     }

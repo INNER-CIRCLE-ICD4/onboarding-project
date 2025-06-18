@@ -4,13 +4,11 @@ import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionSnapshot
 
-data class QuestionSnapshots(
-    private val values: List<QuestionSnapshot> = emptyList()
+class QuestionSnapshots(
+    values: List<QuestionSnapshot> = emptyList()
 ) {
 
-    init {
-        values.sortedByDescending { it.version }
-    }
+    private val values: List<QuestionSnapshot> = values.sortedByDescending { it.version }
 
     fun list(): List<QuestionSnapshot> {
         return values

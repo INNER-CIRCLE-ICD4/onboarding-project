@@ -18,10 +18,9 @@ class FormServiceImpl(
     @Transactional
     override fun create(
         command: FormCommand
-    ): Form {
-        val form = Form.from(command)
-        val id = writer.insertOrUpdate(form)
-        return getById(id)
+    ): String {
+        val form: Form = Form.from(command)
+        return writer.insertOrUpdate(form)
     }
 
     override fun getById(id: String): Form {
@@ -32,10 +31,9 @@ class FormServiceImpl(
     override fun update(
         formId: String,
         command: FormCommand,
-    ): Form {
+    ): String {
         val form: Form = this.getById(formId)
         val updatedForm = form.updated(command)
-        writer.insertOrUpdate(updatedForm)
-        return updatedForm
+        return writer.insertOrUpdate(updatedForm)
     }
 }

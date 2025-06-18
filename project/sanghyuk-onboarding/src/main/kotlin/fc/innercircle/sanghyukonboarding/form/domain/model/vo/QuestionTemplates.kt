@@ -4,13 +4,9 @@ import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionTemplate
 
-data class QuestionTemplates(
-    private val values: List<QuestionTemplate> = emptyList()
-) {
+class QuestionTemplates(values: List<QuestionTemplate> = emptyList()) {
 
-    init {
-        values.sortedBy { it.displayOrder }
-    }
+    private val values: List<QuestionTemplate> = values.sortedBy { it.displayOrder }
 
     fun list(): List<QuestionTemplate> {
         return values.sortedBy { it.displayOrder }

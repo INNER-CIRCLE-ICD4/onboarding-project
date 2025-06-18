@@ -6,7 +6,7 @@ import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.QuestionTemplates
 import fc.innercircle.sanghyukonboarding.form.domain.validator.FormValidator
 
-open class Form(
+class Form(
     val id: String = "",
     val title: String,
     val description: String,
@@ -14,7 +14,9 @@ open class Form(
 ) {
 
     val questionTemplates: QuestionTemplates = QuestionTemplates(
-        values = questionTemplates.filter { it.formId == id }
+        values = questionTemplates.filter { it ->
+            it.formId.isEmpty() || it.formId == id
+        }
     )
 
     init {
@@ -60,7 +62,8 @@ open class Form(
                         // ID가 비어 있으면 새 질문 생성
                         QuestionTemplate.of(
                             cmd = questionCmd,
-                            displayOrder = idx
+                            displayOrder = idx,
+                            formId = this.id,
                         )
                     }
                     else -> {
@@ -80,10 +83,10 @@ open class Form(
                     }
                 }
             }
-
+        val createdOrUpdatedQuestionTemplateIds: List<String> = createdOrUpdatedQuestionTemplates.map { it.id }
         val deletedQuestionTemplates: List<QuestionTemplate> = this.questionTemplates.list()
             // 기존 질문 중에서 새 요청에 포함되지 않은 질문들을 찾아 삭제 처리
-            .filter { it -> !createdOrUpdatedQuestionTemplates.contains(it) }
+            .filter { it -> !createdOrUpdatedQuestionTemplateIds.contains(it.id) }
             .map { it.deleted() }
 
         return this.copy(

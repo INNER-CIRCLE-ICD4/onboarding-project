@@ -2,9 +2,12 @@ package fc.innercircle.sanghyukonboarding.form.domain.model.vo
 
 import fc.innercircle.sanghyukonboarding.form.domain.model.SelectableOption
 
-data class SelectableOptions(
-    private val values: List<SelectableOption> = emptyList()
+class SelectableOptions(
+    values: List<SelectableOption> = emptyList()
 ) {
+
+    private val values: List<SelectableOption> = values.sortedBy { it.displayOrder }
+
     fun list(): List<SelectableOption> {
         return values.sortedBy { it.displayOrder }
     }

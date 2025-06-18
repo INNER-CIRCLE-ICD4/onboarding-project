@@ -50,7 +50,9 @@ data class FormResponse(
                 formId = form.id,
                 title = form.title,
                 description = form.description,
-                questions = form.questionTemplates.list().map { Question.from(it) }
+                questions = form.questionTemplates.list().map {
+                    Question.from(it)
+                }
             )
         }
     }

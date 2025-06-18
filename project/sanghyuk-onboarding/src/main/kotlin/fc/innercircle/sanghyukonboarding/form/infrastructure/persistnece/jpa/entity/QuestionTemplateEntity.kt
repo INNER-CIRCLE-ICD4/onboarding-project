@@ -36,6 +36,12 @@ open class QuestionTemplateEntity(
     val required: Boolean,
     @Column(nullable = false, columnDefinition = "int default 0 comment '항목 순서'")
     val displayOrder: Int,
+    @Column(
+        name = "deleted",
+        nullable = false,
+        columnDefinition = "boolean default false not null comment '삭제 여부'"
+    )
+    val deleted: Boolean = false,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
         name = "form_id",
@@ -64,6 +70,7 @@ open class QuestionTemplateEntity(
             displayOrder = displayOrder,
             snapshots = questionSnapshots,
             formId = formEntity.id,
+            deleted = deleted,
         )
     }
 
@@ -89,6 +96,7 @@ open class QuestionTemplateEntity(
                 required = questionTemplate.required,
                 displayOrder = questionTemplate.displayOrder,
                 formEntity = formEntity,
+                deleted = questionTemplate.deleted,
             )
         }
     }

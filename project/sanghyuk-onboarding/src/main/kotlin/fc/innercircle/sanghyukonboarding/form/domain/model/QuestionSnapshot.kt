@@ -16,7 +16,9 @@ open class QuestionSnapshot(
 ) {
 
     val selectableOptions: SelectableOptions = SelectableOptions(
-        values = selectableOptions.filter { it.questionSnapshotId == id }
+        values = selectableOptions.filter { it ->
+            it.questionSnapshotId.isNotEmpty() && it.questionSnapshotId == id
+        }
     )
 
     init {

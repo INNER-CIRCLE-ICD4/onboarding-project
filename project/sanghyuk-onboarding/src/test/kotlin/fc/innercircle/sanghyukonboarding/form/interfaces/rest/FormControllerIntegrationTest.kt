@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActionsDsl
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-
+import org.springframework.test.web.servlet.put
 
 @Import(MysqlTestContainerConfig::class)
 @AutoConfigureMockMvc
@@ -42,29 +42,29 @@ class FormControllerIntegrationTest : BehaviorSpec({
         given("유효한 요청 값으로") {
             // Given
             // 필요한 데이터 준비
-            val cmd = FormCreateCommand(
+            val cmd = FormCommand(
                 title = "티셔츠 신청",
                 description = "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요.",
                 questions = listOf(
-                    FormCreateCommand.Question(
+                    FormCommand.Question(
                         title = "이름",
                         description = "반드시 본명을 입력해주세요.",
                         type = InputType.TEXT.name,
                         required = true
                     ),
-                    FormCreateCommand.Question(
+                    FormCommand.Question(
                         title = "티셔츠 사이즈",
                         type = InputType.RADIO.name,
                         required = false,
                         selectableOptions = listOf(
-                            FormCreateCommand.Question.SelectableOption(text = "XS"),
-                            FormCreateCommand.Question.SelectableOption(text = "S"),
-                            FormCreateCommand.Question.SelectableOption(text = "M"),
-                            FormCreateCommand.Question.SelectableOption(text = "L"),
-                            FormCreateCommand.Question.SelectableOption(text = "XL")
+                            FormCommand.Question.SelectableOption(text = "XS"),
+                            FormCommand.Question.SelectableOption(text = "S"),
+                            FormCommand.Question.SelectableOption(text = "M"),
+                            FormCommand.Question.SelectableOption(text = "L"),
+                            FormCommand.Question.SelectableOption(text = "XL")
                         )
                     ),
-                    FormCreateCommand.Question(
+                    FormCommand.Question(
                         title = "기타 의견",
                         type = InputType.LONG_TEXT.name,
                         required = false,
@@ -150,29 +150,29 @@ class FormControllerIntegrationTest : BehaviorSpec({
 
         given("존재하는 설문조사에 대해") {
 
-            val cmd = FormCreateCommand(
+            val cmd = FormCommand(
                 title = "티셔츠 신청",
                 description = "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요.",
                 questions = listOf(
-                    FormCreateCommand.Question(
+                    FormCommand.Question(
                         title = "이름",
                         description = "반드시 본명을 입력해주세요.",
                         type = InputType.TEXT.name,
                         required = true
                     ),
-                    FormCreateCommand.Question(
+                    FormCommand.Question(
                         title = "티셔츠 사이즈",
                         type = InputType.RADIO.name,
                         required = false,
                         selectableOptions = listOf(
-                            FormCreateCommand.Question.SelectableOption(text = "XS"),
-                            FormCreateCommand.Question.SelectableOption(text = "S"),
-                            FormCreateCommand.Question.SelectableOption(text = "M"),
-                            FormCreateCommand.Question.SelectableOption(text = "L"),
-                            FormCreateCommand.Question.SelectableOption(text = "XL")
+                            FormCommand.Question.SelectableOption(text = "XS"),
+                            FormCommand.Question.SelectableOption(text = "S"),
+                            FormCommand.Question.SelectableOption(text = "M"),
+                            FormCommand.Question.SelectableOption(text = "L"),
+                            FormCommand.Question.SelectableOption(text = "XL")
                         )
                     ),
-                    FormCreateCommand.Question(
+                    FormCommand.Question(
                         title = "기타 의견",
                         type = InputType.LONG_TEXT.name,
                         required = false,
@@ -217,35 +217,35 @@ class FormControllerIntegrationTest : BehaviorSpec({
         }
     }
 
-    context("설문 조사 수정 API 테슽") {
+    context("설문 조사 수정 API 테스트") {
 
         formWriter.deleteAll()
 
         given("존재하는 설문조사에 대해") {
 
-            val cmd = FormCreateCommand(
+            val cmd = FormCommand(
                 title = "티셔츠 신청",
                 description = "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요.",
                 questions = listOf(
-                    FormCreateCommand.Question(
+                    FormCommand.Question(
                         title = "이름",
                         description = "반드시 본명을 입력해주세요.",
                         type = InputType.TEXT.name,
                         required = true
                     ),
-                    FormCreateCommand.Question(
+                    FormCommand.Question(
                         title = "티셔츠 사이즈",
                         type = InputType.RADIO.name,
                         required = false,
                         selectableOptions = listOf(
-                            FormCreateCommand.Question.SelectableOption(text = "XS"),
-                            FormCreateCommand.Question.SelectableOption(text = "S"),
-                            FormCreateCommand.Question.SelectableOption(text = "M"),
-                            FormCreateCommand.Question.SelectableOption(text = "L"),
-                            FormCreateCommand.Question.SelectableOption(text = "XL")
+                            FormCommand.Question.SelectableOption(text = "XS"),
+                            FormCommand.Question.SelectableOption(text = "S"),
+                            FormCommand.Question.SelectableOption(text = "M"),
+                            FormCommand.Question.SelectableOption(text = "L"),
+                            FormCommand.Question.SelectableOption(text = "XL")
                         )
                     ),
-                    FormCreateCommand.Question(
+                    FormCommand.Question(
                         title = "기타 의견",
                         type = InputType.LONG_TEXT.name,
                         required = false,
@@ -258,13 +258,32 @@ class FormControllerIntegrationTest : BehaviorSpec({
             `when`("설문 조사 수정 API를 호출하면") {
 
                 val updateCmd = FormCommand(
-                    title = "수정된 티셔츠 신청",
-                    description = "수정된 티셔츠를 신청하려면 이름 및 사이즈를 입력하세요.",
+                    title = "티셔츠 신청 (수정)",
+                    description = "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요. (수정됨)",
                     questions = listOf(
                         FormCommand.Question(
+                            title = "(수정 시 추가 문항) 귀하의 키는 몇 cm 인가요?",
+                            type = InputType.CHECKBOX.name,
+                            required = false,
+                            selectableOptions = listOf(
+                                FormCommand.Question.SelectableOption(
+                                    text = "180cm"
+                                ),
+                                FormCommand.Question.SelectableOption(
+                                    text = "170cm"
+                                ),
+                                FormCommand.Question.SelectableOption(
+                                    text = "160cm"
+                                ),
+                                FormCommand.Question.SelectableOption(
+                                    text = "150cm"
+                                ),
+                            ),
+                        ),
+                        FormCommand.Question(
                             questionTemplateId = form.questionTemplates.list()[0].id,
-                            title = "이름",
-                            description = "반드시 본명을 입력해주세요.",
+                            title = "이름 (수정)",
+                            description = "반드시 본명을 입력해주세요. (수정)",
                             type = InputType.TEXT.name,
                             required = true,
                             version = form.questionTemplates.list()[0].version,
@@ -272,16 +291,16 @@ class FormControllerIntegrationTest : BehaviorSpec({
                         FormCommand.Question(
                             questionTemplateId = form.questionTemplates.list()[1].id,
                             title = "티셔츠 사이즈",
-                            type = InputType.RADIO.name,
+                            type = InputType.CHECKBOX.name,
                             required = false,
                             selectableOptions = listOf(
                                 FormCommand.Question.SelectableOption(
                                     selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[0].id,
-                                    text = "XS"
+                                    text = "XL"
                                 ),
                                 FormCommand.Question.SelectableOption(
                                     selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[1].id,
-                                    text = "S"
+                                    text = "L"
                                 ),
                                 FormCommand.Question.SelectableOption(
                                     selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[2].id,
@@ -289,26 +308,19 @@ class FormControllerIntegrationTest : BehaviorSpec({
                                 ),
                                 FormCommand.Question.SelectableOption(
                                     selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[3].id,
-                                    text = "L"
+                                    text = "S"
                                 ),
                                 FormCommand.Question.SelectableOption(
                                     selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[4].id,
-                                    text = "XL"
+                                    text = "XS"
                                 ),
                             ),
                             version = form.questionTemplates.list()[1].version,
                         ),
-                        FormCommand.Question(
-                            questionTemplateId = form.questionTemplates.list()[2].id,
-                            title = "기타 의견",
-                            type = InputType.LONG_TEXT.name,
-                            required = false,
-                            version = form.questionTemplates.list()[2].version,
-                        )
                     )
                 )
 
-                val result: ResultActionsDsl = mockMvc.post("/api/v1/forms/${formId}") {
+                val result: ResultActionsDsl = mockMvc.put("/api/v1/forms/${formId}") {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(updateCmd)
                 }
@@ -319,7 +331,7 @@ class FormControllerIntegrationTest : BehaviorSpec({
                     }
                 }
 
-                then("응답 본문에 수정된 설문 조사의 내용이 포함되어야 한다.") {
+                then("응답 본문에는 수정된 설문 조사의 내용이 포함되어야 한다.") {
                     result.andExpect {
                         jsonPath("$.title") { value(updateCmd.title) }
                         jsonPath("$.description") { value(updateCmd.description) }
@@ -330,8 +342,8 @@ class FormControllerIntegrationTest : BehaviorSpec({
                             jsonPath("$.questions[$idx1].type") { value(question.type.uppercase()) }
                             jsonPath("$.questions[$idx1].required") { value(question.required) }
                             jsonPath("$.questions[$idx1].version") { value(0) } // 버전은 0이어야 함
-                            jsonPath("$.questions[$idx1].selectableOptions.size()") { value(question.selectableOptionCommands.size) }
-                            question.selectableOptionCommands.forEachIndexed { idx2, option ->
+                            jsonPath("$.questions[$idx1].selectableOptions.size()") { value(question.selectableOptions.size) }
+                            question.selectableOptions.forEachIndexed { idx2, option ->
                                 jsonPath("$.questions[$idx1].selectableOptions[$idx2].text") { value(option.text) }
                             }
                         }

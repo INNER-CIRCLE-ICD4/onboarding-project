@@ -6,7 +6,7 @@ import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.QuestionSnapshots
 import fc.innercircle.sanghyukonboarding.form.domain.validator.QuestionTemplateValidator
 
-open class QuestionTemplate(
+class QuestionTemplate(
     val id: String = "",
     val version: Long = 0L,
     val required: Boolean,
@@ -17,7 +17,9 @@ open class QuestionTemplate(
 ) {
 
     val snapshots: QuestionSnapshots = QuestionSnapshots(
-        values = snapshots.filter { it.questionTemplateId == id }
+        values = snapshots.filter { it ->
+            it.questionTemplateId.isNotEmpty() && it.questionTemplateId == id
+        }
     )
 
     init {
@@ -92,7 +94,8 @@ open class QuestionTemplate(
             version = this.version,
             required = this.required,
             displayOrder = this.displayOrder,
-            snapshots = snapshots
+            snapshots = snapshots,
+            deleted = true
         )
     }
 
@@ -108,10 +111,11 @@ open class QuestionTemplate(
     }
 
     private fun copy(
-        version: Long,
-        required: Boolean,
-        displayOrder: Int,
-        snapshots: QuestionSnapshots,
+        version: Long = this.version,
+        required: Boolean = this.required,
+        displayOrder: Int = this.displayOrder,
+        snapshots: QuestionSnapshots = this.snapshots,
+        deleted: Boolean = this.deleted
     ): QuestionTemplate {
         return QuestionTemplate(
             id = this.id,
@@ -119,12 +123,13 @@ open class QuestionTemplate(
             required = required,
             displayOrder = displayOrder,
             snapshots = snapshots.list(),
+            deleted = deleted,
             formId = this.formId
         )
     }
 
     companion object {
-        fun of(cmd: FormCommand.Question, displayOrder: Int): QuestionTemplate {
+        fun of(cmd: FormCommand.Question, displayOrder: Int, formId: String = ""): QuestionTemplate {
             val questionSnapshots: List<QuestionSnapshot> = listOf(
                 QuestionSnapshot.of(cmd)
             )
@@ -133,6 +138,7 @@ open class QuestionTemplate(
                 required = cmd.required,
                 displayOrder = displayOrder,
                 snapshots = questionSnapshots,
+                formId = formId,
             )
         }
     }

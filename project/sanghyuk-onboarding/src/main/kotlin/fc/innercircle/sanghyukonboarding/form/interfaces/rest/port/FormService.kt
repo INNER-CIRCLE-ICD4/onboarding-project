@@ -4,7 +4,7 @@ import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 
 interface FormService {
-    fun create(command: FormCommand): Form
+    fun create(command: FormCommand): String
     fun getById(id: String): Form
-    fun update(formId: String, command: FormCommand): Form
+    fun update(formId: String, command: FormCommand): String
 }

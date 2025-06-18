@@ -50,20 +50,17 @@ Content-Type: application/json
 }
 
 > {%
-    // response.headers는 일반 객체이므로 all(), warn() 같은 메서드는 없습니다.
-    console.log('response headers:', response.headers);
-    const formId = response.headers.formid;
-    if (formId) {
-        client.global.set('formId', formId);
-        console.log(`> Saved global variable formId = ${formId}`);
-    } else {
-        // console.warn() 대신 console.log() 또는 console.error()를 사용하세요.
-        console.log('> formId 헤더가 없습니다.');
-    }
+    // Location 헤더 전체를 가져오기
+    const location = response.headers.valueOf("Location");
+    // URL 마지막 슬래시 뒤의 formId만 추출
+    const formId = location.substring(location.lastIndexOf('/') + 1);
+    // 전역 변수로 저장
+    client.global.set('formId', formId);
+    client.log("Saved formId: " + formId);
 %}
 
 ### Get Form by ID
-GET http://localhost:8080/api/v1/forms/01JXYZJJBG23SP8NQ779TNTJPQ
+GET http://localhost:8080/api/v1/forms/{{formId}}
 Accept: application/json
 
 > {%
@@ -72,7 +69,7 @@ Accept: application/json
 %}
 
 ### Update Form by ID
-PUT http://localhost:8080/api/v1/forms/01JXYZE7ZNW5YFT45Y9DK6HQFV
+PUT http://localhost:8080/api/v1/forms/{{formId}}
 Content-Type: application/json
 
 {
@@ -80,7 +77,7 @@ Content-Type: application/json
   "description": "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요. (수정됨)",
   "questions": [
     {
-      "questionTemplateId": "01JXYZJJBMNHB8CXSMGFNS6ADM",
+      "questionTemplateId": "01JY0JARC9WSN6BSX5PH6Q8V4F",
       "title": "이름 (수정)",
       "description": "반드시 본명을 선택해주세요. (수정됨)",
       "type": "TEXT",
