@@ -2,7 +2,7 @@ package com.multi.sungwoongonboarding.common.valid;
 
 import com.multi.sungwoongonboarding.questions.application.repository.QuestionRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
-import com.multi.sungwoongonboarding.responses.dto.AnswerCreateRequest;
+import com.multi.sungwoongonboarding.submission.dto.AnswerCreateRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
