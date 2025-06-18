@@ -4,7 +4,6 @@ package com.multi.sungwoongonboarding.submission.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,4 +21,8 @@ public class Submission {
     private LocalDateTime createdAt;
     private List<Answers> answers;
     private String userId;
+
+    public List<Answers> getAnswersByQuestionId(Long questionId) {
+        return this.answers.stream().filter(answer -> answer.getQuestionId().equals(questionId)).toList();
+    }
 }

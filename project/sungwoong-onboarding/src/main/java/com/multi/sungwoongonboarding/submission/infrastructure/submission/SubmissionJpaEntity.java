@@ -4,11 +4,11 @@ import com.multi.sungwoongonboarding.common.entity.BaseEntity;
 import com.multi.sungwoongonboarding.submission.domain.Submission;
 import com.multi.sungwoongonboarding.submission.infrastructure.answers.AnswerJpaEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -29,17 +29,22 @@ public class SubmissionJpaEntity extends BaseEntity {
     @Column(name = "form_version", nullable = false)
     private int formVersion;
 
-    @OneToMany(mappedBy = "submissionJpaEntity")
+    @OneToMany(mappedBy = "submissionJpaEntity", cascade = {CascadeType.PERSIST})
     private List<AnswerJpaEntity> answers = new ArrayList<>();
 
     public static SubmissionJpaEntity fromDomain(Submission submission) {
-
         SubmissionJpaEntity submissionJpaEntity = new SubmissionJpaEntity();
         submissionJpaEntity.id = submission.getId();
         submissionJpaEntity.formVersion = submission.getFormVersion();
         submissionJpaEntity.formId = submission.getFormId();
         submissionJpaEntity.userId = submission.getUserId();
+        return submissionJpaEntity;
+    }
 
+    public static SubmissionJpaEntity fromDomainWithFormVersion(Submission submission,  int formVersion) {
+        SubmissionJpaEntity submissionJpaEntity = fromDomain(submission);
+        submissionJpaEntity.formVersion = formVersion;
+        submissionJpaEntity.answers = submission.getAnswers().stream().map(answer -> AnswerJpaEntity.fromDomainAndMapping(answer, submissionJpaEntity)).collect(Collectors.toList());
         return submissionJpaEntity;
     }
 

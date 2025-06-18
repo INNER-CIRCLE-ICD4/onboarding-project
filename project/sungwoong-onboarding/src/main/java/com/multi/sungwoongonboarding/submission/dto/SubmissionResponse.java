@@ -1,13 +1,15 @@
 package com.multi.sungwoongonboarding.submission.dto;
 
 import com.multi.sungwoongonboarding.forms.domain.Forms;
+import com.multi.sungwoongonboarding.submission.domain.Answers;
 import com.multi.sungwoongonboarding.submission.domain.Submission;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 @Builder
 @AllArgsConstructor
 public class SubmissionResponse {
@@ -18,7 +20,7 @@ public class SubmissionResponse {
     private String formTitle;
     private String formDescription;
     private int formVersion;
-    private List<AnswerResponse> answerResponses;
+    private List<QuestionAnswerResponse> questionAnswer;
 
     public static SubmissionResponse fromDomain(Submission submission) {
         return getSubmissionResponseBuilder(submission)
@@ -30,9 +32,14 @@ public class SubmissionResponse {
         return getSubmissionResponseBuilder(submission)
                 .formTitle(form.getTitle())
                 .formDescription(form.getDescription())
+                .questionAnswer(
+                        form.getQuestions().stream().map(questions -> {
+                            List<Answers> answersByQuestionId = submission.getAnswersByQuestionId(questions.getId());
+                            return QuestionAnswerResponse.fromQuestionWithAnswers(questions, answersByQuestionId);
+                        }).toList()
+                )
                 .build();
     }
-
 
 
     private static SubmissionResponseBuilder getSubmissionResponseBuilder(Submission submission) {
@@ -42,7 +49,6 @@ public class SubmissionResponse {
                 .userId(submission.getUserId())
                 .formTitle(submission.getFormTitle())
                 .formDescription(submission.getFormDescription())
-                .formVersion(submission.getFormVersion())
-                .answerResponses(submission.getAnswers().stream().map(AnswerResponse::fromDomain).toList());
+                .formVersion(submission.getFormVersion());
     }
 }
