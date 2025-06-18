@@ -52,8 +52,8 @@ public class SurveyController {
 
     /**
      * 설문 조회 API - 응답
-     *  /api/surveys/1/responses?version=2&page=0&size=20&itemId=5&answer=Yes
-     *  /api/surveys/{surveyId}/responses?itemName=이름&answer=다히&page=0&size=20
+     *  GET http://localhost:8080/surveys/1/responses?version=1&itemId=2&answer=%EB%A7%88%EC%9A%B4%EB%A7%9E%EC%A7%80
+     *  GET http://localhost:8080/surveys/1/responses?itemId=3&answer=%EB%A7%9E%EC%B9%AD
      *
      */
 //    @GetMapping("/{surveyId}/responses")
@@ -75,17 +75,25 @@ public class SurveyController {
     @GetMapping("/{surveyId}/responses")
     public Page<SurveyAnswerResponseDto> getSurveyResponses(
             @PathVariable Long surveyId,
-            @ModelAttribute ResponseSearchCondition cond, // DTO로!
+
+            // DTO의 각 필드를 개별 쿼리 파라미터로 ‘explode’ 시킵니다.
+            @ParameterObject
+            @ModelAttribute
+            ResponseSearchCondition cond,
+
+            // 페이징·정렬도 같은 방식으로 풀어 주고 싶다면 여기도 @ParameterObject
             @ParameterObject
             @PageableDefault(page = 0, size = 20)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "submittedAt", direction = Sort.Direction.DESC),
-                    @SortDefault(sort = "id", direction = Sort.Direction.ASC)
-            }) Pageable pageable
+                    @SortDefault(sort = "id",           direction = Sort.Direction.ASC)
+            })
+            Pageable pageable
     ) {
         cond.setSurveyId(surveyId);
         return surveyService.getSurveyResponses(cond, pageable);
     }
+
 
     /**
      * 설문 수정 API

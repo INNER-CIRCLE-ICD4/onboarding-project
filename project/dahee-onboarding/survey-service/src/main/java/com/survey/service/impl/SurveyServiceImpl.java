@@ -138,6 +138,7 @@ public class SurveyServiceImpl implements SurveyService {
             QuestionType type = item.getType();
             String value = answer.getAnswer();
             List<String> options = item.getOptions();
+
             if (type == QuestionType.SINGLE_CHOICE) {
                 if (options == null || !options.contains(value)) {
                     throw new ApplicationException(
@@ -233,45 +234,69 @@ public class SurveyServiceImpl implements SurveyService {
     @Transactional(readOnly = true)
     public Page<SurveyAnswerResponseDto> getSurveyResponses(ResponseSearchCondition cond, Pageable pageable) {
         Long surveyId = cond.getSurveyId();
-        Integer version = cond.getVersion();
-        Long itemId = cond.getItemId();
-        String answer = cond.getAnswer();
+        Integer version  = cond.getVersion();
+        Long   itemId    = cond.getItemId();
 
-        // [1] SurveyId 기반 응답 페이징
-        Page<SurveyResponse> responses = responseRepo.findBySurveyId(surveyId, pageable);
-
-        if (responses.isEmpty()) {
-            throw new ApplicationException(ErrorCode.NOT_FOUND, "해당 설문 응답이 존재하지 않습니다.");
-        }
-
-        Set<Long> surveyIds = responses.stream().map(SurveyResponse::getSurveyId).collect(Collectors.toSet());
-
-        Map<Long, Integer> surveyVersionMap = surveyRepo.findAllById(surveyIds)
-                .stream()
-                .collect(Collectors.toMap(Survey::getId, Survey::getVersion));
-
-        List<Long> responseIds = responses.stream().map(SurveyResponse::getId).toList();
-        List<SurveyResponseItem> responseItems = responseItemRepo.findByResponseIdIn(responseIds);
-
-        if (responseItems.isEmpty()) {
-            throw new ApplicationException(ErrorCode.NOT_FOUND, "응답 항목 데이터가 없습니다.");
-        }
-
-        // Advanced 필터링 (itemId, answer)
-        if (itemId != null || answer != null) {
-            responseItems = responseItems.stream()
-                    .filter(item -> (itemId == null || item.getSurveyItemId().equals(itemId)) &&
-                            (answer == null || answer.equals(item.getAnswer())))
-                    .toList();
-
-            if (responseItems.isEmpty()) {
-                throw new ApplicationException(ErrorCode.NOT_FOUND, "필터 조건에 맞는 응답이 없습니다.");
+        // [1] SurveyId + version 조건에 따른 응답 페이징 조회
+        Page<SurveyResponse> responses;
+        if (version != null) {
+            responses = responseRepo.findBySurveyIdAndVersion(surveyId, version, pageable);
+            if (responses.isEmpty()) {
+                throw new ApplicationException(
+                        ErrorCode.NOT_FOUND,
+                        "버전 " + version + " 에 해당하는 응답이 존재하지 않습니다."
+                );
+            }
+        } else {
+            responses = responseRepo.findBySurveyId(surveyId, pageable);
+            if (responses.isEmpty()) {
+                throw new ApplicationException(
+                        ErrorCode.NOT_FOUND,
+                        "해당 설문 응답이 존재하지 않습니다."
+                );
             }
         }
 
+        // [2] 조회된 응답들의 아이디 목록 수집
+        List<Long> responseIds = responses.stream()
+                .map(SurveyResponse::getId)
+                .toList();
+
+        // [3] 응답 아이템 전체 조회
+        List<SurveyResponseItem> responseItems = responseItemRepo.findByResponseIdIn(responseIds);
+        if (responseItems.isEmpty()) {
+            throw new ApplicationException(
+                    ErrorCode.NOT_FOUND,
+                    "응답 항목 데이터가 없습니다."
+            );
+        }
+
+        // [4] itemId 필터링 (itemId 파라미터가 있을 때만)
+        if (itemId != null) {
+            responseItems = responseItems.stream()
+                    .filter(item -> item.getSurveyItemId().equals(itemId))
+                    .toList();
+
+            if (responseItems.isEmpty()) {
+                throw new ApplicationException(
+                        ErrorCode.NOT_FOUND,
+                        "문항 ID " + itemId + " 에 해당하는 응답이 없습니다."
+                );
+            }
+        }
+
+        // [5] Survey 엔티티에서 버전 매핑 (서비스 전반에 걸친 버전 정보)
+        Set<Long> surveyIds = responses.stream()
+                .map(SurveyResponse::getSurveyId)
+                .collect(Collectors.toSet());
+        Map<Long, Integer> surveyVersionMap = surveyRepo.findAllById(surveyIds).stream()
+                .collect(Collectors.toMap(Survey::getId, Survey::getVersion));
+
+        // [6] 응답 아이템을 responseId별로 그룹핑
         Map<Long, List<SurveyResponseItem>> responseItemMap =
                 responseItems.stream().collect(Collectors.groupingBy(SurveyResponseItem::getResponseId));
 
+        // [7] DTO 변환
         List<SurveyAnswerResponseDto> dtos = responses.stream().map(resp -> {
             List<SurveyResponseItem> items = responseItemMap.getOrDefault(resp.getId(), List.of());
             List<SurveyAnswerResponseDto.Answer> answers = items.stream().map(item ->
@@ -279,7 +304,8 @@ public class SurveyServiceImpl implements SurveyService {
                             item.getSurveyItemId(),
                             item.getQuestionText(),
                             item.getAnswer()
-                    )).toList();
+                    )
+            ).toList();
 
             Integer respVersion = surveyVersionMap.getOrDefault(resp.getSurveyId(), 1);
 
@@ -293,12 +319,18 @@ public class SurveyServiceImpl implements SurveyService {
                     .build();
         }).toList();
 
+        // [8] 최종 DTO 리스트가 비어 있으면 예외
         if (dtos.isEmpty()) {
-            throw new ApplicationException(ErrorCode.NOT_FOUND, "응답 결과 데이터가 없습니다.");
+            throw new ApplicationException(
+                    ErrorCode.NOT_FOUND,
+                    "응답 결과 데이터가 없습니다."
+            );
         }
 
+        // [9] PageImpl 으로 wrapping
         return new PageImpl<>(dtos, pageable, responses.getTotalElements());
     }
+
 
 
 
