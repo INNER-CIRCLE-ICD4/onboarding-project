@@ -15,10 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -178,50 +179,218 @@ public class SurveyServiceImpl implements SurveyService {
         return 1L;
     }
 
+
     @Override
     @Transactional(readOnly = true)
-    public List<SurveyAnswerResponseDto> getSurveyResponses(Long surveyId) {
-        // 1. 해당 설문에 대한 모든 응답 조회
-        List<SurveyResponse> responses = responseRepo.findBySurveyId(surveyId);
+    public SurveyRequest getSurveyItems(Long surveyId, Integer version) {
+        Survey survey = (Survey) ((version == null)
+                        ? surveyRepo.findTopByIdOrderByVersionDesc(surveyId).orElseThrow() //최신 버전 조회
+                        : surveyRepo.findByIdAndVersion(surveyId, version).orElseThrow()); // 특정 버전 조회
 
-        if (responses.isEmpty()) {
-            return List.of();
-        }
+        List<SurveyItem> items = itemRepo.findBySurveyIdAndIsDeletedFalse(survey.getId());
+        // SurveyRequest.Item 변환
+        List<SurveyRequest.Item> itemDtos = items.stream().map(i -> {
+            SurveyRequest.Item dto = new SurveyRequest.Item();
+            dto.setId(i.getId());
+            dto.setQuestion(i.getQuestion());
+            dto.setType(i.getType().name());
+            dto.setRequired(i.isRequired());
+            dto.setOptions(i.getOptions());
+            dto.setDescription(i.getDescription());
+            return dto;
+        }).toList();
 
-        // 2. 응답 ID 리스트로 각 문항별 답변 한 번에 조회
-        List<Long> responseIds = responses.stream()
-                .map(SurveyResponse::getId)
-                .toList();
+        SurveyRequest dto = new SurveyRequest();
+        dto.setSeriesCode(survey.getSeriesId().toString());
+        dto.setTitle(survey.getTitle());
+        dto.setDescription(survey.getDescription());
+        dto.setItems(itemDtos);
+        dto.setStartDate(survey.getStartDate());
+        dto.setEndDate(survey.getEndDate());
+        dto.setIsOpen(survey.getIsOpen());
+        return dto;
+    }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<SurveyAnswerResponseDto> getSurveyResponses(
+            Long surveyId,
+            Integer version,
+            Long itemId,
+            String answer,
+            Pageable pageable) {
+
+        Page<SurveyResponse> responses = (Page<SurveyResponse>) responseRepo.findBySurveyId(surveyId, pageable);
+
+        // 1. SurveyResponse들의 surveyId 모으기
+        Set<Long> surveyIds = responses.stream()
+                .map(SurveyResponse::getSurveyId)
+                .collect(Collectors.toSet());
+
+        // 2. SurveyId로 Survey 모두 조회 → (surveyId → version) 맵핑
+        Map<Long, Integer> surveyVersionMap = surveyRepo.findAllById(surveyIds)
+                .stream()
+                .collect(Collectors.toMap(Survey::getId, Survey::getVersion));
+
+        // 3. 응답아이템 처리 (itemId/answer Advanced 필터)
+        List<Long> responseIds = responses.stream().map(SurveyResponse::getId).toList();
         List<SurveyResponseItem> responseItems = responseItemRepo.findByResponseIdIn(responseIds);
+        if (itemId != null || answer != null) {
+            responseItems = responseItems.stream()
+                    .filter(item -> (itemId == null || item.getSurveyItemId().equals(itemId)) &&
+                            (answer == null || answer.equals(item.getAnswer())))
+                    .toList();
+        }
+        Map<Long, List<SurveyResponseItem>> responseItemMap =
+                responseItems.stream().collect(Collectors.groupingBy(SurveyResponseItem::getResponseId));
 
-        // 3. 응답ID → 답변 리스트 맵핑
-        Map<Long, List<SurveyResponseItem>> responseItemMap = responseItems.stream()
-                .collect(Collectors.groupingBy(SurveyResponseItem::getResponseId));
-
-        // 4. DTO 변환 (SurveyAnswerResponseDto)
-        List<SurveyAnswerResponseDto> result = new ArrayList<>();
-        for (SurveyResponse response : responses) {
-            List<SurveyResponseItem> items = responseItemMap.getOrDefault(response.getId(), List.of());
-            List<SurveyAnswerResponseDto.Answer> answers = items.stream()
-                    .map(item -> new SurveyAnswerResponseDto.Answer(
+        // 4. 응답 DTO 변환 (surveyId로 version 매핑)
+        List<SurveyAnswerResponseDto> dtos = responses.stream().map(resp -> {
+            List<SurveyResponseItem> items = responseItemMap.getOrDefault(resp.getId(), List.of());
+            List<SurveyAnswerResponseDto.Answer> answers = items.stream().map(item ->
+                    new SurveyAnswerResponseDto.Answer(
                             item.getSurveyItemId(),
                             item.getQuestionText(),
                             item.getAnswer()
-                    ))
-                    .toList();
+                    )).toList();
 
-            result.add(
-                    SurveyAnswerResponseDto.builder()
-                            .responseId(response.getId())
-                            .surveyId(response.getSurveyId())
-                            .uuid(response.getUuid())
-                            .submittedAt(response.getSubmittedAt())
-                            .answers(answers)
-                            .build()
-            );
-        }
-        return result;
+            Integer respVersion = surveyVersionMap.getOrDefault(resp.getSurveyId(), 1); // 진짜 version!
+
+            return SurveyAnswerResponseDto.builder()
+                    .responseId(resp.getId())
+                    .surveyId(resp.getSurveyId())
+                    .version(respVersion)
+                    .uuid(resp.getUuid())
+                    .submittedAt(resp.getSubmittedAt())
+                    .answers(answers)
+                    .build();
+        }).toList();
+
+        return new PageImpl<>(dtos, pageable, responses.getTotalElements());
     }
+
+
+
+
+
+    @Override
+    @Transactional
+    public SurveyResponseDto updateSurvey(Long surveyId, SurveyRequest request) {
+        // 1. 기존 설문, 기존 문항 목록 조회
+        Survey oldSurvey = surveyRepo.findById(surveyId)
+                .orElseThrow(() -> new IllegalArgumentException("설문 없음"));
+        List<SurveyItem> oldItems = itemRepo.findBySurveyId(surveyId);
+
+        // 2. 요청에서 온 최종 문항 목록
+        List<SurveyRequest.Item> newItemsReq = request.getItems();
+
+        // 3. 구조가 변경됐는지 비교(문항 개수/내용이 다르면 새 버전)
+        boolean structureChanged = isStructureChanged(oldItems, newItemsReq);
+
+        Survey newSurvey;
+        if (structureChanged) {
+            // 4-1. 새 버전 설문 생성 (Deep Copy)
+            newSurvey = Survey.builder()
+                    .seriesId(oldSurvey.getSeriesId())
+                    .version(oldSurvey.getVersion() + 1)
+                    .title(request.getTitle())
+                    .description(request.getDescription())
+                    .startDate(request.getStartDate())
+                    .endDate(request.getEndDate())
+                    .isOpen(request.getIsOpen())
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            surveyRepo.save(newSurvey);
+
+            // 새 설문에 대해 문항 전체 재등록
+            List<SurveyItem> itemsToSave = newItemsReq.stream()
+                    .map(req -> SurveyItem.builder()
+                            .surveyId(newSurvey.getId())
+                            .question(req.getQuestion())
+                            .type(QuestionType.valueOf(req.getType()))
+                            .required(req.getRequired())
+                            .options(req.getOptions())
+                            .description(req.getDescription())
+                            .isDeleted(false)
+                            .build())
+                    .toList();
+            itemRepo.saveAll(itemsToSave);
+        } else {
+            // 4-2. 구조 변경 없으면 기존 설문만 update
+            oldSurvey.setTitle(request.getTitle());
+            oldSurvey.setDescription(request.getDescription());
+            oldSurvey.setStartDate(request.getStartDate());
+            oldSurvey.setEndDate(request.getEndDate());
+            oldSurvey.setIsOpen(request.getIsOpen());
+            surveyRepo.save(oldSurvey);
+
+            // 기존 문항 수정/삭제/추가 반영
+            updateSurveyItems(oldItems, newItemsReq, oldSurvey.getId());
+            newSurvey = oldSurvey;
+        }
+
+        // 5. 반환 DTO 변환
+        return SurveyResponseDto.builder()
+                .surveyId(newSurvey.getId())
+                .seriesCode("") // 필요 시 채우기
+                .version(newSurvey.getVersion())
+                .title(newSurvey.getTitle())
+                .createdAt(newSurvey.getCreatedAt())
+                .build();
+    }
+
+
+    private boolean isStructureChanged(List<SurveyItem> oldItems, List<SurveyRequest.Item> newItems) {
+        if (oldItems.size() != newItems.size()) return true;
+        for (int i = 0; i < oldItems.size(); i++) {
+            SurveyItem old = oldItems.get(i);
+            SurveyRequest.Item ni = newItems.get(i);
+            // 문항 내용, 타입, 옵션 등 구조적으로 바뀐 경우만 true
+            if (!old.getQuestion().equals(ni.getQuestion()) ||
+                    !old.getType().name().equals(ni.getType()) ||
+                    !old.getOptions().equals(ni.getOptions())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateSurveyItems(List<SurveyItem> oldItems, List<SurveyRequest.Item> newItemsReq, Long surveyId) {
+        // 기존 id 집합
+        Set<Long> oldIds = oldItems.stream().map(SurveyItem::getId).collect(Collectors.toSet());
+        // 요청 id 집합(없으면 신규)
+        Set<Long> newIds = newItemsReq.stream().map(SurveyRequest.Item::getId).filter(Objects::nonNull).collect(Collectors.toSet());
+
+        // 삭제: 기존엔 있지만 요청에 없는 id
+        oldIds.stream().filter(id -> !newIds.contains(id)).forEach(id -> itemRepo.deleteById(id));
+
+        // 수정/추가
+        for (SurveyRequest.Item ni : newItemsReq) {
+            if (ni.getId() != null && oldIds.contains(ni.getId())) {
+                // 수정
+                SurveyItem item = itemRepo.findById(ni.getId()).orElseThrow();
+                item.setQuestion(ni.getQuestion());
+                item.setType(QuestionType.valueOf(ni.getType()));
+                item.setRequired(ni.getRequired());
+                item.setOptions(ni.getOptions());
+                item.setDescription(ni.getDescription());
+                itemRepo.save(item);
+            } else {
+                // 추가
+                SurveyItem newItem = SurveyItem.builder()
+                        .surveyId(surveyId)
+                        .question(ni.getQuestion())
+                        .type(QuestionType.valueOf(ni.getType()))
+                        .required(ni.getRequired())
+                        .options(ni.getOptions())
+                        .description(ni.getDescription())
+                        .isDeleted(false)
+                        .build();
+                itemRepo.save(newItem);
+            }
+        }
+    }
+
 
 }

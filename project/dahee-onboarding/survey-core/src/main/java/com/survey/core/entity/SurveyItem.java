@@ -13,6 +13,7 @@ import java.util.*;
 @Entity
 @Table(name = "survey_item")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

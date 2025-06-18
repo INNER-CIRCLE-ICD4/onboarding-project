@@ -1,1 +1,217 @@
 swagger : http://localhost:8080/swagger-ui/index.html
+
+H2 접속
+1)서버 실행 → http://localhost:8080/h2-console 접속
+2)JDBC URL: jdbc:h2:mem:test
+3)User: sa / PW: 없음
+4)연결 → 쿼리 실행
+
+-----------------------------------------------------------------
+1. 설문 생성
+{
+  "seriesCode": "SUR_001",
+  "title": "고객 만족도 조사",
+  "description": "서비스 이용 후기를 들려주세요.",
+  "items": [
+    {
+      "question": "서비스에 얼마나 만족하셨나요?",
+      "type": "SINGLE_CHOICE",
+      "required": true,
+      "options": ["매우 만족", "만족", "보통", "불만족", "매우 불만족"],
+      "description": "5점 척도 중 하나를 선택하세요."
+    },
+    {
+      "question": "추가로 개선할 점이 있나요?",
+      "type": "LONG_TEXT",
+      "required": false
+    }
+  ],
+  "startDate": "2025-06-20T00:00:00",
+  "endDate": "2025-07-20T00:00:00",
+  "isOpen": true
+}
+
+(1) 성공 케이스
+{
+  "seriesCode": "employeeSurvey",
+  "title": "2024 만족도 설문",
+  "description": "근무 환경 및 복지 관련 설문",
+  "items": [
+    {
+      "question": "회식이 부담스러우신가요?",
+      "type": "SINGLE_CHOICE",
+      "required": true,
+      "options": ["부담스럽다", "가끔 부담", "전혀 아니다"]
+    },
+    {
+      "question": "개선이 필요하다고 생각하는 점을 적어주세요.",
+      "type": "LONG_TEXT",
+      "required": false,
+      "options": []
+    },
+    {
+      "question": "원격 근무 경험이 있나요?",
+      "type": "SINGLE_CHOICE",
+      "required": true,
+      "options": ["있다", "없다"]
+    },
+    {
+      "question": "선호하는 복지(중복 선택 가능)",
+      "type": "MULTI_CHOICE",
+      "required": false,
+      "options": ["식대지원", "운동비", "자녀학자금", "카페테리아"]
+    },
+    {
+      "question": "직무",
+      "type": "SHORT_TEXT",
+      "required": true,
+      "options": []
+    }
+  ],
+  "startDate": "2024-07-01T00:00:00",
+  "endDate": "2024-07-07T23:59:59",
+  "isOpen": true
+}
+
+(2) 에러 케이스 _ 항목 0개
+{
+  "seriesCode": "test",
+  "title": "빈 설문",
+  "description": "항목 없는 설문",
+  "items": [],
+  "startDate": "2024-07-01T00:00:00",
+  "endDate": "2024-07-07T23:59:59",
+  "isOpen": true
+}
+
+(3) 에러 _  항목 11개
+{
+  "seriesCode": "test",
+  "title": "11개 초과 설문",
+  "description": "11개 항목",
+  "items": [
+    { "question": "질문1", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문2", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문3", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문4", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문5", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문6", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문7", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문8", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문9", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문10", "type": "SHORT_TEXT", "required": true, "options": [] },
+    { "question": "질문11", "type": "SHORT_TEXT", "required": true, "options": [] }
+  ],
+  "startDate": "2024-07-01T00:00:00",
+  "endDate": "2024-07-07T23:59:59",
+  "isOpen": true
+}
+
+(4)에러케이스 - SINGLE_CHOICE/MULTI_CHOICE options 0 개
+{
+  "seriesCode": "test",
+  "title": "보기 0개 설문",
+  "description": "선택형 보기 없음",
+  "items": [
+    {
+      "question": "뭐 먹을래?",
+      "type": "SINGLE_CHOICE",
+      "required": true,
+      "options": []
+    }
+  ],
+  "startDate": "2024-07-01T00:00:00",
+  "endDate": "2024-07-07T23:59:59",
+  "isOpen": true
+}
+
+(5) 에러케이스 _ OPTIONS 6개
+{
+  "seriesCode": "test",
+  "title": "보기 6개 설문",
+  "description": "선택형 보기 6개",
+  "items": [
+    {
+      "question": "선택지 테스트",
+      "type": "SINGLE_CHOICE",
+      "required": true,
+      "options": ["1", "2", "3", "4", "5", "6"]
+    }
+  ],
+  "startDate": "2024-07-01T00:00:00",
+  "endDate": "2024-07-07T23:59:59",
+  "isOpen": true
+}
+
+
+-----------------------------------------------------------------------------------------
+2. 응답 제출
+{
+  "uuid": "anon-1234",
+  "answers": [
+    { "itemId": 1, "answer": "매우 만족" },
+    { "itemId": 2, "answer": "UI가 직관적이었어요." }
+  ]
+}
+
+(1) 성공
+{
+  "uuid": "eb5a5b85-9932-4fa6-8430-123456789abc",
+  "answers": [
+    { "itemId": 1, "answer": "부담스럽다" },
+    { "itemId": 2, "answer": "점심시간 연장" }
+  ]
+}
+
+
+(2)에러케이스 - 필수 문항 누락
+{
+  "uuid": "eb5a5b85-9932-4fa6-8430-123456789abc",
+  "answers": [
+    { "itemId": 2, "answer": "점심시간 연장" }
+  ]
+}
+
+(3) 에러 _ SINGLE_CHOICE 보기 이외 값 응답
+{
+  "uuid": "eb5a5b85-9932-4fa6-8430-123456789abc",
+  "answers": [
+    { "itemId": 1, "answer": "없는 선택지" }
+  ]
+}
+
+(4) 에러 케이스 — MULTI_CHOICE 값 여러 개 중 1개라도 보기 이외
+{
+  "uuid": "eb5a5b85-9932-4fa6-8430-123456789abc",
+  "answers": [
+    { "itemId": 3, "answer": "식대지원,없는복지" }
+  ]
+}
+
+
+-----------------------------------------------------------------------------
+3. 응답 수정
+{
+  "title": "업데이트된 설문 제목",
+  "description": "설문 설명을 수정했습니다.",
+  "items": [
+    {
+      "id": 1,
+      "question": "Q1 수정",
+      "type": "SINGLE_CHOICE",
+      "required": true,
+      "options": ["A", "B", "C"],
+      "description": "옵션을 선택하세요."
+    },
+    {
+      "question": "새로운 질문",
+      "type": "LONG_TEXT",
+      "required": false
+    }
+  ],
+  "startDate": "2025-06-21T00:00:00",
+  "endDate": "2025-08-01T00:00:00",
+  "isOpen": false
+}
+
+

@@ -13,6 +13,7 @@ public class SurveyAnswerResponseDto {
     private Long responseId;
     private Long surveyId;
     private String uuid;
+    private int version;
     private LocalDateTime submittedAt;
     private List<Answer> answers;
 

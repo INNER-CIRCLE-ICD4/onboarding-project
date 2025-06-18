@@ -32,4 +32,5 @@ public class SurveyResponse {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime submittedAt = LocalDateTime.now();
+
 }

@@ -32,6 +32,7 @@ public class SurveyRequest {
 
     @Getter @Setter
     public static class Item {
+        private Long id;
         @NotBlank private String question;
         @NotNull private String type;
         @NotNull private Boolean required;

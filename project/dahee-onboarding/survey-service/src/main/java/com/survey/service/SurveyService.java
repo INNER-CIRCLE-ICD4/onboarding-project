@@ -2,6 +2,8 @@ package com.survey.service;
 
 
 import com.survey.common.dto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -21,10 +23,27 @@ public interface SurveyService {
      */
     ResponseDto submitResponse(Long surveyId, ResponseRequest request);
 
+
+    /**
+     * 설문 문항 조회
+     * @param surveyId
+     * @param version
+     * @return
+     */
+    SurveyRequest getSurveyItems(Long surveyId, Integer version);
+
     /**
      * 설문 조회
      * @param surveyId
      * @return
      */
-    List<SurveyAnswerResponseDto> getSurveyResponses(Long surveyId);
+    Page<SurveyAnswerResponseDto> getSurveyResponses(Long surveyId, Integer version, Long itemId, String answer, Pageable pageable);
+    
+    /**
+     * 설문 수정
+     * @param surveyId
+     * @param request
+     * @return
+     */
+    SurveyResponseDto updateSurvey(Long surveyId, SurveyRequest request);
 }

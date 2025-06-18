@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface SurveyItemRepository extends JpaRepository<SurveyItem, Long> {
     List<SurveyItem> findBySurveyId(Long surveyId);
+
+    List<SurveyItem> findBySurveyIdAndIsDeletedFalse(Long id);
+
 }
