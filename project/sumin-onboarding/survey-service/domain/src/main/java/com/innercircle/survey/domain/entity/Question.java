@@ -1,15 +1,25 @@
 package com.innercircle.survey.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Question {
     //질문 ID(PK)
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     //질문 제목
@@ -30,6 +40,7 @@ public class Question {
     private Survey survey;
 
     //선택 리스트와 1:N
+    @Builder.Default
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionOption> options = new ArrayList<QuestionOption>();
 
@@ -44,6 +55,5 @@ public class Question {
 
     //질문 수정시간
     private LocalDateTime updatedAt;
-
 
 }

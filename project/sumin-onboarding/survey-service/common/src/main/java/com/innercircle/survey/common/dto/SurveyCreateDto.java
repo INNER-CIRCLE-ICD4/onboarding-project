@@ -1,4 +1,4 @@
-package com.innercircle.survey.api.dto;
+package com.innercircle.survey.common.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
