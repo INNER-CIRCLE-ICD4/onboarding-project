@@ -1,11 +1,16 @@
 package com.onboarding.model.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OptionAnswers {
     private static final String NOT_NULL_ANSWER = "답변 목록을 확인해주세요.";
 
     private List<OptionAnswer> answers;
+
+    public OptionAnswers() {
+        answers = new ArrayList<OptionAnswer>();
+    }
 
     public OptionAnswers(List<OptionAnswer> answers) {
         validate(answers);
