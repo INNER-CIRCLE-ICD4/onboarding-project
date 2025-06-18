@@ -1,4 +1,4 @@
-package survey.survey.config;
+package survey.surveyresponse.config;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import survey.common.exception.ApiException;
-import survey.survey.config.response.ErrorResponse;
-import survey.survey.config.response.SurveyErrorResponse;
+import survey.surveyresponse.config.response.ErrorResponse;
+import survey.surveyresponse.config.response.SurveyErrorResponse;
 
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static survey.common.exception.ErrorType.*;
+import static survey.common.exception.ErrorType.INVALID_PARAMETER;
+import static survey.common.exception.ErrorType.NO_RESOURCE;
 
 @Slf4j
 @RestControllerAdvice

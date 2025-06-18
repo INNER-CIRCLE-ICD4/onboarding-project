@@ -1,4 +1,4 @@
-package survey.survey.controller.response;
+package survey.survey.config.response;
 
 
 import survey.survey.config.ErrorType;
