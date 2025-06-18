@@ -5,7 +5,6 @@ import com.multi.sungwoongonboarding.forms.infrastructure.FormHistoryJpaEntity;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormHistoryJpaRepository;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import com.multi.sungwoongonboarding.options.domain.Options;
-import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -234,7 +233,7 @@ public class FormRepositoryTest {
         assertThat(history.get().getVersion()).isLessThan(result.getVersion());
         assertThat(history.get().getTitle()).isEqualTo("원본 설문 제목");
         assertThat(history.get().getQuestionCount()).isEqualTo(originalForm.getQuestions().size());
-        assertThat(byId.getFormsHistory().size()).isEqualTo(1);
+        assertThat(byId.getFormsHistories().size()).isEqualTo(1);
     }
 
 
