@@ -10,4 +10,6 @@ public interface ResponseRepository {
 	Response save (Response response);
 
 	Optional<List<Response>> findBySurveyIdAndSurveyVersion (UUID surveyId, int surveyVersion);
+
+	boolean existsBySurveyIdAndVersionAndRespondentId (UUID surveyId, int surveyVersion, String respondentId);
 }

@@ -16,6 +16,7 @@ class ResponseTest {
 
 	final UUID surveyId = UUID.randomUUID();
 	final int surveyVersion = 1;
+	final String respondentId = "test-id";
 
 	@Nested
 	class ValidateRequiredAnswers {
@@ -26,7 +27,12 @@ class ResponseTest {
 			// given
 			Survey survey = SurveyFixtures.basicSurveyWithRequiredQuestion();
 			List<Answer> incompleteAnswers = List.of();
-			Response response = Response.create(surveyId, surveyVersion, incompleteAnswers);
+			Response response = Response.create(
+					surveyId,
+					surveyVersion,
+					respondentId,
+					incompleteAnswers
+			);
 
 			// when & then
 			assertThrows(
@@ -43,7 +49,12 @@ class ResponseTest {
 			UUID requiredQuestionId = survey.getQuestions().get(0).getId();
 
 			List<Answer> answers = List.of(Answer.create("응답", requiredQuestionId));
-			Response response = Response.create(surveyId, surveyVersion, answers);
+			Response response = Response.create(
+					surveyId,
+					surveyVersion,
+					respondentId,
+					answers
+			);
 
 			// when & then
 			assertDoesNotThrow(() -> response.validateRequiredAnswers(survey));
@@ -65,7 +76,12 @@ class ResponseTest {
 					Answer.create("2", questionId)
 			);
 
-			Response response = Response.create(surveyId, surveyVersion, multipleAnswers);
+			Response response = Response.create(
+					surveyId,
+					surveyVersion,
+					respondentId,
+					multipleAnswers
+			);
 
 			// when & then
 			assertThrows(
@@ -82,7 +98,12 @@ class ResponseTest {
 			UUID questionId = survey.getQuestions().get(0).getId();
 
 			List<Answer> answers = List.of(Answer.create("1", questionId));
-			Response response = Response.create(surveyId, surveyVersion, answers);
+			Response response = Response.create(
+					surveyId,
+					surveyVersion,
+					respondentId,
+					answers
+			);
 
 			// when & then
 			assertDoesNotThrow(() -> response.validateSingleSelectAnswers(survey));

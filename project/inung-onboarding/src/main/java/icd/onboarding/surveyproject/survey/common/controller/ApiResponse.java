@@ -16,4 +16,9 @@ public record ApiResponse<T>(
 		final ApiErrorResponse apiErrorResponse = new ApiErrorResponse(errorCodes.message, errorCodes.code);
 		return new ApiResponse<>(null, apiErrorResponse);
 	}
+
+	public static <T> ApiResponse<T> fromMessageAndCode (String message, String code) {
+		final ApiErrorResponse apiErrorResponse = new ApiErrorResponse(message, code);
+		return new ApiResponse<>(null, apiErrorResponse);
+	}
 }

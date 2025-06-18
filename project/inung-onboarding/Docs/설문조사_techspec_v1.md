@@ -162,6 +162,46 @@ CREATE TABLE answer
 - 모든 ID 형식은 UUID를 사용합니다.
 - `inputType`은 `SINGLE_SELECT`, `MULTI_SELECT`, `SHORT_TEXT`, `LONG_TEXT` 중 하나입니다.
 
+### 설문 조사 조회
+
+#### 요청
+- URL : `/api/v1/survey/{surveyId}/version/{version}`
+- Method : `GET`
+- 설명 : 설문 조사 단건을 조회합니다.
+
+#### 응답
+- 상태 코드 : `200 Ok`
+
+```json
+{
+  "data": {
+    "id": "uuid-1234",
+    "version": 1,
+    "title": "설문 조사 제목",
+    "description": "설문 조사 설명",
+    "questions": [
+      {
+        "name": "질문 1",
+        "description": "질문 설명",
+        "inputType": "SINGLE_SELECT",
+        "required": true,
+        "sortOrder": 1,
+        "options": [
+          {
+            "text": "선택 옵션 1",
+            "sortOrder": 1
+          },
+          {
+            "text": "선택 옵션 2",
+            "sortOrder": 2
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ### 설문 조사 생성
 
 #### 요청

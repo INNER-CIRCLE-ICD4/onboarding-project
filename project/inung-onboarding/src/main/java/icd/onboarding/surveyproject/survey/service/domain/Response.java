@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 @Getter
 public class Response {
 	private final UUID responseId;
-	private final UUID respondentId;
+	private final String respondentId;
 	private final UUID surveyId;
 	private final Integer surveyVersion;
 	private final List<Answer> answers;
 
-	private Response (UUID surveyId, Integer surveyVersion, List<Answer> answers) {
+	private Response (UUID surveyId, Integer surveyVersion, String respondentId, List<Answer> answers) {
 		this.responseId = UUID.randomUUID();
-		this.respondentId = UUID.randomUUID();
+		this.respondentId = respondentId;
 		this.surveyId = surveyId;
 		this.surveyVersion = surveyVersion;
 
@@ -32,8 +32,8 @@ public class Response {
 		this.answers = List.copyOf(answers);
 	}
 
-	public static Response create (UUID surveyId, Integer surveyVersion, List<Answer> answers) {
-		return new Response(surveyId, surveyVersion, answers);
+	public static Response create (UUID surveyId, Integer surveyVersion, String respondentId, List<Answer> answers) {
+		return new Response(surveyId, surveyVersion, respondentId, answers);
 	}
 
 	public Set<UUID> getAnsweredQuestionIds () {

@@ -32,19 +32,4 @@ public class QuestionFixtures {
 				)
 		);
 	}
-
-	public static Question multiSelectQuestion () {
-		return Question.create(
-				"다중 선택형 질문",
-				"다중 선택형 질문 설명",
-				InputType.MULTI_SELECT,
-				false,
-				1,
-				List.of(
-						Option.create("옵션 1", 1),
-						Option.create("옵션 2", 2)
-				)
-		);
-	}
-
 }
