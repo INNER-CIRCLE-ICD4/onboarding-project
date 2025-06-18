@@ -25,33 +25,4 @@ class Question(
     @JoinColumn(name = "survey_id", nullable = false)
     @JsonIgnore
     var survey: Survey
-): BaseEntity() {
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Question) return false
-
-        if (required != other.required) return false
-        if (title != other.title) return false
-        if (description != other.description) return false
-        if (questionType != other.questionType) return false
-        if (options != other.options) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = required.hashCode()
-        result = 31 * result + title.hashCode()
-        result = 31 * result + description.hashCode()
-        result = 31 * result + questionType.hashCode()
-        result = 31 * result + options.hashCode()
-        return result
-    }
-
-    override fun toString(): String {
-        return "Question(id=$id, title='$title', description='$description', questionType=$questionType, required=$required, options=$options, deprecated=$deprecated, survey=$survey)"
-    }
-
-
-}
+): BaseEntity()
