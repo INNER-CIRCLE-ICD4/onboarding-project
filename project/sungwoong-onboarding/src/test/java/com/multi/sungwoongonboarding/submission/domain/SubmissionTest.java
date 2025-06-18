@@ -3,9 +3,7 @@ package com.multi.sungwoongonboarding.submission.domain;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.submission.dto.AnswerCreateRequest;
-import com.multi.sungwoongonboarding.submission.dto.AnswerResponse;
 import com.multi.sungwoongonboarding.submission.dto.SubmissionCreateRequest;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +12,6 @@ import java.util.List;
 
 import static com.multi.sungwoongonboarding.questions.domain.Questions.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 public class SubmissionTest {

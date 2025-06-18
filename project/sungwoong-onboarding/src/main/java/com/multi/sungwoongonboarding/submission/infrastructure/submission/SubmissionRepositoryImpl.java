@@ -33,7 +33,6 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
         Forms forms = formRepository.findById(submission.getFormId());
 
         SubmissionJpaEntity submissionJpaEntity = SubmissionJpaEntity.fromDomainWithFormVersion(submission, forms.getVersion());
-
         submissionJpaRepository.save(submissionJpaEntity);
 
         return submissionJpaEntity.toDomain();

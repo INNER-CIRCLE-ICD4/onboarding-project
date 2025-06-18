@@ -19,7 +19,6 @@ public class FormService {
     public FormResponse createForms(FormCreateRequest formCreateRequest) {
 
         Forms createRequestDomain = formCreateRequest.toDomain();
-        formCreateRequest.getQuestionCreateRequests();
 
         return FormResponse.fromDomain(
                 formRepository.save(createRequestDomain)
