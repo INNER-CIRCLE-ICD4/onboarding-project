@@ -1,7 +1,7 @@
-package com.multi.sungwoongonboarding.submission.infrastructure.responses;
+package com.multi.sungwoongonboarding.submission.infrastructure.submission;
 
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
-import com.multi.sungwoongonboarding.submission.domain.Responses;
+import com.multi.sungwoongonboarding.submission.domain.Submission;
 import com.multi.sungwoongonboarding.submission.infrastructure.answers.AnswerJpaEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,12 +12,12 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name = "responses")
-public class ResponseJpaEntity extends BaseEntity {
+@Table(name = "submissions")
+public class SubmissionJpaEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "response_id")
+    @Column(name = "submission_id")
     private Long id;
 
     @Column(name = "form_id", nullable = false)
@@ -30,23 +30,23 @@ public class ResponseJpaEntity extends BaseEntity {
     @Column(name = "form_version", nullable = false)
     private int formVersion;
 
-    @OneToMany(mappedBy = "responseJpaEntity")
+    @OneToMany(mappedBy = "submissionJpaEntity")
     private List<AnswerJpaEntity> answers = new ArrayList<>();
 
-    public static ResponseJpaEntity fromDomain(Responses responses) {
+    public static SubmissionJpaEntity fromDomain(Submission submission) {
 
-        ResponseJpaEntity responseJpaEntity = new ResponseJpaEntity();
-        responseJpaEntity.id = responses.getId();
-        responseJpaEntity.formVersion = responses.getFormVersion();
-        responseJpaEntity.formId = responses.getFormId();
-        responseJpaEntity.userId = responses.getUserId();
+        SubmissionJpaEntity submissionJpaEntity = new SubmissionJpaEntity();
+        submissionJpaEntity.id = submission.getId();
+        submissionJpaEntity.formVersion = submission.getFormVersion();
+        submissionJpaEntity.formId = submission.getFormId();
+        submissionJpaEntity.userId = submission.getUserId();
 
-        return responseJpaEntity;
+        return submissionJpaEntity;
     }
 
 
-    public Responses toDomain() {
-        return Responses.builder()
+    public Submission toDomain() {
+        return Submission.builder()
                 .id(this.id)
                 .formId(this.formId)
                 .userId(this.userId)

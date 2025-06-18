@@ -6,11 +6,11 @@ import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.application.repository.QuestionRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.submission.application.repository.AnswerRepository;
-import com.multi.sungwoongonboarding.submission.application.repository.ResponseRepository;
+import com.multi.sungwoongonboarding.submission.application.repository.SubmissionRepository;
 import com.multi.sungwoongonboarding.submission.domain.Answers;
-import com.multi.sungwoongonboarding.submission.domain.Responses;
+import com.multi.sungwoongonboarding.submission.domain.Submission;
 import com.multi.sungwoongonboarding.submission.dto.AnswerCreateRequest;
-import com.multi.sungwoongonboarding.submission.dto.ResponseCreateRequest;
+import com.multi.sungwoongonboarding.submission.dto.SubmissionCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +40,9 @@ public class AnswerRepositoryImplTest {
     AnswerRepository answerRepository;
 
     @Autowired
-    ResponseRepository responseRepository;
+    SubmissionRepository submissionRepository;
 
-    Responses 더미_응답지;
+    Submission 더미_응답지;
 
     Forms 더미_설문지;
 
@@ -80,13 +80,13 @@ public class AnswerRepositoryImplTest {
                 .build();
         더미_설문지 = formRepository.save(formsDomain);
 
-        ResponseCreateRequest responses = ResponseCreateRequest.builder()
+        SubmissionCreateRequest responses = SubmissionCreateRequest.builder()
                 .formId(더미_설문지.getId())
                 .userId("sungwoong")
                 .answerCreateRequests(List.of())
                 .build();
 
-        더미_응답지 = responseRepository.save(responses.toDomain());
+        더미_응답지 = submissionRepository.save(responses.toDomain());
     }
 
     @Test

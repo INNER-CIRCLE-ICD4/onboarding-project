@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Builder
 @RequiredArgsConstructor
-public class Responses {
+public class Submission {
 
     private final Long id;
     private final Long formId;

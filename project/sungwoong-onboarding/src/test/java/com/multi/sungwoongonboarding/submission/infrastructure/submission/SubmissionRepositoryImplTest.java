@@ -1,13 +1,13 @@
-package com.multi.sungwoongonboarding.submission.infrastructure.responses;
+package com.multi.sungwoongonboarding.submission.infrastructure.submission;
 
 import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
 import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
-import com.multi.sungwoongonboarding.submission.application.repository.ResponseRepository;
-import com.multi.sungwoongonboarding.submission.domain.Responses;
+import com.multi.sungwoongonboarding.submission.application.repository.SubmissionRepository;
+import com.multi.sungwoongonboarding.submission.domain.Submission;
 import com.multi.sungwoongonboarding.submission.dto.AnswerCreateRequest;
-import com.multi.sungwoongonboarding.submission.dto.ResponseCreateRequest;
+import com.multi.sungwoongonboarding.submission.dto.SubmissionCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,16 +23,16 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class ResponseRepositoryImplTest {
+class SubmissionRepositoryImplTest {
 
     @Autowired
     FormRepository formRepository;
 
     @Autowired
-    ResponseRepository responseRepository;
+    SubmissionRepository submissionRepository;
 
     @Autowired
-    ResponsesJpaRepository responsesJpaRepository;
+    SubmissionJpaRepository submissionJpaRepository;
 
     private Forms forms;
 
@@ -67,7 +67,7 @@ class ResponseRepositoryImplTest {
     public void save_response() {
 
         //Given
-        ResponseCreateRequest 응답지_요청_값 = ResponseCreateRequest.builder()
+        SubmissionCreateRequest 응답지_요청_값 = SubmissionCreateRequest.builder()
                 .formId(forms.getId())
                 .userId("sungwoong")
                 .answerCreateRequests(
@@ -79,8 +79,8 @@ class ResponseRepositoryImplTest {
                 .build();
 
         //When
-        Responses 응답지_저장 = responseRepository.save(응답지_요청_값.toDomain());
-        Optional<ResponseJpaEntity> 응답지_조회_1 = responsesJpaRepository.findById(응답지_저장.getId());
+        Submission 응답지_저장 = submissionRepository.save(응답지_요청_값.toDomain());
+        Optional<SubmissionJpaEntity> 응답지_조회_1 = submissionJpaRepository.findById(응답지_저장.getId());
 
         //Then
         assertThat(응답지_조회_1.isPresent()).isTrue();

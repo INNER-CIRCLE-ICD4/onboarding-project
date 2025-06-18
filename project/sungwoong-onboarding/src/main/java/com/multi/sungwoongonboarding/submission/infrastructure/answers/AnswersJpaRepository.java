@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AnswersJpaRepository extends JpaRepository<AnswerJpaEntity, Long> {
     
-    List<AnswerJpaEntity> findByResponseJpaEntityId(Long responseId);
+    List<AnswerJpaEntity> findBySubmissionJpaEntity_Id(Long responseId);
     
     List<AnswerJpaEntity> findByQuestionId(Long questionId);
 }

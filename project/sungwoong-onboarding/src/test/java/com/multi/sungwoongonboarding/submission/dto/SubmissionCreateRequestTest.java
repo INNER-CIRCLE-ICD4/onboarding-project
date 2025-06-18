@@ -4,8 +4,8 @@ import com.multi.sungwoongonboarding.forms.application.repository.FormRepository
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
-import com.multi.sungwoongonboarding.submission.application.repository.ResponseRepository;
-import com.multi.sungwoongonboarding.submission.domain.Responses;
+import com.multi.sungwoongonboarding.submission.application.repository.SubmissionRepository;
+import com.multi.sungwoongonboarding.submission.domain.Submission;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-public class ResponseCreateRequestTest {
+public class SubmissionCreateRequestTest {
 
     @Autowired
     Validator validator;
@@ -32,11 +32,11 @@ public class ResponseCreateRequestTest {
     FormRepository formRepository;
 
     @Autowired
-    ResponseRepository responseRepository;
+    SubmissionRepository submissionRepository;
 
     Forms 더미_설문지;
 
-    Responses 더미_응답지;
+    Submission 더미_응답지;
 
     @BeforeEach
     public void setUp() {
@@ -83,20 +83,20 @@ public class ResponseCreateRequestTest {
                 .build();
         더미_설문지 = formRepository.save(formsDomain);
 
-        ResponseCreateRequest responses = ResponseCreateRequest.builder()
+        SubmissionCreateRequest responses = SubmissionCreateRequest.builder()
                 .formId(더미_설문지.getId())
                 .userId("sungwoong")
                 .answerCreateRequests(List.of())
                 .build();
 
-        더미_응답지 = responseRepository.save(responses.toDomain());
+        더미_응답지 = submissionRepository.save(responses.toDomain());
     }
 
     @Test
     @DisplayName("ResponseCreateRequest 요청 객체 유효성 검사 - 섦문지 pk, 작성자, 응답 내용은 필수이다.")
     public void testResponseCreateRequestValidation() {
         // Given
-        ResponseCreateRequest request = new ResponseCreateRequest(null, "", null);
+        SubmissionCreateRequest request = new SubmissionCreateRequest(null, "", null);
 
 
         // When
@@ -113,7 +113,7 @@ public class ResponseCreateRequestTest {
     public void testResponseCreateRequestValidation2() {
 
         // Given
-        ResponseCreateRequest 유효한_응답지_요청값 = new ResponseCreateRequest(
+        SubmissionCreateRequest 유효한_응답지_요청값 = new SubmissionCreateRequest(
                 더미_설문지.getId(),
                 "sungwoong",
                 List.of(
@@ -122,12 +122,12 @@ public class ResponseCreateRequestTest {
                         new AnswerCreateRequest(더미_설문지.getQuestions().get(1).getId(), 더미_설문지.getQuestions().get(1).getOptions().get(1).getId(), null) // 다중 선택 질문에 대한 응답
                 ));
 
-        ResponseCreateRequest 유효하지_않은_요청값_필수질문의응답이빠짐 = new ResponseCreateRequest(1L, "sungwoong", List.of());
+        SubmissionCreateRequest 유효하지_않은_요청값_필수질문의응답이빠짐 = new SubmissionCreateRequest(1L, "sungwoong", List.of());
 
-        ResponseCreateRequest 유효하지_않은_요청값_선택질문응답이_올바르지않음 = new ResponseCreateRequest(1L, "sungwoong", List.of(
-                new AnswerCreateRequest(1L, 3L, null),
-                new AnswerCreateRequest(1L, 4L, null),
-                new AnswerCreateRequest(1L, 5L, null)
+        SubmissionCreateRequest 유효하지_않은_요청값_선택질문응답이_올바르지않음 = new SubmissionCreateRequest(1L, "sungwoong", List.of(
+                new AnswerCreateRequest(더미_설문지.getQuestions().get(0).getId(), 3L, null),
+                new AnswerCreateRequest(더미_설문지.getQuestions().get(0).getId(), 4L, null),
+                new AnswerCreateRequest(더미_설문지.getQuestions().get(0).getId(), 5L, null)
         ));
 
         // When

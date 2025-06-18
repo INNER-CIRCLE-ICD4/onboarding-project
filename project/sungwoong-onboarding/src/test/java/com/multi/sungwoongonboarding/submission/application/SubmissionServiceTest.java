@@ -4,9 +4,9 @@ import com.multi.sungwoongonboarding.forms.infrastructure.FormJpaRepository;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormsJpaEntity;
 import com.multi.sungwoongonboarding.questions.infrastructure.QuestionJpaEntity;
 import com.multi.sungwoongonboarding.submission.dto.AnswerCreateRequest;
-import com.multi.sungwoongonboarding.submission.dto.ResponseCreateRequest;
-import com.multi.sungwoongonboarding.submission.infrastructure.responses.ResponseJpaEntity;
-import com.multi.sungwoongonboarding.submission.infrastructure.responses.ResponsesJpaRepository;
+import com.multi.sungwoongonboarding.submission.dto.SubmissionCreateRequest;
+import com.multi.sungwoongonboarding.submission.infrastructure.submission.SubmissionJpaEntity;
+import com.multi.sungwoongonboarding.submission.infrastructure.submission.SubmissionJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,16 +24,16 @@ import java.util.Optional;
 @ActiveProfiles("test")
 @Sql(scripts = "/sql/form_insert_data.sql")
 @Transactional
-class ResponseServiceTest {
+class SubmissionServiceTest {
 
     @Autowired
     FormJpaRepository formJpaRepository;
 
     @Autowired
-    ResponseService responseService;
+    SubmissionService submissionService;
 
     @Autowired
-    private ResponsesJpaRepository responsesJpaRepository;
+    private SubmissionJpaRepository submissionJpaRepository;
 
 
     @Test
@@ -57,7 +57,7 @@ class ResponseServiceTest {
         FormsJpaEntity formsJpaEntity = formJpaRepository.findById(1L).orElseThrow(AssertionError::new);
         List<QuestionJpaEntity> questions = formsJpaEntity.getQuestions();
 
-        ResponseCreateRequest responseCreateRequest = ResponseCreateRequest.builder()
+        SubmissionCreateRequest submissionCreateRequest = SubmissionCreateRequest.builder()
                 .formId(formsJpaEntity.getId())
                 .userId("123햅버거러버123")
                 .answerCreateRequests(
@@ -82,8 +82,8 @@ class ResponseServiceTest {
 
         // When
         // 여기에 응답 제출 메소드를 호출합니다.
-        responseService.submitResponse(responseCreateRequest);
-        Optional<ResponseJpaEntity> byId = responsesJpaRepository.findById(1L);
+        submissionService.submitResponse(submissionCreateRequest);
+        Optional<SubmissionJpaEntity> byId = submissionJpaRepository.findById(1L);
 
         // Then
         // 여기에 응답 제출 결과를 검증하는 로직을 작성합니다.

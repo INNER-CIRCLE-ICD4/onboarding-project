@@ -1,4 +1,4 @@
-package com.multi.sungwoongonboarding.submission.infrastructure.responses;
+package com.multi.sungwoongonboarding.submission.infrastructure.submission;
 
 import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
@@ -7,8 +7,8 @@ import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.application.repository.QuestionRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.submission.domain.Answers;
-import com.multi.sungwoongonboarding.submission.domain.Responses;
-import com.multi.sungwoongonboarding.submission.application.repository.ResponseRepository;
+import com.multi.sungwoongonboarding.submission.domain.Submission;
+import com.multi.sungwoongonboarding.submission.application.repository.SubmissionRepository;
 import com.multi.sungwoongonboarding.submission.infrastructure.answers.AnswerJpaEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,9 +20,9 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ResponseRepositoryImpl implements ResponseRepository {
+public class SubmissionRepositoryImpl implements SubmissionRepository {
 
-    private final ResponsesJpaRepository responsesJpaRepository;
+    private final SubmissionJpaRepository submissionJpaRepository;
 
     private final OptionsRepository optionsRepository;
 
@@ -33,16 +33,16 @@ public class ResponseRepositoryImpl implements ResponseRepository {
 
     @Override
     @Transactional
-    public Responses save(Responses responses) {
+    public Submission save(Submission submission) {
 
-        Forms forms = formRepository.findById(responses.getFormId());
+        Forms forms = formRepository.findById(submission.getFormId());
 
-        ResponseJpaEntity responseJpaEntity = ResponseJpaEntity.fromDomain(responses);
-        responseJpaEntity.setFormVersion(forms.getVersion());
+        SubmissionJpaEntity submissionJpaEntity = SubmissionJpaEntity.fromDomain(submission);
+        submissionJpaEntity.setFormVersion(forms.getVersion());
 
-        for (Answers answer : responses.getAnswers()) {
+        for (Answers answer : submission.getAnswers()) {
             AnswerJpaEntity answerJpaEntity = AnswerJpaEntity.fromDomain(answer);
-            answerJpaEntity.setResponseJpaEntity(responseJpaEntity);
+            answerJpaEntity.setSubmissionJpaEntity(submissionJpaEntity);
             Questions question = questionRepository.findById(answer.getQuestionId());
 
             if (question.getQuestionType().isChoiceType()) {
@@ -50,21 +50,21 @@ public class ResponseRepositoryImpl implements ResponseRepository {
                 answerJpaEntity.setOptions(options);
             }
         }
-        responsesJpaRepository.save(responseJpaEntity);
+        submissionJpaRepository.save(submissionJpaEntity);
 
-        return responseJpaEntity.toDomain();
+        return submissionJpaEntity.toDomain();
     }
 
     @Override
-    public List<Responses> findAll() {
-        return responsesJpaRepository.findAll().stream().map(ResponseJpaEntity::toDomain).toList();
+    public List<Submission> findAll() {
+        return submissionJpaRepository.findAll().stream().map(SubmissionJpaEntity::toDomain).toList();
     }
 
     @Override
-    public Responses findById(Long id) {
+    public Submission findById(Long id) {
 
-        Optional<ResponseJpaEntity> byId = responsesJpaRepository.findById(id);
-        return byId.map(ResponseJpaEntity::toDomain).orElse(null);
+        Optional<SubmissionJpaEntity> byId = submissionJpaRepository.findById(id);
+        return byId.map(SubmissionJpaEntity::toDomain).orElse(null);
 
     }
 }

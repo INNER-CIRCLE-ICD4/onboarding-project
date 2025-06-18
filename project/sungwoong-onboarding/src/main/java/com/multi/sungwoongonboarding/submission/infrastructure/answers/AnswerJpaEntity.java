@@ -3,7 +3,7 @@ package com.multi.sungwoongonboarding.submission.infrastructure.answers;
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.submission.domain.Answers;
-import com.multi.sungwoongonboarding.submission.infrastructure.responses.ResponseJpaEntity;
+import com.multi.sungwoongonboarding.submission.infrastructure.submission.SubmissionJpaEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -18,8 +18,8 @@ public class AnswerJpaEntity extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "response_id")
-    private ResponseJpaEntity responseJpaEntity;
+    @JoinColumn(name = "submission_id")
+    private SubmissionJpaEntity submissionJpaEntity;
 
     @Column(name = "question_id", nullable = false)
     private Long questionId;
@@ -40,10 +40,10 @@ public class AnswerJpaEntity extends BaseEntity {
         return answerJpaEntity;
     }
 
-    public void setResponseJpaEntity(ResponseJpaEntity responseJpaEntity) {
-        this.responseJpaEntity = responseJpaEntity;
-        if (!responseJpaEntity.getAnswers().contains(this)) {
-            responseJpaEntity.getAnswers().add(this);
+    public void setSubmissionJpaEntity(SubmissionJpaEntity submissionJpaEntity) {
+        this.submissionJpaEntity = submissionJpaEntity;
+        if (!submissionJpaEntity.getAnswers().contains(this)) {
+            submissionJpaEntity.getAnswers().add(this);
         }
     }
 
@@ -55,7 +55,7 @@ public class AnswerJpaEntity extends BaseEntity {
     public Answers toDomain() {
         return Answers.builder()
                 .id(this.id)
-                .responseId(this.responseJpaEntity != null ? this.responseJpaEntity.getId() : null)
+                .submissionId(this.submissionJpaEntity != null ? this.submissionJpaEntity.getId() : null)
                 .questionId(this.questionId)
                 .answerText(this.answerText)
                 .build();

@@ -9,7 +9,7 @@ public class Answers {
 
     private final Long id;
     // 응답 ID
-    private final Long responseId;
+    private final Long submissionId;
     // 응답에 대한 질문 ID, 옵션 ID, 답변 내용
     private final Long questionId;
     // 선택한 질문 옵션 ID (단일 선택, 복수 선택)
@@ -18,9 +18,9 @@ public class Answers {
     private final String answerText;
 
     @Builder
-    public Answers(Long id, Long responseId, Long questionId, Long optionId, String answerText) {
+    public Answers(Long id, Long submissionId, Long questionId, Long optionId, String answerText) {
         this.id = id;
-        this.responseId = responseId;
+        this.submissionId = submissionId;
         this.questionId = questionId;
         this.optionId = optionId;
         this.answerText = answerText;

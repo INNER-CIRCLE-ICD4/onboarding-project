@@ -1,6 +1,6 @@
 package com.multi.sungwoongonboarding.submission.dto;
 
-import com.multi.sungwoongonboarding.submission.domain.Responses;
+import com.multi.sungwoongonboarding.submission.domain.Submission;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class ResponseCreateRequest {
+public class SubmissionCreateRequest {
 
     @NotNull(message = "설문지 ID는 필수 입력 항목입니다.")
     private Long formId;
@@ -26,14 +26,14 @@ public class ResponseCreateRequest {
     private List<AnswerCreateRequest> answerCreateRequests;
 
     @Builder
-    public ResponseCreateRequest(Long formId, String userId, List<AnswerCreateRequest> answerCreateRequests) {
+    public SubmissionCreateRequest(Long formId, String userId, List<AnswerCreateRequest> answerCreateRequests) {
         this.formId = formId;
         this.userId = userId;
         this.answerCreateRequests = answerCreateRequests;
     }
 
-    public Responses toDomain() {
-        Responses.ResponsesBuilder responsesBuilder = Responses.builder()
+    public Submission toDomain() {
+        Submission.SubmissionBuilder responsesBuilder = Submission.builder()
                 .formId(this.formId)
                 .userId(this.userId)
                 .createdAt(LocalDateTime.now());
