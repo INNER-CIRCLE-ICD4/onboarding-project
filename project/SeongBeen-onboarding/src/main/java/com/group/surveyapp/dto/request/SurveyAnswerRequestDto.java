@@ -1,4 +1,4 @@
-package com.group.surveyapp.dto;
+package com.group.surveyapp.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class SurveyAnswerRequestDto {
 
     @Data
     public static class AnswerDto {
-        private String questionName; // 항목 이름
-        private Object answer;       // 응답 값(문자열 또는 배열)
+        private Long questionId;
+        private Object answer;   // 문자열(단답/장문) 또는 리스트(선택형)
     }
 }
