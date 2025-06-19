@@ -19,12 +19,14 @@ public class SurveyController {
 
     private final SurveyService surveyService;
 
+    //create
     @PostMapping
     public ResponseEntity<ApiResponse<SurveyResponseDto>> createSurvey(@Valid @RequestBody CreateSurveyRequestDto dto) {
         SurveyResponseDto surveyResponse = surveyService.createSurvey(dto);
         return ResponseEntity.ok(ApiResponse.success(surveyResponse));
     }
 
+    //update
     @PatchMapping("/{surveyId}")
     public ResponseEntity<ApiResponse<SurveyResponseDto>> updateSurvey(
             @PathVariable Long surveyId,
@@ -32,5 +34,8 @@ public class SurveyController {
         SurveyResponseDto surveyResponse = surveyService.updateSurvey(surveyId, dto);
         return ResponseEntity.ok(ApiResponse.success(surveyResponse));
     }
+
+
+
 
 }

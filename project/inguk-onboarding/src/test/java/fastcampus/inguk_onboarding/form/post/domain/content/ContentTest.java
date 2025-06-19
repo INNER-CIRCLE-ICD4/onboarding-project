@@ -9,7 +9,7 @@ class ContentTest {
 
     @Test
     @DisplayName("정상적인 Content 생성")
-    void createContent_정상() {
+    void createContent_success() {
         // given & when
         Content content = new Content("설문조사", "설문조사 설명");
 
@@ -20,7 +20,7 @@ class ContentTest {
 
     @Test
     @DisplayName("Content 생성 실패 - 이름이 null")
-    void createContent_실패_이름null() {
+    void createContent_name_null() {
         // given & when & then
         assertThatThrownBy(() -> new Content(null, "설명"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -29,7 +29,7 @@ class ContentTest {
 
     @Test
     @DisplayName("Content 생성 실패 - 이름이 빈 문자열")
-    void createContent_실패_이름빈문자열() {
+    void createContent_name_empty() {
         // given & when & then
         assertThatThrownBy(() -> new Content("   ", "설명"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -38,7 +38,7 @@ class ContentTest {
 
     @Test
     @DisplayName("Content 생성 성공 - 설명이 null")
-    void createContent_성공_설명null() {
+    void createContent_success_description() {
         // given & when
         Content content = new Content("이름", null);
 

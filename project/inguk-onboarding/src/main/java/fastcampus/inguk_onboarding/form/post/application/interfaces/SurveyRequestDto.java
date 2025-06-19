@@ -1,4 +1,6 @@
-package fastcampus.inguk_onboarding.form.post.application.dto;
+package fastcampus.inguk_onboarding.form.post.application.interfaces;
+
+import fastcampus.inguk_onboarding.form.post.application.dto.CreateSurveyItemRequestDto;
 
 import java.util.List;
 

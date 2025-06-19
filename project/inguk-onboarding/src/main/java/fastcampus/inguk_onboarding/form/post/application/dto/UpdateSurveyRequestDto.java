@@ -1,5 +1,6 @@
 package fastcampus.inguk_onboarding.form.post.application.dto;
 
+import fastcampus.inguk_onboarding.form.post.application.interfaces.SurveyRequestDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

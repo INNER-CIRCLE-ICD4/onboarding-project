@@ -1,10 +1,11 @@
 package fastcampus.inguk_onboarding.form.post.repository.entity.post;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import fastcampus.inguk_onboarding.common.repository.entity.TimeBaseEntity;
 import fastcampus.inguk_onboarding.form.post.domain.Surveys.InputType;
 import jakarta.persistence.*;
-import lombok.*;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 

@@ -34,7 +34,7 @@ class SurveyServiceTest {
 
     @Test
     @DisplayName("설문조사 생성 성공 - 단답형과 선택형 혼합")
-    void createSurvey_성공_혼합타입() {
+    void createSurvey_success_MutiSurvey() {
         // given
         CreateSurveyItemRequestDto item1 = new CreateSurveyItemRequestDto(
                 "이름",
@@ -78,7 +78,7 @@ class SurveyServiceTest {
 
     @Test
     @DisplayName("설문조사 생성 실패 - 설문조사 이름이 없음")
-    void createSurvey_실패_이름없음() {
+    void createSurvey_Name_null() {
         // given
         CreateSurveyItemRequestDto item = new CreateSurveyItemRequestDto(
                 "이름",
@@ -106,7 +106,7 @@ class SurveyServiceTest {
 
     @Test
     @DisplayName("설문조사 생성 실패 - 항목이 없음")
-    void createSurvey_실패_항목없음() {
+    void createSurvey_Content_null() {
         // given
         CreateSurveyRequestDto dto = new CreateSurveyRequestDto(
                 "설문조사",
@@ -125,7 +125,7 @@ class SurveyServiceTest {
 
     @Test
     @DisplayName("설문조사 생성 실패 - 선택형 항목에 옵션이 없음")
-    void createSurvey_실패_선택형옵션없음() {
+    void createSurvey_Option_null() {
         // given
         CreateSurveyItemRequestDto item = new CreateSurveyItemRequestDto(
                 "만족도",
@@ -153,7 +153,7 @@ class SurveyServiceTest {
 
     @Test
     @DisplayName("설문조사 생성 성공 - 다중 선택형")
-    void createSurvey_성공_다중선택형() {
+    void createSurvey_success_MutiSurvey() {
         // given
         CreateSurveyItemRequestDto item = new CreateSurveyItemRequestDto(
                 "취미",

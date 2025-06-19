@@ -1,11 +1,10 @@
 package fastcampus.inguk_onboarding.form.post.repository.entity.post;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import fastcampus.inguk_onboarding.common.repository.entity.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.ArrayList;
 import java.util.List;

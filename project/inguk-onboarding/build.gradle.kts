@@ -35,6 +35,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 
+	//google gson
+	implementation("com.google.code.gson:gson:2.13.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

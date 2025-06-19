@@ -1,6 +1,7 @@
 package fastcampus.inguk_onboarding.form.post.application;
 
 import fastcampus.inguk_onboarding.form.post.application.dto.*;
+import fastcampus.inguk_onboarding.form.post.application.interfaces.SurveyRequestDto;
 import fastcampus.inguk_onboarding.form.post.domain.content.SurveyItem;
 import fastcampus.inguk_onboarding.form.post.domain.Survey;
 import fastcampus.inguk_onboarding.form.post.domain.content.SurveyContent;

@@ -1,11 +1,11 @@
 package fastcampus.inguk_onboarding.form.post.repository.entity.post;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import fastcampus.inguk_onboarding.common.repository.entity.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,4 +52,5 @@ public class SurveyVersionEntity extends TimeBaseEntity {
         items.remove(item);
         item.setSurveyVersion(null);
     }
+
 }

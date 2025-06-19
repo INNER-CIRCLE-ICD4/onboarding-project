@@ -14,7 +14,7 @@ class SurveyContentTest {
 
     @Test
     @DisplayName("정상적인 SurveyContent 생성")
-    void createSurveyContent_정상() {
+    void createSurveyContent_success() {
         // given
         List<SurveyItem> items = List.of(
                 new SurveyItem("이름", "이름을 입력해주세요", InputType.SHORT_TYPE, true, 1, null),
@@ -39,7 +39,7 @@ class SurveyContentTest {
 
     @Test
     @DisplayName("SurveyContent 생성 실패 - 이름이 null")
-    void createSurveyContent_실패_이름null() {
+    void createSurveyContent_name_null() {
         // given
         List<SurveyItem> items = List.of(
                 new SurveyItem("이름", "이름을 입력해주세요", InputType.SHORT_TYPE, true, 1, null)
@@ -56,7 +56,7 @@ class SurveyContentTest {
 
     @Test
     @DisplayName("SurveyContent 생성 실패 - 이름이 빈 문자열")
-    void createSurveyContent_실패_이름빈문자열() {
+    void createSurveyContent_name_empty() {
         // given
         List<SurveyItem> items = List.of(
                 new SurveyItem("이름", "이름을 입력해주세요", InputType.SHORT_TYPE, true, 1, null)
@@ -73,7 +73,7 @@ class SurveyContentTest {
 
     @Test
     @DisplayName("SurveyContent 생성 실패 - 항목이 없음")
-    void createSurveyContent_실패_항목없음() {
+    void createSurveyContent_content_empty() {
         // given & when & then
         assertThatThrownBy(() -> new SurveyContent(
                 "설문조사",
@@ -85,7 +85,7 @@ class SurveyContentTest {
 
     @Test
     @DisplayName("SurveyContent 생성 실패 - 항목이 null")
-    void createSurveyContent_실패_항목null() {
+    void createSurveyContent_content_null() {
         // given & when & then
         assertThatThrownBy(() -> new SurveyContent(
                 "설문조사",
@@ -97,7 +97,7 @@ class SurveyContentTest {
 
     @Test
     @DisplayName("SurveyContent 생성 실패 - 항목이 10개 초과")
-    void createSurveyContent_실패_항목10개초과() {
+    void createSurveyContent_options_over() {
         // given - 11개의 항목 생성
         List<SurveyItem> items = IntStream.range(1, 12)
                 .mapToObj(i -> new SurveyItem(
@@ -121,7 +121,7 @@ class SurveyContentTest {
 
     @Test
     @DisplayName("SurveyContent - 최대 10개 항목은 정상 생성")
-    void createSurveyContent_정상_10개항목() {
+    void createSurveyContent_options_correct() {
         // given - 정확히 10개의 항목 생성
         List<SurveyItem> items = IntStream.range(1, 11)
                 .mapToObj(i -> new SurveyItem(
@@ -148,7 +148,7 @@ class SurveyContentTest {
 
     @Test
     @DisplayName("SurveyContent - 상속받은 Content의 기능 확인")
-    void surveyContent_상속기능확인() {
+    void surveyContent_check_extends() {
         // given
         List<SurveyItem> items = List.of(
                 new SurveyItem("이름", "이름을 입력해주세요", InputType.SHORT_TYPE, true, 1, null)

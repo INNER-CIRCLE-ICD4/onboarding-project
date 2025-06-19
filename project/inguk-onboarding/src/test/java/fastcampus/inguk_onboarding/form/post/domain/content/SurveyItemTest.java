@@ -98,7 +98,7 @@ class SurveyItemTest {
 
     @Test
     @DisplayName("SurveyItem 생성 실패 - 이름이 null")
-    void createSurveyItem_실패_이름null() {
+    void createSurveyItem_Name_null() {
         // given & when & then
         assertThatThrownBy(() -> new SurveyItem(
                 null,
@@ -113,7 +113,7 @@ class SurveyItemTest {
 
     @Test
     @DisplayName("SurveyItem 생성 실패 - 이름이 빈 문자열")
-    void createSurveyItem_실패_이름빈문자열() {
+    void createSurveyItem_name_null() {
         // given & when & then
         assertThatThrownBy(() -> new SurveyItem(
                 "   ",
@@ -128,7 +128,7 @@ class SurveyItemTest {
 
     @Test
     @DisplayName("SurveyItem 생성 실패 - 입력 타입이 null")
-    void createSurveyItem_실패_입력타입null() {
+    void createSurveyItem_InputType_null() {
         // given & when & then
         assertThatThrownBy(() -> new SurveyItem(
                 "이름",
@@ -143,7 +143,7 @@ class SurveyItemTest {
 
     @Test
     @DisplayName("SurveyItem 생성 실패 - 필수여부가 null")
-    void createSurveyItem_실패_필수여부null() {
+    void createSurveyItem_required_null() {
         // given & when & then
         assertThatThrownBy(() -> new SurveyItem(
                 "이름",
@@ -158,7 +158,7 @@ class SurveyItemTest {
 
     @Test
     @DisplayName("SurveyItem 생성 실패 - 순서가 null")
-    void createSurveyItem_실패_순서null() {
+    void createSurveyItem_order_null() {
         // given & when & then
         assertThatThrownBy(() -> new SurveyItem(
                 "이름",
@@ -173,7 +173,7 @@ class SurveyItemTest {
 
     @Test
     @DisplayName("SurveyItem 생성 실패 - 단일선택형인데 옵션이 null")
-    void createSurveyItem_실패_단일선택형_옵션null() {
+    void createSurveyItem_singleType_null() {
         // given & when & then
         assertThatThrownBy(() -> new SurveyItem(
                 "만족도",
@@ -188,7 +188,7 @@ class SurveyItemTest {
 
     @Test
     @DisplayName("SurveyItem 생성 실패 - 다중선택형인데 옵션이 빈 리스트")
-    void createSurveyItem_실패_다중선택형_옵션빈리스트() {
+    void createSurveyItem_options_null() {
         // given & when & then
         assertThatThrownBy(() -> new SurveyItem(
                 "취미",
@@ -203,7 +203,7 @@ class SurveyItemTest {
 
     @Test
     @DisplayName("SurveyItem 비교 - 다른 항목과 다름을 확인")
-    void isDifferentFrom_다름() {
+    void isDifferentFrom_differentType() {
         // given
         SurveyItem surveyItem = new SurveyItem(
                 "이름",
@@ -227,7 +227,7 @@ class SurveyItemTest {
 
     @Test
     @DisplayName("SurveyItem 비교 - 같은 항목임을 확인")
-    void isDifferentFrom_같음() {
+    void isDifferentFrom_sameType() {
         // given
         SurveyItem surveyItem = new SurveyItem(
                 "이름",

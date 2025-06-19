@@ -17,7 +17,7 @@ class SurveyTest {
 
     @Test
     @DisplayName("정상적인 Survey 생성 및 createSurvey 실행")
-    void createSurvey_정상() {
+    void createSurvey_success() {
         // given
         List<SurveyItem> items = List.of(
                 new SurveyItem("이름", "이름을 입력해주세요", InputType.SHORT_TYPE, true, 1, null),
@@ -68,7 +68,7 @@ class SurveyTest {
 
     @Test
     @DisplayName("Survey 생성 시 항목 개수 검증 - 11개 항목으로 실패")
-    void createSurvey_실패_항목11개() {
+    void createSurvey_fail_multiSurvey() {
         // given - 11개 항목 생성
         List<SurveyItem> items = List.of(
                 new SurveyItem("항목1", "설명1", InputType.SHORT_TYPE, true, 1, null),
@@ -95,7 +95,7 @@ class SurveyTest {
 
     @Test
     @DisplayName("Survey 생성 시 다중 선택형 항목 포함")
-    void createSurvey_정상_다중선택형포함() {
+    void createSurvey_success_multiple() {
         // given
         List<SurveyItem> items = List.of(
                 new SurveyItem("취미", "관심있는 취미를 모두 선택해주세요", InputType.MULTIPLE_TYPE, false, 1,
@@ -125,7 +125,7 @@ class SurveyTest {
 
     @Test
     @DisplayName("Survey 생성 시 장문형 항목 포함")
-    void createSurvey_정상_장문형포함() {
+    void createSurvey_success_LongType() {
         // given
         List<SurveyItem> items = List.of(
                 new SurveyItem("의견", "개선사항이나 의견을 자유롭게 작성해주세요", InputType.LONG_TYPE, false, 1, null)
