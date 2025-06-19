@@ -13,17 +13,31 @@ class Answer(
     @Lob
     val answerValue: String? = null,
     val selectedOptionIds: List<Long>? = null,
+    val selectedOptionTexts: List<String>? = null,
 ) {
 
+    fun matchQuestion(questionKeyword: String?): Boolean {
+        return questionKeyword.isNullOrBlank()
+                || questionName.contains(questionKeyword, ignoreCase = true)
+    }
+
+    fun matchesAnswer(answerKeyword: String?): Boolean {
+        return answerKeyword.isNullOrBlank()
+                || (answerValue?.contains(answerKeyword, ignoreCase = true) == true
+                || selectedOptionTexts?.any { it.contains(answerKeyword, ignoreCase = true) } == true)
+    }
+
     companion object {
-        fun of(questionId: Long,
-               questionName: String,
-               questionType: QuestionType,
-               answerValue: String? = null,
-               selectedOptionIds: List<Long>? = null,
+        fun of(
+            questionId: Long,
+            questionName: String,
+            questionType: QuestionType,
+            answerValue: String? = null,
+            selectedOptionIds: List<Long>? = null,
+            selectedOptionTexts: List<String>? = null,
         ): Answer {
-            AnswerValidator.validate(questionType, answerValue, selectedOptionIds)
-            return Answer(questionId, questionName, questionType, answerValue, selectedOptionIds)
+            questionType.validateAnswer(answerValue, selectedOptionIds)
+            return Answer(questionId, questionName, questionType, answerValue, selectedOptionIds, selectedOptionTexts)
         }
     }
 }

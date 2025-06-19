@@ -1,5 +1,7 @@
 package com.wlghsp.querybox.domain.survey
 
+import com.wlghsp.querybox.domain.response.Answer
+import com.wlghsp.querybox.domain.response.Answers
 import com.wlghsp.querybox.ui.dto.QuestionUpdateRequest
 import com.wlghsp.querybox.ui.dto.SurveyUpdateRequest
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -9,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 class SurveyTest {
 
-    @DisplayName("설문 생성 Success")
+    @DisplayName("설문 생성 성공")
     @Test
     fun createSurvey_success() {
         val questions = Questions.of(
@@ -23,6 +25,42 @@ class SurveyTest {
         assertThat(survey.title).isEqualTo("기본 설문")
         assertThat(survey.description).isEqualTo("간단한 설문입니다.")
         assertThat(survey.getQuestions()).hasSize(2)
+    }
+
+    @DisplayName("설문 응답 생성 성공")
+    @Test
+    fun createResponse_success() {
+        // given
+        val survey = Survey.of(
+            title = "언어 선호도 조사",
+            description = "개발 언어에 대한 선호도 조사입니다.",
+            questions = Questions.of(
+                listOf(
+                    Question("언어", "가장 좋아하는 언어는?", QuestionType.SHORT_TEXT, true)
+                )
+            )
+        )
+
+        val answers = Answers.of(
+            listOf(
+                Answer.of(
+                    questionId = survey.getQuestions().first().id,
+                    questionName = "언어",
+                    questionType = QuestionType.SHORT_TEXT,
+                    answerValue = "Kotlin"
+                )
+            )
+        )
+
+        val snapshot = """{"survey":"fake","response":"fake"}"""
+
+        // when
+        val response = survey.createResponse(answers, snapshot)
+
+        // then
+        assertThat(response.surveyId).isEqualTo(survey.id)
+        assertThat(response.answers!!.values()).hasSize(1)
+        assertThat(response.snapshot).isEqualTo(snapshot)
     }
 
     @DisplayName("설문 제목이 비어 있으면 예외 발생")

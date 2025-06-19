@@ -8,6 +8,7 @@ import support.domain.BaseEntity
 class Question(
     @Column(nullable = false)
     var name: String, // 항목 이름
+
     var description: String, // 항목 설명
 
     @Enumerated(EnumType.STRING)
@@ -18,17 +19,22 @@ class Question(
     @Embedded
     var options: Options? = Options(),
 
-) : BaseEntity() {
+    ) : BaseEntity() {
 
     var required: Boolean = required
         protected set
 
     init {
-        validateInvariants()
+        validate()
+    }
+
+    fun validate() {
+        require(name.isNotBlank()) { "항목 이름은 비어 있을 수 없습니다." }
+        type.validateQuestion(options)
     }
 
     fun updateFrom(request: QuestionUpdateRequest) {
-        validateInvariants()
+        validate()
 
         this.name = request.name
         this.description = request.description
@@ -36,15 +42,15 @@ class Question(
         this.required = request.required
     }
 
-    private fun validateInvariants() {
-        require(name.isNotBlank()) { "항목 이름은 비어 있을 수 없습니다." }
-
-        if (type == QuestionType.SINGLE_CHOICE || type == QuestionType.MULTIPLE_CHOICE) {
-            require(options != null && options!!.isNotEmpty()) {
-                "선택형 항목에는 옵션이 반드시 있어야 합니다."
-            }
-        } else {
-            require(options == null || options!!.isEmpty()) { "주관식 항목은 옵션을 가질 수 없습니다." }
+    companion object {
+        fun from(request: QuestionUpdateRequest): Question {
+            return Question(
+                name = request.name,
+                description = request.description,
+                type = request.type,
+                required = request.required,
+                options = request.options?.let { Options(it.map(::Option)) }
+            )
         }
     }
 }

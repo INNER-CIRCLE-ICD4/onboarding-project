@@ -5,7 +5,6 @@ import com.wlghsp.querybox.domain.survey.Survey
 import com.wlghsp.querybox.ui.dto.ApiResponse
 import com.wlghsp.querybox.ui.dto.SurveyCreateRequest
 import com.wlghsp.querybox.ui.dto.SurveyUpdateRequest
-import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -28,7 +27,7 @@ class SurveyRestController(
     }
 
     @PatchMapping("{id}")
-    fun updateSurvey(@PathVariable id: Long, @RequestBody @Valid request: SurveyUpdateRequest): ResponseEntity<Unit> {
+    fun updateSurvey(@PathVariable id: Long, @RequestBody request: SurveyUpdateRequest): ResponseEntity<Unit> {
         surveyService.update(id, request)
         return ResponseEntity.ok().build()
     }

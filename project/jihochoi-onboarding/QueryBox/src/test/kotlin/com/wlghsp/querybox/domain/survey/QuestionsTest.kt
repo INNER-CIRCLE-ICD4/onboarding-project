@@ -11,8 +11,7 @@ class QuestionsTest {
     @Test
     fun createQuestions_success() {
         assertDoesNotThrow {
-            Questions.of(
-                mutableListOf(
+            Questions.of(mutableListOf(
                     Question("Q1", "desc", QuestionType.SHORT_TEXT, true, null),
                     Question("Q2", "desc", QuestionType.SHORT_TEXT, true, null),
                 )

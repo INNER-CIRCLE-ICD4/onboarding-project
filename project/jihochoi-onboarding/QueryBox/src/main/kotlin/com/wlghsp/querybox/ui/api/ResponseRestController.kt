@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/response")
+@RequestMapping("/responses")
 class ResponseRestController(
     private val responseService: ResponseService,
 ) {
@@ -26,9 +27,13 @@ class ResponseRestController(
         return ResponseEntity.ok().build()
     }
 
-    @GetMapping("/{surveyId}")
-    fun getAll(@PathVariable("surveyId") surveyId: Long): ResponseEntity<ApiResponse<List<ResponseDto>>> {
-        val responseDto = responseService.findAllBySurveyId(surveyId)
+    @GetMapping("/{surveyId}/search")
+    fun searchResponses(
+        @PathVariable("surveyId") surveyId: Long,
+        @RequestParam(required = false) questionKeyword: String?,
+        @RequestParam(required = false) answerKeyword: String?,
+    ): ResponseEntity<ApiResponse<List<ResponseDto>>> {
+        val responseDto = responseService.searchResponses(surveyId, questionKeyword, answerKeyword)
         return ResponseEntity.ok(ApiResponse.success(responseDto))
     }
 }
