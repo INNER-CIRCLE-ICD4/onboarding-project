@@ -22,4 +22,10 @@ public class SurveyCtrl {
         surveySvc.createSurvey(survey);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/api/survey/update")
+    public ResponseEntity<?> updateSurvey(@RequestBody SurveyDto.UpdateSurveyRequest survey) {
+        surveySvc.updateSurvey(survey);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

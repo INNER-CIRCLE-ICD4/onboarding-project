@@ -66,4 +66,54 @@ public class SurveySvc {
 
 
     }
+
+    @Transactional
+    public void updateSurvey(SurveyDto.UpdateSurveyRequest request) {
+
+        Survey survey = surveyRepo.findById(request.id())
+                .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
+
+        // 1. 기존 설문 업데이트
+        survey.setTitle(request.survey().title());
+        survey.setDescription(request.survey().description());
+
+        // 2. 기존 질문, 옵션
+        List<SurveyQuestion> existingQuestions = surveyQuestionRepo.findBySurveyId(survey.getId());
+        List<QuestionOption> existingOptions = questionOptionRepo.findByQuestionIdIn(
+                existingQuestions.stream().map(SurveyQuestion::getId).toList()
+        );
+
+        // 3. 기존 질문/옵션 삭제 (선택 사항, 전체 교체 방식이면)
+        questionOptionRepo.deleteAll(existingOptions);
+        surveyQuestionRepo.deleteAll(existingQuestions);
+
+        // 4. 새 질문/옵션 추가
+        List<SurveyQuestion> newQuestions = new ArrayList<>();
+        List<QuestionOption> newOptions = new ArrayList<>();
+
+        for (SurveyDto.QuestionDto q : request.survey().questions()) {
+            SurveyQuestion question = SurveyQuestion.builder()
+                    .id(UUID.randomUUID().toString())
+                    .survey(survey)
+                    .questionText(q.questionText())
+                    .questionDescription(q.questionDescription())
+                    .questionType(q.questionType())
+                    .isRequired(q.isRequired())
+                    .build();
+            newQuestions.add(question);
+
+            for (SurveyDto.QuestionOptionDto o : q.options()) {
+                QuestionOption option = QuestionOption.builder()
+                        .id(UUID.randomUUID().toString())
+                        .question(question)
+                        .optionText(o.optionText())
+                        .build();
+                newOptions.add(option);
+            }
+        }
+
+        surveyRepo.save(survey);
+        surveyQuestionRepo.saveAll(newQuestions);
+        questionOptionRepo.saveAll(newOptions);
+    }
 }

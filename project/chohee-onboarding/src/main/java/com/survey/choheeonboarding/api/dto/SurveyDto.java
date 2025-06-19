@@ -11,6 +11,11 @@ public class SurveyDto {
             List<QuestionDto> questions
     ) {}
 
+    public record UpdateSurveyRequest(
+            String id,
+            CreateSurveyRequest survey
+    ) {}
+
     public record QuestionDto(
             String questionText,
             String questionDescription,
