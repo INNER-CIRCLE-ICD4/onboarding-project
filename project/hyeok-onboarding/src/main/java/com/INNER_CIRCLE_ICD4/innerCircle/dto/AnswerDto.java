@@ -13,13 +13,12 @@ public record AnswerDto(
 ) {
     public static AnswerDto from(Answer answer) {
         return new AnswerDto(
-                answer.getQuestion().getId(), // ✅ 수정된 부분
+                answer.getQuestion().getId(),
                 answer.getText(),
                 answer.getSelectedOptions() == null ? null :
                         answer.getSelectedOptions().stream()
-                                .map(UUID::toString)
+                                .map(choice -> choice.getId().toString())  // ✅ 여기 수정
                                 .collect(Collectors.toList())
         );
     }
-
 }
