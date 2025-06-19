@@ -5,12 +5,12 @@ import com.multi.sungwoongonboarding.questions.domain.Questions;
 import com.multi.sungwoongonboarding.submission.dto.AnswerCreateRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class AnswerOptionValidator implements ConstraintValidator<AnswerOptionValid, AnswerCreateRequest> {
 
-    @Autowired
-    private QuestionRepository questionRepository;
+    private final QuestionRepository questionRepository;
 
     @Override
     public void initialize(AnswerOptionValid constraintAnnotation) {

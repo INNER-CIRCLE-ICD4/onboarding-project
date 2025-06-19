@@ -6,18 +6,16 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.*;
 
+@RequiredArgsConstructor
 public class QuestionOptionValidator implements ConstraintValidator<QuestionOptionValid, OptionContainer> {
 
     private final Validator validator;
-
-    public QuestionOptionValidator(Validator validator) {
-        this.validator = validator;
-    }
 
     @Override
     public void initialize(QuestionOptionValid constraintAnnotation) {
