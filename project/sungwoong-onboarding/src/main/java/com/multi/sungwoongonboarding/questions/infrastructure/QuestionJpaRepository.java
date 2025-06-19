@@ -18,4 +18,13 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     Optional<QuestionJpaEntity> findById(Long id);
 
     List<QuestionJpaEntity> findByFormsJpaEntity(FormsJpaEntity formsJpaEntity);
+
+    @Query("""
+            SELECT q
+            FROM QuestionJpaEntity q
+            left join fetch q.options
+            where q.formsJpaEntity.id = :formId
+            and q.isRequired = true
+            """)
+    List<QuestionJpaEntity> findRequiredByFormId(Long formId);
 }
