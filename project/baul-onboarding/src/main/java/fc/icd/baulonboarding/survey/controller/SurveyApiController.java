@@ -1,25 +1,35 @@
 package fc.icd.baulonboarding.survey.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import fc.icd.baulonboarding.common.reponse.CommonResponse;
+import fc.icd.baulonboarding.survey.model.dto.SurveyCommand;
+import fc.icd.baulonboarding.survey.model.dto.SurveyDto;
+import fc.icd.baulonboarding.survey.model.mapper.SurveyDtoMapper;
+import fc.icd.baulonboarding.survey.service.SurveyService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/api/surveys")
 public class SurveyApiController {
 
-    @PostMapping("")
-    public void 설문조사생성API(){
+    private final SurveyService surveyService;
+    private final SurveyDtoMapper surveyDtoMapper;
 
+    @PostMapping
+    public CommonResponse registerSurvey(@RequestBody @Valid SurveyDto.RegisterSurveyRequest request){
+        SurveyCommand.RegisterSurvey surveyCommand = surveyDtoMapper.of(request);
+        surveyService.registerSurvey(surveyCommand);
+        return CommonResponse.success("ok");
     }
 
-    @PutMapping("")
-    public void 설문조사수정API(){
-
+    @PutMapping
+    public CommonResponse updateSurvey(@RequestBody @Valid SurveyDto.UpdateSurveyRequest request){
+        SurveyCommand.UpdateSurvey surveyCommand = surveyDtoMapper.of(request);
+        surveyService.updateSurvey(surveyCommand);
+        return CommonResponse.success("ok");
     }
 
-    @PostMapping("/submit")
-    public void 설문조사응답제출API(){
-
-    }
 
 }
