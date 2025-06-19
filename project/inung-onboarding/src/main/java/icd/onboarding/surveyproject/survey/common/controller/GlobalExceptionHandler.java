@@ -1,8 +1,6 @@
 package icd.onboarding.surveyproject.survey.common.controller;
 
-import icd.onboarding.surveyproject.survey.controller.consts.ErrorCodes;
 import icd.onboarding.surveyproject.survey.controller.exception.CommonSurveyHttpException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

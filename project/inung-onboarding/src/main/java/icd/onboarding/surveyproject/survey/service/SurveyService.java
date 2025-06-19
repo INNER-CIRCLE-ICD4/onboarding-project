@@ -31,7 +31,14 @@ public class SurveyService {
 	}
 
 	public Survey updateSurvey (Survey existingSurvey) {
-		Survey updatedSurvey = existingSurvey.update(existingSurvey.getTitle(), existingSurvey.getDescription(), existingSurvey.getQuestions());
+		surveyRepository.findByIdAndVersion(existingSurvey.getId(), existingSurvey.getVersion())
+						.orElseThrow(SurveyNotFoundException::new);
+
+		Survey updatedSurvey = existingSurvey.update(
+				existingSurvey.getTitle(),
+				existingSurvey.getDescription(),
+				existingSurvey.getQuestions()
+		);
 
 		return surveyRepository.save(updatedSurvey);
 	}

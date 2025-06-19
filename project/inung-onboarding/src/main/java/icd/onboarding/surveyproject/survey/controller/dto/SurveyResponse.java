@@ -12,7 +12,7 @@ public record SurveyResponse(
 		String description,
 		List<QuestionResponse> questions
 ) {
-	public static SurveyResponse formDomain (Survey survey) {
+	public static SurveyResponse fromDomain (Survey survey) {
 		return new SurveyResponse(
 				survey.getId(),
 				survey.getVersion(),

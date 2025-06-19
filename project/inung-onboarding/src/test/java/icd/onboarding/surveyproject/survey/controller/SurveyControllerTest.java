@@ -1,17 +1,19 @@
 package icd.onboarding.surveyproject.survey.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import icd.onboarding.surveyproject.common.NotImplementedTestException;
 import icd.onboarding.surveyproject.survey.common.controller.GlobalExceptionHandler;
 import icd.onboarding.surveyproject.survey.controller.consts.ErrorCodes;
-import icd.onboarding.surveyproject.survey.controller.dto.CreateQuestionRequest;
-import icd.onboarding.surveyproject.survey.controller.dto.CreateSurveyRequest;
-import icd.onboarding.surveyproject.survey.controller.dto.SurveyResponse;
+import icd.onboarding.surveyproject.survey.controller.dto.*;
+import icd.onboarding.surveyproject.survey.controller.exception.CommonSurveyHttpException;
+import icd.onboarding.surveyproject.survey.fixtures.ResponseFixtures;
 import icd.onboarding.surveyproject.survey.fixtures.SurveyFixtures;
 import icd.onboarding.surveyproject.survey.service.SurveyService;
 import icd.onboarding.surveyproject.survey.service.domain.Survey;
-import icd.onboarding.surveyproject.survey.service.enums.InputType;
+import icd.onboarding.surveyproject.survey.service.exception.InSufficientOptionException;
 import icd.onboarding.surveyproject.survey.service.exception.SurveyNotFoundException;
+import icd.onboarding.surveyproject.survey.service.exception.UnsupportedOptionException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,10 +32,8 @@ import java.util.stream.IntStream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,8 +64,8 @@ class SurveyControllerTest {
 			// when & then
 			mockMvc.perform(get("/api/v1/survey/{surveyId}/version/{version}", surveyId, version))
 				   .andExpect(status().isNotFound())
-				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.SURVEY_NOT_FOUND.code))
-				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.SURVEY_NOT_FOUND.message));
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.SURVEY_NOT_FOUND.message))
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.SURVEY_NOT_FOUND.name()));
 		}
 
 		@Test
@@ -72,7 +73,7 @@ class SurveyControllerTest {
 		void shouldGetSurveys () throws Exception {
 			// given
 			Survey survey = SurveyFixtures.basicSurvey();
-			SurveyResponse response = SurveyResponse.formDomain(survey);
+			SurveyResponse response = SurveyResponse.fromDomain(survey);
 
 			given(surveyService.findByIdAndVersion(surveyId, version))
 					.willReturn(survey);
@@ -89,7 +90,7 @@ class SurveyControllerTest {
 	@DisplayName("설문 생성")
 	@Nested
 	class CreateSurvey {
-		String url = "/api/v1/survey";
+		final String url = "/api/v1/survey";
 
 		@ParameterizedTest
 		@NullAndEmptySource
@@ -97,14 +98,13 @@ class SurveyControllerTest {
 		void throwExceptionWhenSurveyNameIsNullAndEmpty (String title) throws Exception {
 			// given
 			CreateSurveyRequest request = new CreateSurveyRequest(title, "", List.of());
-			String body = objectMapper.writeValueAsString(request);
 
 			given(surveyService.createSurvey(request.toDomain()))
 					.willReturn(null);
 
 			// when & then
 			mockMvc.perform(post(url)
-						   .content(body)
+						   .content(toJson(request))
 						   .contentType(MediaType.APPLICATION_JSON))
 				   .andExpect(status().isBadRequest())
 				   .andReturn();
@@ -117,14 +117,13 @@ class SurveyControllerTest {
 		void throwExceptionWhenInSufficientQuestions () throws Exception {
 			// given
 			CreateSurveyRequest request = new CreateSurveyRequest("설문 조사 1", "", List.of());
-			String body = objectMapper.writeValueAsString(request);
 
 			given(surveyService.createSurvey(request.toDomain()))
 					.willReturn(null);
 
 			// when & then
 			mockMvc.perform(post(url)
-						   .content(body)
+						   .content(toJson(request))
 						   .contentType(MediaType.APPLICATION_JSON))
 				   .andExpect(status().isBadRequest())
 				   .andReturn();
@@ -146,14 +145,13 @@ class SurveyControllerTest {
 																	 List.of())
 															 ).toList();
 			CreateSurveyRequest request = new CreateSurveyRequest("설문 조사 1", "", questions);
-			String body = objectMapper.writeValueAsString(request);
 
 			given(surveyService.createSurvey(request.toDomain()))
 					.willReturn(null);
 
 			// when & then
 			mockMvc.perform(post(url)
-						   .content(body)
+						   .content(toJson(request))
 						   .contentType(MediaType.APPLICATION_JSON))
 				   .andExpect(status().isBadRequest())
 				   .andReturn();
@@ -174,14 +172,13 @@ class SurveyControllerTest {
 					List.of()
 			);
 			CreateSurveyRequest request = new CreateSurveyRequest("설문 조사 1", "", List.of(question));
-			String body = objectMapper.writeValueAsString(request);
 
-			given(surveyService.createSurvey(SurveyFixtures.basicSurvey()))
+			given(surveyService.createSurvey(any()))
 					.willReturn(null);
 
 			// when & then
 			mockMvc.perform(post(url)
-						   .content(body)
+						   .content(toJson(request))
 						   .contentType(MediaType.APPLICATION_JSON))
 				   .andExpect(status().isBadRequest())
 				   .andReturn();
@@ -191,76 +188,271 @@ class SurveyControllerTest {
 
 		@Test
 		@DisplayName("질문의 유형이 선택형일 경우 옵션이 존재하지 않으면 400 status와 error를 반환한다.")
-		void throwExceptionWhenOptionsNotHaveForSelectTypeQuestion () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenOptionsNotHaveForSelectTypeQuestion () throws Exception {
+			// given
+			CreateQuestionRequest question = new CreateQuestionRequest(
+					"질문 1",
+					"질문 설명",
+					"SINGLE_SELECT",
+					true,
+					1,
+					List.of()
+			);
+
+			CreateSurveyRequest request = new CreateSurveyRequest(
+					"설문 조사 1",
+					"",
+					List.of(question)
+			);
+
+			given(surveyService.createSurvey(any()))
+					.willThrow(new InSufficientOptionException());
+
+			// when & then
+			mockMvc.perform(post(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest())
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.INSUFFICIENT_OPTION.message))
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.INSUFFICIENT_OPTION.name()))
+				   .andReturn();
+
+			verify(surveyService, never()).createSurvey(any());
 		}
 
 		@Test
 		@DisplayName("질문의 유형이 문자형일 경우 옵션이 존재하면 400 status와 error를 반환한다.")
-		void throwExceptionWhenOptionsExistsToTextTypeQuestion () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenOptionsExistsToTextTypeQuestion () throws Exception {
+			// given
+			CreateQuestionRequest questionRequest = new CreateQuestionRequest(
+					"질문 1",
+					"질문 설명",
+					"SHORT_TEXT",
+					false,
+					1,
+					List.of(new CreateOptionRequest("옵션 1", 1))
+			);
+			CreateSurveyRequest request = new CreateSurveyRequest("설문 조사1", "설문 조사 설명", List.of(questionRequest));
+
+			given(surveyService.createSurvey(any()))
+					.willThrow(new UnsupportedOptionException());
+
+			// when & then
+			mockMvc.perform(post(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest())
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.UNSUPPORTED_OPTION.message))
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.UNSUPPORTED_OPTION.name()))
+				   .andReturn();
+
+			verify(surveyService, never()).createSurvey(any());
 		}
 
 		@Test
 		@DisplayName("설문 조사의 정보가 올바른 경우 200 stauts와 data를 반환한다.")
-		void shouldCreateSurveyWithValidInfo () {
-			throw new NotImplementedTestException();
+		void shouldCreateSurveyWithValidInfo () throws Exception {
+			// given
+			CreateQuestionRequest questionRequest = new CreateQuestionRequest(
+					"질문 1",
+					"질문 설명",
+					"SHORT_TEXT",
+					false,
+					1,
+					List.of()
+			);
+			CreateSurveyRequest request = new CreateSurveyRequest("설문 조사1", "설문 조사 설명", List.of(questionRequest));
+			Survey survey = SurveyFixtures.basicSurvey();
+
+			given(surveyService.createSurvey(any())).willReturn(survey);
+
+			// when & then
+			mockMvc.perform(post(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isCreated())
+				   .andExpect(jsonPath("$.data.id").value(survey.getId().toString()));
+
+			verify(surveyService, times(1)).createSurvey(any());
 		}
 	}
 
 	@DisplayName("설문 수정")
 	@Nested
 	class UpdateSurvey {
+		final String url = "/api/v1/survey";
+		final UUID surveyId = UUID.randomUUID();
+
 		@Test
 		@DisplayName("설문이 존재하지 않으면 404 status와 error를 반환한다.")
-		void throwExceptionWhenSurveyNotFound () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenSurveyNotFound () throws Exception {
+			UpdateQuestionRequest questionRequest = new UpdateQuestionRequest(
+					"수정 질문 1",
+					"",
+					"SHORT_TEXT",
+					1,
+					false,
+					List.of()
+			);
+			UpdateSurveyRequest request = new UpdateSurveyRequest(surveyId, 1, "수정된 설문", "수정된 설명", List.of(questionRequest));
+
+			given(surveyService.updateSurvey(any()))
+					.willThrow(new SurveyNotFoundException());
+
+			mockMvc.perform(put(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isNotFound())
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.SURVEY_NOT_FOUND.name()))
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.SURVEY_NOT_FOUND.message));
+
+			verify(surveyService, times(1)).updateSurvey(any());
 		}
 
 		@Test
 		@DisplayName("질문이 존재하지 않으면 400 status와 error를 반환 한다.")
-		void throwExceptionWhenInSufficientQuestions () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenInSufficientQuestions () throws Exception {
+			UpdateSurveyRequest request = new UpdateSurveyRequest(surveyId, 1, "수정된 설문", "수정된 설명", List.of());
+
+			mockMvc.perform(put(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest());
+
+			verify(surveyService, never()).updateSurvey(any());
 		}
 
 		@Test
 		@DisplayName("질문이 10개 이상이면 400 status와 error를 반환한다.")
-		void throwExceptionWhenMaxExceededQuestions () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenMaxExceededQuestions () throws Exception {
+			List<UpdateQuestionRequest> questions = IntStream.rangeClosed(1, 11)
+															 .mapToObj(i -> new UpdateQuestionRequest(
+																	 "질문 " + i,
+																	 "설명 " + i,
+																	 "SHORT_TEXT",
+																	 i,
+																	 false,
+																	 List.of()
+															 )).toList();
+
+			UpdateSurveyRequest request = new UpdateSurveyRequest(surveyId, 1, "설문 수정", "내용", questions);
+
+			mockMvc.perform(put(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest());
+
+			verify(surveyService, never()).updateSurvey(any());
 		}
 
 		@Test
 		@DisplayName("질문의 유형이 올바르지 않으면 400 status와 error를 반환한다.")
-		void throwExceptionWhenWrongInputType () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenWrongInputType () throws Exception {
+			UpdateQuestionRequest question = new UpdateQuestionRequest(
+					"질문", "설명", "INVALID_TYPE", 1, true, List.of()
+			);
+			UpdateSurveyRequest request = new UpdateSurveyRequest(surveyId, 1, "설문 수정", "내용", List.of(question));
+
+			mockMvc.perform(put(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest());
+
+			verify(surveyService, never()).updateSurvey(any());
 		}
 
 		@Test
 		@DisplayName("질문의 유형이 선택형일 경우 옵션이 존재하지 않으면 400 status와 error를 반환한다.")
-		void throwExceptionWhenOptionsNotHaveForSelectTypeQuestion () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenOptionsNotHaveForSelectTypeQuestion () throws Exception {
+			UpdateQuestionRequest question = new UpdateQuestionRequest(
+					"질문", "설명", "SINGLE_SELECT", 1, true, List.of()
+			);
+			UpdateSurveyRequest request = new UpdateSurveyRequest(surveyId, 1, "설문 수정", "내용", List.of(question));
+
+			given(surveyService.updateSurvey(any()))
+					.willThrow(new InSufficientOptionException());
+
+			mockMvc.perform(put(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest())
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.INSUFFICIENT_OPTION.name()))
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.INSUFFICIENT_OPTION.message));
+
+			verify(surveyService, never()).updateSurvey(any());
 		}
 
 		@Test
 		@DisplayName("질문의 유형이 문자형일 경우 옵션이 존재하면 400 status와 error를 반환한다.")
-		void throwExceptionWhenOptionsExistsToTextTypeQuestion () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenOptionsExistsToTextTypeQuestion () throws Exception {
+			UpdateQuestionRequest question = new UpdateQuestionRequest(
+					"질문",
+					"설명",
+					"SHORT_TEXT",
+					1,
+					false,
+					List.of(new UpdateOptionRequest("옵션 1", 1))
+			);
+			UpdateSurveyRequest request = new UpdateSurveyRequest(surveyId, 1, "설문 수정", "내용", List.of(question));
+
+			given(surveyService.updateSurvey(any()))
+					.willThrow(new UnsupportedOptionException());
+
+			mockMvc.perform(put(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest())
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.UNSUPPORTED_OPTION.name()))
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.UNSUPPORTED_OPTION.message));
+
+			verify(surveyService, never()).updateSurvey(any());
 		}
 
 		@Test
 		@DisplayName("수정 요청에 대한 정보가 올바른 경우 200 status와 data를 반환한다.")
-		void shouldUpdateSurveyWithValidInfo () {
-			throw new NotImplementedTestException();
+		void shouldUpdateSurveyWithValidInfo () throws Exception {
+			UpdateQuestionRequest question = new UpdateQuestionRequest(
+					"질문", "설명", "SHORT_TEXT", 1, false, List.of()
+			);
+			UpdateSurveyRequest request = new UpdateSurveyRequest(surveyId, 1, "설문 수정", "내용", List.of(question));
+			Survey updatedSurvey = SurveyFixtures.updatedSurvey(request.id(), request.version());
+
+			given(surveyService.updateSurvey(any())).willReturn(updatedSurvey);
+
+			mockMvc.perform(put(url)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isOk())
+				   .andExpect(jsonPath("$.data.id").value(request.id().toString()))
+				   .andExpect(jsonPath("$.data.version").value(request.version() + 1));
+
+			verify(surveyService, times(1)).updateSurvey(any());
 		}
 	}
 
 	@DisplayName("응답 제출")
 	@Nested
 	class SubmitResponse {
+		final String url = "/api/v1/survey";
+		final UUID surveyId = UUID.randomUUID();
+		final int version = 1;
+
 		@Test
 		@DisplayName("설문이 존재하지 않으면 404 status와 error를 반환한다.")
-		void throwExceptionWhenSurveyNotFound () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenSurveyNotFound () throws Exception {
+			SubmitResponseRequest request = ResponseFixtures.validSubmitRequest();
+
+			given(surveyService.submitResponse(any()))
+					.willThrow(new SurveyNotFoundException());
+
+			mockMvc.perform(post(url + "/{surveyId}/version/{version}/response", surveyId, version)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isNotFound())
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.SURVEY_NOT_FOUND.name()))
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.SURVEY_NOT_FOUND.message));
+
+			verify(surveyService, times(1)).submitResponse(any());
 		}
 
 		@Test
@@ -308,5 +500,9 @@ class SurveyControllerTest {
 		void shouldGetResponsesBySurveyInfo () {
 			throw new NotImplementedTestException();
 		}
+	}
+
+	private String toJson (Object value) throws JsonProcessingException {
+		return objectMapper.writeValueAsString(value);
 	}
 }
