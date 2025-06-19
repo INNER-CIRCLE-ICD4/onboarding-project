@@ -30,16 +30,13 @@ public class ResponseService {
      */
     @Transactional
     public UUID saveResponse(ResponseRequest req) {
-        // 1. 설문 조회
         Survey survey = surveyRepository.findById(req.surveyId())
                 .orElseThrow(() -> new ResourceNotFoundException("설문이 존재하지 않습니다."));
 
-        // 2. 질문 수와 응답 수 불일치 체크
         if (survey.getQuestions().size() != req.answers().size()) {
             throw new BusinessException("응답 개수가 설문 질문 개수와 일치하지 않습니다.");
         }
 
-        // 3. 설문 Snapshot 직렬화
         String snapshotJson;
         try {
             SurveySnapshotDto snapshotDto = SurveySnapshotDto.from(survey);
@@ -48,17 +45,14 @@ public class ResponseService {
             throw new BusinessException("설문 스냅샷 직렬화 중 오류가 발생했습니다.");
         }
 
-        // 4. 응답 엔티티 생성
         Response response = new Response(survey, snapshotJson);
 
-        // 5. 각 응답을 Answer 엔티티로 변환 및 유효성 검증
         for (AnswerRequest ar : req.answers()) {
             Question question = survey.getQuestions().stream()
                     .filter(q -> q.getId().equals(ar.questionId()))
                     .findAny()
                     .orElseThrow(() -> new BusinessException("존재하지 않는 질문에 대한 응답입니다."));
 
-            // ✨ 질문 타입에 따라 응답 유효성 검사
             switch (question.getType()) {
                 case SHORT, LONG -> {
                     if (ar.text() == null || ar.text().isBlank()) {
@@ -78,7 +72,6 @@ public class ResponseService {
                 default -> throw new BusinessException("알 수 없는 질문 타입입니다. 질문 ID: " + question.getId());
             }
 
-            // ✨ 필수 질문에 대한 응답 누락 체크
             if (question.isRequired()) {
                 boolean isEmpty = switch (question.getType()) {
                     case SHORT, LONG -> ar.text() == null || ar.text().isBlank();
@@ -89,12 +82,10 @@ public class ResponseService {
                 }
             }
 
-            // 6. Answer 객체 생성 및 응답에 추가
             Answer answer = new Answer(response, question, ar.text(), ar.selectedOptions());
             response.getAnswers().add(answer);
         }
 
-        // 7. 응답 저장
         Response saved = responseRepository.save(response);
         return saved.getId();
     }
@@ -140,5 +131,29 @@ public class ResponseService {
      */
     public List<ResponseDetail> getResponses(UUID surveyId) {
         return findBySurveyId(surveyId);
+    }
+
+    /**
+     * ✨ 응답 ID로 단일 응답 조회
+     */
+    @Transactional(readOnly = true)
+    public ResponseDto findById(UUID responseId) {
+        Response response = responseRepository.findById(responseId)
+                .orElseThrow(() -> new ResourceNotFoundException("응답이 존재하지 않습니다."));
+
+        return new ResponseDto(
+                response.getId(),
+                response.getSurvey().getId(),
+                response.getAnswers().stream()
+                        .map(a -> new AnswerDto(
+                                a.getQuestion().getId(),
+                                a.getText(),
+                                a.getSelectedOptions() == null ? null :
+                                        a.getSelectedOptions().stream()
+                                                .map(UUID::toString)
+                                                .collect(toList())
+                        ))
+                        .collect(toList())
+        );
     }
 }
