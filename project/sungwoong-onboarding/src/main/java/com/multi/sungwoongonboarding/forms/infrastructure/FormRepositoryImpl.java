@@ -14,6 +14,7 @@ import java.util.List;
 public class FormRepositoryImpl implements FormRepository {
 
     private final FormJpaRepository formJpaRepository;
+    private final FormHistoryJpaRepository formHistoryJpaRepository;
 
     @Override
     @Transactional
@@ -45,6 +46,7 @@ public class FormRepositoryImpl implements FormRepository {
         FormsJpaEntity existingForm = formJpaRepository.findById(formId)
                 .orElseThrow(() -> new IllegalArgumentException("Form not found with id: " + formId));
 
+        formHistoryJpaRepository.save(FormHistoryJpaEntity.createHistory(existingForm));
         existingForm.update(forms);
 
         return existingForm.toDomain();

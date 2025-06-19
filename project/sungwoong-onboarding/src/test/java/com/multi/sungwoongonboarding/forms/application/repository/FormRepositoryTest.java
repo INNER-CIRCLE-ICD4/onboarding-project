@@ -1,6 +1,8 @@
 package com.multi.sungwoongonboarding.forms.application.repository;
 
 import com.multi.sungwoongonboarding.forms.domain.Forms;
+import com.multi.sungwoongonboarding.forms.infrastructure.FormHistoryJpaEntity;
+import com.multi.sungwoongonboarding.forms.infrastructure.FormHistoryJpaRepository;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaRepository;
@@ -16,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionType.*;
 import static org.assertj.core.api.Assertions.*;
@@ -32,7 +35,7 @@ public class FormRepositoryTest {
     FormRepository formRepository;
 
     @Autowired
-    OptionsJpaRepository optionsJpaRepository;
+    FormHistoryJpaRepository formHistoryJpaRepository;
 
     @Test
     @DisplayName("Forms 엔티티가 저장되고 조회되는지 테스트")
@@ -223,5 +226,13 @@ public class FormRepositoryTest {
         assertThat(updatedFormInDb.getDescription()).isEqualTo("업데이트된 설문 설명");
         assertThat(updatedFormInDb.getQuestions().size()).isEqualTo(3);
         assertThat(updatedFormInDb.getQuestions().stream().filter(q -> !q.isDeleted()).toList().size()).isEqualTo(2);
+
+        // 이력 조회
+        Optional<FormHistoryJpaEntity> history = formHistoryJpaRepository.findById(1L);
+        assertThat(history.isPresent()).isTrue();
+        assertThat(history.get().getVersion()).isLessThan(result.getVersion());
+        assertThat(history.get().getTitle()).isEqualTo("원본 설문 제목");
+        assertThat(history.get().getQuestionCount()).isEqualTo(originalForm.getQuestions().size());
+
     }
 }
