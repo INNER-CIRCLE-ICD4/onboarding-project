@@ -35,6 +35,7 @@ dependencies {
 
 	// Bean Validation 의존성
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+
 }
 
 tasks.withType<Test> {
