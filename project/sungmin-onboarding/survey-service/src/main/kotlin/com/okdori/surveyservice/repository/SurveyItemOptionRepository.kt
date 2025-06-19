@@ -1,5 +1,6 @@
 package com.okdori.surveyservice.repository
 
+import com.okdori.surveyservice.domain.SurveyItem
 import com.okdori.surveyservice.domain.SurveyItemOption
 import org.springframework.data.jpa.repository.JpaRepository
 
@@ -11,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository
  * description    :
  */
 interface SurveyItemOptionRepository: JpaRepository<SurveyItemOption, String> {
+    fun findBySurveyItemAndIsDeleted(surveyItem: SurveyItem, isDeleted: Boolean): List<SurveyItemOption>
 }

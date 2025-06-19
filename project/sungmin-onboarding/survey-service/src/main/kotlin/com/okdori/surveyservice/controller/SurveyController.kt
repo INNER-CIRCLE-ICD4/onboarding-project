@@ -2,6 +2,8 @@ package com.okdori.surveyservice.controller
 
 import com.okdori.surveyservice.dto.Payload
 import com.okdori.surveyservice.dto.SurveyCreateDto
+import com.okdori.surveyservice.dto.SurveyAnswerCreateDto
+import com.okdori.surveyservice.dto.SurveyAnswerResponseDto
 import com.okdori.surveyservice.dto.SurveyResponseDto
 import com.okdori.surveyservice.service.SurveyService
 import jakarta.servlet.http.HttpServletRequest
@@ -49,6 +51,20 @@ class SurveyController(
             "설문조사 항목 조회가 완료되었습니다.",
             request.servletPath,
             surveyService.getSurvey(surveyId)
+        )
+    }
+
+    @PostMapping("/{surveyId}/responses")
+    fun createSurveyResponse(
+        @PathVariable surveyId: String,
+        @RequestBody surveyAnswerCreateDto: SurveyAnswerCreateDto,
+        request: HttpServletRequest,
+    ): Payload<SurveyAnswerResponseDto> {
+        return Payload(
+            HttpStatus.CREATED,
+            "응답이 제출되었습니다.",
+            request.servletPath,
+            surveyService.createSurveyResponse(surveyId, surveyAnswerCreateDto)
         )
     }
 }
