@@ -1,4 +1,4 @@
-# create answer
+# create answer 1
 
 POST http://localhost:8080/v1/surveys/1/answers
 Content-Type: application/json
@@ -42,6 +42,48 @@ Content-Type: application/json
         "input_type": "checkbox",
         "required": false,
         "options": ["독서", "TV시청", "게임", "영화", "여행", "기타"]
+      }
+    }
+  ]
+}
+
+###
+
+# create answer 3
+
+POST http://localhost:8080/v1/surveys/1/answers
+Content-Type: application/json
+
+{
+  "question_group_id": 2,
+  "answers_with_question": [
+    {
+      "content": ["독서", "TV시청", "여행", "기타"],
+      "question":         {
+        "label": "관심사(2)",
+        "description": "",
+        "input_type": "checkbox",
+        "required": true,
+        "options": ["독서", "TV시청", "여행", "기타"]
+      }
+    }
+  , {
+      "content": null,
+      "question": {
+        "label": "어떤 경로로 알게 되셨나요?",
+        "description": "",
+        "input_type": "radio",
+        "required": true,
+        "options": ["웹 검색", "지인을 통해", "소셜미디어", "기타"]
+      }
+    }
+  , {
+      "content" : "김재현",
+      "question": {
+        "label": "성명을 입력해주세요.(2)",
+        "description": "",
+        "input_type": "text",
+        "required": true
       }
     }
   ]

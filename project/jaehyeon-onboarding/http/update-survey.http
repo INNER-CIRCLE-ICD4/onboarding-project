@@ -5,7 +5,7 @@ Content-Type: application/json
 {
     "name": "설문1-수정",
     "description": "수정테스트",
-    "version": 2,
+    "version": 1,
     "questions": [
         {
             "label": "관심사(2)",

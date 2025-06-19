@@ -250,24 +250,42 @@ GET /v1/surveys/{surveyId}/answers
       "submitted_at": "2025-06-13 00:00:00",
       "answers": [
         {
-          "label": "성명을 입력해주세요.",
-          "input_type": "text",
-          "required": true,
-          "value": "김재현"
-        },
-        {
-          "label": "어떤 경로로 알게 되셨나요?",
-          "input_type": "radio",
-          "required": false,
-          "options": ["웹 검색", "SNS", "지인을 통해"],
-          "value": "웹 검색"
-        },
-        {
-          "label": "관심사를 선택해주세요.",
-          "input_type": "checkbox",
-          "required": false,
-          "options": ["독서", "TV시청", "게임", "영화", "여행", "기타"],
-          "value": ["영화", "여행", "기타:누워있기"]
+            "content": "김재현",
+            "question": {
+              "label": "성명을 입력해주세요.",
+              "description": "",
+              "input_type": "text",
+              "required": true
+            }
+        }
+        , {
+            "content": null,
+            "question": {
+              "label": "자기소개",
+              "description": "",
+              "input_type": "long_text",
+              "required": false
+            }
+        }
+        , {
+            "content" : "웹 검색",
+            "question": {
+              "label": "어떤 경로로 알게 되셨나요?",
+              "description": "",
+              "input_type": "radio",
+              "required": false,
+              "options": ["웹 검색", "지인을 통해", "소셜미디어", "기타"]              
+            } 
+        }
+        , {
+            "content" :["영화", "여행", "기타:누워있기"],
+            "question": {
+              "label": "관심사",
+              "description": "",
+              "input_type": "checkbox",
+              "required": false,
+              "options": ["독서", "TV시청", "게임", "영화", "여행", "기타"]
+            }
         }
       ]
     }
