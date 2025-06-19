@@ -20,9 +20,14 @@ class QuestionTemplates(values: List<QuestionTemplate> = emptyList()) {
         return QuestionTemplates(values.filter(function))
     }
 
-    fun size(): Long = values.size.toLong()
+    fun size(): Int = values.size
     fun getById(id: String): QuestionTemplate {
         return values.firstOrNull { it.id == id }
             ?: throw CustomException(ErrorCode.QUESTION_TEMPLATE_NOT_FOUND.withArgs(id))
+    }
+
+    fun snapshots(): QuestionSnapshots {
+        val snapshots = values.flatMap { it.snapshots.list() }
+        return QuestionSnapshots(values = snapshots)
     }
 }

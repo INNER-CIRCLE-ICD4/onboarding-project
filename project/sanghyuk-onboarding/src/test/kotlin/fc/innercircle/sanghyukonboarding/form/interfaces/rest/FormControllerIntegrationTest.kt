@@ -262,7 +262,7 @@ class FormControllerIntegrationTest : BehaviorSpec({
                     description = "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요. (수정됨)",
                     questions = listOf(
                         FormCommand.Question(
-                            title = "(수정 시 추가 문항) 귀하의 키는 몇 cm 인가요?",
+                            title = "(추가 문항) 귀하의 키는 몇 cm 인가요?",
                             type = InputType.CHECKBOX.name,
                             required = false,
                             selectableOptions = listOf(
@@ -286,7 +286,6 @@ class FormControllerIntegrationTest : BehaviorSpec({
                             description = "반드시 본명을 입력해주세요. (수정)",
                             type = InputType.TEXT.name,
                             required = true,
-                            version = form.questionTemplates.list()[0].version,
                         ),
                         FormCommand.Question(
                             questionTemplateId = form.questionTemplates.list()[1].id,
@@ -295,27 +294,21 @@ class FormControllerIntegrationTest : BehaviorSpec({
                             required = false,
                             selectableOptions = listOf(
                                 FormCommand.Question.SelectableOption(
-                                    selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[0].id,
                                     text = "XL"
                                 ),
                                 FormCommand.Question.SelectableOption(
-                                    selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[1].id,
                                     text = "L"
                                 ),
                                 FormCommand.Question.SelectableOption(
-                                    selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[2].id,
                                     text = "M"
                                 ),
                                 FormCommand.Question.SelectableOption(
-                                    selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[3].id,
                                     text = "S"
                                 ),
                                 FormCommand.Question.SelectableOption(
-                                    selectableOptionId = form.questionTemplates.list()[1].snapshots.list()[0].selectableOptions.list()[4].id,
                                     text = "XS"
                                 ),
                             ),
-                            version = form.questionTemplates.list()[1].version,
                         ),
                     )
                 )
@@ -341,7 +334,8 @@ class FormControllerIntegrationTest : BehaviorSpec({
                             jsonPath("$.questions[$idx1].description") { value(question.description) }
                             jsonPath("$.questions[$idx1].type") { value(question.type.uppercase()) }
                             jsonPath("$.questions[$idx1].required") { value(question.required) }
-                            jsonPath("$.questions[$idx1].version") { value(0) } // 버전은 0이어야 함
+                            // 요청 값에 questionTemplateId가 있으면, 기존 질문을 업데이트 하는 것이므로 기존 버전 + 1 이어야 하고, questionTemplateId가 없으면 새 질문이므로 0이어야 함
+                            jsonPath("$.questions[$idx1].version") { value(if (question.questionTemplateId.isNotBlank()) 1 else 0) }
                             jsonPath("$.questions[$idx1].selectableOptions.size()") { value(question.selectableOptions.size) }
                             question.selectableOptions.forEachIndexed { idx2, option ->
                                 jsonPath("$.questions[$idx1].selectableOptions[$idx2].text") { value(option.text) }

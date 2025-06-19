@@ -6,6 +6,8 @@ import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.InputType
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.SelectableOptions
 import fc.innercircle.sanghyukonboarding.form.domain.validator.QuestionSnapshotValidator
+import fc.innercircle.sanghyukonboarding.formreply.domain.dto.command.FormReplyCommand
+import fc.innercircle.sanghyukonboarding.formreply.domain.model.Answer
 
 open class QuestionSnapshot(
     val id: String = "",
@@ -17,15 +19,20 @@ open class QuestionSnapshot(
     val questionTemplateId: String = ""
 ) {
 
-    val selectableOptions: SelectableOptions = SelectableOptions(
-        values = selectableOptions.filter { it ->
-            it.isNew() || it.isSelectableOptionOf(this)
-        }
-    )
+    val selectableOptions: SelectableOptions
 
     init {
-        verifyInputType(selectableOptions)
+        val filteredSelectableOptions: List<SelectableOption> = filteringNewOrSelectableOptionsOfThis(selectableOptions)
+        verifyInputType(filteredSelectableOptions)
+        this.selectableOptions = SelectableOptions(values = filteredSelectableOptions)
         validateRequiredFields()
+    }
+
+    private fun filteringNewOrSelectableOptionsOfThis(selectableOptions: List<SelectableOption>): List<SelectableOption> {
+        val selectableOptionsOfThis: List<SelectableOption> = selectableOptions.filter { it ->
+            it.isNew() || it.isSelectableOptionOf(this)
+        }
+        return selectableOptionsOfThis
     }
 
     /**
@@ -42,6 +49,10 @@ open class QuestionSnapshot(
                 throw CustomException(ErrorCode.SELECTABLE_TYPE_INPUT_ERROR.withArgs(title))
             }
         }
+    }
+
+    fun selectableOptionIds(): List<String> {
+        return selectableOptions.list().map { it.id }
     }
 
     fun isNew(): Boolean {
@@ -101,7 +112,6 @@ open class QuestionSnapshot(
         ): QuestionSnapshot {
             val selectableOptions: List<SelectableOption> = cmd.selectableOptions.mapIndexed { idx, optionCmd ->
                 SelectableOption.of(
-                    id = optionCmd.selectableOptionId,
                     text = optionCmd.text,
                     displayOrder = idx,
                     questionSnapshotId = id

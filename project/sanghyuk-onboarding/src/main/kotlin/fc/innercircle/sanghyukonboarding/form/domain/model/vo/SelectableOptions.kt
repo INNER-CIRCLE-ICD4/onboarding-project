@@ -32,4 +32,8 @@ class SelectableOptions(
     }
 
     fun size(): Long = values.size.toLong()
+    fun containsAll(selectableOptionIds: List<String>): Boolean {
+        val ids = values.map { it.id }
+        return ids.containsAll(selectableOptionIds)
+    }
 }

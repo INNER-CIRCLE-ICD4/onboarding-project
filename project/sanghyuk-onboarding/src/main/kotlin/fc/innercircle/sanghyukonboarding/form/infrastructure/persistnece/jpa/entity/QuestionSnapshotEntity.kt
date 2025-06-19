@@ -91,7 +91,7 @@ open class QuestionSnapshotEntity(
             description = description,
             type = type,
             version = version,
-            selectableOptions = selectableOptions.filter { it.questionSnapshotId == id },
+            selectableOptions = selectableOptions,
             questionTemplateId = questionTemplateEntity.id,
         )
     }

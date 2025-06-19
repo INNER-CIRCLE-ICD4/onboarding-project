@@ -14,7 +14,6 @@ data class FormCommand(
         val selectableOptions: List<SelectableOption> = emptyList(),
     ) {
         data class SelectableOption(
-            val selectableOptionId: String = "",
             val text: String,
         )
     }

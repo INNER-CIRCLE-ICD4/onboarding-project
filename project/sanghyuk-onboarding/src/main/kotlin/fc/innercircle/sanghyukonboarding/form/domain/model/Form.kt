@@ -13,16 +13,19 @@ class Form(
     questionTemplates: List<QuestionTemplate>,
 ) {
 
-    val questionTemplates: QuestionTemplates = QuestionTemplates(
-        values = questionTemplates.filter { it ->
-            it.isNew() || it.isQuestionOf(this)
-        }
-    )
+    val questionTemplates: QuestionTemplates
 
     init {
-        validateRequiredFields()
+        val filteredTemplates: List<QuestionTemplate> = filteringNewOrQuestionTemplateOfThis(questionTemplates)
+        this.questionTemplates = QuestionTemplates(values = filteredTemplates)
         verifyOrThrowsMaxQuestionCounts(this.questionTemplates)
+        validateRequiredFields()
     }
+
+    private fun filteringNewOrQuestionTemplateOfThis(questionTemplates: List<QuestionTemplate>): List<QuestionTemplate> =
+        questionTemplates.filter { it ->
+            it.isNew() || it.isQuestionOf(this)
+        }
 
     private fun validateRequiredFields() {
         FormValidator.validateTitle(title)

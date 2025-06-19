@@ -16,14 +16,19 @@ class QuestionTemplate(
     val formId: String = ""
 ) {
 
-    val snapshots: QuestionSnapshots = QuestionSnapshots(
-        values = snapshots.filter { it ->
-            it.isNew() || it.isSnapshotOf(this)
-        }
-    )
+    val snapshots: QuestionSnapshots
 
     init {
+        val filteredSnapshots: List<QuestionSnapshot> = filteringNewOrQuestionTemplateOfThis(snapshots)
+        this.snapshots = QuestionSnapshots(values = filteredSnapshots)
         validateRequiredFields()
+    }
+
+    private fun filteringNewOrQuestionTemplateOfThis(snapshots: List<QuestionSnapshot>): List<QuestionSnapshot> {
+        val filteredSnapshots: List<QuestionSnapshot> = snapshots.filter { it ->
+            it.isNew() || it.isSnapshotOf(this)
+        }
+        return filteredSnapshots
     }
 
     fun isNew(): Boolean {

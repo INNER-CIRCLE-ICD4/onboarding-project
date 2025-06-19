@@ -4,10 +4,14 @@ import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionSnapshot
+import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionTemplate
+import fc.innercircle.sanghyukonboarding.form.domain.model.SelectableOption
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.FormJpaRepository
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.QuestionSnapshotJpaRepository
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.QuestionTemplateJpaRepository
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.SelectableOptionJpaRepository
+import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.QuestionSnapshotEntity
+import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.QuestionTemplateEntity
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.SelectableOptionEntity
 import fc.innercircle.sanghyukonboarding.form.service.port.FormReader
 import org.springframework.stereotype.Component
@@ -22,39 +26,40 @@ class FormReaderImpl(
     private val selectableOptionJpaRepository: SelectableOptionJpaRepository,
 ): FormReader {
 
-    override fun getById(id: String): Form =
-        formJpaRepository.findById(id)
+    override fun getById(id: String): Form {
+        // 1. Form 조회
+        val formEntity = formJpaRepository.findById(id)
+            .orElseThrow { CustomException(ErrorCode.FORM_NOT_FOUND.withArgs(id)) }
 
-            .map { formEntity ->
-                // 1) 템플릿 조회
-                val templateEntities = questionTemplateJpaRepository.findAllByDeletedAndFormEntity(false, formEntity).toSet()
+        // 2. Template 엔티티 조회
+        val templateEntities: Set<QuestionTemplateEntity> =
+            questionTemplateJpaRepository
+                .findAllByDeletedAndFormEntity(false, formEntity)
+                .toSet()
 
-                // 2) 스냅샷 조회
-                val snapshotEntities =
-                    questionSnapshotJpaRepository.findAllByQuestionTemplateEntityIn(templateEntities).toSet()
+        // 3. Snapshot 엔티티 조회
+        val snapshotEntities: Set<QuestionSnapshotEntity> =
+            questionSnapshotJpaRepository
+                .findAllByQuestionTemplateEntityIn(templateEntities)
+                .toSet()
 
-                // 3) 옵션 조회
-                val optionEntities = selectableOptionJpaRepository.findAllByQuestionSnapshotEntityIn(snapshotEntities)
-                val selectableOptions = optionEntities.map(SelectableOptionEntity::toDomain)
+        // 4. Option 엔티티 조회 및 도메인 변환
+        val selectableOptions: List<SelectableOption> =
+            selectableOptionJpaRepository
+                .findAllByQuestionSnapshotEntityIn(snapshotEntities)
+                .map(SelectableOptionEntity::toDomain)
 
-                // 4) 도메인 변환: 스냅샷
-                val snapshots: List<QuestionSnapshot> = snapshotEntities.map { snapshot ->
-                    snapshot.toDomain(selectableOptions.filter {
-                        it.questionSnapshotId == snapshot.id
-                    })
-                }
+        // 5. 스냅샷 → 도메인 변환
+        val snapshots: List<QuestionSnapshot> = snapshotEntities.map { snapshot ->
+            snapshot.toDomain(selectableOptions)
+        }
 
-                // 4) 도메인 변환: 템플릿
-                val templates = templateEntities.map { templateEntity ->
-                    templateEntity.toDomain(snapshots.filter { snapshot ->
-                        snapshot.questionTemplateId == templateEntity.id
-                    })
-                }
+        // 6. 템플릿 → 도메인 변환
+        val templates: List<QuestionTemplate> = templateEntities.map { template ->
+            template.toDomain(snapshots)
+        }
 
-                // 6) 도메인 변환: 폼
-                formEntity.toDomain(templates)
-            }
-            .orElseThrow {
-                throw CustomException(ErrorCode.FORM_NOT_FOUND.withArgs(id))
-            }
+        // 7. 폼 → 도메인 변환 및 반환
+        return formEntity.toDomain(templates)
+    }
 }

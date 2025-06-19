@@ -7,14 +7,6 @@ Content-Type: application/json
   "description": "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요.",
   "questions": [
     {
-      "title": "이름",
-      "description": "반드시 본명을 입력해주세요.",
-      "type": "TEXT",
-      "required": true,
-      "version": 0,
-      "selectableOptions": []
-    },
-    {
       "title": "티셔츠 사이즈",
       "description": "",
       "type": "RADIO",
@@ -26,25 +18,8 @@ Content-Type: application/json
         },
         {
           "text": "S"
-        },
-        {
-          "text": "M"
-        },
-        {
-          "text": "L"
-        },
-        {
-          "text": "XL"
         }
       ]
-    },
-    {
-      "title": "기타 의견",
-      "description": "",
-      "type": "LONG_TEXT",
-      "required": false,
-      "version": 0,
-      "selectableOptions": []
     }
   ]
 }
@@ -77,11 +52,33 @@ Content-Type: application/json
   "description": "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요. (수정됨)",
   "questions": [
     {
-      "questionTemplateId": "01JY1MKEQS1B1HRV4BGSG8NB3V",
-      "title": "귀하의 신장은 몇 cm인가요?",
+      "questionTemplateId": "01JY2XB3J35XV8YF8CS443CH1N",
+      "title": "티셔츠 사이즈 1",
       "description": "",
       "type": "CHECKBOX",
-      "required": false
+      "required": false,
+      "selectableOptions": [
+        {
+          "text": "L"
+        },
+        {
+          "text": "XL"
+        }
+      ]
     }
   ]
 }
+
+### Reply to Form
+POST http://localhost:8080/api/v1/forms/{{formId}}/submit
+Content-Type: application/json
+
+[
+    {
+        "questionTemplateId": "01JY3JP6M29X4ZW8KDD268H7GK",
+        "answer": "",
+        "selectableOptionIds": [
+          "01JY3JP6M5QFJ5HCYNY51YAD4V"
+        ]
+    }
+]

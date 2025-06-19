@@ -10,14 +10,16 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest
 import java.net.URI
 
+@RequestMapping(path = ["/api/v1/forms"])
 @RestController
 class FormController(private val formService: FormService) {
 
-    @PostMapping("/api/v1/forms", consumes = ["application/json"], produces = ["application/json"])
+    @PostMapping(consumes = ["application/json"], produces = ["application/json"])
     fun createForm(@RequestBody command: FormCommand): ResponseEntity<FormResponse> {
         val formId: String = formService.create(command)
         val form: Form = formService.getById(formId)
@@ -31,14 +33,14 @@ class FormController(private val formService: FormService) {
             .body(response)
     }
 
-    @GetMapping("/api/v1/forms/{formId}")
+    @GetMapping("/{formId}", produces = ["application/json"])
     fun getById(@PathVariable formId: String): ResponseEntity<FormResponse> {
         val form: Form = formService.getById(formId)
         val response: FormResponse = FormResponse.from(form)
         return ResponseEntity.ok(response)
     }
 
-    @PutMapping("/api/v1/forms/{formId}", consumes = ["application/json"], produces = ["application/json"])
+    @PutMapping("/{formId}", consumes = ["application/json"], produces = ["application/json"])
     fun updateForm(
         @PathVariable formId: String,
         @RequestBody command: FormCommand

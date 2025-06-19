@@ -1,29 +1,31 @@
 package fc.innercircle.sanghyukonboarding.formreply.domain.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Id
+import fc.innercircle.sanghyukonboarding.formreply.domain.model.vo.Answers
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-open class FormReply(
-    @Id
-    @Column(
-        name = "id",
-        nullable = false,
-        updatable = false,
-        unique = true,
-        columnDefinition = "char(26) not null comment 'ID'"
-    )
-    val id: String,
-    formId: String,
-    submittedAt: LocalDateTime? = null,
-    createdBy: String,
+class FormReply(
+    val id: String = "",
+    val formId: String,
+    val submittedAt: LocalDateTime,
+    answers: List<Answer>
 ) {
+    val answers: Answers
 
-    @Column(nullable = false, columnDefinition = "bigint not null comment '설문 ID'")
-    var formId: String = formId
-        protected set
+    init {
+        this.answers = filteringNewOrFormReplyOfThis(answers)
+    }
 
-    @Column(nullable = false, columnDefinition = "datetime not null comment '설문 응답일자'")
-    var submittedAt: LocalDateTime? = submittedAt
-        protected set
+    private fun filteringNewOrFormReplyOfThis(answers: List<Answer>): Answers {
+        return Answers(
+            values = answers.filter { it ->
+                it.isNew() || it.isFormReplyOf(this)
+            }
+        )
+    }
+
+    fun formattedSubmittedAt(): String {
+        val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return submittedAt.format(dateTimeFormatter)
+    }
 }
