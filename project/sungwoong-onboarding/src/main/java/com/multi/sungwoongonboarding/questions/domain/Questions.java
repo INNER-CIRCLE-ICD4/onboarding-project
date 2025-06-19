@@ -1,8 +1,6 @@
 package com.multi.sungwoongonboarding.questions.domain;
 
 import com.multi.sungwoongonboarding.options.domain.Options;
-import com.multi.sungwoongonboarding.options.dto.OptionCreateRequest;
-import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +22,7 @@ public class Questions {
     private final QuestionType questionType;
     private final int order;
     private final boolean isRequired;
+    private final int version;
+    private final boolean deleted;
     private final List<Options> options;
 }
