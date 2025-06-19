@@ -1,0 +1,36 @@
+# create survey
+POST http://localhost:8080/v1/surveys
+Content-Type: application/json
+
+{
+  "name": "설문조사 테스트",
+  "description": "설문조사 테스트 description",
+  "questions": [
+    {
+      "label": "성명을 입력해주세요.",
+      "description": "",
+      "input_type": "text",
+      "required": true
+    }
+  ,{
+      "label": "자기소개",
+      "description": "",
+      "input_type": "long_text",
+      "required": true
+    }
+  , {
+      "label": "어떤 경로로 알게 되셨나요?",
+      "description": "",
+      "input_type": "radio",
+      "required": false,
+      "options": ["웹 검색", "SNS", "지인을 통해"]
+    }, {
+      "label": "관심사를 선택해주세요.",
+      "description": "",
+      "input_type": "checkbox",
+      "required": false,
+      "options": ["독서", "TV시청", "게임", "영화"]
+    }
+  ]
+}
+
