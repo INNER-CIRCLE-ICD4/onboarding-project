@@ -37,15 +37,13 @@ public class FormsJpaEntity extends BaseEntity {
     private List<QuestionJpaEntity> questions = new ArrayList<>();
 
     public static FormsJpaEntity fromDomain(Forms form) {
-
         FormsJpaEntity formsJpaEntity = new FormsJpaEntity();
         formsJpaEntity.id = form.getId();
         formsJpaEntity.title = form.getTitle();
         formsJpaEntity.description = form.getDescription();
         formsJpaEntity.version = form.getVersion();
-
+        // 연관관계 매핑
         mappingEntityFromDomain(form, formsJpaEntity);
-
         return formsJpaEntity;
     }
 
@@ -63,16 +61,6 @@ public class FormsJpaEntity extends BaseEntity {
         return this;
     }
 
-    private static void mappingEntityFromDomain(Forms form, FormsJpaEntity formsJpaEntity) {
-        if (form.getQuestions() != null && !form.getQuestions().isEmpty()) {
-            form.getQuestions().forEach(question -> {
-                QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
-                questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
-            });
-        }
-    }
-
-
     public Forms toDomain() {
         return getFormsBuilder()
                 .build();
@@ -82,6 +70,15 @@ public class FormsJpaEntity extends BaseEntity {
         return getFormsBuilder()
                 .formsHistories(formsHistory)
                 .build();
+    }
+
+    private static void mappingEntityFromDomain(Forms form, FormsJpaEntity formsJpaEntity) {
+        if (form.getQuestions() != null && !form.getQuestions().isEmpty()) {
+            form.getQuestions().forEach(question -> {
+                QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
+                questionJpaEntity.mappingFormJpaEntity(formsJpaEntity);
+            });
+        }
     }
 
     private Forms.FormsBuilder getFormsBuilder() {
