@@ -13,5 +13,4 @@ public interface SurveyResponseRepository extends JpaRepository<SurveyResponse, 
 
     Page<SurveyResponse> findBySurveyId(Long surveyId, Pageable pageable);
 
-    Page<SurveyResponse> findBySurveyIdAndVersion(Long surveyId, Integer version, Pageable pageable);
 }

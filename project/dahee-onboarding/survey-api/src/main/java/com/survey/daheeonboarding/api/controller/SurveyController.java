@@ -54,6 +54,7 @@ public class SurveyController {
      * 설문 조회 API - 응답
      *  GET http://localhost:8080/surveys/1/responses?version=1&itemId=2&answer=%EB%A7%88%EC%9A%B4%EB%A7%9E%EC%A7%80
      *  GET http://localhost:8080/surveys/1/responses?itemId=3&answer=%EB%A7%9E%EC%B9%AD
+     *  질문 포함: GET /surveys/1/responses?includeQuestion=true
      *
      */
 //    @GetMapping("/{surveyId}/responses")

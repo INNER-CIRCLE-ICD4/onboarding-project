@@ -233,36 +233,46 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     @Transactional(readOnly = true)
     public Page<SurveyAnswerResponseDto> getSurveyResponses(ResponseSearchCondition cond, Pageable pageable) {
-        Long surveyId = cond.getSurveyId();
-        Integer version  = cond.getVersion();
-        Long   itemId    = cond.getItemId();
+        Long   surveySeriesId   = cond.getSurveyId();
+        Integer version         = cond.getVersion();
+        Long   itemId           = cond.getItemId();
+        boolean includeQuestion = Boolean.TRUE.equals(cond.getIncludeQuestion());
 
-        // [1] SurveyId + version 조건에 따른 응답 페이징 조회
-        Page<SurveyResponse> responses;
+        // [1] 시리즈ID 기준으로 응답 페이징 조회 (버전 구분 없이)
+        Page<SurveyResponse> responses = responseRepo.findBySurveyId(surveySeriesId, pageable);
+        if (responses.isEmpty()) {
+            throw new ApplicationException(
+                    ErrorCode.NOT_FOUND,
+                    "해당 설문 응답이 존재하지 않습니다."
+            );
+        }
+
+        // [2] 응답에 달린 Survey 버전 정보 조회
+        Set<Long> surveyIds = responses.stream()
+                .map(SurveyResponse::getSurveyId)
+                .collect(Collectors.toSet());
+        Map<Long, Integer> surveyVersionMap = surveyRepo.findAllById(surveyIds).stream()
+                .collect(Collectors.toMap(Survey::getId, Survey::getVersion));
+
+        // [3] 버전 필터링 (메모리)
         if (version != null) {
-            responses = responseRepo.findBySurveyIdAndVersion(surveyId, version, pageable);
-            if (responses.isEmpty()) {
+            List<SurveyResponse> filtered = responses.getContent().stream()
+                    .filter(resp -> surveyVersionMap.getOrDefault(resp.getSurveyId(), -1).equals(version))
+                    .toList();
+
+            if (filtered.isEmpty()) {
                 throw new ApplicationException(
                         ErrorCode.NOT_FOUND,
                         "버전 " + version + " 에 해당하는 응답이 존재하지 않습니다."
                 );
             }
-        } else {
-            responses = responseRepo.findBySurveyId(surveyId, pageable);
-            if (responses.isEmpty()) {
-                throw new ApplicationException(
-                        ErrorCode.NOT_FOUND,
-                        "해당 설문 응답이 존재하지 않습니다."
-                );
-            }
+            responses = new PageImpl<>(filtered, pageable, filtered.size());
         }
 
-        // [2] 조회된 응답들의 아이디 목록 수집
+        // [4] 응답 아이템 전체 조회
         List<Long> responseIds = responses.stream()
                 .map(SurveyResponse::getId)
                 .toList();
-
-        // [3] 응답 아이템 전체 조회
         List<SurveyResponseItem> responseItems = responseItemRepo.findByResponseIdIn(responseIds);
         if (responseItems.isEmpty()) {
             throw new ApplicationException(
@@ -271,12 +281,11 @@ public class SurveyServiceImpl implements SurveyService {
             );
         }
 
-        // [4] itemId 필터링 (itemId 파라미터가 있을 때만)
+        // [5] itemId 필터링
         if (itemId != null) {
             responseItems = responseItems.stream()
                     .filter(item -> item.getSurveyItemId().equals(itemId))
                     .toList();
-
             if (responseItems.isEmpty()) {
                 throw new ApplicationException(
                         ErrorCode.NOT_FOUND,
@@ -285,30 +294,31 @@ public class SurveyServiceImpl implements SurveyService {
             }
         }
 
-        // [5] Survey 엔티티에서 버전 매핑 (서비스 전반에 걸친 버전 정보)
-        Set<Long> surveyIds = responses.stream()
-                .map(SurveyResponse::getSurveyId)
-                .collect(Collectors.toSet());
-        Map<Long, Integer> surveyVersionMap = surveyRepo.findAllById(surveyIds).stream()
-                .collect(Collectors.toMap(Survey::getId, Survey::getVersion));
-
-        // [6] 응답 아이템을 responseId별로 그룹핑
+        // [6] responseId별 그룹핑
         Map<Long, List<SurveyResponseItem>> responseItemMap =
                 responseItems.stream().collect(Collectors.groupingBy(SurveyResponseItem::getResponseId));
 
-        // [7] DTO 변환
+        // [7] DTO 변환 (includeQuestion에 따라 questionText 포함/제외)
         List<SurveyAnswerResponseDto> dtos = responses.stream().map(resp -> {
             List<SurveyResponseItem> items = responseItemMap.getOrDefault(resp.getId(), List.of());
-            List<SurveyAnswerResponseDto.Answer> answers = items.stream().map(item ->
-                    new SurveyAnswerResponseDto.Answer(
-                            item.getSurveyItemId(),
-                            item.getQuestionText(),
-                            item.getAnswer()
-                    )
-            ).toList();
+            List<SurveyAnswerResponseDto.Answer> answers = items.stream()
+                    .map(item -> {
+                        String questionText = includeQuestion
+                                ? item.getQuestionText()
+                                : null;
+                        return new SurveyAnswerResponseDto.Answer(
+                                item.getSurveyItemId(),
+                                questionText,
+                                item.getAnswer()
+                        );
+                    })
+                    .toList();
 
-            Integer respVersion = surveyVersionMap.getOrDefault(resp.getSurveyId(), 1);
-
+            // 혹시 키가 없다면 디폴트(예: 1) 를 넣도록 getOrDefault 로 처리합니다.
+            Integer respVersion = surveyVersionMap.getOrDefault(
+                    resp.getSurveyId(),  // map 의 key: Survey.id
+                    1                     // map 에 없을 때 기본 버전
+            );
             return SurveyAnswerResponseDto.builder()
                     .responseId(resp.getId())
                     .surveyId(resp.getSurveyId())
@@ -319,7 +329,6 @@ public class SurveyServiceImpl implements SurveyService {
                     .build();
         }).toList();
 
-        // [8] 최종 DTO 리스트가 비어 있으면 예외
         if (dtos.isEmpty()) {
             throw new ApplicationException(
                     ErrorCode.NOT_FOUND,
@@ -327,13 +336,14 @@ public class SurveyServiceImpl implements SurveyService {
             );
         }
 
-        // [9] PageImpl 으로 wrapping
+        // [8] 페이징 정보 유지하면서 DTO 리스트 반환
         return new PageImpl<>(dtos, pageable, responses.getTotalElements());
     }
 
 
 
-
+    //수정하는 경우 과거 버전은 ispoen -> 취소 ,신규버전 isopen ,
+    //고객은??
     @Override
     @Transactional
     public SurveyResponseDto updateSurvey(Long surveyId, SurveyRequest request) {

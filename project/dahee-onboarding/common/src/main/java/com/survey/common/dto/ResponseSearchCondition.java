@@ -9,6 +9,8 @@ public class ResponseSearchCondition {
     private Long surveyId;
     private Integer version;
     private Long itemId;        // 특정 문항으로 검색
+
+    private Boolean includeQuestion = false;
 //    private String answer;      // 특정 답변값(주관식, 객관식 모두 가능)
 //    private String question;    // 문항명 검색(옵션)
 //    private String uuid;        // 특정 응답자 검색

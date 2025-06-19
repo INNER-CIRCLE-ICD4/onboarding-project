@@ -1,5 +1,6 @@
 package com.survey.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class SurveyAnswerResponseDto {
     @AllArgsConstructor
     public static class Answer {
         private Long itemId;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         private String question;
         private String answer;
     }
