@@ -4,4 +4,5 @@ import fc.innercircle.sanghyukonboarding.formreply.infrastructure.persistence.jp
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface FormReplyJpaRepository: JpaRepository<FormReplyEntity, String> {
+    fun findAllByFormId(formId: String): List<FormReplyEntity>
 }

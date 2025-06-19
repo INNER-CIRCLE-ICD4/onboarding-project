@@ -1,4 +1,4 @@
-package fc.innercircle.sanghyukonboarding.form.domain.validator
+package fc.innercircle.sanghyukonboarding.form.domain.model.validator
 
 import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode

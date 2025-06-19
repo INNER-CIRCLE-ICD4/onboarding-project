@@ -52,20 +52,12 @@ Content-Type: application/json
   "description": "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요. (수정됨)",
   "questions": [
     {
-      "questionTemplateId": "01JY2XB3J35XV8YF8CS443CH1N",
-      "title": "티셔츠 사이즈 1",
+      "questionTemplateId": "01JY4AZT4Q1KB5CA766CJZ9TF0",
+      "title": "티셔츠 사이즈 2 (수정됨)",
       "description": "",
-      "type": "CHECKBOX",
+      "type": "TEXT",
       "required": false,
-      "selectableOptions": [
-        {
-          "text": "L"
-        },
-        {
-          "text": "XL"
-        }
-      ]
-    }
+      "selectableOptions": []    }
   ]
 }
 

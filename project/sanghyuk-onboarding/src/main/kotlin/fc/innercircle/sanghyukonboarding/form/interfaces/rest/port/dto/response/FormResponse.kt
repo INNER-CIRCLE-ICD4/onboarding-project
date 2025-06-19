@@ -1,4 +1,4 @@
-package fc.innercircle.sanghyukonboarding.form.interfaces.rest.dto.response
+package fc.innercircle.sanghyukonboarding.form.interfaces.rest.port.dto.response
 
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionTemplate
@@ -7,26 +7,26 @@ data class FormResponse(
     val formId: String,
     val title: String,
     val description: String,
-    val questions: List<Question>
+    val questions: List<QuestionResponse>
 ) {
-    data class Question(
+    data class QuestionResponse(
         val questionTemplateId: String,
         val title: String,
         val description: String,
         val type: String,
         val required: Boolean,
         val version: Long,
-        val selectableOptions: List<SelectableOption>,
+        val selectableOptions: List<SelectableOptionResponse>,
     ) {
-        data class SelectableOption(
+        data class SelectableOptionResponse(
             val selectableOptionId: String,
             val text: String,
         )
 
         companion object {
-            fun from(questionTemplate: QuestionTemplate): Question {
+            fun from(questionTemplate: QuestionTemplate): QuestionResponse {
                 val questionSnapshot = questionTemplate.getLatestSnapshot()
-                return Question(
+                return QuestionResponse(
                     questionTemplateId = questionTemplate.id,
                     title = questionSnapshot.title,
                     description = questionSnapshot.description,
@@ -34,7 +34,7 @@ data class FormResponse(
                     required = questionTemplate.required,
                     version = questionSnapshot.version,
                     selectableOptions = questionSnapshot.selectableOptions.list().map { option ->
-                        SelectableOption(
+                        SelectableOptionResponse(
                             selectableOptionId = option.id,
                             text = option.text
                         )
@@ -51,7 +51,7 @@ data class FormResponse(
                 title = form.title,
                 description = form.description,
                 questions = form.questionTemplates.list().map {
-                    Question.from(it)
+                    QuestionResponse.from(it)
                 }
             )
         }

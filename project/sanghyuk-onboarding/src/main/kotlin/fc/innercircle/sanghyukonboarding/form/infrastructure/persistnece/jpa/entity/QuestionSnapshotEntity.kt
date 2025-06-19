@@ -4,7 +4,7 @@ import fc.innercircle.sanghyukonboarding.common.domain.model.IdGenerator
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionSnapshot
 import fc.innercircle.sanghyukonboarding.form.domain.model.SelectableOption
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.InputType
-import fc.innercircle.sanghyukonboarding.form.domain.validator.QuestionSnapshotValidator
+import fc.innercircle.sanghyukonboarding.form.domain.model.validator.QuestionSnapshotValidator
 import jakarta.persistence.Column
 import jakarta.persistence.ConstraintMode
 import jakarta.persistence.Entity

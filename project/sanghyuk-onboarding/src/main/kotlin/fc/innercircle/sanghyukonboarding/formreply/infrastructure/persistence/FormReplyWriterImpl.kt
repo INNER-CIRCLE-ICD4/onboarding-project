@@ -1,13 +1,15 @@
 package fc.innercircle.sanghyukonboarding.formreply.infrastructure.persistence
 
 import fc.innercircle.sanghyukonboarding.formreply.domain.model.FormReply
+import fc.innercircle.sanghyukonboarding.formreply.domain.service.port.FormReplyWriter
 import fc.innercircle.sanghyukonboarding.formreply.infrastructure.persistence.jpa.AnswerJpaRepository
 import fc.innercircle.sanghyukonboarding.formreply.infrastructure.persistence.jpa.FormReplyJpaRepository
 import fc.innercircle.sanghyukonboarding.formreply.infrastructure.persistence.jpa.entity.AnswerEntity
 import fc.innercircle.sanghyukonboarding.formreply.infrastructure.persistence.jpa.entity.FormReplyEntity
-import fc.innercircle.sanghyukonboarding.formreply.application.port.FormReplyWriter
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Component
 
+@Transactional
 @Component
 class FormReplyWriterImpl(
     private val formReplyJpaRepository: FormReplyJpaRepository,

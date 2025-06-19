@@ -2,9 +2,8 @@ package fc.innercircle.sanghyukonboarding.form.domain.model
 
 import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
+import fc.innercircle.sanghyukonboarding.form.domain.model.validator.FormValidator
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.QuestionTemplates
-import fc.innercircle.sanghyukonboarding.form.domain.validator.FormValidator
 
 class Form(
     val id: String = "",
@@ -56,51 +55,29 @@ class Form(
         )
     }
 
-    fun updated(cmd: FormCommand): Form {
-        // 1) 생성 혹은 업데이트된 템플릿 모으기
-        val updatedTemplates = cmd.questions.mapIndexed { idx, questionCmd ->
-            when {
-                questionCmd.questionTemplateId.isBlank() ->
-                    // 새 질문
-                    QuestionTemplate.of(
-                        cmd = questionCmd,
-                        displayOrder = idx,
-                        formId = this.id
-                    )
-                else ->
-                    // 기존 질문 업데이트
-                    this.questionTemplates
-                        .getById(questionCmd.questionTemplateId)
-                        .updated(questionCmd, idx)
-            }
-        }
+    fun edited(
+        title: String,
+        description: String,
+        questionTemplates: List<QuestionTemplate>,
+    ): Form {
 
-        // 2) cmd에 없는 기존 질문은 삭제 처리
-        val deletedTemplates = this.questionTemplates.list().filter { template ->
-            !updatedTemplates.any { it.id == template.id }
-        }.map { it.deleted() }
+        val deletedTemplates: List<QuestionTemplate> = this.questionTemplates.list()
+            .filter { template ->
+                questionTemplates.none { it.id == template.id }
+            }.map { it.deleted() }
 
-        // 3) 새로운 질문 리스트 + 삭제된 질문 리스트 합쳐서 copy
         return copy(
-            title = cmd.title,
-            description = cmd.description,
-            questionTemplates = updatedTemplates + deletedTemplates
+            title = title,
+            description = description,
+            questionTemplates = deletedTemplates + questionTemplates
         )
     }
 
-    companion object {
-        fun from(cmd: FormCommand): Form {
-            val questionTemplates: List<QuestionTemplate> = cmd.questions.mapIndexed { idx, it ->
-                QuestionTemplate.of(
-                    cmd = it,
-                    displayOrder = idx
-                )
-            }
-            return Form(
-                title = cmd.title,
-                description = cmd.description,
-                questionTemplates = questionTemplates
-            )
-        }
+    fun hasQuestionTemplate(questionTemplateId: String): Boolean {
+        return questionTemplates.existsById(questionTemplateId)
+    }
+
+    fun getQuestionTemplate(questionTemplateId: String): QuestionTemplate {
+        return questionTemplates.getById(questionTemplateId)
     }
 }

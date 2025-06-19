@@ -2,7 +2,7 @@ package fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.en
 
 import fc.innercircle.sanghyukonboarding.common.domain.model.IdGenerator
 import fc.innercircle.sanghyukonboarding.form.domain.model.SelectableOption
-import fc.innercircle.sanghyukonboarding.form.domain.validator.SelectableOptionsValidator
+import fc.innercircle.sanghyukonboarding.form.domain.model.validator.SelectableOptionsValidator
 import jakarta.persistence.Column
 import jakarta.persistence.ConstraintMode
 import jakarta.persistence.Entity

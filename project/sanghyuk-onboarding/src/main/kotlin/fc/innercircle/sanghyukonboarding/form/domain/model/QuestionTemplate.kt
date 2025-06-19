@@ -2,9 +2,9 @@ package fc.innercircle.sanghyukonboarding.form.domain.model
 
 import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
+import fc.innercircle.sanghyukonboarding.form.domain.model.validator.QuestionTemplateValidator
+import fc.innercircle.sanghyukonboarding.form.domain.model.vo.InputType
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.QuestionSnapshots
-import fc.innercircle.sanghyukonboarding.form.domain.validator.QuestionTemplateValidator
 
 class QuestionTemplate(
     val id: String = "",
@@ -75,26 +75,47 @@ class QuestionTemplate(
             ?: throw IllegalStateException("No snapshots available for question template with id: $id")
     }
 
-    fun updated(cmd: FormCommand.Question, displayOrder: Int): QuestionTemplate {
-        if (this.getLatestSnapshot().isModified(cmd)) {
+    fun edited(
+        title: String,
+        description: String,
+        type: String,
+        required: Boolean,
+        displayOrder: Int,
+        selectableOptions: List<SelectableOption>,
+    ): QuestionTemplate {
+        val questionSnapshot = QuestionSnapshot(
+            title = title,
+            description = description,
+            type = InputType.valueOrThrows(type),
+            version = this.version,
+            selectableOptions = selectableOptions,
+            questionTemplateId = this.id
+        )
+        if (this.getLatestSnapshot().isModified(questionSnapshot)) {
             val newVersion: Long = version + 1
-            val newSnapshot: QuestionSnapshot = QuestionSnapshot.of(
-                cmd = cmd,
-                version = newVersion
+            val newSnapshot = QuestionSnapshot(
+                title = title,
+                description = description,
+                type = InputType.valueOrThrows(type),
+                version = newVersion,
+                selectableOptions = selectableOptions,
+                questionTemplateId = this.id
             )
             val copy: QuestionTemplate = this.copy(
                 version = newVersion,
-                required = cmd.required,
+                required = required,
                 displayOrder = displayOrder,
                 snapshots = snapshots.add(newSnapshot)
             )
             return copy
         }
-        return this.copy(displayOrder = displayOrder)
+        return this.copy(
+            required = required,
+            displayOrder = displayOrder,
+        )
     }
 
     fun deleted(): QuestionTemplate {
-        isLatestVersionOrThrows(version)
         return this.copy(
             version = this.version,
             required = this.required,
@@ -102,17 +123,6 @@ class QuestionTemplate(
             snapshots = snapshots,
             deleted = true
         )
-    }
-
-    private fun isLatestVersionOrThrows(version: Long) {
-        if (version != this.version) {
-            throw CustomException(
-                ErrorCode.NOT_MODIFIABLE_QUESTION_TEMPLATE_VERSION.withArgs(
-                    version,
-                    this.version
-                )
-            )
-        }
     }
 
     private fun copy(
@@ -133,18 +143,22 @@ class QuestionTemplate(
         )
     }
 
-    companion object {
-        fun of(cmd: FormCommand.Question, displayOrder: Int, formId: String = ""): QuestionTemplate {
-            val questionSnapshots: List<QuestionSnapshot> = listOf(
-                QuestionSnapshot.of(cmd = cmd)
-            )
-            return QuestionTemplate(
-                version = 0L,
-                required = cmd.required,
-                displayOrder = displayOrder,
-                snapshots = questionSnapshots,
-                formId = formId,
-            )
-        }
+    fun addSnapshot(
+        title: String,
+        description: String = "",
+        type: String,
+        selectableOptions: List<SelectableOption>,
+    ): QuestionTemplate {
+        val createSnapshot = QuestionSnapshot(
+            title = title,
+            description = description,
+            type = InputType.valueOrThrows(type),
+            version = this.version,
+            selectableOptions = selectableOptions,
+            questionTemplateId = this.id,
+        )
+        return this.copy(
+            snapshots = this.snapshots.add(createSnapshot)
+        )
     }
 }

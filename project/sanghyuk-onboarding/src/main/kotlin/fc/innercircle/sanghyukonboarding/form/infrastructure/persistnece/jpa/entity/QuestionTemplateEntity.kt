@@ -3,7 +3,7 @@ package fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.en
 import fc.innercircle.sanghyukonboarding.common.domain.model.IdGenerator
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionSnapshot
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionTemplate
-import fc.innercircle.sanghyukonboarding.form.domain.validator.QuestionTemplateValidator
+import fc.innercircle.sanghyukonboarding.form.domain.model.validator.QuestionTemplateValidator
 import jakarta.persistence.Column
 import jakarta.persistence.ConstraintMode
 import jakarta.persistence.Entity

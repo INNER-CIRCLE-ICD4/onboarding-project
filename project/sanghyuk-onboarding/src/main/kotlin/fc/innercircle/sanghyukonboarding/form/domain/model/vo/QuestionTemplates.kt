@@ -26,8 +26,7 @@ class QuestionTemplates(values: List<QuestionTemplate> = emptyList()) {
             ?: throw CustomException(ErrorCode.QUESTION_TEMPLATE_NOT_FOUND.withArgs(id))
     }
 
-    fun snapshots(): QuestionSnapshots {
-        val snapshots = values.flatMap { it.snapshots.list() }
-        return QuestionSnapshots(values = snapshots)
+    fun existsById(questionTemplateId: String): Boolean {
+        return values.any { it.id == questionTemplateId }
     }
 }

@@ -78,7 +78,7 @@ open class AnswerEntity(
         return Answer(
             id = id,
             questionSnapshotId = questionSnapshotId,
-            answer = answer,
+            text = answer,
             selectableOptionIds = selectableOptionIds.toList(),
             formReplyId = formReplyEntity.id
         )
@@ -90,7 +90,7 @@ open class AnswerEntity(
             return AnswerEntity(
                 id = answer.id,
                 questionSnapshotId = answer.questionSnapshotId,
-                answer = answer.answer,
+                answer = answer.text,
                 selectableOptionIds = answer.selectableOptionIds,
                 formReplyEntity = formReplyEntity
             )

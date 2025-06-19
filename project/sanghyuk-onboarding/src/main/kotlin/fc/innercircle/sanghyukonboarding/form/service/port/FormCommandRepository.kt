@@ -2,7 +2,7 @@ package fc.innercircle.sanghyukonboarding.form.service.port
 
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 
-interface FormWriter {
+interface FormCommandRepository {
     fun insertOrUpdate(form: Form): String
     fun deleteAll()
 }

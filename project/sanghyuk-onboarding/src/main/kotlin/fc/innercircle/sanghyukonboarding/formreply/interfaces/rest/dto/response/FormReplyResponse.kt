@@ -17,7 +17,7 @@ data class FormReplyResponse(
             fun from(answer: fc.innercircle.sanghyukonboarding.formreply.domain.model.Answer): Answer {
                 return Answer(
                     questionTemplateId = answer.questionSnapshotId,
-                    answer = answer.answer,
+                    answer = answer.text,
                     selectableOptionIds = answer.selectableOptionIds
                 )
             }

@@ -1,4 +1,4 @@
-package fc.innercircle.sanghyukonboarding.common.service
+package fc.innercircle.sanghyukonboarding.common.domain.service
 
 import java.time.LocalDateTime
 

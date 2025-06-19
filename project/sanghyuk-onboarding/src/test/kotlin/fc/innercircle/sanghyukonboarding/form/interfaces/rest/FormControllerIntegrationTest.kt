@@ -3,11 +3,11 @@ package fc.innercircle.sanghyukonboarding.form.interfaces.rest
 import com.fasterxml.jackson.databind.ObjectMapper
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
 import fc.innercircle.sanghyukonboarding.configuration.MysqlTestContainerConfig
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
+import fc.innercircle.sanghyukonboarding.form.interfaces.rest.port.dto.request.FormRequest
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.InputType
-import fc.innercircle.sanghyukonboarding.form.service.port.FormReader
-import fc.innercircle.sanghyukonboarding.form.service.port.FormWriter
+import fc.innercircle.sanghyukonboarding.form.service.port.FormQueryRepository
+import fc.innercircle.sanghyukonboarding.form.service.port.FormCommandRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import org.hamcrest.CoreMatchers.endsWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -31,40 +31,40 @@ class FormControllerIntegrationTest : BehaviorSpec({
         .testContext.applicationContext
     val mockMvc = applicationContext.getBean(MockMvc::class.java)
     val objectMapper = applicationContext.getBean(ObjectMapper::class.java)
-    val formWriter = applicationContext.getBean(FormWriter::class.java)
-    val formReader = applicationContext.getBean(FormReader::class.java)
+    val formCommandRepository = applicationContext.getBean(FormCommandRepository::class.java)
+    val formQueryRepository = applicationContext.getBean(FormQueryRepository::class.java)
 
     context("설문 조사 작성 API 테스트") {
 
         // DB 초기화
-        formWriter.deleteAll()
+        formCommandRepository.deleteAll()
 
         given("유효한 요청 값으로") {
             // Given
             // 필요한 데이터 준비
-            val cmd = FormCommand(
+            val cmd = FormRequest(
                 title = "티셔츠 신청",
                 description = "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요.",
                 questions = listOf(
-                    FormCommand.Question(
+                    FormRequest.QuestionRequest(
                         title = "이름",
                         description = "반드시 본명을 입력해주세요.",
                         type = InputType.TEXT.name,
                         required = true
                     ),
-                    FormCommand.Question(
+                    FormRequest.QuestionRequest(
                         title = "티셔츠 사이즈",
                         type = InputType.RADIO.name,
                         required = false,
                         selectableOptions = listOf(
-                            FormCommand.Question.SelectableOption(text = "XS"),
-                            FormCommand.Question.SelectableOption(text = "S"),
-                            FormCommand.Question.SelectableOption(text = "M"),
-                            FormCommand.Question.SelectableOption(text = "L"),
-                            FormCommand.Question.SelectableOption(text = "XL")
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "XS"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "S"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "M"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "L"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "XL")
                         )
                     ),
-                    FormCommand.Question(
+                    FormRequest.QuestionRequest(
                         title = "기타 의견",
                         type = InputType.LONG_TEXT.name,
                         required = false,
@@ -146,40 +146,40 @@ class FormControllerIntegrationTest : BehaviorSpec({
     context("설문 조사 조회 API 테스트") {
 
         // DB 초기화
-        formWriter.deleteAll()
+        formCommandRepository.deleteAll()
 
         given("존재하는 설문조사에 대해") {
 
-            val cmd = FormCommand(
+            val cmd = FormRequest(
                 title = "티셔츠 신청",
                 description = "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요.",
                 questions = listOf(
-                    FormCommand.Question(
+                    FormRequest.QuestionRequest(
                         title = "이름",
                         description = "반드시 본명을 입력해주세요.",
                         type = InputType.TEXT.name,
                         required = true
                     ),
-                    FormCommand.Question(
+                    FormRequest.QuestionRequest(
                         title = "티셔츠 사이즈",
                         type = InputType.RADIO.name,
                         required = false,
                         selectableOptions = listOf(
-                            FormCommand.Question.SelectableOption(text = "XS"),
-                            FormCommand.Question.SelectableOption(text = "S"),
-                            FormCommand.Question.SelectableOption(text = "M"),
-                            FormCommand.Question.SelectableOption(text = "L"),
-                            FormCommand.Question.SelectableOption(text = "XL")
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "XS"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "S"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "M"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "L"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "XL")
                         )
                     ),
-                    FormCommand.Question(
+                    FormRequest.QuestionRequest(
                         title = "기타 의견",
                         type = InputType.LONG_TEXT.name,
                         required = false,
                     )
                 )
             )
-            val formId: String = formWriter.insertOrUpdate(Form.from(cmd))
+            val formId: String = formCommandRepository.insertOrUpdate(Form.from(cmd))
 
             `when`("설문 조사 조회 API를 호출하면") {
 
@@ -219,93 +219,93 @@ class FormControllerIntegrationTest : BehaviorSpec({
 
     context("설문 조사 수정 API 테스트") {
 
-        formWriter.deleteAll()
+        formCommandRepository.deleteAll()
 
         given("존재하는 설문조사에 대해") {
 
-            val cmd = FormCommand(
+            val cmd = FormRequest(
                 title = "티셔츠 신청",
                 description = "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요.",
                 questions = listOf(
-                    FormCommand.Question(
+                    FormRequest.QuestionRequest(
                         title = "이름",
                         description = "반드시 본명을 입력해주세요.",
                         type = InputType.TEXT.name,
                         required = true
                     ),
-                    FormCommand.Question(
+                    FormRequest.QuestionRequest(
                         title = "티셔츠 사이즈",
                         type = InputType.RADIO.name,
                         required = false,
                         selectableOptions = listOf(
-                            FormCommand.Question.SelectableOption(text = "XS"),
-                            FormCommand.Question.SelectableOption(text = "S"),
-                            FormCommand.Question.SelectableOption(text = "M"),
-                            FormCommand.Question.SelectableOption(text = "L"),
-                            FormCommand.Question.SelectableOption(text = "XL")
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "XS"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "S"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "M"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "L"),
+                            FormRequest.QuestionRequest.SelectableOptionRequest(text = "XL")
                         )
                     ),
-                    FormCommand.Question(
+                    FormRequest.QuestionRequest(
                         title = "기타 의견",
                         type = InputType.LONG_TEXT.name,
                         required = false,
                     )
                 )
             )
-            val formId: String = formWriter.insertOrUpdate(Form.from(cmd))
-            val form: Form = formReader.getById(formId)
+            val formId: String = formCommandRepository.insertOrUpdate(Form.from(cmd))
+            val form: Form = formQueryRepository.getById(formId)
 
             `when`("설문 조사 수정 API를 호출하면") {
 
-                val updateCmd = FormCommand(
+                val updateCmd = FormRequest(
                     title = "티셔츠 신청 (수정)",
                     description = "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요. (수정됨)",
                     questions = listOf(
-                        FormCommand.Question(
+                        FormRequest.QuestionRequest(
                             title = "(추가 문항) 귀하의 키는 몇 cm 인가요?",
                             type = InputType.CHECKBOX.name,
                             required = false,
                             selectableOptions = listOf(
-                                FormCommand.Question.SelectableOption(
+                                FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "180cm"
                                 ),
-                                FormCommand.Question.SelectableOption(
+                                FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "170cm"
                                 ),
-                                FormCommand.Question.SelectableOption(
+                                FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "160cm"
                                 ),
-                                FormCommand.Question.SelectableOption(
+                                FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "150cm"
                                 ),
                             ),
                         ),
-                        FormCommand.Question(
+                        FormRequest.QuestionRequest(
                             questionTemplateId = form.questionTemplates.list()[0].id,
                             title = "이름 (수정)",
                             description = "반드시 본명을 입력해주세요. (수정)",
                             type = InputType.TEXT.name,
                             required = true,
                         ),
-                        FormCommand.Question(
+                        FormRequest.QuestionRequest(
                             questionTemplateId = form.questionTemplates.list()[1].id,
                             title = "티셔츠 사이즈",
                             type = InputType.CHECKBOX.name,
                             required = false,
                             selectableOptions = listOf(
-                                FormCommand.Question.SelectableOption(
+                                FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "XL"
                                 ),
-                                FormCommand.Question.SelectableOption(
+                                FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "L"
                                 ),
-                                FormCommand.Question.SelectableOption(
+                                FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "M"
                                 ),
-                                FormCommand.Question.SelectableOption(
+                                FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "S"
                                 ),
-                                FormCommand.Question.SelectableOption(
+                                FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "XS"
                                 ),
                             ),

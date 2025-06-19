@@ -2,21 +2,18 @@ package fc.innercircle.sanghyukonboarding.form.domain.model
 
 import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
-import fc.innercircle.sanghyukonboarding.form.domain.dto.command.FormCommand
+import fc.innercircle.sanghyukonboarding.form.domain.model.validator.QuestionSnapshotValidator
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.InputType
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.SelectableOptions
-import fc.innercircle.sanghyukonboarding.form.domain.validator.QuestionSnapshotValidator
-import fc.innercircle.sanghyukonboarding.formreply.domain.dto.command.FormReplyCommand
-import fc.innercircle.sanghyukonboarding.formreply.domain.model.Answer
 
 open class QuestionSnapshot(
     val id: String = "",
     val title: String,
-    val description: String,
+    val description: String = "",
     val type: InputType,
     val version: Long,
     selectableOptions: List<SelectableOption>,
-    val questionTemplateId: String = ""
+    val questionTemplateId: String
 ) {
 
     val selectableOptions: SelectableOptions
@@ -69,63 +66,34 @@ open class QuestionSnapshot(
         QuestionSnapshotValidator.validateVersion(version)
     }
 
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + title.hashCode()
-        result = 31 * result + description.hashCode()
-        result = 31 * result + type.hashCode()
-        result = 31 * result + version.hashCode()
-        result = 31 * result + selectableOptions.hashCode()
-        result = 31 * result + questionTemplateId.hashCode()
-        return result
+
+    fun isModified(questionSnapshot: QuestionSnapshot): Boolean {
+        return this != questionSnapshot
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is QuestionSnapshot) return false
+        if (javaClass != other?.javaClass) return false
 
-        if (id != other.id) return false
+        other as QuestionSnapshot
+
+        if (version != other.version) return false
         if (title != other.title) return false
         if (description != other.description) return false
         if (type != other.type) return false
-        if (version != other.version) return false
-        if (selectableOptions != other.selectableOptions) return false
         if (questionTemplateId != other.questionTemplateId) return false
+        if (selectableOptions != other.selectableOptions) return false
 
         return true
     }
 
-    fun isModified(cmd: FormCommand.Question): Boolean {
-        val newSnapshot: QuestionSnapshot = of(
-            id = this.id,
-            cmd = cmd,
-            version = this.version
-        )
-        return this != newSnapshot
-    }
-
-    companion object {
-        fun of(
-            id: String = "",
-            cmd: FormCommand.Question,
-            version: Long = 0L,
-        ): QuestionSnapshot {
-            val selectableOptions: List<SelectableOption> = cmd.selectableOptions.mapIndexed { idx, optionCmd ->
-                SelectableOption.of(
-                    text = optionCmd.text,
-                    displayOrder = idx,
-                    questionSnapshotId = id
-                )
-            }
-            return QuestionSnapshot(
-                id = id,
-                title = cmd.title,
-                description = cmd.description,
-                type = InputType.valueOrThrows(cmd.type),
-                version = version,
-                selectableOptions = selectableOptions,
-                questionTemplateId = cmd.questionTemplateId,
-            )
-        }
+    override fun hashCode(): Int {
+        var result = version.hashCode()
+        result = 31 * result + title.hashCode()
+        result = 31 * result + description.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + questionTemplateId.hashCode()
+        result = 31 * result + selectableOptions.hashCode()
+        return result
     }
 }

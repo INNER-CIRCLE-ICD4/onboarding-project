@@ -13,18 +13,18 @@ import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.Sel
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.QuestionSnapshotEntity
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.QuestionTemplateEntity
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.SelectableOptionEntity
-import fc.innercircle.sanghyukonboarding.form.service.port.FormReader
+import fc.innercircle.sanghyukonboarding.form.service.port.FormQueryRepository
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Transactional(readOnly = true)
 @Component
-class FormReaderImpl(
+class FormQueryRepositoryImpl(
     private val formJpaRepository: FormJpaRepository,
     private val questionTemplateJpaRepository: QuestionTemplateJpaRepository,
     private val questionSnapshotJpaRepository: QuestionSnapshotJpaRepository,
     private val selectableOptionJpaRepository: SelectableOptionJpaRepository,
-): FormReader {
+): FormQueryRepository {
 
     override fun getById(id: String): Form {
         // 1. Form 조회

@@ -1,6 +1,6 @@
 package fc.innercircle.sanghyukonboarding.form.domain.model
 
-import fc.innercircle.sanghyukonboarding.form.domain.validator.SelectableOptionsValidator
+import fc.innercircle.sanghyukonboarding.form.domain.model.validator.SelectableOptionsValidator
 
 class SelectableOption(
     val id: String = "",
@@ -34,7 +34,6 @@ class SelectableOption(
 
         if (displayOrder != other.displayOrder) return false
         if (text != other.text) return false
-        if (questionSnapshotId != other.questionSnapshotId) return false
 
         return true
     }
@@ -42,24 +41,6 @@ class SelectableOption(
     override fun hashCode(): Int {
         var result = displayOrder
         result = 31 * result + text.hashCode()
-        result = 31 * result + questionSnapshotId.hashCode()
         return result
-    }
-
-
-    companion object {
-        fun of(
-            id: String = "",
-            text: String,
-            displayOrder: Int,
-            questionSnapshotId: String = "",
-        ): SelectableOption {
-            return SelectableOption(
-                id = id,
-                text = text,
-                displayOrder = displayOrder,
-                questionSnapshotId = questionSnapshotId,
-            )
-        }
     }
 }
