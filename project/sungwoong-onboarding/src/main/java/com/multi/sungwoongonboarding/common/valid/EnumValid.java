@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = EnumValidator.class)
 @Target({ElementType.FIELD, ElementType.TYPE_PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidEnum {
+public @interface EnumValid {
     String message() default "유효하지 않은 타입입니다.";
 
     Class<?>[] groups() default {};
