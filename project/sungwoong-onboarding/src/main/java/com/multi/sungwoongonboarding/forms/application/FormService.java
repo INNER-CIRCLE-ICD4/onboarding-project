@@ -25,7 +25,6 @@ public class FormService {
         );
     }
 
-    @Transactional
     public FormResponse updateForms(Long formId, FormUpdateRequest formUpdateRequest) {
 
         Forms updateRequestDomain = formUpdateRequest.toDomain();

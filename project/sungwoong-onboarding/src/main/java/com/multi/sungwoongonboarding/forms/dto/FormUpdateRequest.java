@@ -36,6 +36,7 @@ public class FormUpdateRequest {
                 .id(this.id)
                 .title(this.title)
                 .description(this.description)
+                .questions(questions.stream().map(QuestionUpdateRequest::toDomain).toList())
                 .build();
     }
 }

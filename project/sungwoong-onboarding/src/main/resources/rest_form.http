@@ -1,0 +1,190 @@
+### POST 설문지 등록 api - 성공
+POST http://localhost:8080/api/v1/forms
+Content-Type: application/json
+
+{
+  "title": "햄버거 설문조사",
+  "description": "햄버거를 다들 좋아하는지 조사한다",
+  "questionCreateRequests": [
+    {
+      "questionText": "나는 햄버거를 좋아한다.",
+      "questionType": "SINGLE_CHOICE",
+      "isRequired": true,
+      "optionCreateRequests": [
+        {
+          "optionText": "좋아한다"
+        },
+        {
+          "optionText": "가끔 땡긴다"
+        },
+        {
+          "optionText": "안좋아한다."
+        }
+      ]
+    },
+    {
+      "questionText": "치킨버거 vs 비프버거",
+      "questionType": "SINGLE_CHOICE",
+      "optionCreateRequests": [
+        {
+          "optionText": "치킨버거"
+        },
+        {
+          "optionText": "비프버거"
+        }
+      ]
+    },
+    {
+      "questionText": "브랜드",
+      "questionType": "MULTIPLE_CHOICE",
+      "optionCreateRequests": [
+        {
+          "optionText": "맥도날드"
+        },
+        {
+          "optionText": "롯데리아"
+        },
+        {
+          "optionText": "버거킹"
+        },
+        {
+          "optionText": "KFC"
+        }
+      ]
+    }
+  ]
+}
+
+### POST 설문지 등록 오류
+POST http://localhost:8080/api/v1/forms
+Content-Type: application/json
+
+{
+  "title": "햄버거 설문조사",
+  "description": "햄버거를 다들 좋아하는지 조사한다",
+  "questionCreateRequests": [
+    {
+      "questionText": "나는 햄버거를 좋아한다.",
+      "questionType": "SINGLE_CHOICE",
+      "isRequired": true,
+      "optionCreateRequests": [
+        {
+          "optionText": "좋아한다"
+        },
+        {
+          "optionText": "가끔 땡긴다"
+        },
+        {
+          "optionText": "안좋아한다."
+        }
+      ]
+    },
+    {
+      "questionText": "치킨버거 vs 비프버거",
+      "questionType": "SINGLE_CHOICE",
+      "optionCreateRequests": [
+        {
+          "optionText": "치킨버거"
+        },
+        {
+          "optionText": "비프버거"
+        }
+      ]
+    },
+    {
+      "questionText": "브랜드",
+      "questionType": "SHORT_ANSWER",
+      "optionCreateRequests": [{
+        "optionText": ""
+      }]
+    }
+  ]
+}
+
+
+### PATCh 설문지 수정
+PATCH http://localhost:8080/api/v1/forms/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "title": "햄버거 설문조사",
+  "description": "햄버거를 다들 좋아하는지 조사한다22222",
+  "questions": [
+    {
+      "id": 1,
+      "questionText": "나는 햄버거를 좋아한다22222.2222222",
+      "questionType": "SINGLE_CHOICE",
+      "isRequired": false,
+      "version": 1,
+      "deleted": false,
+      "options": [
+        {
+          "id": 1,
+          "optionText": "좋아한다",
+          "deleted": false
+        },
+        {
+          "id": 2,
+          "optionText": "가끔 땡긴다",
+          "deleted": false
+        },
+        {
+          "id": 3,
+          "optionText": "안좋아한다.",
+          "deleted": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "questionText": "치킨버거 vs 비프버거",
+      "questionType": "MULTIPLE_CHOICE",
+      "isRequired": false,
+      "version": 1,
+      "deleted": false,
+      "options": [
+        {
+          "id": 4,
+          "optionText": "치킨버거",
+          "deleted": false
+        },
+        {
+          "id": 5,
+          "optionText": "비프버거",
+          "deleted": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "questionText": "브랜드",
+      "questionType": "MULTIPLE_CHOICE",
+      "isRequired": false,
+      "version": 1,
+      "deleted": false,
+      "options": [
+        {
+          "id": 6,
+          "optionText": "맥도날드",
+          "deleted": false
+        },
+        {
+          "id": 7,
+          "optionText": "롯데리아",
+          "deleted": false
+        },
+        {
+          "id": 8,
+          "optionText": "버거킹",
+          "deleted": false
+        },
+        {
+          "id": 9,
+          "optionText": "KFC",
+          "deleted": false
+        }
+      ]
+    }
+  ]
+}

@@ -16,13 +16,22 @@ public class Questions {
         //단문, 장문, 단일 선택, 복수 선택
         SHORT_ANSWER, LONG_ANSWER, SINGLE_CHOICE, MULTIPLE_CHOICE;
 
+        public boolean isMultipleChoice() {
+            return this == MULTIPLE_CHOICE;
+        }
+        public boolean isSingleChoice() {
+            return this == SINGLE_CHOICE;
+        }
+
         public boolean isChoiceType() {
-            return this == SINGLE_CHOICE || this == MULTIPLE_CHOICE;
+            return isSingleChoice() || isMultipleChoice();
         }
 
         public boolean isTextType() {
             return this == SHORT_ANSWER || this == LONG_ANSWER;
         }
+
+
     }
 
     private final Long id;

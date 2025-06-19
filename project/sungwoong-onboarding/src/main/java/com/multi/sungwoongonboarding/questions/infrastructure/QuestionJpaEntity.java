@@ -4,6 +4,7 @@ import com.multi.sungwoongonboarding.common.entity.BaseEntity;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormsJpaEntity;
 import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaEntity;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
+import com.multi.sungwoongonboarding.questions.dto.QuestionUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Entity
@@ -28,7 +30,8 @@ public class QuestionJpaEntity extends BaseEntity {
     private String questionText;
 
     @Column(name = "question_type", nullable = false)
-    private String questionType;
+    @Enumerated(EnumType.STRING)
+    private Questions.QuestionType questionType;
 
     @Column(name = "is_required", nullable = false)
     private boolean isRequired;
@@ -43,16 +46,15 @@ public class QuestionJpaEntity extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "questionJpaEntity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "questionJpaEntity", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<OptionsJpaEntity> options = new ArrayList<>();
-
 
 
     public static QuestionJpaEntity fromDomain(Questions question) {
 
         QuestionJpaEntity questionJpaEntity = new QuestionJpaEntity();
         questionJpaEntity.questionText = question.getQuestionText();
-        questionJpaEntity.questionType = question.getQuestionType().name();
+        questionJpaEntity.questionType = question.getQuestionType();
         questionJpaEntity.isRequired = question.isRequired();
 
         if (question.getId() != null) {
@@ -60,7 +62,7 @@ public class QuestionJpaEntity extends BaseEntity {
             questionJpaEntity.version++;
         }
 
-        if (question.getOptions() != null && !question.getOptions().isEmpty()) {
+        if (question.getQuestionType().isChoiceType() && question.getOptions() != null && !question.getOptions().isEmpty()) {
             question.getOptions().forEach(options -> {
                 OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
                 optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
@@ -73,11 +75,33 @@ public class QuestionJpaEntity extends BaseEntity {
         return Questions.builder()
                 .id(this.id)
                 .questionText(this.questionText)
-                .questionType(Questions.QuestionType.valueOf(this.questionType))
+                .questionType(this.questionType)
                 .version(this.version)
                 .isRequired(this.isRequired)
                 .options(this.options.stream().map(OptionsJpaEntity::toDomain).toList())
                 .build();
+    }
+
+    public void update(Questions question) {
+
+        this.questionText = question.getQuestionText();
+        this.questionType = question.getQuestionType();
+        this.isRequired = question.isRequired();
+        this.version++;
+
+        if (question.getQuestionType().isChoiceType() && question.getOptions() != null && !question.getOptions().isEmpty()) {
+
+            question.getOptions().forEach(option -> {
+
+                Optional<OptionsJpaEntity> hasOption = this.options.stream().filter(optionsJpaEntity -> optionsJpaEntity.getId().equals(option.getId())).findFirst();
+                hasOption.ifPresentOrElse(options -> options.update(option), () -> {
+
+                    OptionsJpaEntity optionsJpaEntity = OptionsJpaEntity.fromDomain(option);
+                    optionsJpaEntity.mappingQuestionJpaEntity(this);
+
+                });
+            });
+        }
     }
 
     public void mappingFormJpaEntity(FormsJpaEntity formsJpaEntity) {

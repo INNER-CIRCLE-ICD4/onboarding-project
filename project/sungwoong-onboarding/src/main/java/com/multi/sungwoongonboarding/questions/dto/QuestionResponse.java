@@ -7,6 +7,7 @@ import java.util.List;
 
 public record QuestionResponse(Long id,
                                String questionText,
+                               Questions.QuestionType questionType,
                                boolean isRequired,
                                int version,
                                boolean deleted,
@@ -16,6 +17,7 @@ public record QuestionResponse(Long id,
         return new QuestionResponse(
                 question.getId(),
                 question.getQuestionText(),
+                question.getQuestionType(),
                 question.isRequired(),
                 question.getVersion(),
                 question.isDeleted(),
