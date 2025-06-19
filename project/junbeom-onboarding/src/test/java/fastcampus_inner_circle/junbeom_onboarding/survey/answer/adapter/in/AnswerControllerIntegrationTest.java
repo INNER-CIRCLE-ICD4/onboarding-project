@@ -31,29 +31,29 @@ class AnswerControllerIntegrationTest {
     @DisplayName("optionIds 구조로 응답 제출 및 조회 성공")
     void submitAndGetAnswer_success() throws Exception {
         // given: 다양한 케이스의 optionIds
-        AnswerRequest.AnswerDto answerDto1 = new AnswerRequest.AnswerDto();
-        answerDto1.setContentId(1L);
-        answerDto1.setOptionIds(null); // 복수 선택
-        answerDto1.setAnswerValue("조준범");
+        AnswerRequest.AnswerDetail answerDetail1 = new AnswerRequest.AnswerDetail();
+        answerDetail1.setContentId(1L);
+        answerDetail1.setOptionIds(null); // 복수 선택
+        answerDetail1.setAnswerValue("조준범");
 
-        AnswerRequest.AnswerDto answerDto2 = new AnswerRequest.AnswerDto();
-        answerDto2.setContentId(2L);
-        answerDto2.setOptionIds(List.of(2L)); // 단일 선택
-        answerDto2.setAnswerValue(null);
+        AnswerRequest.AnswerDetail answerDetail2 = new AnswerRequest.AnswerDetail();
+        answerDetail2.setContentId(2L);
+        answerDetail2.setOptionIds(List.of(2L)); // 단일 선택
+        answerDetail2.setAnswerValue(null);
 
-        AnswerRequest.AnswerDto answerDto3 = new AnswerRequest.AnswerDto();
-        answerDto3.setContentId(3L);
-        answerDto3.setOptionIds(null); // 미선택
-        answerDto3.setAnswerValue("조회 속도를 개선해주세요.");
+        AnswerRequest.AnswerDetail answerDetail3 = new AnswerRequest.AnswerDetail();
+        answerDetail3.setContentId(3L);
+        answerDetail3.setOptionIds(null); // 미선택
+        answerDetail3.setAnswerValue("조회 속도를 개선해주세요.");
 
-        AnswerRequest.AnswerDto answerDto4 = new AnswerRequest.AnswerDto();
-        answerDto3.setContentId(4L);
-        answerDto3.setOptionIds(List.of(8L, 9L)); // 미선택
-        answerDto3.setAnswerValue(null);
+        AnswerRequest.AnswerDetail answerDetail4 = new AnswerRequest.AnswerDetail();
+        answerDetail3.setContentId(4L);
+        answerDetail3.setOptionIds(List.of(8L, 9L)); // 미선택
+        answerDetail3.setAnswerValue(null);
 
         AnswerRequest request = new AnswerRequest();
         request.setFormId(1L);
-        request.setAnswers(List.of(answerDto1, answerDto2, answerDto3, answerDto4));
+        request.setAnswers(List.of(answerDetail1, answerDetail2, answerDetail3, answerDetail4));
 
         // when: 응답 제출
         String responseBody = mockMvc.perform(post("/api/answers")
@@ -82,14 +82,14 @@ class AnswerControllerIntegrationTest {
     @Rollback(false)
     void insertAnswerToDb_success() throws Exception {
         // given
-        AnswerRequest.AnswerDto answerDto = new AnswerRequest.AnswerDto();
-        answerDto.setContentId(1L);
-        answerDto.setOptionIds(List.of(2L, 3L));
-        answerDto.setAnswerValue("테스트 답변");
+        AnswerRequest.AnswerDetail answerDetail = new AnswerRequest.AnswerDetail();
+        answerDetail.setContentId(1L);
+        answerDetail.setOptionIds(List.of(2L, 3L));
+        answerDetail.setAnswerValue("테스트 답변");
 
         AnswerRequest request = new AnswerRequest();
         request.setFormId(200L);
-        request.setAnswers(List.of(answerDto));
+        request.setAnswers(List.of(answerDetail));
 
         // when: 응답 제출
         String responseBody = mockMvc.perform(post("/api/answers")
@@ -136,14 +136,14 @@ class AnswerControllerIntegrationTest {
     void submitAndGetAnswer_withOptionText_success() throws Exception {
         // given: 실제 DB에 존재하는 optionId와 그에 대응하는 text가 있다고 가정
         // 예시: optionId=2L -> "매우 만족", optionId=3L -> "만족"
-        AnswerRequest.AnswerDto answerDto = new AnswerRequest.AnswerDto();
-        answerDto.setContentId(1L);
-        answerDto.setOptionIds(List.of(2L, 3L));
-        answerDto.setAnswerValue(null);
+        AnswerRequest.AnswerDetail answerDetail = new AnswerRequest.AnswerDetail();
+        answerDetail.setContentId(1L);
+        answerDetail.setOptionIds(List.of(2L, 3L));
+        answerDetail.setAnswerValue(null);
 
         AnswerRequest request = new AnswerRequest();
         request.setFormId(300L);
-        request.setAnswers(List.of(answerDto));
+        request.setAnswers(List.of(answerDetail));
 
         // when: 응답 제출
         String responseBody = mockMvc.perform(post("/api/answers")

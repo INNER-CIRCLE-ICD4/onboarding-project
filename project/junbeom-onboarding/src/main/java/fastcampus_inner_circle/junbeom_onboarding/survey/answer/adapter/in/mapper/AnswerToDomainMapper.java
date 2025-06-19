@@ -3,6 +3,7 @@ package fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.in.mapp
 import fastcampus_inner_circle.junbeom_onboarding.survey.answer.adapter.in.dto.AnswerRequest;
 import fastcampus_inner_circle.junbeom_onboarding.survey.answer.domain.model.Answer;
 import fastcampus_inner_circle.junbeom_onboarding.survey.answer.domain.model.AnswerDetail;
+import fastcampus_inner_circle.junbeom_onboarding.survey.answer.domain.model.AnswerDetailOption;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,18 +17,35 @@ import java.util.stream.Collectors;
 @ToString
 public class AnswerToDomainMapper {
     public static Answer toDomain(AnswerRequest dto) {
-        List<AnswerDetail> details = dto.getAnswers()
-                .stream()
-                .map(detailDto -> AnswerDetail.builder()
-                        .contentId(detailDto.getContentId())
-                        .optionIds(detailDto.getOptionIds())
-                        .answerValue(detailDto.getAnswerValue())
-                        .build()
-        ).collect(Collectors.toList());
         return Answer.builder()
                 .formId(dto.getFormId())
                 .submittedAt(LocalDateTime.now())
-                .details(details)
+                .details(convertDetails(dto.getAnswers()))
                 .build();
+    }
+
+    private static List<AnswerDetail> convertDetails(List<AnswerRequest.AnswerDetail> answerDetails) {
+        return answerDetails.stream()
+                .map(AnswerToDomainMapper::convertDetail)
+                .collect(Collectors.toList());
+    }
+
+    private static AnswerDetail convertDetail(AnswerRequest.AnswerDetail dto) {
+        return AnswerDetail.builder()
+                .contentId(dto.getContentId())
+                .answerValue(dto.getValue())
+                .options(convertOptions(dto.getOptions()))
+                .build();
+    }
+
+
+    private static List<AnswerDetailOption> convertOptions(List<AnswerRequest.AnswerDetailOptions> details) {
+
+        return details.stream()
+                .map(opt -> AnswerDetailOption.builder()
+                        .contentId(opt.getOptionId())
+                        .text(opt.getText())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

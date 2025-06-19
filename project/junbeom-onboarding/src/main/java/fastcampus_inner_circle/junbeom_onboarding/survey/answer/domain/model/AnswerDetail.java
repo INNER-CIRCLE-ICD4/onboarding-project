@@ -13,7 +13,7 @@ import java.util.List;
 public class AnswerDetail {
     private Long id;
     private Long contentId;
-    private List<AnswerDetailOption> optionIds;
+    private List<AnswerDetailOption> options;
     private String answerValue;
     private String questionContent;
 } 
