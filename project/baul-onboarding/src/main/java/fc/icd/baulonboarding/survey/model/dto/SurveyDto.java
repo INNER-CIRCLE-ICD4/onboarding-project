@@ -41,7 +41,7 @@ public class SurveyDto {
 
     @Getter
     @Setter
-    @ValidItemOptions
+    @ValidItemOptions(inputTypeField = "inputType", optionListField = "surveyItemOptionList")
     public static class RegisterSurveyItemRequest{
 
         @NotBlank(message = "surveyItemName 는 필수값입니다")
@@ -117,7 +117,7 @@ public class SurveyDto {
 
     @Getter
     @Setter
-    @ValidItemOptions
+    @ValidItemOptions(inputTypeField = "inputType", optionListField = "surveyItemOptionList")
     public static class UpdateSurveyItemRequest{
 
         @NotNull(message = "surveyItemId 는 필수값입니다")
@@ -142,6 +142,7 @@ public class SurveyDto {
         @Min(value = 1, message = "surveyItemOrdering 는 1 이상이어야 합니다")
         private Integer ordering;
 
+        @Valid
         private List<UpdateSurveyItemOptionRequest> surveyItemOptionList;
 
         public SurveyItem toEntity(Survey survey){

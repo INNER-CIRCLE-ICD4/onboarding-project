@@ -9,7 +9,6 @@ import fc.icd.baulonboarding.survey.model.entity.Survey;
 import fc.icd.baulonboarding.survey.model.entity.SurveyItem;
 import fc.icd.baulonboarding.survey.model.entity.SurveyItemOption;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -40,11 +39,8 @@ public class AnswerDto {
 
     @Getter
     @Setter
-    @ValidItemOptions
+    @ValidItemOptions(inputTypeField = "inputType", optionListField = "answerItemOptionList")
     public static class RegisterAnswerItemRequest{
-
-        @NotNull(message = "answerId 는 필수값입니다")
-        private Long answerId;
 
         @NotNull(message = "surveyItemId 는 필수값입니다")
         private Long surveyItemId;
@@ -52,9 +48,9 @@ public class AnswerDto {
         @NotNull(message = "surveyItemInputType 는 필수값입니다")
         private InputType inputType;
 
-        @NotBlank(message = "answerItemContent 는 필수값입니다")
         private String content;
 
+        @Valid
         private List<AnswerDto.RegisterAnswerItemOptionRequest> answerItemOptionList;
 
         public AnswerItem toEntity(Answer answer, SurveyItem surveyItem){
@@ -72,12 +68,8 @@ public class AnswerDto {
     @Setter
     public static class RegisterAnswerItemOptionRequest{
 
-        @NotNull(message = "answerItemId 는 필수값입니다")
-        private Long answerItemId;
-
         @NotNull(message = "optionId 는 필수값입니다")
         private Long optionId;
-
 
         public AnswerItemOption toEntity(AnswerItem answerItem, SurveyItemOption surveyItemOption){
             return AnswerItemOption.builder()

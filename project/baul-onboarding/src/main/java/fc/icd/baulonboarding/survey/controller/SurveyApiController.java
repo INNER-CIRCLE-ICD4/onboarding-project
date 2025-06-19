@@ -1,5 +1,6 @@
 package fc.icd.baulonboarding.survey.controller;
 
+import fc.icd.baulonboarding.common.reponse.CommonResponse;
 import fc.icd.baulonboarding.survey.model.dto.SurveyDto;
 import fc.icd.baulonboarding.survey.service.SurveyService;
 import jakarta.validation.Valid;
@@ -14,14 +15,15 @@ public class SurveyApiController {
     private final SurveyService surveyService;
 
     @PostMapping
-    public void registerSurvey(@RequestBody @Valid SurveyDto.RegisterSurveyRequest request){
+    public CommonResponse registerSurvey(@RequestBody @Valid SurveyDto.RegisterSurveyRequest request){
         surveyService.registerSurvey(request);
+        return CommonResponse.success("ok");
     }
 
     @PutMapping
-    public void updateSurvey(@RequestBody @Valid SurveyDto.UpdateSurveyRequest request){
+    public CommonResponse updateSurvey(@RequestBody @Valid SurveyDto.UpdateSurveyRequest request){
         surveyService.updateSurvey(request);
-
+        return CommonResponse.success("ok");
     }
 
 

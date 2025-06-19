@@ -16,8 +16,9 @@ public class AnswerApiController {
     private final AnswerService answerService;
 
     @PostMapping
-    public void registerAnswer(@RequestBody @Valid AnswerDto.RegisterAnswerRequest request){
+    public CommonResponse registerAnswer(@RequestBody @Valid AnswerDto.RegisterAnswerRequest request){
         answerService.registerAnswer(request);
+        return CommonResponse.success("ok");
     }
 
     @GetMapping("/{answerId}")

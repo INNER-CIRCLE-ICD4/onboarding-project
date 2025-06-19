@@ -1,10 +1,12 @@
 package fc.icd.baulonboarding.answer.model.entity;
 
+import fc.icd.baulonboarding.common.exception.InvalidParamException;
 import fc.icd.baulonboarding.survey.model.entity.SurveyItemOption;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Getter
@@ -31,6 +33,10 @@ public class AnswerItemOption {
                             SurveyItemOption surveyItemOption,
                             String content
     ) {
+        if (answerItem == null) throw new InvalidParamException("Entity AnswerItemOption.answerItem");
+        if (surveyItemOption == null) throw new InvalidParamException("Entity AnswerItemOption.surveyItemOption");
+        if (!StringUtils.hasText(content)) throw new InvalidParamException("Entity AnswerItemOption.content");
+
         this.answerItem = answerItem;
         this.surveyItemOption = surveyItemOption;
         this.content = content;

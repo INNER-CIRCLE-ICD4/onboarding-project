@@ -1,11 +1,13 @@
 package fc.icd.baulonboarding.survey.model.entity;
 
+import fc.icd.baulonboarding.common.exception.InvalidParamException;
 import fc.icd.baulonboarding.common.model.entity.AbstractEntity;
 import fc.icd.baulonboarding.common.model.code.InputType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +48,15 @@ public class SurveyItem extends AbstractEntity {
                       String name,
                       String description,
                       InputType inputType,
-                      boolean isRequired,
+                      Boolean isRequired,
                       Integer ordering
                       ){
+        if (survey == null) throw new InvalidParamException("Entity SurveyItem.survey");
+        if (!StringUtils.hasText(name)) throw new InvalidParamException("Entity SurveyItem.name");
+        if (inputType == null) throw new InvalidParamException("Entity SurveyItem.inputType");
+        if (isRequired == null) throw new InvalidParamException("Entity SurveyItem.isRequired");
+        if (ordering == null) throw new InvalidParamException("Entity SurveyItem.ordering");
+
         this.survey = survey;
         this.name = name;
         this.description = description;
@@ -61,10 +69,17 @@ public class SurveyItem extends AbstractEntity {
             String name,
             String description,
             InputType inputType,
-            boolean isRequired,
-            boolean isDeleted,
+            Boolean isRequired,
+            Boolean isDeleted,
             Integer ordering
             ){
+
+        if (!StringUtils.hasText(name)) throw new InvalidParamException("Entity SurveyItem.name");
+        if (inputType == null) throw new InvalidParamException("Entity SurveyItem.inputType");
+        if (isRequired == null) throw new InvalidParamException("Entity SurveyItem.isRequired");
+        if (isDeleted == null) throw new InvalidParamException("Entity SurveyItem.isDeleted");
+        if (ordering == null) throw new InvalidParamException("Entity SurveyItem.ordering");
+
         this.name = name;
         this.description = description;
         this.inputType = inputType;

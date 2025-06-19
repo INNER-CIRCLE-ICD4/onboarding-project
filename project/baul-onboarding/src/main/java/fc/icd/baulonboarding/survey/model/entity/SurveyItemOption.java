@@ -1,10 +1,12 @@
 package fc.icd.baulonboarding.survey.model.entity;
 
+import fc.icd.baulonboarding.common.exception.InvalidParamException;
 import fc.icd.baulonboarding.common.model.entity.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Getter
@@ -31,6 +33,10 @@ public class SurveyItemOption extends AbstractEntity {
                             String content,
                             Integer ordering
     ){
+        if(surveyItem == null) throw new InvalidParamException("Entity SurveyItemOption.surveyItem");
+        if(!StringUtils.hasText(content)) throw new InvalidParamException("Entity SurveyItemOption.content");
+        if(ordering == null) throw new InvalidParamException("Entity SurveyItemOption.ordering");
+
         this.surveyItem = surveyItem;
         this.content = content;
         this.ordering = ordering;
@@ -38,8 +44,12 @@ public class SurveyItemOption extends AbstractEntity {
 
     public void applyChanges(String content,
                         Integer ordering,
-                        boolean isDeleted
+                        Boolean isDeleted
     ){
+        if(!StringUtils.hasText(content)) throw new InvalidParamException("Entity SurveyItemOption.content");
+        if(ordering == null) throw new InvalidParamException("Entity SurveyItemOption.ordering");
+        if(isDeleted == null) throw new InvalidParamException("Entity SurveyItemOption.isDeleted");
+
         this.content = content;
         this.ordering = ordering;
         this.isDeleted = isDeleted;

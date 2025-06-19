@@ -1,5 +1,6 @@
 package fc.icd.baulonboarding.answer.model.entity;
 
+import fc.icd.baulonboarding.common.exception.InvalidParamException;
 import fc.icd.baulonboarding.common.model.entity.AbstractEntity;
 import fc.icd.baulonboarding.common.model.code.InputType;
 import fc.icd.baulonboarding.survey.model.entity.SurveyItem;
@@ -7,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,12 @@ public class AnswerItem extends AbstractEntity {
                       InputType inputType,
                       String content
     ) {
+        if (answer == null) throw new InvalidParamException("Entity AnswerItem.answer");
+        if (surveyItem == null) throw new InvalidParamException("Entity AnswerItem.surveyItem");
+        if (!StringUtils.hasText(question)) throw new InvalidParamException("Entity AnswerItem.question");
+        if (inputType == null) throw new InvalidParamException("Entity AnswerItem.inputType");
+        if (!StringUtils.hasText(content)) throw new InvalidParamException("Entity AnswerItem.content");
+
         this.answer = answer;
         this.surveyItem = surveyItem;
         this.question = question;
