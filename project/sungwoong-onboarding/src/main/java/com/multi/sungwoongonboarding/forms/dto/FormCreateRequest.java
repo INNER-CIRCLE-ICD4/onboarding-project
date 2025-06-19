@@ -36,6 +36,7 @@ public class FormCreateRequest {
     public Forms toDomain() {
         Forms.FormsBuilder formBuilder = Forms.builder()
                 .title(this.title)
+                .version(1)
                 .description(this.description);
 
         if (this.questionCreateRequests != null) {

@@ -26,6 +26,14 @@ public class FormRepositoryImpl implements FormRepository {
     }
 
     @Override
+    public Forms findById(Long id) {
+
+        FormsJpaEntity formsJpaEntity = formJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Form not found with id: " + id));
+
+        return formsJpaEntity.toDomain();
+    }
+
+    @Override
     public List<Forms> findAll() {
         return formJpaRepository.findAll().stream().map(FormsJpaEntity::toDomain).toList();
     }

@@ -28,6 +28,7 @@ public class FormService {
     public FormResponse updateForms(Long formId, FormUpdateRequest formUpdateRequest) {
 
         Forms updateRequestDomain = formUpdateRequest.toDomain();
+        updateRequestDomain.versionUp();
 
         return FormResponse.fromDomain(
                 formRepository.update(formId, updateRequestDomain)

@@ -22,8 +22,6 @@ import static com.multi.sungwoongonboarding.questions.domain.Questions.QuestionT
 @RequiredArgsConstructor
 public class QuestionUpdateRequest implements OptionContainer {
 
-    private final Long id;
-
     @NotBlank(message = "질문 내용은 필수 입력 항목입니다.")
     private final String questionText;
 
@@ -51,7 +49,6 @@ public class QuestionUpdateRequest implements OptionContainer {
     public Questions toDomain() {
 
         Questions.QuestionsBuilder questionBuilder = Questions.builder()
-                .id(this.id)
                 .questionText(this.questionText)
                 .questionType(valueOf(this.getQuestionType().toUpperCase()))
                 .isRequired(this.isRequired);

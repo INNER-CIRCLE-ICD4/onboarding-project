@@ -11,15 +11,31 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder
-@RequiredArgsConstructor
 public class Forms {
-    private final Long id;
-    private final String title;
-    private final String description;
-    private final String questionType;
-    private final List<Questions> questions;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
-    private final String userId;
+    private Long id;
+    private String title;
+    private String description;
+    private String questionType;
+    private int version;
+    private List<Questions> questions;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String userId;
+
+    @Builder
+    public Forms(Long id, String title, String description, String questionType, int version, List<Questions> questions, LocalDateTime createdAt, LocalDateTime updatedAt, String userId) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.questionType = questionType;
+        this.version = version;
+        this.questions = questions;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.userId = userId;
+    }
+
+    public void versionUp() {
+        this.version++;
+    }
 }

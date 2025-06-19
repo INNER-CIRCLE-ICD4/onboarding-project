@@ -16,6 +16,7 @@ public class Responses {
     private final Long id;
     private final Long formId;
     private final String userId;
+    private final int formVersion;
     private final LocalDateTime createdAt;
     private final List<Answers> answers;
 

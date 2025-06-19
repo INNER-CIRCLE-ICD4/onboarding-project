@@ -10,5 +10,4 @@ import lombok.RequiredArgsConstructor;
 public class Options {
     private final Long id;
     private final String optionText;
-    private final Boolean deleted;
 }

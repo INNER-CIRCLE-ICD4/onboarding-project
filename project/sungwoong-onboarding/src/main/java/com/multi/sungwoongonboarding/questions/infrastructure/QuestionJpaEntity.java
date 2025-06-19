@@ -40,9 +40,6 @@ public class QuestionJpaEntity extends BaseEntity {
     @JoinColumn(name = "form_id")
     private FormsJpaEntity formsJpaEntity;
 
-    @Column(name = "version", nullable = false)
-    private int version = 1;
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -53,14 +50,10 @@ public class QuestionJpaEntity extends BaseEntity {
     public static QuestionJpaEntity fromDomain(Questions question) {
 
         QuestionJpaEntity questionJpaEntity = new QuestionJpaEntity();
+        questionJpaEntity.id = question.getId();
         questionJpaEntity.questionText = question.getQuestionText();
         questionJpaEntity.questionType = question.getQuestionType();
         questionJpaEntity.isRequired = question.isRequired();
-
-        if (question.getId() != null) {
-            questionJpaEntity.id = question.getId();
-            questionJpaEntity.version++;
-        }
 
         if (question.getQuestionType().isChoiceType() && question.getOptions() != null && !question.getOptions().isEmpty()) {
             question.getOptions().forEach(options -> {
@@ -76,8 +69,8 @@ public class QuestionJpaEntity extends BaseEntity {
                 .id(this.id)
                 .questionText(this.questionText)
                 .questionType(this.questionType)
-                .version(this.version)
                 .isRequired(this.isRequired)
+                .deleted(this.deleted)
                 .options(this.options.stream().map(OptionsJpaEntity::toDomain).toList())
                 .build();
     }
@@ -87,7 +80,6 @@ public class QuestionJpaEntity extends BaseEntity {
         this.questionText = question.getQuestionText();
         this.questionType = question.getQuestionType();
         this.isRequired = question.isRequired();
-        this.version++;
 
         if (question.getQuestionType().isChoiceType() && question.getOptions() != null && !question.getOptions().isEmpty()) {
 
@@ -109,5 +101,9 @@ public class QuestionJpaEntity extends BaseEntity {
         if (!formsJpaEntity.getQuestions().contains(this)) {
             formsJpaEntity.getQuestions().add(this);
         }
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }

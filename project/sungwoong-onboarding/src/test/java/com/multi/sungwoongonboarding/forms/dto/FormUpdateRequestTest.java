@@ -45,11 +45,11 @@ public class FormUpdateRequestTest {
     @DisplayName("QuestionUpdateRequest 필드 검증")
     public void 질문_수정_요청값_검증() {
         // Given
-        QuestionUpdateRequest text_null = QuestionUpdateRequest.builder().id(1L).questionType("SINGLE_CHOICE").deleted(false).isRequired(true).build();
-        QuestionUpdateRequest bad_type = QuestionUpdateRequest.builder().id(1L).questionText("Updated Question").questionType("잘못된 타입").deleted(false).isRequired(true).build();
-        QuestionUpdateRequest type_null = QuestionUpdateRequest.builder().id(1L).questionText("Updated Question").deleted(false).isRequired(true).build();
-        QuestionUpdateRequest deleted_null = QuestionUpdateRequest.builder().id(1L).questionText("SINGLE_CHOICE").isRequired(true).build();
-        QuestionUpdateRequest required_null = QuestionUpdateRequest.builder().id(1L).questionType("SINGLE_CHOICE").questionText("Updated Question").deleted(false).build();
+        QuestionUpdateRequest text_null = QuestionUpdateRequest.builder().questionType("SINGLE_CHOICE").deleted(false).isRequired(true).build();
+        QuestionUpdateRequest bad_type = QuestionUpdateRequest.builder().questionText("Updated Question").questionType("잘못된 타입").deleted(false).isRequired(true).build();
+        QuestionUpdateRequest type_null = QuestionUpdateRequest.builder().questionText("Updated Question").deleted(false).isRequired(true).build();
+        QuestionUpdateRequest deleted_null = QuestionUpdateRequest.builder().questionText("SINGLE_CHOICE").isRequired(true).build();
+        QuestionUpdateRequest required_null = QuestionUpdateRequest.builder().questionType("SINGLE_CHOICE").questionText("Updated Question").deleted(false).build();
 
         // When
         var text_valid = validator.validate(text_null);

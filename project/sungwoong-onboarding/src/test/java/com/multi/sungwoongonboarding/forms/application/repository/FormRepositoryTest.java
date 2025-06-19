@@ -3,7 +3,6 @@ package com.multi.sungwoongonboarding.forms.application.repository;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import com.multi.sungwoongonboarding.options.domain.Options;
-import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaEntity;
 import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.*;
 @Import({FormRepositoryImpl.class})
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@Transactional
 @EnableJpaAuditing
 public class FormRepositoryTest {
 
@@ -41,6 +42,7 @@ public class FormRepositoryTest {
         Forms formsDomain = Forms.builder()
                 .title("테스트 폼")
                 .description("테스트 폼 설명")
+                .version(1)
                 .build();
 
         //When
@@ -50,6 +52,7 @@ public class FormRepositoryTest {
         //Then
         assertThat(all.size()).isEqualTo(1);
         assertThat(all.get(0).getTitle()).isEqualTo("테스트 폼");
+        assertThat(all.get(0).getVersion()).isEqualTo(1);
 
     }
 
@@ -139,17 +142,8 @@ public class FormRepositoryTest {
         assertThat(save.getQuestions().get(1).getOptions().size()).isEqualTo(2);
         assertThat(all.get(0).getQuestions().get(0).getOptions().size()).isEqualTo(2);
         assertThat(all.get(0).getQuestions().get(1).getOptions().size()).isEqualTo(2);
-        assertThat(all.get(0).getQuestions().get(1).getOptions().get(0).getDeleted()).isEqualTo(false);
     }
 
-    @Test
-    @DisplayName("옵션의 삭제여부 기본값 검증")
-    public void saveForm() {
-        OptionsJpaEntity optionsJpaEntity = OptionsJpaEntity.fromDomain(Options.builder().optionText("test").build());
-        OptionsJpaEntity save = optionsJpaRepository.save(optionsJpaEntity);
-
-        System.out.println("save = " + save.getDeleted());
-    }
 
     @Test
     @DisplayName("Form을 업데이트한다")
@@ -189,10 +183,12 @@ public class FormRepositoryTest {
         );
 
         Forms updatedFormData = Forms.builder()
+                .id(formId)
                 .title("업데이트된 설문 제목")
                 .description("업데이트된 설문 설명")
                 .questions(새_질문_목록)
                 .build();
+        updatedFormData.versionUp();
 
         // When
         Forms result = formRepository.update(formId, updatedFormData);
@@ -203,18 +199,21 @@ public class FormRepositoryTest {
         assertThat(result.getId()).isEqualTo(formId);
         assertThat(result.getTitle()).isEqualTo("업데이트된 설문 제목");
         assertThat(result.getDescription()).isEqualTo("업데이트된 설문 설명");
+        assertThat(result.getVersion()).isGreaterThan(savedForm.getVersion());
 
         // 질문 검증
-        assertThat(result.getQuestions().size()).isEqualTo(2);
-        assertThat(result.getQuestions().get(0).getQuestionText()).isEqualTo("새 단일 선택 질문");
-        assertThat(result.getQuestions().get(0).getQuestionType()).isEqualTo(SINGLE_CHOICE);
-        assertThat(result.getQuestions().get(1).getQuestionText()).isEqualTo("새 장문 질문");
-        assertThat(result.getQuestions().get(1).getQuestionType()).isEqualTo(LONG_ANSWER);
+        assertThat(result.getQuestions().size()).isEqualTo(3);
+        List<Questions> notDeleteQuestions = result.getQuestions().stream().filter(q -> !q.isDeleted()).toList();
+        assertThat(notDeleteQuestions.size()).isEqualTo(2);
+        assertThat(notDeleteQuestions.get(0).getQuestionText()).isEqualTo("새 단일 선택 질문");
+        assertThat(notDeleteQuestions.get(0).getQuestionType()).isEqualTo(SINGLE_CHOICE);
+        assertThat(notDeleteQuestions.get(1).getQuestionText()).isEqualTo("새 장문 질문");
+        assertThat(notDeleteQuestions.get(1).getQuestionType()).isEqualTo(LONG_ANSWER);
 
         // 옵션 검증
-        assertThat(result.getQuestions().get(0).getOptions().size()).isEqualTo(2);
-        assertThat(result.getQuestions().get(0).getOptions().get(0).getOptionText()).isEqualTo("새 옵션1");
-        assertThat(result.getQuestions().get(0).getOptions().get(1).getOptionText()).isEqualTo("새 옵션2");
+        assertThat(notDeleteQuestions.get(0).getOptions().size()).isEqualTo(2);
+        assertThat(notDeleteQuestions.get(0).getOptions().get(0).getOptionText()).isEqualTo("새 옵션1");
+        assertThat(notDeleteQuestions.get(0).getOptions().get(1).getOptionText()).isEqualTo("새 옵션2");
 
         // DB에서 다시 조회하여 검증
         List<Forms> all = formRepository.findAll();
@@ -222,6 +221,7 @@ public class FormRepositoryTest {
         Forms updatedFormInDb = all.get(0);
         assertThat(updatedFormInDb.getTitle()).isEqualTo("업데이트된 설문 제목");
         assertThat(updatedFormInDb.getDescription()).isEqualTo("업데이트된 설문 설명");
-        assertThat(updatedFormInDb.getQuestions().size()).isEqualTo(2);
+        assertThat(updatedFormInDb.getQuestions().size()).isEqualTo(3);
+        assertThat(updatedFormInDb.getQuestions().stream().filter(q -> !q.isDeleted()).toList().size()).isEqualTo(2);
     }
 }

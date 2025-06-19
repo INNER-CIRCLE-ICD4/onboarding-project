@@ -1,5 +1,6 @@
 package com.multi.sungwoongonboarding.forms.dto;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.questions.dto.QuestionResponse;
 

@@ -18,28 +18,12 @@ public class Answers {
     // 답변 내용 (단문, 장문)
     private final String answerText;
 
-    private String originalQuestionText;
-    private int originalQuestionVersion;
-    private boolean originalQuestionIsRequired;
-    private Questions.QuestionType originalQuestionType;
-
     @Builder
-    public Answers(Long id, Long responseId, Long questionId, Long optionId, String answerText, String originalQuestionText, int originalQuestionVersion, boolean originalQuestionIsRequired, Questions.QuestionType originalQuestionType) {
+    public Answers(Long id, Long responseId, Long questionId, Long optionId, String answerText) {
         this.id = id;
         this.responseId = responseId;
         this.questionId = questionId;
         this.optionId = optionId;
         this.answerText = answerText;
-        this.originalQuestionText = originalQuestionText;
-        this.originalQuestionVersion = originalQuestionVersion;
-        this.originalQuestionIsRequired = originalQuestionIsRequired;
-        this.originalQuestionType = originalQuestionType;
-    }
-
-    public void setOriginalQuestion(Questions question) {
-        this.originalQuestionText = question.getQuestionText();
-        this.originalQuestionVersion = question.getVersion();
-        this.originalQuestionIsRequired = question.isRequired();
-        this.originalQuestionType = question.getQuestionType();
     }
 }
