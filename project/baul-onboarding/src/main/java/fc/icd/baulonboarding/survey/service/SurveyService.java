@@ -1,10 +1,10 @@
 package fc.icd.baulonboarding.survey.service;
 
-import fc.icd.baulonboarding.survey.model.dto.SurveyDto;
+import fc.icd.baulonboarding.survey.model.dto.SurveyCommand;
 
 public interface SurveyService {
 
-    void registerSurvey(SurveyDto.RegisterSurveyRequest request);
+    void registerSurvey(SurveyCommand.RegisterSurvey registerSurvey);
 
-    void updateSurvey(SurveyDto.UpdateSurveyRequest request);
+    void updateSurvey(SurveyCommand.UpdateSurvey updateSurvey);
 }

@@ -52,7 +52,7 @@ public class AnswerItem extends AbstractEntity {
         if (surveyItem == null) throw new InvalidParamException("Entity AnswerItem.surveyItem");
         if (!StringUtils.hasText(question)) throw new InvalidParamException("Entity AnswerItem.question");
         if (inputType == null) throw new InvalidParamException("Entity AnswerItem.inputType");
-        if (!StringUtils.hasText(content)) throw new InvalidParamException("Entity AnswerItem.content");
+        if (isSelectableType() && !StringUtils.hasText(content)) throw new InvalidParamException("Entity AnswerItem.content");
 
         this.answer = answer;
         this.surveyItem = surveyItem;

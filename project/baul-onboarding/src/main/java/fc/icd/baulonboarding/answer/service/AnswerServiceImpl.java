@@ -1,6 +1,6 @@
 package fc.icd.baulonboarding.answer.service;
 
-import fc.icd.baulonboarding.answer.model.dto.AnswerDto;
+import fc.icd.baulonboarding.answer.model.dto.AnswerCommand;
 
 import fc.icd.baulonboarding.answer.model.dto.AnswerInfo;
 import fc.icd.baulonboarding.answer.model.entity.Answer;
@@ -29,14 +29,14 @@ public class AnswerServiceImpl implements AnswerService{
     private final AnswerInfoMapper answerInfoMapper;
 
     @Override
-    public void registerAnswer(AnswerDto.RegisterAnswerRequest request) {
-        Survey survey = surveyReader.getSurveyBy(request.getSurveyId());
-        Answer answer = request.toEntity(survey);
+    public void registerAnswer(AnswerCommand.RegisterAnswer registerAnswer) {
+        Survey survey = surveyReader.getSurveyBy(registerAnswer.getSurveyId());
+        Answer answer = registerAnswer.toEntity(survey);
 
         Map<Long, SurveyItem> existingSurveyItemMap = survey.getSurveyItemList().stream()
                 .collect(Collectors.toMap(SurveyItem::getId, item -> item));
 
-        request.getAnswerItemList().forEach(requestAnswerItem ->{
+        registerAnswer.getAnswerItemList().forEach(requestAnswerItem ->{
             SurveyItem surveyItem = existingSurveyItemMap.get(requestAnswerItem.getSurveyItemId());
             AnswerItem answerItem = requestAnswerItem.toEntity(answer, surveyItem);
             answer.getAnswerItemList().add(answerItem);

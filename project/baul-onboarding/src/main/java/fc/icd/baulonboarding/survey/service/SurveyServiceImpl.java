@@ -1,6 +1,6 @@
 package fc.icd.baulonboarding.survey.service;
 
-import fc.icd.baulonboarding.survey.model.dto.SurveyDto;
+import fc.icd.baulonboarding.survey.model.dto.SurveyCommand;
 import fc.icd.baulonboarding.survey.model.entity.Survey;
 import fc.icd.baulonboarding.survey.model.entity.SurveyItem;
 import fc.icd.baulonboarding.survey.model.entity.SurveyItemOption;
@@ -23,10 +23,10 @@ public class SurveyServiceImpl implements SurveyService{
 
     @Override
     @Transactional
-    public void registerSurvey(SurveyDto.RegisterSurveyRequest request) {
-        Survey survey = request.toEntity();
+    public void registerSurvey(SurveyCommand.RegisterSurvey registerSurvey) {
+        Survey survey = registerSurvey.toEntity();
 
-        request.getSurveyItemList().forEach(requestSurveyItem -> {
+        registerSurvey.getSurveyItemList().forEach(requestSurveyItem -> {
             SurveyItem surveyItem = requestSurveyItem.toEntity(survey);
             survey.getSurveyItemList().add(surveyItem);
 
@@ -44,14 +44,14 @@ public class SurveyServiceImpl implements SurveyService{
 
     @Override
     @Transactional
-    public void updateSurvey(SurveyDto.UpdateSurveyRequest request) {
-        Survey survey = surveyReader.getSurveyBy(request.getId());
-        survey.applyChanges(request.getName(), request.getDescription());
+    public void updateSurvey(SurveyCommand.UpdateSurvey updateSurvey) {
+        Survey survey = surveyReader.getSurveyBy(updateSurvey.getId());
+        survey.applyChanges(updateSurvey.getName(), updateSurvey.getDescription());
 
         Map<Long, SurveyItem> existingItemMap = survey.getSurveyItemList().stream()
                 .collect(Collectors.toMap(SurveyItem::getId, item -> item));
 
-        for (SurveyDto.UpdateSurveyItemRequest requestSurveyItem : request.getSurveyItemList()) {
+        for (SurveyCommand.UpdateSurveyItem requestSurveyItem : updateSurvey.getSurveyItemList()) {
             SurveyItem item = requestSurveyItem.getId() != null
                     ? existingItemMap.get(requestSurveyItem.getId()) : null;
 
@@ -72,7 +72,7 @@ public class SurveyServiceImpl implements SurveyService{
             Map<Long, SurveyItemOption> existingOptionMap = item.getSurveyItemOptionList().stream()
                     .collect(Collectors.toMap(SurveyItemOption::getId, option -> option));
 
-            for (SurveyDto.UpdateSurveyItemOptionRequest requestSurveyItemOption : requestSurveyItem.getSurveyItemOptionList()) {
+            for (SurveyCommand.UpdateSurveyItemOption requestSurveyItemOption : requestSurveyItem.getSurveyItemOptionList()) {
                 SurveyItemOption option = requestSurveyItemOption.getId() != null
                         ? existingOptionMap.get(requestSurveyItemOption.getId()) : null;
 
