@@ -4,16 +4,8 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContextException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import survey.common.exception.ApiException;
-import survey.common.exception.ErrorType;
-
-import java.util.Optional;
-
-import static survey.common.exception.ErrorType.RESOURCE_VERSION_MISMATCH;
 
 @Slf4j
 @Component
@@ -36,7 +28,7 @@ public class SurveyClient {
                     .body(Long.class);
             return response;
         } catch (Exception e) {
-            log.error("[ArticleClient.read()] articleId: {}", surveyId, e);
+            log.error("[SurveyClient.read()] surveyId: {}", surveyId, e);
             return null;
         }
     }

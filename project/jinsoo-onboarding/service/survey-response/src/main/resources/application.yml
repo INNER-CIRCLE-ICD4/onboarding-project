@@ -29,3 +29,5 @@ spring:
 endpoints:
   survey-service:
     url: http://localhost:8080
+  survey-read-service:
+    url: http://localhost:8082
