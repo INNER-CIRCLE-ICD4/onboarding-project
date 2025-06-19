@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +41,7 @@ public class Question {
     //선택 리스트와 1:N
     @Builder.Default
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionOption> options = new ArrayList<QuestionOption>();
+    private List<QuestionOption> options = new ArrayList<>();
 
     //질문 생성자
     private String createdBy;
