@@ -34,17 +34,17 @@ public class OptionValidator implements ConstraintValidator<OptionValid, OptionC
             return false;
         }
 
-        String questionType = request.getType();
+        String questionTypeText = request.getType();
         List<?> options = request.getOptions();
 
         // 타입이 null이면 다른 검증에서 처리
-        if (questionType == null) {
+        if (questionTypeText == null) {
             return true;
         }
 
         try {
-            Questions.QuestionType type = valueOf(questionType);
-            if (type == SINGLE_CHOICE || type == MULTIPLE_CHOICE) {
+            Questions.QuestionType questionType = valueOf(questionTypeText);
+            if (questionType.isChoiceType()) {
                 // 옵션이 null이거나 비어있으면 유효하지 않음
                 if (options == null || options.isEmpty()) {
                     constraintValidatorContext.disableDefaultConstraintViolation();

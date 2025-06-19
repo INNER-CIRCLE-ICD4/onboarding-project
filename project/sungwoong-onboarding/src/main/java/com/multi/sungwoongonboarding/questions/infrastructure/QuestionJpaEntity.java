@@ -5,7 +5,10 @@ import com.multi.sungwoongonboarding.forms.infrastructure.FormsJpaEntity;
 import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaEntity;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "questions")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuestionJpaEntity extends BaseEntity {
 
     @Id
@@ -39,17 +43,29 @@ public class QuestionJpaEntity extends BaseEntity {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "questionJpaEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "questionJpaEntity", cascade = CascadeType.ALL)
     private List<OptionsJpaEntity> options = new ArrayList<>();
 
 
-    public static QuestionJpaEntity fromDomain(Questions questions) {
+
+    public static QuestionJpaEntity fromDomain(Questions question) {
 
         QuestionJpaEntity questionJpaEntity = new QuestionJpaEntity();
-        questionJpaEntity.id = questions.getId();
-        questionJpaEntity.questionText = questions.getQuestionText();
-        questionJpaEntity.questionType = questions.getQuestionType().name();
-        questionJpaEntity.isRequired = questions.isRequired();
+        questionJpaEntity.questionText = question.getQuestionText();
+        questionJpaEntity.questionType = question.getQuestionType().name();
+        questionJpaEntity.isRequired = question.isRequired();
+
+        if (question.getId() != null) {
+            questionJpaEntity.id = question.getId();
+            questionJpaEntity.version++;
+        }
+
+        if (question.getOptions() != null && !question.getOptions().isEmpty()) {
+            question.getOptions().forEach(options -> {
+                OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
+                optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
+            });
+        }
         return questionJpaEntity;
     }
 
