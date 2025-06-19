@@ -32,6 +32,9 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	// Bean Validation 의존성
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 tasks.withType<Test> {
