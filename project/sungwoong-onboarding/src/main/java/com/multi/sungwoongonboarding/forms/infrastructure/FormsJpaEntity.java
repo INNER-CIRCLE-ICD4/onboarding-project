@@ -50,14 +50,33 @@ public class FormsJpaEntity extends BaseEntity {
 
                         OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
                         optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
-
                     });
                 }
             });
         }
 
-
         return formsJpaEntity;
+    }
+
+    public void update(Forms form) {
+
+        this.title = form.getTitle();
+        this.description = form.getDescription();
+        this.questions.clear();
+
+        if (form.getQuestions() != null && !form.getQuestions().isEmpty()) {
+            form.getQuestions().forEach(question -> {
+                QuestionJpaEntity questionJpaEntity = QuestionJpaEntity.fromDomain(question);
+                questionJpaEntity.mappingFormJpaEntity(this);
+                if (question.getOptions() != null && !question.getOptions().isEmpty()) {
+                    question.getOptions().forEach(options -> {
+
+                        OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
+                        optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
+                    });
+                }
+            });
+        }
     }
 
     public Forms toDomain() {

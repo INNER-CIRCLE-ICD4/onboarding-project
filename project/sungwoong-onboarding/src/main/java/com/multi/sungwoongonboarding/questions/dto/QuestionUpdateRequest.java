@@ -31,9 +31,6 @@ public class QuestionUpdateRequest implements OptionContainer {
     @NotNull(message = "삭제여부를 입력해주세요.")
     private final Boolean deleted;
 
-    @NotNull(message = "순서를 입력해주세요.")
-    private final Integer order;
-
     @NotNull(message = "필수 여부를 입력해주세요.")
     private final Boolean isRequired;
 
