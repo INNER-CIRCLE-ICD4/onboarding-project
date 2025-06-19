@@ -20,8 +20,8 @@ public class SubmissionRestController {
     private final SubmissionService submissionService;
 
     @PostMapping
-    public ResponseDto<SubmissionResponse> submitResponse(@RequestBody @Valid SubmissionCreateRequest submissionCreateRequest) {
-        SubmissionResponse submissionResponse = submissionService.submitResponse(submissionCreateRequest);
+    public ResponseDto<Long> submitResponse(@RequestBody @Valid SubmissionCreateRequest submissionCreateRequest) {
+        Long submissionResponse = submissionService.submitResponse(submissionCreateRequest);
         return ResponseUtil.success(submissionResponse);
     }
 }

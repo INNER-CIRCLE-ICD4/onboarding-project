@@ -1,6 +1,7 @@
 package com.multi.sungwoongonboarding.submission.infrastructure.submission;
 
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
+import com.multi.sungwoongonboarding.submission.domain.Answers;
 import com.multi.sungwoongonboarding.submission.domain.Submission;
 import com.multi.sungwoongonboarding.submission.infrastructure.answers.AnswerJpaEntity;
 import jakarta.persistence.*;
@@ -42,9 +43,14 @@ public class SubmissionJpaEntity extends BaseEntity {
     }
 
     public static SubmissionJpaEntity fromDomainWithFormVersion(Submission submission,  int formVersion) {
+
         SubmissionJpaEntity submissionJpaEntity = fromDomain(submission);
         submissionJpaEntity.formVersion = formVersion;
-        submissionJpaEntity.answers = submission.getAnswers().stream().map(answer -> AnswerJpaEntity.fromDomainAndMapping(answer, submissionJpaEntity)).collect(Collectors.toList());
+
+        for (Answers answer : submission.getAnswers()) {
+            AnswerJpaEntity.fromDomainsAndMapping(answer, submissionJpaEntity);
+        }
+
         return submissionJpaEntity;
     }
 

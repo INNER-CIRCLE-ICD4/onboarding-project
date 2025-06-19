@@ -2,8 +2,10 @@ package com.multi.sungwoongonboarding.submission.application;
 
 import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
+import com.multi.sungwoongonboarding.questions.application.repository.QuestionRepository;
 import com.multi.sungwoongonboarding.submission.domain.Submission;
 import com.multi.sungwoongonboarding.submission.application.repository.SubmissionRepository;
+import com.multi.sungwoongonboarding.submission.dto.AnswerCreateRequest;
 import com.multi.sungwoongonboarding.submission.dto.SubmissionCreateRequest;
 import com.multi.sungwoongonboarding.submission.dto.SubmissionResponse;
 import lombok.Builder;
@@ -11,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Builder
@@ -18,15 +22,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SubmissionService {
 
+    private final SubmissionFactory submissionFactory;
+
     private final SubmissionRepository submissionRepository;
     private final FormRepository formRepository;
 
-    public SubmissionResponse submitResponse(SubmissionCreateRequest request) {
+    public Long submitResponse(SubmissionCreateRequest request) {
+
         // todo 의존성 개선 예정
         // 응답 저장
-        Submission response = request.toDomain();
-        Submission result = submissionRepository.save(response);
-        return SubmissionResponse.fromDomain(result);
+        Submission submission = submissionFactory.createSubmission(request);
+
+        return submissionRepository.save(submission);
     }
 
     public List<SubmissionResponse> getSubmissionByFormId(Long formId) {

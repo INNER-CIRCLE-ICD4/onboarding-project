@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SubmissionRepository {
 
-    Submission save(Submission submission);
+    Long save(Submission submission);
 
     List<Submission> findAll();
 

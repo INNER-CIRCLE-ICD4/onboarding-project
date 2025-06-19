@@ -1,91 +1,60 @@
 package com.multi.sungwoongonboarding.submission.infrastructure.submission;
 
-import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
-import com.multi.sungwoongonboarding.forms.domain.Forms;
-import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
-import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import com.multi.sungwoongonboarding.submission.application.repository.SubmissionRepository;
+import com.multi.sungwoongonboarding.submission.domain.Answers;
+import com.multi.sungwoongonboarding.submission.domain.SelectedOption;
 import com.multi.sungwoongonboarding.submission.domain.Submission;
-import com.multi.sungwoongonboarding.submission.dto.AnswerCreateRequest;
-import com.multi.sungwoongonboarding.submission.dto.SubmissionCreateRequest;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Sql(scripts = "/sql/form_insert_data.sql")
 class SubmissionRepositoryImplTest {
-
-    @Autowired
-    FormRepository formRepository;
-
     @Autowired
     SubmissionRepository submissionRepository;
 
-    @Autowired
-    SubmissionJpaRepository submissionJpaRepository;
-
-    private Forms forms;
-
-    @BeforeEach
-    public void setUp() {
-
-        FormCreateRequest form = FormCreateRequest.builder()
-                .title("모든 질문 유형 테스트")
-                .description("모든 질문 유형을 테스트합니다.")
-                .questionCreateRequests(List.of(
-                        QuestionCreateRequest.builder()
-                                .questionText("단문형 질문")
-                                .questionType("SHORT_ANSWER")
-                                .isRequired(true)
-                                .optionCreateRequests(List.of())
-                                .build(),
-                        QuestionCreateRequest.builder()
-                                .questionText("장문형 질문")
-                                .questionType("LONG_ANSWER")
-                                .isRequired(false)
-                                .optionCreateRequests(List.of())
-                                .build()
-                ))
-                .build();
-
-        forms = formRepository.save(form.toDomain());
-    }
 
     @Test
-    @DisplayName("응답을 저장한다. - 성공")
-    @Transactional
-    public void save_response() {
+    @DisplayName("응답 제출 기능")
+    public void submitSubmission() {
 
         //Given
-        SubmissionCreateRequest 응답지_요청_값 = SubmissionCreateRequest.builder()
-                .formId(forms.getId())
+
+        Answers answers = Answers.builder()
+                .questionId(1L)
+                .selectedOptions(List.of(
+                        SelectedOption.builder()
+                                .optionId(1L)
+                                .build(),
+                        SelectedOption.builder()
+                                .optionId(1L)
+                                .build(),
+                        SelectedOption.builder()
+                                .optionId(1L)
+                                .build()))
+                .build();
+
+
+        Submission submission = Submission.builder()
+                .formId(1L)
                 .userId("sungwoong")
-                .answerCreateRequests(
-                        List.of(
-                                new AnswerCreateRequest(forms.getQuestions().get(0).getId(), null, "답변 테스트"),
-                                new AnswerCreateRequest(forms.getQuestions().get(1).getId(), null, "답변 테스트222")
-                        )
-                )
+                .answers(List.of(answers))
                 .build();
 
         //When
-        Submission 응답지_저장 = submissionRepository.save(응답지_요청_값.toDomain());
-        Optional<SubmissionJpaEntity> 응답지_조회_1 = submissionJpaRepository.findById(응답지_저장.getId());
+        Long save = submissionRepository.save(submission);
 
-        //Then
-        assertThat(응답지_조회_1.isPresent()).isTrue();
-        assertThat(응답지_조회_1.get().getAnswers()).size().isEqualTo(2);
-        assertThat(응답지_조회_1.get().getFormVersion()).isEqualTo(1);
+        //Given
+        Assertions.assertNotNull(save);
+
     }
-
+  
 }

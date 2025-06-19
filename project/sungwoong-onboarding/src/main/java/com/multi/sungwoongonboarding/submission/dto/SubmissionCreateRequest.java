@@ -1,5 +1,6 @@
 package com.multi.sungwoongonboarding.submission.dto;
 
+import com.multi.sungwoongonboarding.submission.domain.Answers;
 import com.multi.sungwoongonboarding.submission.domain.Submission;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -32,18 +33,12 @@ public class SubmissionCreateRequest {
         this.answerCreateRequests = answerCreateRequests;
     }
 
-    public Submission toDomain() {
-        Submission.SubmissionBuilder responsesBuilder = Submission.builder()
-                .formId(this.formId)
-                .userId(this.userId)
-                .createdAt(LocalDateTime.now());
-
-        if (this.answerCreateRequests != null) {
-            responsesBuilder.answers(
-                    this.answerCreateRequests.stream().map(AnswerCreateRequest::toDomain).toList());
-        }
-
-        return responsesBuilder
+    public Submission toDomainForSave(List<Answers> answers) {
+        return Submission.builder()
+                .formId(this.getFormId())
+                .answers(answers)
+                .userId(this.getUserId())
                 .build();
     }
+
 }

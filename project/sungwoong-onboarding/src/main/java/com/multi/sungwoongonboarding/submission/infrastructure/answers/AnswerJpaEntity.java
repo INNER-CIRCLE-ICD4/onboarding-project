@@ -7,6 +7,8 @@ import com.multi.sungwoongonboarding.submission.infrastructure.submission.Submis
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name = "answers")
@@ -31,19 +33,25 @@ public class AnswerJpaEntity extends BaseEntity {
     private String answerText;
 
 
-    public static AnswerJpaEntity fromDomain(Answers answers) {
-        AnswerJpaEntity answerJpaEntity = new AnswerJpaEntity();
-        answerJpaEntity.id = answers.getId();
-        answerJpaEntity.questionId = answers.getQuestionId();
-        answerJpaEntity.optionId = answers.getOptionId();
-        answerJpaEntity.answerText = answers.getAnswerText();
-        return answerJpaEntity;
+    public static List<AnswerJpaEntity> fromDomain(Answers answers) {
+        return answers.getSelectedOptions().stream().map(selectedOption -> {
+            AnswerJpaEntity answerJpaEntity = new AnswerJpaEntity();
+            answerJpaEntity.id = answers.getId();
+            answerJpaEntity.questionId = answers.getQuestionId();
+            answerJpaEntity.answerText = answers.getAnswerText();
+            answerJpaEntity.optionId = selectedOption.getOptionId();
+            return answerJpaEntity;
+        }).toList();
     }
 
-    public static AnswerJpaEntity fromDomainAndMapping(Answers answers, SubmissionJpaEntity submissionJpaEntity) {
-        AnswerJpaEntity answerJpaEntity = fromDomain(answers);
-        answerJpaEntity.mappingSubmissionJpaEntity(submissionJpaEntity);
-        return answerJpaEntity;
+    public static List<AnswerJpaEntity> fromDomainsAndMapping(Answers answers, SubmissionJpaEntity submissionJpaEntity) {
+
+        List<AnswerJpaEntity> answerJpaEntities = fromDomain(answers);
+        for (AnswerJpaEntity answerJpaEntity : answerJpaEntities) {
+            answerJpaEntity.mappingSubmissionJpaEntity(submissionJpaEntity);
+        }
+
+        return answerJpaEntities;
     }
 
     public void mappingSubmissionJpaEntity(SubmissionJpaEntity submissionJpaEntity) {

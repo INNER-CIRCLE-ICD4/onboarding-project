@@ -28,14 +28,12 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
     @Override
     @Transactional
-    public Submission save(Submission submission) {
+    public Long save(Submission submission) {
 
         Forms forms = formRepository.findById(submission.getFormId());
-
         SubmissionJpaEntity submissionJpaEntity = SubmissionJpaEntity.fromDomainWithFormVersion(submission, forms.getVersion());
         submissionJpaRepository.save(submissionJpaEntity);
-
-        return submissionJpaEntity.toDomain();
+        return submissionJpaEntity.getId();
     }
 
     @Override

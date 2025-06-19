@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -37,4 +40,12 @@ public class Questions {
     private final boolean isRequired;
     private final boolean deleted;
     private final List<Options> options;
+
+    public Set<Long> getUniqueOptionIds() {
+        return this.options.stream().map(Options::getId).collect(Collectors.toSet());
+    }
+
+    public int getMaxSelection() {
+        return this.options.size();
+    }
 }
