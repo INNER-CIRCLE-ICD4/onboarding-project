@@ -1,10 +1,10 @@
 server:
-  port: 8081
+  port: 8082
 spring:
   application:
-    name: survey-submit
+    name: survey-read
   datasource:
-    url: jdbc:h2:mem:survey-response
+    url: jdbc:h2:mem:survey-read
     hikari:
       username: sa
       password:
@@ -12,8 +12,8 @@ spring:
 
   h2:
     console:
-      enabled: true
-      path: /h2-console
+        enabled: true
+        path: /h2-console
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
@@ -25,9 +25,3 @@ spring:
       hibernate:
         format_sql: true
         highlight_sql: true
-
-endpoints:
-  survey-service:
-    url: http://localhost:8080
-  survey-read-service:
-    url: http://localhost:8082

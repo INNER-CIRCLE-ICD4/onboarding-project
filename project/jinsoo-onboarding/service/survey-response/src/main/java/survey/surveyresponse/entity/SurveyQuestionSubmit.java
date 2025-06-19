@@ -19,6 +19,8 @@ public class SurveyQuestionSubmit extends BaseEntity {
 
     private String answer;
 
+    private Long surveyId;
+    private Long surveyFormId;
     private Long surveySubmitId;
 
     @Column(nullable = false)
@@ -26,10 +28,12 @@ public class SurveyQuestionSubmit extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
-    public static SurveyQuestionSubmit create(Long questionId, String answer, Long surveySubmitId) {
+    public static SurveyQuestionSubmit create(Long questionId, String answer, Long surveyId, Long surveyFormId, Long surveySubmitId) {
         SurveyQuestionSubmit surveyQuestionSubmit = new SurveyQuestionSubmit();
         surveyQuestionSubmit.questionId = questionId;
         surveyQuestionSubmit.answer = answer;
+        surveyQuestionSubmit.surveyId = surveyId;
+        surveyQuestionSubmit.surveyFormId = surveyFormId;
         surveyQuestionSubmit.surveySubmitId = surveySubmitId;
         surveyQuestionSubmit.createdAt = LocalDateTime.now();
         surveyQuestionSubmit.modifiedAt = surveyQuestionSubmit.createdAt;
