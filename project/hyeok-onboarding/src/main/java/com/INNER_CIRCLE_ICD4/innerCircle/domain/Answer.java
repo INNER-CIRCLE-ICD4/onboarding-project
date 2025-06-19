@@ -1,42 +1,56 @@
 package com.INNER_CIRCLE_ICD4.innerCircle.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer {
 
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private java.util.UUID id;
 
-    @Setter
-    @ManyToOne(optional = false)
-    @JsonBackReference // ✅ 순환 참조 방지: Response → Answer 방향 직렬화만 허용
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "response_id")
     private Response response;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
     private Question question;
 
     private String text;
 
-    @ElementCollection
-    private List<UUID> selectedOptions;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "answer_selected_options",
+            joinColumns = @JoinColumn(name = "answer_id"),
+            inverseJoinColumns = @JoinColumn(name = "choice_id")
+    )
+    private Set<Choice> selectedOptions = new HashSet<>();
 
-    public Answer(Response response, Question question, String text, List<UUID> selectedOptions) {
+    public Answer(Response response, Question question, String text, java.util.List<java.util.UUID> selectedOptionIds) {
         this.response = response;
         this.question = question;
         this.text = text;
-        this.selectedOptions = selectedOptions;
+        if (selectedOptionIds != null) {
+            for (java.util.UUID id : selectedOptionIds) {
+                Choice choice = new Choice();
+                choice.setId(id);
+                this.selectedOptions.add(choice);
+            }
+        }
     }
 
-    public UUID getQuestionId() {
-        return question.getId();
+    public void addSelectedOption(Choice choice) {
+        this.selectedOptions.add(choice);
     }
 }

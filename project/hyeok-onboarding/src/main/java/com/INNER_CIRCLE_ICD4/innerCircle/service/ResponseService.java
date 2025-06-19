@@ -83,18 +83,7 @@ public class ResponseService {
                 }
                 default -> throw new BusinessException("알 수 없는 질문 타입입니다. 질문 ID: " + question.getId());
             }
-            // ✨ 필수 질문에 대한 응답 누락 체크
-            if (question.isRequired()) {
-                boolean isEmpty = switch (question.getType()) {
-                    case SHORT, LONG -> ar.text() == null || ar.text().isBlank();
-                    case SINGLE_CHOICE, MULTIPLE_CHOICE -> ar.selectedOptions() == null || ar.selectedOptions().isEmpty();
-                };
-                if (isEmpty) {
-                    throw new BusinessException("필수 질문에 응답이 없습니다. 질문 ID: " + question.getId());
-                }
-            }
 
-            // 6. Answer 객체 생성 및 응답에 추가
             Answer answer = new Answer(response, question, ar.text(), ar.selectedOptions());
             response.getAnswers().add(answer);
         }
@@ -102,6 +91,7 @@ public class ResponseService {
         Response saved = responseRepository.save(response);
         return saved.getId();
     }
+
     /**
      * ✨ 응답 ID로 단일 응답 조회
      */
@@ -109,6 +99,13 @@ public class ResponseService {
     public ResponseDto findById(UUID responseId) {
         Response response = responseRepository.findById(responseId)
                 .orElseThrow(() -> new ResourceNotFoundException("응답이 존재하지 않습니다."));
+
+        // ✅ LazyInitialization 방지를 위해 선택지 강제 초기화
+        response.getAnswers().forEach(a -> {
+            if (a.getSelectedOptions() != null) {
+                a.getSelectedOptions().size();
+            }
+        });
 
         return new ResponseDto(
                 response.getId(),
@@ -119,21 +116,22 @@ public class ResponseService {
                                 a.getText(),
                                 a.getSelectedOptions() == null ? null :
                                         a.getSelectedOptions().stream()
-                                                .map(UUID::toString)
+                                                .map(choice -> choice.getId().toString())  // ✅ 수정된 부분
                                                 .collect(toList())
                         ))
                         .collect(toList())
         );
     }
+
     /**
-     * ✨ 설문별 응답 전체 조회
+     * ✨ 설문별 응답 전체 조회 (답변 + 선택지까지 포함)
      */
     @Transactional(readOnly = true)
     public List<ResponseDetail> findBySurveyId(UUID surveyId) {
-        Survey survey = surveyRepository.findById(surveyId)
+        surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new ResourceNotFoundException("설문이 존재하지 않습니다."));
 
-        return responseRepository.findBySurveyId(surveyId).stream()
+        return responseRepository.findBySurveyIdWithAnswersAndOptions(surveyId).stream()
                 .map(ResponseDetail::from)
                 .collect(toList());
     }
@@ -143,7 +141,16 @@ public class ResponseService {
      */
     @Transactional(readOnly = true)
     public List<ResponseDto> findAll() {
-        return responseRepository.findAll().stream()
+        List<Response> responses = responseRepository.findAll();
+        responses.forEach(r -> {
+            r.getAnswers().forEach(a -> {
+                if (a.getSelectedOptions() != null) {
+                    a.getSelectedOptions().size(); // ✅ Lazy 방지
+                }
+            });
+        });
+
+        return responses.stream()
                 .map(r -> new ResponseDto(
                         r.getId(),
                         r.getSurvey().getId(),
@@ -153,7 +160,7 @@ public class ResponseService {
                                         a.getText(),
                                         a.getSelectedOptions() == null ? null :
                                                 a.getSelectedOptions().stream()
-                                                        .map(UUID::toString)
+                                                        .map(choice -> choice.getId().toString())  // ✅ 수정된 부분
                                                         .collect(toList())
                                 ))
                                 .collect(toList())
