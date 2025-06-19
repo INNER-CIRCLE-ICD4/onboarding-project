@@ -30,6 +30,6 @@ public class SurveyController {
     public ResponseEntity<?> updateSurvey(@PathVariable UUID surveyId,
                                           @Valid @RequestBody SurveyUpdateDto request) {
         surveyService.updateSurvey(surveyId, request);
-        return ResponseEntity.ok().body("설문조사 수정 성공");
+        return ResponseEntity.ok().body(Map.of("message","설문조사 수정 성공"));
     }
 }
