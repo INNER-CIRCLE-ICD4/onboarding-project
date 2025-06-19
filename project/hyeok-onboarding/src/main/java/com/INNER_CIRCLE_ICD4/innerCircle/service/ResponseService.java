@@ -83,7 +83,18 @@ public class ResponseService {
                 }
                 default -> throw new BusinessException("알 수 없는 질문 타입입니다. 질문 ID: " + question.getId());
             }
+            // ✨ 필수 질문에 대한 응답 누락 체크
+            if (question.isRequired()) {
+                boolean isEmpty = switch (question.getType()) {
+                    case SHORT, LONG -> ar.text() == null || ar.text().isBlank();
+                    case SINGLE_CHOICE, MULTIPLE_CHOICE -> ar.selectedOptions() == null || ar.selectedOptions().isEmpty();
+                };
+                if (isEmpty) {
+                    throw new BusinessException("필수 질문에 응답이 없습니다. 질문 ID: " + question.getId());
+                }
+            }
 
+            // 6. Answer 객체 생성 및 응답에 추가
             Answer answer = new Answer(response, question, ar.text(), ar.selectedOptions());
             response.getAnswers().add(answer);
         }
@@ -91,7 +102,29 @@ public class ResponseService {
         Response saved = responseRepository.save(response);
         return saved.getId();
     }
+    /**
+     * ✨ 응답 ID로 단일 응답 조회
+     */
+    @Transactional(readOnly = true)
+    public ResponseDto findById(UUID responseId) {
+        Response response = responseRepository.findById(responseId)
+                .orElseThrow(() -> new ResourceNotFoundException("응답이 존재하지 않습니다."));
 
+        return new ResponseDto(
+                response.getId(),
+                response.getSurvey().getId(),
+                response.getAnswers().stream()
+                        .map(a -> new AnswerDto(
+                                a.getQuestion().getId(),
+                                a.getText(),
+                                a.getSelectedOptions() == null ? null :
+                                        a.getSelectedOptions().stream()
+                                                .map(UUID::toString)
+                                                .collect(toList())
+                        ))
+                        .collect(toList())
+        );
+    }
     /**
      * ✨ 설문별 응답 전체 조회
      */
