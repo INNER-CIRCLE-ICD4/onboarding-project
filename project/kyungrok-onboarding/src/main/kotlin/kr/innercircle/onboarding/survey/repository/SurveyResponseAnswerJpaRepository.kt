@@ -1,5 +1,6 @@
 package kr.innercircle.onboarding.survey.repository
 
+import kr.innercircle.onboarding.survey.domain.SurveyResponse
 import kr.innercircle.onboarding.survey.domain.SurveyResponseAnswer
 import org.springframework.data.jpa.repository.JpaRepository
 
@@ -11,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository
  * description :
  */
 interface SurveyResponseAnswerJpaRepository: JpaRepository<SurveyResponseAnswer, Long> {
+    fun findAllBySurveyResponse(surveyResponse: SurveyResponse): List<SurveyResponseAnswer>
 }

@@ -1,5 +1,6 @@
 package kr.innercircle.onboarding.survey.repository
 
+import kr.innercircle.onboarding.survey.domain.SurveyResponse
 import kr.innercircle.onboarding.survey.domain.SurveyResponseAnswer
 
 /**
@@ -11,4 +12,5 @@ import kr.innercircle.onboarding.survey.domain.SurveyResponseAnswer
  */
 interface SurveyResponseAnswerRepository {
     fun saveAll(surveyResponseAnswers: List<SurveyResponseAnswer>): List<SurveyResponseAnswer>
+    fun findAllBySurveyResponse(surveyResponse: SurveyResponse): List<SurveyResponseAnswer>
 }
