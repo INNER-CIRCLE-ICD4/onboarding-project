@@ -13,9 +13,9 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class SurveyFormRepositoryImpl implements SurveyFormRepository {
+
     private final SurveyFormJpaRepository jpaRepository;
     private final SurveyFormJpaEntityMapper surveyFormJpaEntityMapper;
-
 
     @Override
     public SurveyForm save(SurveyForm form) {
@@ -26,6 +26,7 @@ public class SurveyFormRepositoryImpl implements SurveyFormRepository {
 
     @Override
     public Optional<SurveyForm> findById(Long id) {
-        return jpaRepository.findById(id).map(surveyFormJpaEntityMapper::toDomain);
+        return jpaRepository.findById(id)
+                .map(surveyFormJpaEntityMapper::toDomain);
     }
 } 
