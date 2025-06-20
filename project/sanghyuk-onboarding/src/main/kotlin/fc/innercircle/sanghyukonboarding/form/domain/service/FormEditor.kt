@@ -2,8 +2,8 @@
 package fc.innercircle.sanghyukonboarding.form.domain.service
 
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
-import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionTemplate
-import fc.innercircle.sanghyukonboarding.form.domain.model.SelectableOption
+import fc.innercircle.sanghyukonboarding.form.domain.model.Question
+import fc.innercircle.sanghyukonboarding.form.domain.model.vo.InputType
 import fc.innercircle.sanghyukonboarding.form.domain.service.dto.param.QuestionParam
 import org.springframework.stereotype.Component
 
@@ -15,13 +15,13 @@ class FormEditor {
         description: String,
         params: List<QuestionParam>,
     ): Form {
-        val questionTemplates = params.mapIndexed { idx, param ->
-            createNewQuestionTemplate(param = param, displayOrder = idx)
+        val questions = params.mapIndexed { idx, param ->
+            createNewQuestion(param = param, displayOrder = idx)
         }
         return Form(
             title = title,
             description = description,
-            questionTemplates = questionTemplates
+            questions = questions
         )
     }
 
@@ -31,56 +31,42 @@ class FormEditor {
         description: String,
         params: List<QuestionParam>,
     ): Form {
-        val questionTemplates = params.mapIndexed { idx, param ->
-            updateOrRenewQuestionTemplate(form, param, idx)
+        val newQuestions = params.mapIndexed { idx, param ->
+            reviseQuestionOrCreate(form, param, idx)
         }
-
         return form.edited(
             title = title,
             description = description,
-            questionTemplates = questionTemplates
+            newQuestions = newQuestions
         )
     }
 
-    private fun updateOrRenewQuestionTemplate(form: Form, param: QuestionParam, displayOrder: Int): QuestionTemplate {
-        return if (form.hasQuestionTemplate(param.questionTemplateId)) {
-            val selectableOptions = buildSelectableOptions(param.selectableOptions)
-            form.getQuestionTemplate(param.questionTemplateId)
-                .edited(
-                    title = param.title,
-                    description = param.description,
-                    type = param.type,
+    private fun reviseQuestionOrCreate(form: Form, param: QuestionParam, displayOrder: Int): Question {
+        return if (form.hasQuestionTemplate(param.questionId)) {
+            form.getQuestionTemplate(param.questionId)
+                .revise(
                     required = param.required,
                     displayOrder = displayOrder,
-                    selectableOptions = selectableOptions,
+                    type = param.type,
+                    title = param.title,
+                    description = param.description,
+                    options = param.options
                 )
         } else {
-            createNewQuestionTemplate(form.id, param, displayOrder)
+            createNewQuestion(form.id, param, displayOrder)
         }
     }
 
-    private fun createNewQuestionTemplate(formId: String = "", param: QuestionParam, displayOrder: Int): QuestionTemplate {
-        return QuestionTemplate(
-            id = param.questionTemplateId,
+    private fun createNewQuestion(formId: String = "", param: QuestionParam, displayOrder: Int): Question {
+        return Question(
+            id = param.questionId,
             required = param.required,
             displayOrder = displayOrder,
-            formId = formId
-        ).addSnapshot(
+            type = InputType.valueOrThrows(param.type),
             title = param.title,
             description = param.description,
-            type = param.type,
-            selectableOptions = buildSelectableOptions(param.selectableOptions)
+            options = param.options,
+            formId = formId
         )
-    }
-
-    private fun buildSelectableOptions(
-        options: List<QuestionParam.SelectableOptionParam>
-    ): List<SelectableOption> {
-        return options.mapIndexed { index, option ->
-            SelectableOption(
-                text = option.text,
-                displayOrder = index
-            )
-        }
     }
 }

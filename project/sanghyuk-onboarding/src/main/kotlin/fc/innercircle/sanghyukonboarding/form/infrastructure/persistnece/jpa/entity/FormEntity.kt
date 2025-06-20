@@ -2,7 +2,7 @@ package fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.en
 
 import fc.innercircle.sanghyukonboarding.common.domain.model.IdGenerator
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
-import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionTemplate
+import fc.innercircle.sanghyukonboarding.form.domain.model.Question
 import fc.innercircle.sanghyukonboarding.form.domain.model.validator.FormValidator
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -41,12 +41,12 @@ open class FormEntity(
         FormValidator.validateDescription(description)
     }
 
-    fun toDomain(questionTemplates: List<QuestionTemplate>): Form {
+    fun toDomain(questions: List<Question>): Form {
         return Form(
             id = id,
             title = title,
             description = description,
-            questionTemplates = questionTemplates.filter { it.formId == id }
+            questions = questions.filter { it.formId == id }
         )
     }
 

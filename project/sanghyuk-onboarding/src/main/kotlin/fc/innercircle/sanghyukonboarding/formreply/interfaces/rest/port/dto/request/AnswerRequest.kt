@@ -3,15 +3,13 @@ package fc.innercircle.sanghyukonboarding.formreply.interfaces.rest.port.dto.req
 import fc.innercircle.sanghyukonboarding.formreply.domain.service.dto.param.AnswerParam
 
 data class AnswerRequest(
-    val questionTemplateId: String,
-    val text: String = "",
-    val selectableOptionIds: List<String> = emptyList()
+    val questionId: String,
+    val values: List<String>,
 ) {
     fun toParam(): AnswerParam {
         return AnswerParam(
-            questionTemplateId = questionTemplateId,
-            text = text,
-            selectableOptionIds = selectableOptionIds
+            questionId = questionId,
+            values = values.toList()
         )
     }
 }

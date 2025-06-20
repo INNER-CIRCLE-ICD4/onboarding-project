@@ -1,7 +1,7 @@
 package fc.innercircle.sanghyukonboarding.form.interfaces.rest.port.dto.response
 
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
-import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionTemplate
+import fc.innercircle.sanghyukonboarding.form.domain.model.Question
 
 data class FormResponse(
     val formId: String,
@@ -10,35 +10,25 @@ data class FormResponse(
     val questions: List<QuestionResponse>
 ) {
     data class QuestionResponse(
-        val questionTemplateId: String,
+        val questionId: String,
         val title: String,
         val description: String,
         val type: String,
         val required: Boolean,
         val version: Long,
-        val selectableOptions: List<SelectableOptionResponse>,
+        val options: List<String>
     ) {
-        data class SelectableOptionResponse(
-            val selectableOptionId: String,
-            val text: String,
-        )
 
         companion object {
-            fun from(questionTemplate: QuestionTemplate): QuestionResponse {
-                val questionSnapshot = questionTemplate.getLatestSnapshot()
+            fun from(question: Question): QuestionResponse {
                 return QuestionResponse(
-                    questionTemplateId = questionTemplate.id,
-                    title = questionSnapshot.title,
-                    description = questionSnapshot.description,
-                    type = questionSnapshot.type.name,
-                    required = questionTemplate.required,
-                    version = questionSnapshot.version,
-                    selectableOptions = questionSnapshot.selectableOptions.list().map { option ->
-                        SelectableOptionResponse(
-                            selectableOptionId = option.id,
-                            text = option.text
-                        )
-                    }
+                    questionId = question.id,
+                    title = question.title,
+                    description = question.description,
+                    type = question.type.name,
+                    required = question.required,
+                    version = question.version,
+                    options =  question.options
                 )
             }
         }
@@ -50,7 +40,7 @@ data class FormResponse(
                 formId = form.id,
                 title = form.title,
                 description = form.description,
-                questions = form.questionTemplates.list().map {
+                questions = form.questions.list().map {
                     QuestionResponse.from(it)
                 }
             )

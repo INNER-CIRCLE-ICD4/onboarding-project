@@ -56,17 +56,18 @@ enum class ErrorCode(
     // 비즈니스 로직 에러 코드 (409)
     EXCEEDS_MAX_QUESTION_COUNT(HttpStatus.CONFLICT, "설문은 최대 10개의 질문을 포함할 수 있습니다. (현재 입력값: {0})"),
     DUPLICATE_QUESTION_SNAPSHOT_VERSION(HttpStatus.CONFLICT, "해당 질문 버전은 이미 존재합니다. [버전]: {1}"),
-    NOT_MODIFIABLE_QUESTION_TEMPLATE_VERSION(HttpStatus.CONFLICT, "현재 버전과 일치하는 질문 템플릿만 수정할 수 있습니다. [요청 버전]: {0}, [현재 버전]: {1}"),
     TEXT_TYPE_INPUT_ERROR(HttpStatus.CONFLICT, "단답형 또는 장문형 질문에는 선택 가능한 옵션을 설정할 수 없습니다. [오류 질문 제목]: {0}"),
     SELECTABLE_TYPE_INPUT_ERROR(HttpStatus.CONFLICT, "선택형 질문에는 선택 가능한 옵션을 반드시 설정해야 합니다. [오류 질문 제목]: {0}"),
-    INVALID_ANSWER_SIZE(HttpStatus.CONFLICT, "답변 개수는 설문 조사의 질문 개수와 일치해야 합니다. [설문 ID]: {0}, [질문 개수]: {1}, [답변 개수]: {2}"),
-    INVALID_TEXT_QUESTION_ANSWER(HttpStatus.CONFLICT, "단답형 또는 장문형 질문에는 답변이 반드시 있어야 합니다. [질문 유형]: {0}"),
-    INVALID_SELECTABLE_QUESTION_ANSWER(HttpStatus.CONFLICT, "선택형 질문에는 최소 하나 이상의 응답이 있어야 합니다. [질문 유형]: {0}"),
-    INVALID_SINGLE_SELECTABLE_QUESTION_ANSWER(HttpStatus.CONFLICT, "단일 선택형 질문에는 하나의 응답만 있어야 합니다. [질문 유형]: {0}"),
-    INVALID_ANSWER(HttpStatus.CONFLICT, "두 가지 유형의 답변을 할 수 없습니다."),
+    INVALID_TEXT_QUESTION_ANSWER(HttpStatus.CONFLICT, "단답형 또는 장문형 질문에는 반드시 하나의 답변만 가능합니다. [오류 질문 제목]: {0}"),
+    INVALID_SELECTABLE_QUESTION_ANSWER(HttpStatus.CONFLICT, "선택형 질문에는 최소 하나 이상의 답변이 있어야 합니다. [오류 질문 제목]: {0}"),
+    INVALID_SINGLE_SELECTABLE_QUESTION_ANSWER(HttpStatus.CONFLICT, "단일 선택형 질문에는 하나의 응답만 있어야 합니다. [오류 질문 제목]: {0}"),
     INVALID_SELECTABLE_OPTION(
         HttpStatus.CONFLICT,
         "답변은 해당 질문에 속하는 옵션의 ID를 포함해야 합니다. [질문 ID]: {0}, [속하지 않는 옵션 ID]: {1}"
+    ),
+    REQUIRED_QUESTION_ANSWER(
+        HttpStatus.CONFLICT,
+        "필수 질문에 대한 답변이 누락되었습니다. [질문 제목]: {0}"
     ),
 
     // 서버 에러 코드 (500)

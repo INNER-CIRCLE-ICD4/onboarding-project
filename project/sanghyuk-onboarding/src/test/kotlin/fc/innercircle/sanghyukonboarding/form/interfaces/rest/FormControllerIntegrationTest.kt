@@ -56,7 +56,7 @@ class FormControllerIntegrationTest : BehaviorSpec({
                         title = "티셔츠 사이즈",
                         type = InputType.RADIO.name,
                         required = false,
-                        selectableOptions = listOf(
+                        options = listOf(
                             FormRequest.QuestionRequest.SelectableOptionRequest(text = "XS"),
                             FormRequest.QuestionRequest.SelectableOptionRequest(text = "S"),
                             FormRequest.QuestionRequest.SelectableOptionRequest(text = "M"),
@@ -112,8 +112,8 @@ class FormControllerIntegrationTest : BehaviorSpec({
                             jsonPath("$.questions[$idx1].type") { value(question.type.uppercase()) }
                             jsonPath("$.questions[$idx1].required") { value(question.required) }
                             jsonPath("$.questions[$idx1].version") { value(0) }
-                            jsonPath("$.questions[$idx1].selectableOptions.size()") { value(question.selectableOptions.size) }
-                            question.selectableOptions.forEachIndexed { idx2, option ->
+                            jsonPath("$.questions[$idx1].selectableOptions.size()") { value(question.options.size) }
+                            question.options.forEachIndexed { idx2, option ->
                                 jsonPath("$.questions[$idx1].selectableOptions[$idx2].text") { value(option.text) }
                             }
                         }
@@ -164,7 +164,7 @@ class FormControllerIntegrationTest : BehaviorSpec({
                         title = "티셔츠 사이즈",
                         type = InputType.RADIO.name,
                         required = false,
-                        selectableOptions = listOf(
+                        options = listOf(
                             FormRequest.QuestionRequest.SelectableOptionRequest(text = "XS"),
                             FormRequest.QuestionRequest.SelectableOptionRequest(text = "S"),
                             FormRequest.QuestionRequest.SelectableOptionRequest(text = "M"),
@@ -204,8 +204,8 @@ class FormControllerIntegrationTest : BehaviorSpec({
                             jsonPath("$.questions[$idx1].type") { value(question.type.uppercase()) }
                             jsonPath("$.questions[$idx1].required") { value(question.required) }
                             jsonPath("$.questions[$idx1].version") { value(0) } // 버전은 0이어야 함
-                            jsonPath("$.questions[$idx1].selectableOptions.size()") { value(question.selectableOptions.size) }
-                            question.selectableOptions.forEachIndexed { idx2, option ->
+                            jsonPath("$.questions[$idx1].selectableOptions.size()") { value(question.options.size) }
+                            question.options.forEachIndexed { idx2, option ->
                                 jsonPath("$.questions[$idx1].selectableOptions[$idx2].text") { value(option.text) }
                             }
                         }
@@ -237,7 +237,7 @@ class FormControllerIntegrationTest : BehaviorSpec({
                         title = "티셔츠 사이즈",
                         type = InputType.RADIO.name,
                         required = false,
-                        selectableOptions = listOf(
+                        options = listOf(
                             FormRequest.QuestionRequest.SelectableOptionRequest(text = "XS"),
                             FormRequest.QuestionRequest.SelectableOptionRequest(text = "S"),
                             FormRequest.QuestionRequest.SelectableOptionRequest(text = "M"),
@@ -265,7 +265,7 @@ class FormControllerIntegrationTest : BehaviorSpec({
                             title = "(추가 문항) 귀하의 키는 몇 cm 인가요?",
                             type = InputType.CHECKBOX.name,
                             required = false,
-                            selectableOptions = listOf(
+                            options = listOf(
                                 FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "180cm"
                                 ),
@@ -281,18 +281,18 @@ class FormControllerIntegrationTest : BehaviorSpec({
                             ),
                         ),
                         FormRequest.QuestionRequest(
-                            questionTemplateId = form.questionTemplates.list()[0].id,
+                            questionId = form.questions.list()[0].id,
                             title = "이름 (수정)",
                             description = "반드시 본명을 입력해주세요. (수정)",
                             type = InputType.TEXT.name,
                             required = true,
                         ),
                         FormRequest.QuestionRequest(
-                            questionTemplateId = form.questionTemplates.list()[1].id,
+                            questionId = form.questions.list()[1].id,
                             title = "티셔츠 사이즈",
                             type = InputType.CHECKBOX.name,
                             required = false,
-                            selectableOptions = listOf(
+                            options = listOf(
                                 FormRequest.QuestionRequest.SelectableOptionRequest(
                                     text = "XL"
                                 ),
@@ -335,9 +335,9 @@ class FormControllerIntegrationTest : BehaviorSpec({
                             jsonPath("$.questions[$idx1].type") { value(question.type.uppercase()) }
                             jsonPath("$.questions[$idx1].required") { value(question.required) }
                             // 요청 값에 questionTemplateId가 있으면, 기존 질문을 업데이트 하는 것이므로 기존 버전 + 1 이어야 하고, questionTemplateId가 없으면 새 질문이므로 0이어야 함
-                            jsonPath("$.questions[$idx1].version") { value(if (question.questionTemplateId.isNotBlank()) 1 else 0) }
-                            jsonPath("$.questions[$idx1].selectableOptions.size()") { value(question.selectableOptions.size) }
-                            question.selectableOptions.forEachIndexed { idx2, option ->
+                            jsonPath("$.questions[$idx1].version") { value(if (question.questionId.isNotBlank()) 1 else 0) }
+                            jsonPath("$.questions[$idx1].selectableOptions.size()") { value(question.options.size) }
+                            question.options.forEachIndexed { idx2, option ->
                                 jsonPath("$.questions[$idx1].selectableOptions[$idx2].text") { value(option.text) }
                             }
                         }

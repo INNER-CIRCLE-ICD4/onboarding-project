@@ -56,7 +56,7 @@ open class QuestionSnapshot(
         return id.isBlank()
     }
 
-    fun isSnapshotOf(template: QuestionTemplate): Boolean {
+    fun isSnapshotOf(template: Question): Boolean {
         return this.questionTemplateId == template.id
     }
 

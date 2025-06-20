@@ -25,7 +25,7 @@ class FormReply(
     }
 
     fun formattedSubmittedAt(): String {
-        val isoOffsetDateTime: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-        return submittedAt.format(isoOffsetDateTime)
+        val isoLocalDateTime: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+        return submittedAt.format(isoLocalDateTime)
     }
 }

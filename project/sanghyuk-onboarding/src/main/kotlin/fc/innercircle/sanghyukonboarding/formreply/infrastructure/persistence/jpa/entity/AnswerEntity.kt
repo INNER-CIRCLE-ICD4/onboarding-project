@@ -37,19 +37,12 @@ open class AnswerEntity(
     )
     val questionSnapshotId: String,
     @Column(
-        name = "answer",
+        name = "`values`",
         nullable = false,
-        columnDefinition = "TEXT not null comment '답변 내용 (텍스트 형 입력 타입에만 값이 존재)'"
-    )
-    val answer: String = "",
-
-    @Column(
-        name = "selectable_option_ids",
-        nullable = false,
-        columnDefinition = "JSON not null comment '선택형 옵션 ID (선택형 입력 타입에만 값이 존재)'"
+        columnDefinition = "JSON not null comment '답변 내용'"
     )
     @Convert(converter = ListToJsonConverter::class)
-    val selectableOptionIds: List<String> = emptyList(),
+    val values: List<String>,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
         name = "form_reply_id",
@@ -77,21 +70,18 @@ open class AnswerEntity(
     fun toDomain(): Answer {
         return Answer(
             id = id,
-            questionSnapshotId = questionSnapshotId,
-            text = answer,
-            selectableOptionIds = selectableOptionIds.toList(),
+            questionId = questionSnapshotId,
+            values = values.toList(),
             formReplyId = formReplyEntity.id
         )
     }
-
 
     companion object {
         fun fromDomain(answer: Answer, formReplyEntity: FormReplyEntity): AnswerEntity {
             return AnswerEntity(
                 id = answer.id,
-                questionSnapshotId = answer.questionSnapshotId,
-                answer = answer.text,
-                selectableOptionIds = answer.selectableOptionIds,
+                questionSnapshotId = answer.questionId,
+                values = answer.values.toList(),
                 formReplyEntity = formReplyEntity
             )
         }

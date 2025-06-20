@@ -2,13 +2,13 @@ package fc.innercircle.sanghyukonboarding.form.domain.model.vo
 
 import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
-import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionTemplate
+import fc.innercircle.sanghyukonboarding.form.domain.model.Question
 
-class QuestionTemplates(values: List<QuestionTemplate> = emptyList()) {
+class Questions(values: List<Question> = emptyList()) {
 
-    private val values: List<QuestionTemplate> = values.sortedBy { it.displayOrder }
+    private val values: List<Question> = values.sortedBy { it.displayOrder }
 
-    fun list(): List<QuestionTemplate> {
+    fun list(): List<Question> {
         return values.sortedBy { it.displayOrder }
     }
 
@@ -16,12 +16,12 @@ class QuestionTemplates(values: List<QuestionTemplate> = emptyList()) {
         return values.size.toLong()
     }
 
-    fun filter(function: (QuestionTemplate) -> Boolean): QuestionTemplates {
-        return QuestionTemplates(values.filter(function))
+    fun filter(function: (Question) -> Boolean): Questions {
+        return Questions(values.filter(function))
     }
 
     fun size(): Int = values.size
-    fun getById(id: String): QuestionTemplate {
+    fun getById(id: String): Question {
         return values.firstOrNull { it.id == id }
             ?: throw CustomException(ErrorCode.QUESTION_TEMPLATE_NOT_FOUND.withArgs(id))
     }

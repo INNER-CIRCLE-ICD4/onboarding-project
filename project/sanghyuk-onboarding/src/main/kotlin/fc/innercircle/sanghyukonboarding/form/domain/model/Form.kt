@@ -3,26 +3,26 @@ package fc.innercircle.sanghyukonboarding.form.domain.model
 import fc.innercircle.sanghyukonboarding.common.domain.exception.CustomException
 import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
 import fc.innercircle.sanghyukonboarding.form.domain.model.validator.FormValidator
-import fc.innercircle.sanghyukonboarding.form.domain.model.vo.QuestionTemplates
+import fc.innercircle.sanghyukonboarding.form.domain.model.vo.Questions
 
 class Form(
     val id: String = "",
     val title: String,
     val description: String,
-    questionTemplates: List<QuestionTemplate>,
+    questions: List<Question>,
 ) {
 
-    val questionTemplates: QuestionTemplates
+    val questions: Questions
 
     init {
-        val filteredTemplates: List<QuestionTemplate> = filteringNewOrQuestionTemplateOfThis(questionTemplates)
-        this.questionTemplates = QuestionTemplates(values = filteredTemplates)
-        verifyOrThrowsMaxQuestionCounts(this.questionTemplates)
+        val filteredTemplates: List<Question> = filteringNewOrQuestionTemplateOfThis(questions)
+        this.questions = Questions(values = filteredTemplates)
+        verifyOrThrowsMaxQuestionCounts(this.questions)
         validateRequiredFields()
     }
 
-    private fun filteringNewOrQuestionTemplateOfThis(questionTemplates: List<QuestionTemplate>): List<QuestionTemplate> =
-        questionTemplates.filter { it ->
+    private fun filteringNewOrQuestionTemplateOfThis(questions: List<Question>): List<Question> =
+        questions.filter { it ->
             it.isNew() || it.isQuestionOf(this)
         }
 
@@ -35,9 +35,9 @@ class Form(
      * 비즈니스 정책 검사
      * 1. 설문은 최대 10개의 질문을 가질 수 있다.
      */
-    private fun verifyOrThrowsMaxQuestionCounts(questionTemplates: QuestionTemplates) {
-        if (questionTemplates.count() > 10) {
-            throw CustomException(ErrorCode.EXCEEDS_MAX_QUESTION_COUNT.withArgs(questionTemplates.count()))
+    private fun verifyOrThrowsMaxQuestionCounts(questions: Questions) {
+        if (questions.count() > 10) {
+            throw CustomException(ErrorCode.EXCEEDS_MAX_QUESTION_COUNT.withArgs(questions.count()))
         }
     }
 
@@ -45,39 +45,40 @@ class Form(
         id: String = this.id,
         title: String = this.title,
         description: String = this.description,
-        questionTemplates: List<QuestionTemplate> = this.questionTemplates.list()
+        questions: List<Question> = this.questions.list()
     ): Form {
         return Form(
             id = id,
             title = title,
             description = description,
-            questionTemplates = questionTemplates
+            questions = questions
         )
     }
 
     fun edited(
         title: String,
         description: String,
-        questionTemplates: List<QuestionTemplate>,
+        newQuestions: List<Question>,
     ): Form {
 
-        val deletedTemplates: List<QuestionTemplate> = this.questionTemplates.list()
-            .filter { template ->
-                questionTemplates.none { it.id == template.id }
+        // 기존 질문 중 새로 추가된 질문에 없는 질문은 삭제 처리
+        val deletedQuestions: List<Question> = this.questions.list()
+            .filter { question ->
+                newQuestions.none { it.id == question.id }
             }.map { it.deleted() }
 
         return copy(
             title = title,
             description = description,
-            questionTemplates = deletedTemplates + questionTemplates
+            questions = deletedQuestions + newQuestions
         )
     }
 
     fun hasQuestionTemplate(questionTemplateId: String): Boolean {
-        return questionTemplates.existsById(questionTemplateId)
+        return questions.existsById(questionTemplateId)
     }
 
-    fun getQuestionTemplate(questionTemplateId: String): QuestionTemplate {
-        return questionTemplates.getById(questionTemplateId)
+    fun getQuestionTemplate(questionTemplateId: String): Question {
+        return questions.getById(questionTemplateId)
     }
 }

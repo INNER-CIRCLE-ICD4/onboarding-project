@@ -14,7 +14,7 @@ class FormReplyQueryRepositoryImpl(
     private val answerJpaRepository: AnswerJpaRepository
 ): FormReplyQueryRepository {
 
-    override fun getAllByFormId(formId: String): List<FormReply> {
+    override fun getAllByForm(formId: String): List<FormReply> {
         // 1. FormReply 엔티티 리스트 조회
         val formReplyEntities: List<FormReplyEntity> = formReplyJpaRepository.findAllByFormId(formId)
 

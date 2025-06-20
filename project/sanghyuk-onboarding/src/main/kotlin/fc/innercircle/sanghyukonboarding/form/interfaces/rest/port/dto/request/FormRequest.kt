@@ -8,25 +8,21 @@ data class FormRequest(
     val questions: List<QuestionRequest> = emptyList(),
 ) {
     data class QuestionRequest(
-        val questionTemplateId: String = "",
+        val questionId: String = "",
         val title: String,
         val description: String = "",
         val type: String,
         val required: Boolean,
-        val selectableOptions: List<SelectableOptionRequest> = emptyList(),
+        val options: List<String> = emptyList(),
     ) {
-        data class SelectableOptionRequest(
-            val text: String,
-        )
-
         fun toParam(): QuestionParam {
             return QuestionParam(
-                questionTemplateId = questionTemplateId,
+                questionId = questionId,
                 title = title,
                 description = description,
                 type = type,
                 required = required,
-                selectableOptions = selectableOptions.map { QuestionParam.SelectableOptionParam(it.text) }
+                options = options
             )
         }
     }

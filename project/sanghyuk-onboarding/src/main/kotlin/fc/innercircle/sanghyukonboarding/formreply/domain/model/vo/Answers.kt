@@ -8,6 +8,11 @@ class Answers(private val values: List<Answer> = emptyList()) {
         return values
     }
 
+    fun getByQuestionId(questionId: String): Answer {
+        return values.firstOrNull { it.questionId == questionId }
+            ?: Answer.empty()
+    }
+
     fun getValues(): List<Answer> {
         return values
     }

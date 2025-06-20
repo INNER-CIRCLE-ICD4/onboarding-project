@@ -1,9 +1,9 @@
 package fc.innercircle.sanghyukonboarding.formreply.interfaces.rest
 
-import fc.innercircle.sanghyukonboarding.formreply.domain.service.port.FormReplyQueryRepository
 import fc.innercircle.sanghyukonboarding.formreply.interfaces.rest.port.SubmitReplyUseCase
+import fc.innercircle.sanghyukonboarding.formreply.interfaces.rest.port.SummarizeFormRepliesUseCase
 import fc.innercircle.sanghyukonboarding.formreply.interfaces.rest.port.dto.request.AnswerRequest
-import fc.innercircle.sanghyukonboarding.formreply.interfaces.rest.port.dto.response.FormReplyResponse
+import fc.innercircle.sanghyukonboarding.formreply.interfaces.rest.port.dto.response.ReplySummaryResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RestController
 class FormReplyController(
     private val submitReplyUseCase: SubmitReplyUseCase,
-    private val replyReader: FormReplyQueryRepository
+    private val summarizeFormRepliesUseCase: SummarizeFormRepliesUseCase
 ) {
 
     @PostMapping("/replies",consumes = ["application/json"], produces = ["application/json"])
@@ -35,14 +35,22 @@ class FormReplyController(
         return ResponseEntity.created(location).build()
     }
 
-    @GetMapping("/replies", produces = ["application/json"])
-    fun getAllReplies(
+    @GetMapping("/replies/summary", produces = ["application/json"])
+    fun summarizeFormReplies(
         @PathVariable formId: String,
-        @RequestParam(required = false) version: Int? = null,
-    ): ResponseEntity<List<FormReplyResponse>> {
-        val response = replyReader.getAllByFormId(formId).map { reply ->
-            FormReplyResponse.from(reply)
-        }
+    ): ResponseEntity<ReplySummaryResponse> {
+        val response: ReplySummaryResponse = summarizeFormRepliesUseCase.summarize(formId)
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/replies", produces = ["application/json"])
+    fun getFormReplies(
+        @PathVariable formId: String,
+        @RequestParam page: Int = 0,
+        @RequestParam size: Int = 10,
+        @RequestParam questionName: String = ""
+    ): ResponseEntity<List<ReplySummaryResponse>> {
+        val response: List<ReplySummaryResponse> = summarizeFormRepliesUseCase.summarize(formId).replies
         return ResponseEntity.ok(response)
     }
 
