@@ -1,6 +1,7 @@
 package onboarding.survey.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 import onboarding.survey.exception.BadRequestException;
 
@@ -11,9 +12,12 @@ import java.util.List;
 @Entity
 public class SurveyItem {
 
-    @Id @GeneratedValue
+    @Id
+    @Getter
+    @GeneratedValue
     private Long id;
 
+    @Getter
     private String name;
 
     private String description;
@@ -21,6 +25,7 @@ public class SurveyItem {
     @Enumerated(EnumType.STRING)
     private InputType inputType;
 
+    @Getter
     private boolean required;
 
     @Setter
@@ -41,6 +46,21 @@ public class SurveyItem {
         this.required = required;
         if (choices != null) {
             choices.forEach(this::addChoice);
+        }
+    }
+
+    public void update(String name, String description, InputType type, boolean required, List<Choice> newChoices) {
+        validateName(name);
+        validateChoices(type, newChoices);
+
+        this.name = name;
+        this.description = description;
+        this.inputType = type;
+        this.required = required;
+        this.choices.clear();
+
+        if (newChoices != null) {
+            newChoices.forEach(this::addChoice);
         }
     }
 

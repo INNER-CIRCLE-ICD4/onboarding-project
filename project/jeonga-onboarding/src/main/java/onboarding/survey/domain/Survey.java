@@ -43,6 +43,15 @@ public class Survey {
     }
 
 
+    public void update(String title, String description, List<SurveyItem> newItems) {
+        validateTitle(title);
+        validateItems(newItems);
+        this.title = title;
+        this.description = description;
+        this.items.clear();
+        newItems.forEach(this::addItem);
+    }
+
     private void validateTitle(String title) {
         if (title == null || title.isBlank()) {
             throw new BadRequestException("제목은 필수입니다.");
