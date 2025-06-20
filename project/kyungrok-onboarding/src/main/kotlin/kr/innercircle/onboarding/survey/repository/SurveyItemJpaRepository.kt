@@ -12,5 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository
  * description :
  */
 interface SurveyItemJpaRepository: JpaRepository<SurveyItem, Long> {
-    fun findAllBySurveyAndDeleted(survey: Survey, deleted: Boolean): List<SurveyItem>
+    fun findAllBySurveyAndIsDeleted(survey: Survey, deleted: Boolean): List<SurveyItem>
 }

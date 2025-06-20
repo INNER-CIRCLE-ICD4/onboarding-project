@@ -22,5 +22,5 @@ class SurveyItemRepositoryImpl(
     override fun save(surveyItem: SurveyItem): SurveyItem = surveyItemJpaRepository.save(surveyItem)
     override fun findById(id: Long): SurveyItem? = surveyItemJpaRepository.findByIdOrNull(id)
     override fun findAll(): List<SurveyItem> = surveyItemJpaRepository.findAll()
-    override fun findAllBySurveyAndIsDeleted(survey: Survey, isDeleted: Boolean): List<SurveyItem> = surveyItemJpaRepository.findAllBySurveyAndDeleted(survey, isDeleted)
+    override fun findAllBySurveyAndIsDeleted(survey: Survey, isDeleted: Boolean): List<SurveyItem> = surveyItemJpaRepository.findAllBySurveyAndIsDeleted(survey, isDeleted)
 }

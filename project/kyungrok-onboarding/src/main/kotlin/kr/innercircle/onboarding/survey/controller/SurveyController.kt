@@ -1,9 +1,11 @@
 package kr.innercircle.onboarding.survey.controller
 
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import kr.innercircle.onboarding.survey.dto.request.CreateSurveyRequest
+import kr.innercircle.onboarding.survey.dto.request.UpdateSurveyRequest
 import kr.innercircle.onboarding.survey.dto.response.ApiResponse
 import kr.innercircle.onboarding.survey.service.SurveyService
 import org.springframework.http.HttpStatus
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*
  * description :
  */
 
+@Tag(name = "설문조사")
 @RestController
 @RequestMapping("/surveys")
 class SurveyController(
@@ -44,5 +47,17 @@ class SurveyController(
             message = "설문조사 목록을 조회했습니다.",
             data = result
         )
+    }
+
+    @PutMapping("/{surveyId}")
+    fun putSurveys(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        @PathVariable surveyId: Long,
+        @RequestBody @Valid updateSurveyRequest: UpdateSurveyRequest,
+    ): ApiResponse {
+        surveyService.updateSurvey(surveyId, updateSurveyRequest)
+        response.status = HttpStatus.OK.value()
+        return ApiResponse(message = "설문조사를 수정했습니다.")
     }
 }
