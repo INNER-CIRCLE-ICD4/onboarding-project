@@ -2,6 +2,7 @@ package kr.innercircle.onboarding.survey.service
 
 import kr.innercircle.onboarding.survey.domain.Survey
 import kr.innercircle.onboarding.survey.dto.request.CreateSurveyRequest
+import kr.innercircle.onboarding.survey.dto.response.GetSurveysResponse
 import kr.innercircle.onboarding.survey.repository.SurveyRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,5 +28,13 @@ class SurveyService(
 
         surveyItemService.createSurveyItems(survey, createSurveyRequest.surveyItems)
         return survey
+    }
+
+    fun getSurveysResponse(): List<GetSurveysResponse> {
+        val surveys = surveyRepository.findAll()
+        return surveys.map { survey ->
+            val surveyItemsResponses = surveyItemService.getSurveyItemsResponse(survey)
+            GetSurveysResponse(survey, surveyItemsResponses)
+        }
     }
 }

@@ -1,5 +1,6 @@
 package kr.innercircle.onboarding.survey.repository
 
+import kr.innercircle.onboarding.survey.domain.Survey
 import kr.innercircle.onboarding.survey.domain.SurveyItem
 import org.springframework.data.jpa.repository.JpaRepository
 
@@ -11,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository
  * description :
  */
 interface SurveyItemJpaRepository: JpaRepository<SurveyItem, Long> {
+    fun findAllBySurveyAndDeleted(survey: Survey, deleted: Boolean): List<SurveyItem>
 }

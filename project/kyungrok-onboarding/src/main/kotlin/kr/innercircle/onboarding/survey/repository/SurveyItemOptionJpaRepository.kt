@@ -1,5 +1,6 @@
 package kr.innercircle.onboarding.survey.repository
 
+import kr.innercircle.onboarding.survey.domain.SurveyItem
 import kr.innercircle.onboarding.survey.domain.SurveyItemOption
 import org.springframework.data.jpa.repository.JpaRepository
 
@@ -11,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository
  * description :
  */
 interface SurveyItemOptionJpaRepository: JpaRepository<SurveyItemOption, Long> {
+    fun findAllBySurveyItemOrderByOrderNumber(surveyItem: SurveyItem): List<SurveyItemOption>
 }
