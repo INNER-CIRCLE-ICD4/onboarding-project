@@ -6,15 +6,22 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher  # Kotlin + Spring 호환 이슈 방지 (Spring Boot 2.x 기준)
 
-  jackson:
-    property-naming-strategy: SNAKE_CASE   # JSON 응답 시 snake_case 적용 (선택)
+#  jackson:
+#    property-naming-strategy: IDENTITY
 
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
     password:
-    initialization-mode: always
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true  # querylog
+    properties:
+      hibernate:
+        format_sql: true
 
   h2:
     console:
@@ -22,4 +29,4 @@ spring:
       path: /h2-console
 
 server:
-  port: 8080
+  port: 8081

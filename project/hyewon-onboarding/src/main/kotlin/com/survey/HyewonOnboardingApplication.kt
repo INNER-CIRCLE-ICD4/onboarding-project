@@ -6,14 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @SpringBootApplication
-class SampleStartApplication
+class HyewonOnboardingApplication
 
 fun main(args: Array<String>) {
-    runApplication<SampleStartApplication>(*args)
-}
-
-@RestController
-class SampleStart {
-    @GetMapping("/hello")
-    fun hello(): String = "Hello"
+    runApplication<HyewonOnboardingApplication>(*args)
 }
