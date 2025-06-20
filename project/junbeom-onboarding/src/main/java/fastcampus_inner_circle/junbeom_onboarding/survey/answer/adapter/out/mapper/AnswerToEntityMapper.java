@@ -14,6 +14,7 @@ public class AnswerToEntityMapper {
     public static AnswerJpaEntity toJpaEntity(Answer answer) {
         AnswerJpaEntity entity = AnswerJpaEntity.builder()
                 .formId(answer.getFormId())
+                .formName(answer.getFormName())
                 .submittedAt(answer.getSubmittedAt())
                 .build();
 
@@ -40,6 +41,7 @@ public class AnswerToEntityMapper {
             List<AnswerDetailOptionJpaEntity> options = detail.getOptions().stream()
                     .map(opt -> AnswerDetailOptionJpaEntity.builder()
                             .answerDetail(entity) // 부모 연결
+                            .optionId(opt.getOptionId())
                             .text(opt.getText()) // DTO에서 받아온 값
                             .build())
                     .collect(Collectors.toList());

@@ -19,6 +19,7 @@ public class AnswerToDomainMapper {
     public static Answer toDomain(AnswerRequest dto) {
         return Answer.builder()
                 .formId(dto.getFormId())
+                .formName(dto.getFormName())
                 .submittedAt(LocalDateTime.now())
                 .details(convertDetails(dto.getAnswers()))
                 .build();

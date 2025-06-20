@@ -22,6 +22,9 @@ public class AnswerJpaEntity {
     @Column(nullable = false)
     private Long formId;
 
+    @Column(name="form_name", length = 100)
+    private String formName;
+
     @Column(nullable = false)
     private LocalDateTime submittedAt;
 

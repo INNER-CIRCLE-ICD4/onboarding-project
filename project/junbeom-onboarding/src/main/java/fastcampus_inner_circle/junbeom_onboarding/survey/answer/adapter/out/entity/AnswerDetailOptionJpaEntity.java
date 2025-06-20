@@ -21,6 +21,9 @@ public class AnswerDetailOptionJpaEntity {
     @JoinColumn(name = "answer_detail_id")
     private AnswerDetailJpaEntity answerDetail;
 
+    @Column(name = "option_id")
+    private Long optionId;
+
     @Column(length = 100)
     private String text;
 } 

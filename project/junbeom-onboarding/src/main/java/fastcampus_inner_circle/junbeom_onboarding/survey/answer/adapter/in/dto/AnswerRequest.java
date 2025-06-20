@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 public class AnswerRequest {
     private Long formId;
+    private String formName;
     private List<AnswerDetail> answers;
 
     @Data

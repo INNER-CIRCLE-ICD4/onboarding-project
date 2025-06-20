@@ -83,6 +83,7 @@ class AnswerControllerIntegrationTest {
 
         AnswerRequest request = new AnswerRequest();
         request.setFormId(1L);
+        request.setFormName("고객 경험을 조사하기 위한 설문지입니다.");
         request.setAnswers(List.of(nameAnswer, satisfactionAnswer, suggestionAnswer, featureAnswer));
 
         // when & then: 답변을 제출하고, 200 OK와 함께 answerId가 반환되는지 확인

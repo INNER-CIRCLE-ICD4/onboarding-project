@@ -1,11 +1,12 @@
 package fastcampus_inner_circle.junbeom_onboarding.survey.answer.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Builder;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
@@ -14,6 +15,7 @@ import java.util.List;
 public class Answer {
     private Long id;
     private Long formId;
+    private String formName;
     private LocalDateTime submittedAt;
     private List<AnswerDetail> details;
 } 
