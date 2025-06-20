@@ -16,4 +16,5 @@ import onboardingproject.project.domain.SurveyVersion
 interface SurveyRepository {
     fun save(survey: Survey): Survey
     fun deleteAll()
+    fun findByIdOrNull(id: String): Survey?
 }

@@ -27,6 +27,10 @@ class FakeSurveyRepository : SurveyRepository {
         saved.clear()
     }
 
+    override fun findByIdOrNull(id: String): Survey? {
+        return saved.find { it.id == id }
+    }
+
     // 필요한 경우 다른 메서드도 구현
 }
 
@@ -40,6 +44,10 @@ class FakeSurveyVersionRepository : SurveyVersionRepository {
 
     override fun deleteAll() {
         saved.clear()
+    }
+
+    override fun findFirstBySurveyOrderByVersionDesc(survey: Survey): SurveyVersion {
+        return saved.filter { it.survey.id == survey.id }.maxBy { it.version }
     }
 }
 

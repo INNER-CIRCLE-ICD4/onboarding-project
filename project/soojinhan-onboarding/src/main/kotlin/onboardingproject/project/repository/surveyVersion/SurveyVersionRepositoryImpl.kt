@@ -1,5 +1,6 @@
 package onboardingproject.project.repository.surveyVersion
 
+import onboardingproject.project.domain.Survey
 import onboardingproject.project.domain.SurveyVersion
 import org.springframework.stereotype.Repository
 
@@ -20,5 +21,9 @@ class SurveyVersionRepositoryImpl(
 
     override fun deleteAll() {
         surveyVersionJpaRepository.deleteAll()
+    }
+
+    override fun findFirstBySurveyOrderByVersionDesc(survey: Survey): SurveyVersion {
+        return surveyVersionJpaRepository.findFirstBySurveyOrderByVersionDesc(survey)
     }
 }

@@ -1,5 +1,6 @@
 package onboardingproject.project.repository.surveyVersion
 
+import onboardingproject.project.domain.Survey
 import onboardingproject.project.domain.SurveyVersion
 
 /**
@@ -12,4 +13,5 @@ import onboardingproject.project.domain.SurveyVersion
 interface SurveyVersionRepository {
     fun save(surveyVersion: SurveyVersion): SurveyVersion
     fun deleteAll()
+    fun findFirstBySurveyOrderByVersionDesc(survey: Survey): SurveyVersion
 }
