@@ -2,6 +2,7 @@ package com.example.demo.survey.Dto;
 
 import com.example.demo.item.Item;
 import com.example.demo.item.dto.CreateItemDto;
+import com.example.demo.item.dto.UpdateItemDto;
 import com.example.demo.survey.Survey;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,16 +15,18 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateSurveyDTO {
+public class UpdateSurveyDTO {
 
     @NotNull
+    private Long surveyId;
+
     private String name;
 
-    @NotNull
+
     private String description;
 
-    @NotNull
-    private List<CreateItemDto> items;
+
+    private List<UpdateItemDto> items;
 
     public Survey toEntity(List<Item> items){
         return Survey.builder()

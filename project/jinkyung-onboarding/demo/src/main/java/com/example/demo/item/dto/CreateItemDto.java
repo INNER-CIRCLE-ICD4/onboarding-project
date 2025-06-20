@@ -1,5 +1,6 @@
 package com.example.demo.item.dto;
 
+import com.example.demo.itemQuestion.ItemQuestion;
 import com.example.demo.utill.ItemType;
 import com.example.demo.item.Item;
 import com.sun.istack.NotNull;
@@ -18,13 +19,10 @@ public class CreateItemDto {
     @NotNull
     private String itemName;
 
-    @NotNull
     private String itemDescription;
 
     @NotNull
     private ItemType itemType;
-
-    private String itemValue;
 
     private List<String> itemQuestionList;
 
@@ -36,12 +34,11 @@ public class CreateItemDto {
                 .itemName(this.itemName)
                 .itemDescription(this.itemDescription)
                 .itemType(this.itemType)
-                .itemValue(itemValue)
                 .itemQuestion(
-                        this.itemType.equals(ItemType.singleChoice) || this.itemType.equals(ItemType.multipleChoice)
+                        this.itemType.equals(ItemType.SingleChoice) || this.itemType.equals(ItemType.MultipleChoice)
                                 ?  itemQuestionList.stream()
                                     .map(
-                                        Item.ItemQuestion::toEntity
+                                        ItemQuestion::toEntity
                                     ).collect(Collectors.toList())
                                 : null
                 )
