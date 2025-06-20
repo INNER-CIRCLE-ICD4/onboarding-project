@@ -1,6 +1,7 @@
 package kr.innercircle.onboarding.survey.domain
 
 import jakarta.persistence.*
+import kr.innercircle.onboarding.survey.dto.request.CreateSurveyItemRequest
 
 /**
  * packageName : kr.innercircle.onboarding.survey.domain
@@ -38,4 +39,21 @@ class SurveyItem (
 
     @Column(nullable = false)
     var isDeleted: Boolean = false
-): BaseTimeEntity()
+): BaseTimeEntity() {
+    companion object {
+        fun from(
+            survey: Survey,
+            createSurveyItemRequest: CreateSurveyItemRequest,
+            orderNumber: Int
+        ): SurveyItem {
+            return SurveyItem(
+                survey = survey,
+                name = createSurveyItemRequest.name,
+                description = createSurveyItemRequest.description,
+                inputType = createSurveyItemRequest.inputType,
+                isRequired = createSurveyItemRequest.isRequired,
+                orderNumber = orderNumber
+            )
+        }
+    }
+}
