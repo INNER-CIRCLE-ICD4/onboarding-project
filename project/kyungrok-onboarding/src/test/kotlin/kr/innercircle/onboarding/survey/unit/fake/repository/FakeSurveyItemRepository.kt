@@ -1,5 +1,6 @@
 package kr.innercircle.onboarding.survey.unit.fake.repository
 
+import kr.innercircle.onboarding.survey.domain.Survey
 import kr.innercircle.onboarding.survey.domain.SurveyItem
 import kr.innercircle.onboarding.survey.repository.SurveyItemRepository
 
@@ -42,5 +43,9 @@ class FakeSurveyItemRepository: SurveyItemRepository {
 
     override fun findAll(): List<SurveyItem> {
         return storedSurveyItems.toList()
+    }
+
+    override fun findAllBySurveyAndIsDeleted(survey: Survey, isDeleted: Boolean): List<SurveyItem> {
+        return storedSurveyItems.filter { it.survey == survey && it.isDeleted == isDeleted }
     }
 }

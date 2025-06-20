@@ -1,5 +1,6 @@
 package kr.innercircle.onboarding.survey.unit.fake.repository
 
+import kr.innercircle.onboarding.survey.domain.SurveyItem
 import kr.innercircle.onboarding.survey.domain.SurveyItemOption
 import kr.innercircle.onboarding.survey.repository.SurveyItemOptionRepository
 
@@ -42,5 +43,10 @@ class FakeSurveyItemOptionRepository: SurveyItemOptionRepository {
 
     override fun saveAll(surveyItemOptions: List<SurveyItemOption>): List<SurveyItemOption> {
         return surveyItemOptions.map { save(it) }
+    }
+
+    override fun findAllBySurveyItemOrderByOrderNumber(surveyItem: SurveyItem): List<SurveyItemOption> {
+        return storedSurveyItemOptions.filter { it.surveyItem == surveyItem }
+            .sortedBy { it.orderNumber }
     }
 }
