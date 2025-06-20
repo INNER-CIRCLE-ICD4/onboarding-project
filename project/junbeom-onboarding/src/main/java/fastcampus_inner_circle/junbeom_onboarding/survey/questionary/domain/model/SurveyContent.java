@@ -29,4 +29,12 @@ public class SurveyContent {
         this.isRequired = isRequired;
         this.options = options;
     }
+
+    public void update(String name, String describe, SurveyContentType type, boolean isRequired, java.util.List<SurveyContentOption> options) {
+        this.name = name;
+        this.describe = describe;
+        this.type = type;
+        this.isRequired = isRequired;
+        this.options = options;
+    }
 }

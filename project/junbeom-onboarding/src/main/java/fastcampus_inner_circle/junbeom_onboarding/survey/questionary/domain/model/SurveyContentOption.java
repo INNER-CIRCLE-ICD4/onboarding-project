@@ -24,4 +24,8 @@ public class SurveyContentOption {
     public int hashCode() {
         return Objects.hash(text); // text만 포함
     }
+
+    public void update(String text) {
+        this.text = text;
+    }
 }

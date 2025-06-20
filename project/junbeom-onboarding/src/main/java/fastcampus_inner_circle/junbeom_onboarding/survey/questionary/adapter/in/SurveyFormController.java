@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import fastcampus_inner_circle.junbeom_onboarding.survey.questionary.adapter.in.dto.InsertFormRequest;
+import fastcampus_inner_circle.junbeom_onboarding.survey.questionary.adapter.in.dto.UpdateFormRequest;
 import fastcampus_inner_circle.junbeom_onboarding.survey.questionary.application.service.SurveyFormService;
 
 @RestController
@@ -31,6 +34,21 @@ public class SurveyFormController {
 
         SurveyForm surveyForm = surveyFormService.createSurveyForm(requestDto);
         return ResponseEntity.ok(surveyForm);
+    }
+
+    @PutMapping("/{formId}")
+    public ResponseEntity<?> updateSurvey(
+            @PathVariable Long formId,
+            @Valid @RequestBody UpdateFormRequest requestDto,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            bindingResult.getFieldErrors().forEach(error -> {
+                throw new ContentValidationException(error.getField(), error.getDefaultMessage());
+            });
+        }
+        SurveyForm updatedSurveyForm = surveyFormService.updateSurveyForm(formId, requestDto);
+        return ResponseEntity.ok(updatedSurveyForm);
     }
 
 } 
