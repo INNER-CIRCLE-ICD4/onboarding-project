@@ -1,6 +1,7 @@
 package kr.innercircle.onboarding.survey.domain
 
 import jakarta.persistence.*
+import kr.innercircle.onboarding.survey.dto.request.CreateSurveyRequest
 
 /**
  * packageName : kr.innercircle.onboarding.survey.domain
@@ -21,4 +22,13 @@ class Survey (
 
     @Column(columnDefinition = "TEXT")
     var description: String? = null
-): BaseTimeEntity()
+): BaseTimeEntity() {
+    companion object {
+        fun from(createSurveyRequest: CreateSurveyRequest): Survey {
+            return Survey(
+                name = createSurveyRequest.name,
+                description = createSurveyRequest.description
+            )
+        }
+    }
+}
