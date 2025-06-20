@@ -25,7 +25,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             FROM QuestionJpaEntity q
             left join fetch q.options
             where q.formsJpaEntity.id = :formId
-            and (q.deleted is null or q.deleted = :deleted)
+            and (:deleted is null or q.deleted = :deleted)
             """)
     List<QuestionJpaEntity> findRequiredByFormId(@Param("formId") Long formId, @Param("deleted") Character deleted);
 }
