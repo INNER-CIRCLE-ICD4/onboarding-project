@@ -1,5 +1,6 @@
 package kr.innercircle.onboarding.survey.repository
 
+import kr.innercircle.onboarding.survey.domain.Survey
 import kr.innercircle.onboarding.survey.domain.SurveyItem
 
 /**
@@ -13,4 +14,5 @@ interface SurveyItemRepository {
     fun save(surveyItem: SurveyItem): SurveyItem
     fun findById(id: Long): SurveyItem?
     fun findAll(): List<SurveyItem>
+    fun findAllBySurveyAndIsDeleted(survey: Survey, isDeleted: Boolean): List<SurveyItem>
 }

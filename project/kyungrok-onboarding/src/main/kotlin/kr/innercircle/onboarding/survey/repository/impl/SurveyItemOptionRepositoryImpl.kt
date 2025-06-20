@@ -1,5 +1,6 @@
 package kr.innercircle.onboarding.survey.repository.impl
 
+import kr.innercircle.onboarding.survey.domain.SurveyItem
 import kr.innercircle.onboarding.survey.domain.SurveyItemOption
 import kr.innercircle.onboarding.survey.repository.SurveyItemOptionJpaRepository
 import kr.innercircle.onboarding.survey.repository.SurveyItemOptionRepository
@@ -21,4 +22,5 @@ class SurveyItemOptionRepositoryImpl(
     override fun findById(id: Long): SurveyItemOption? = surveyItemOptionJpaRepository.findByIdOrNull(id)
     override fun findAll(): List<SurveyItemOption> = surveyItemOptionJpaRepository.findAll()
     override fun saveAll(surveyItemOptions: List<SurveyItemOption>): List<SurveyItemOption> = surveyItemOptionJpaRepository.saveAll(surveyItemOptions)
+    override fun findAllBySurveyItemOrderByOrderNumber(surveyItem: SurveyItem): List<SurveyItemOption> = surveyItemOptionJpaRepository.findAllBySurveyItemOrderByOrderNumber(surveyItem)
 }
