@@ -52,15 +52,12 @@ class SurveyTest {
             )
         )
 
-        val snapshot = """{"survey":"fake","response":"fake"}"""
-
         // when
-        val response = survey.createResponse(answers, snapshot)
+        val response = survey.createResponse(answers)
 
         // then
         assertThat(response.surveyId).isEqualTo(survey.id)
         assertThat(response.answers!!.values()).hasSize(1)
-        assertThat(response.snapshot).isEqualTo(snapshot)
     }
 
     @DisplayName("설문 제목이 비어 있으면 예외 발생")

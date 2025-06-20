@@ -22,12 +22,10 @@ class ResponseTest {
         val response = Response.of(
             surveyId = 100L,
             answers = answers,
-            snapshot = """{"survey": {}, "response": {}}"""
         )
 
         assertThat(response.surveyId).isEqualTo(100L)
         assertThat(response.answers?.values()).hasSize(1)
-        assertThat(response.snapshot).contains("survey")
     }
 
     @DisplayName("항목 이름 키워드와 응답값 키워드로 필터링하여 DTO 생성 반환")
@@ -49,7 +47,6 @@ class ResponseTest {
         val response = Response.of(
             surveyId = 1L,
             answers = Answers.of(listOf(answer1, answer2)),
-            snapshot = "{}"
         )
 
         val dtos = response.toFilteredDtos("취미","등산")
@@ -64,7 +61,6 @@ class ResponseTest {
         val response = Response(
             surveyId = 1L,
             answers = null,
-            snapshot = "{}"
         )
 
         val dtos = response.toFilteredDtos("질문", "응답")

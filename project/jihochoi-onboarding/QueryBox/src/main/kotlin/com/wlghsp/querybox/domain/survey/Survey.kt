@@ -22,14 +22,17 @@ class Survey (
         this.questions.update(request.questions)
     }
 
+    fun addQuestion(question: Question) {
+        this.questions.add(question)
+    }
+
     fun getQuestions(): List<Question> {
         return questions.values()
     }
-    fun createResponse(answers: Answers, snapshot: String): Response {
+    fun createResponse(answers: Answers): Response {
         return Response.of(
             surveyId = this.id,
             answers = answers,
-            snapshot = snapshot,
         )
     }
 

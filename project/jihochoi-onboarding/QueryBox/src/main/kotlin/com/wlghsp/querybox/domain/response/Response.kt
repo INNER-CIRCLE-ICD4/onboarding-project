@@ -1,7 +1,6 @@
 package com.wlghsp.querybox.domain.response
 
 import com.wlghsp.querybox.ui.dto.ResponseDto
-import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import support.domain.BaseRootEntity
@@ -12,9 +11,6 @@ class Response(
 
     @Embedded
     val answers: Answers? = Answers(),
-
-    @Column(columnDefinition = "TEXT", nullable = false)
-    val snapshot: String,
 
     id: Long = 0L
 ): BaseRootEntity<Response>(id) {
@@ -30,8 +26,10 @@ class Response(
     ): List<Answer> = this.answers?.filterAnswer(questionKeyword, answerKeyword) ?: emptyList()
 
     companion object {
-        fun of(surveyId: Long, answers: Answers, snapshot: String): Response {
-            return Response(surveyId, answers, snapshot)
+        fun of(surveyId: Long, answers: Answers): Response {
+            val response = Response(surveyId, answers)
+            response.registerEvent(ResponseSubmittedEvent(response.id, surveyId, answers))
+            return response
         }
     }
 }
