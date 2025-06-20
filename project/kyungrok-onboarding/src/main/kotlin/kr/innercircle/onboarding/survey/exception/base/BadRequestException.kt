@@ -8,4 +8,4 @@ package kr.innercircle.onboarding.survey.exception.base
  * description :
  */
 
-class BadRequestException(val errorCode: ErrorCode): RuntimeException()
+open class BadRequestException(val errorCode: ErrorCode): RuntimeException()
