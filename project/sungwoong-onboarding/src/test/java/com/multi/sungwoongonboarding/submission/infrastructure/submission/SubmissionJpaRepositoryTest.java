@@ -61,7 +61,7 @@ class SubmissionJpaRepositoryTest {
         entityManager.flush();
         entityManager.clear();
 
-        List<SubmissionJpaEntity> byFormId = submissionJpaRepository.findByFormId(save.getId());
+        List<SubmissionJpaEntity> byFormId = submissionJpaRepository.findByFormId(save.getId(), null, null);
 
         //Then
         assertThat(byFormId).isNotNull();
@@ -83,17 +83,6 @@ class SubmissionJpaRepositoryTest {
     }
 
     @Test
-    @DisplayName("Submission : findById")
-    public void jpa_조회_findById() {
-        //Given
-
-        //When
-
-        //Then
-
-    }
-
-    @Test
     @DisplayName("Submission : formId로 조회")
     public void findById() {
 
@@ -101,7 +90,7 @@ class SubmissionJpaRepositoryTest {
         Long formId = 1L;
 
         //When
-        List<SubmissionJpaEntity> byFormId = submissionJpaRepository.findByFormId(formId);
+        List<SubmissionJpaEntity> byFormId = submissionJpaRepository.findByFormId(formId, null, null);
 
         //Then
         assertThat(byFormId).isNotNull();

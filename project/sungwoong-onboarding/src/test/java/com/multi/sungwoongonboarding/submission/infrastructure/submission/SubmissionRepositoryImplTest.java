@@ -178,9 +178,9 @@ class SubmissionRepositoryImplTest {
 
 
         //When
-        when(submissionJpaRepository.findByFormId(any(Long.class))).thenReturn(mockSubmissions);
+        when(submissionJpaRepository.findByFormId(any(Long.class), any(), any())).thenReturn(mockSubmissions);
         when(optionsRepository.getOptionMapByFormId(any(Long.class))).thenReturn(optionsMap);
-        List<Submission> byFormId = submissionRepository.findByFormId(formId);
+        List<Submission> byFormId = submissionRepository.findByFormId(formId, null, null);
 
 
         //Then
@@ -190,6 +190,6 @@ class SubmissionRepositoryImplTest {
         assertThat(byFormId.get(0).getAnswers()).hasSize(1);
         assertThat(byFormId.get(1).getAnswers()).hasSize(1);
         assertThat(byFormId.get(1).getAnswers().get(0).getSelectedOptions()).hasSize(2);
-        verify(submissionJpaRepository).findByFormId(formId);
+        verify(submissionJpaRepository).findByFormId(formId, null, null);
     }
 }

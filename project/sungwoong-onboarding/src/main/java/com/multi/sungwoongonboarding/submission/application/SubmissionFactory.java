@@ -28,8 +28,10 @@ public class SubmissionFactory {
     public Submission createSubmission(SubmissionCreateRequest submissionCreateRequest) {
 
         Map<Long, Questions> questionMap = questionRepository.getRequiredQuestionMapByFormId(submissionCreateRequest.getFormId());
+
+
         validateSubmissionRequest(submissionCreateRequest, questionMap);
-        //
+
         List<Answers> answers = createAnswersFromRequests(submissionCreateRequest.getAnswerCreateRequests(), questionMap);
 
         return submissionCreateRequest.toDomainForSave(answers);

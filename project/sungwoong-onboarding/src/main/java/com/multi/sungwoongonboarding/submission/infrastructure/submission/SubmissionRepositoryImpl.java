@@ -50,10 +50,10 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
     }
 
     @Override
-    public List<Submission> findByFormId(Long formId) {
+    public List<Submission> findByFormId(Long formId, String questionText, String answerText) {
 
         // 제출지 entity 목록 조회
-        List<SubmissionJpaEntity> submissionJpaEntities = submissionJpaRepository.findByFormId(formId);
+        List<SubmissionJpaEntity> submissionJpaEntities = submissionJpaRepository.findByFormId(formId, questionText, answerText);
         Map<Long, Options> optionMapByFormId = optionsRepository.getOptionMapByFormId(formId);
 
         // 도메인 형태로 반환

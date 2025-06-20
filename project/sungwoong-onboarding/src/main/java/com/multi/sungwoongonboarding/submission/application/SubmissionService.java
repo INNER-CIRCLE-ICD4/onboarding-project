@@ -36,11 +36,11 @@ public class SubmissionService {
         return submissionRepository.save(submission);
     }
 
-    public List<SubmissionResponse> getSubmissionByFormId(Long formId) {
+    public List<SubmissionResponse> getSubmissionByFormId(Long formId, String questionText, String answerText) {
 
         // todo 응답 형식 개선 필요
         Forms form = formRepository.findById(formId);
-        List<Submission> submissions = submissionRepository.findByFormId(formId);
+        List<Submission> submissions = submissionRepository.findByFormId(formId, questionText, answerText);
 
         // 조회된 제출지를 순회하며 설문지 버전을 찾은 후 응답 형식으로 변환해준다.
         return submissions.stream().map(

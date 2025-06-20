@@ -12,5 +12,6 @@ public interface SubmissionRepository {
 
     Submission findById(Long id);
 
-    List<Submission> findByFormId(Long formId);
+
+    List<Submission> findByFormId(Long formId, String questionText, String answerText);
 }
