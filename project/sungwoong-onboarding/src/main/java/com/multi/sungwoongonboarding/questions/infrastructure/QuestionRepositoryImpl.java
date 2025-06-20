@@ -1,6 +1,5 @@
 package com.multi.sungwoongonboarding.questions.infrastructure;
 
-import com.multi.sungwoongonboarding.forms.infrastructure.FormsJpaEntity;
 import com.multi.sungwoongonboarding.questions.application.repository.QuestionRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import lombok.RequiredArgsConstructor;
@@ -26,15 +25,18 @@ public class QuestionRepositoryImpl implements QuestionRepository {
 
 
     @Override
-    public List<Questions> findRequiredByFormId(Long formId) {
-        return questionJpaRepository.findRequiredByFormId(formId).stream()
+    public List<Questions> findByFormId(Long formId, Character deleted) {
+        return questionJpaRepository.findRequiredByFormId(formId, deleted).stream()
                 .map(QuestionJpaEntity::toDomain).toList();
     }
 
-    @Override
-    public Map<Long, Questions> getRequiredQuestionMapByFormId(Long formId) {
 
-        return findRequiredByFormId(formId).stream()
+
+
+    @Override
+    public Map<Long, Questions> getQuestionMapByFormId(Long formId, Character deleted) {
+
+        return findByFormId(formId, deleted).stream()
                 .collect(Collectors.toMap(Questions::getId, Function.identity()));
     }
 }

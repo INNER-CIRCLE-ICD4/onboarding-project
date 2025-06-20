@@ -86,7 +86,7 @@ class SubmissionFactoryTest {
                 3L, 텍스트_질문
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
                 .userId("testUser")
@@ -124,7 +124,7 @@ class SubmissionFactoryTest {
                 1L, 단일_선택_질문(1L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
@@ -150,7 +150,7 @@ class SubmissionFactoryTest {
                 1L, 단일_선택_질문(1L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
@@ -180,7 +180,7 @@ class SubmissionFactoryTest {
                 1L, 단일_선택_질문(1L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
@@ -208,7 +208,7 @@ class SubmissionFactoryTest {
                 2L, 다중_선택_질문(2L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
@@ -235,7 +235,7 @@ class SubmissionFactoryTest {
                 1L, 다중_선택_질문(1L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
@@ -261,7 +261,7 @@ class SubmissionFactoryTest {
                 1L, 텍스트_질문(1L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
@@ -288,7 +288,7 @@ class SubmissionFactoryTest {
                 1L, 텍스트_질문(1L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
@@ -315,7 +315,7 @@ class SubmissionFactoryTest {
                 1L, 단일_선택_질문(1L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
@@ -342,7 +342,7 @@ class SubmissionFactoryTest {
                 1L, 단일_선택_질문(1L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)
@@ -371,7 +371,7 @@ class SubmissionFactoryTest {
                 3L, 단일_선택_질문(3L, true)
         );
 
-        when(questionRepository.getRequiredQuestionMapByFormId(1L)).thenReturn(questionMap);
+        when(questionRepository.getQuestionMapByFormId(1L, null)).thenReturn(questionMap);
 
         SubmissionCreateRequest request = SubmissionCreateRequest.builder()
                 .formId(1L)

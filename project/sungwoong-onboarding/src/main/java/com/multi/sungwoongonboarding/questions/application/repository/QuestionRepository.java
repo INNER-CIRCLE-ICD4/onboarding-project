@@ -9,7 +9,7 @@ public interface QuestionRepository {
 
     Questions findById(Long id);
 
-    List<Questions> findRequiredByFormId(Long formId);
+    List<Questions> findByFormId(Long formId, Character deleted);
 
-    Map<Long, Questions> getRequiredQuestionMapByFormId(Long formId);
+    Map<Long, Questions> getQuestionMapByFormId(Long formId, Character deleted);
 }

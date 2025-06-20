@@ -102,7 +102,7 @@ Content-Type: application/json
 }
 
 
-### PATCh 설문지 수정
+### PATCH 설문지 수정
 PATCH http://localhost:8080/api/v1/forms/1
 Content-Type: application/json
 
@@ -116,23 +116,19 @@ Content-Type: application/json
       "questionText": "나는 햄버거를 좋아한다22222.2222222",
       "questionType": "SINGLE_CHOICE",
       "isRequired": false,
-      "version": 1,
       "deleted": false,
       "options": [
         {
           "id": 1,
-          "optionText": "좋아한다",
-          "deleted": false
+          "optionText": "좋아한다"
         },
         {
           "id": 2,
-          "optionText": "가끔 땡긴다",
-          "deleted": false
+          "optionText": "가끔 땡긴다"
         },
         {
           "id": 3,
-          "optionText": "안좋아한다.",
-          "deleted": false
+          "optionText": "안좋아한다."
         }
       ]
     },
@@ -141,18 +137,15 @@ Content-Type: application/json
       "questionText": "치킨버거 vs 비프버거",
       "questionType": "MULTIPLE_CHOICE",
       "isRequired": false,
-      "version": 1,
       "deleted": false,
       "options": [
         {
           "id": 4,
-          "optionText": "치킨버거",
-          "deleted": false
+          "optionText": "치킨버거"
         },
         {
           "id": 5,
-          "optionText": "비프버거",
-          "deleted": false
+          "optionText": "비프버거"
         }
       ]
     },
@@ -161,30 +154,32 @@ Content-Type: application/json
       "questionText": "브랜드",
       "questionType": "MULTIPLE_CHOICE",
       "isRequired": false,
-      "version": 1,
       "deleted": false,
       "options": [
         {
           "id": 6,
-          "optionText": "맥도날드",
-          "deleted": false
+          "optionText": "맥도날드"
         },
         {
           "id": 7,
-          "optionText": "롯데리아",
-          "deleted": false
+          "optionText": "롯데리아"
         },
         {
           "id": 8,
-          "optionText": "버거킹",
-          "deleted": false
+          "optionText": "버거킹"
         },
         {
           "id": 9,
-          "optionText": "KFC",
-          "deleted": false
+          "optionText": "KFC"
         }
       ]
+    },
+    {
+      "questionText": "자세히 알려주세요",
+      "questionType": "SHORT_ANSWER",
+      "isRequired": true,
+      "deleted": false,
+      "options": []
     }
   ]
 }
@@ -200,16 +195,26 @@ Content-Type: application/json
   "userId": "sungwoong_test",
   "answerCreateRequests": [
     {
-      "questionId": 1,
-      "optionIds": [1]
+      "questionId": 4,
+      "optionIds": [10]
     },
     {
-      "questionId": 2,
-      "optionIds": [4]
+      "questionId": 5,
+      "optionIds": [13]
     },
     {
-      "questionId": 3,
-      "optionIds": [6,7,8]
+      "questionId": 6,
+      "optionIds": [15, 16]
+    },
+    {
+      "questionId": 7,
+      "answerText": "sdfkjajfaklsjfksjflksjdf"
     }
+
   ]
 }
+
+
+### GET 응답지 조회
+GET localhost:8080/api/v1/submission/1
+Content-Type: application/json

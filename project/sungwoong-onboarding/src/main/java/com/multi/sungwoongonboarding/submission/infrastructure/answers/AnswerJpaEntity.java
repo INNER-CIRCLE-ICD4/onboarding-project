@@ -37,6 +37,17 @@ public class AnswerJpaEntity {
 
 
     public static List<AnswerJpaEntity> fromDomain(Answers answers) {
+
+        if (answers.getSelectedOptions() == null) {
+
+            AnswerJpaEntity answerJpaEntity = new AnswerJpaEntity();
+            answerJpaEntity.id = answers.getId();
+            answerJpaEntity.questionId = answers.getQuestionId();
+            answerJpaEntity.answerText = answers.getAnswerText();
+
+            return List.of(answerJpaEntity);
+        }
+
         return answers.getSelectedOptions().stream().map(selectedOption -> {
             AnswerJpaEntity answerJpaEntity = new AnswerJpaEntity();
             answerJpaEntity.id = answers.getId();

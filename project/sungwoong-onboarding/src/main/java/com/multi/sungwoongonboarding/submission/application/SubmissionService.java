@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class SubmissionService {
 
     private final SubmissionFactory submissionFactory;
-
     private final SubmissionRepository submissionRepository;
     private final FormRepository formRepository;
 
@@ -39,13 +38,11 @@ public class SubmissionService {
     public List<SubmissionResponse> getSubmissionByFormId(Long formId, String questionText, String answerText) {
 
         // todo 응답 형식 개선 필요
-        Forms form = formRepository.findById(formId);
-        List<Submission> submissions = submissionRepository.findByFormId(formId, questionText, answerText);
+//        Forms form = formRepository.findById(formId);
+//        List<Submission> submissions = submissionRepository.findByFormId(formId, questionText, answerText);
 
         // 조회된 제출지를 순회하며 설문지 버전을 찾은 후 응답 형식으로 변환해준다.
-        return submissions.stream().map(
-                        submission -> SubmissionResponse.fromDomainWithForm(submission, form.findFormVersion(submission.getFormVersion())))
-                .toList();
+        return  submissionFactory.retrieveSubmission(formId, questionText, answerText);
     }
 
 }

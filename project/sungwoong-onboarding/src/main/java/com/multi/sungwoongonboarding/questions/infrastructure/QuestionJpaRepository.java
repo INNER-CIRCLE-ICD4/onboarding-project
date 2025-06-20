@@ -3,6 +3,7 @@ package com.multi.sungwoongonboarding.questions.infrastructure;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormsJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             FROM QuestionJpaEntity q
             left join fetch q.options
             where q.formsJpaEntity.id = :formId
-            and q.isRequired = true
+            and (q.deleted is null or q.deleted = :deleted)
             """)
-    List<QuestionJpaEntity> findRequiredByFormId(Long formId);
+    List<QuestionJpaEntity> findRequiredByFormId(@Param("formId") Long formId, @Param("deleted") Character deleted);
 }

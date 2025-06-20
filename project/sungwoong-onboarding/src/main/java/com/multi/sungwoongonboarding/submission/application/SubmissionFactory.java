@@ -1,13 +1,17 @@
 package com.multi.sungwoongonboarding.submission.application;
 
+import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
+import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.questions.application.repository.QuestionRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
+import com.multi.sungwoongonboarding.submission.application.repository.SubmissionRepository;
 import com.multi.sungwoongonboarding.submission.domain.Answers;
 import com.multi.sungwoongonboarding.submission.domain.SelectedOption;
 import com.multi.sungwoongonboarding.submission.domain.Submission;
 import com.multi.sungwoongonboarding.submission.dto.AnswerCreateRequest;
 import com.multi.sungwoongonboarding.submission.dto.SubmissionCreateRequest;
+import com.multi.sungwoongonboarding.submission.dto.SubmissionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +23,8 @@ import java.util.stream.Collectors;
 public class SubmissionFactory {
 
     private final QuestionRepository questionRepository;
+    private final SubmissionRepository submissionRepository;
+    private final FormRepository formRepository;
 
     /**
      * Submission : CreateRequest -> Domain 변환
@@ -27,8 +33,7 @@ public class SubmissionFactory {
      */
     public Submission createSubmission(SubmissionCreateRequest submissionCreateRequest) {
 
-        Map<Long, Questions> questionMap = questionRepository.getRequiredQuestionMapByFormId(submissionCreateRequest.getFormId());
-
+        Map<Long, Questions> questionMap = questionRepository.getQuestionMapByFormId(submissionCreateRequest.getFormId(), null);
 
         validateSubmissionRequest(submissionCreateRequest, questionMap);
 
@@ -36,6 +41,26 @@ public class SubmissionFactory {
 
         return submissionCreateRequest.toDomainForSave(answers);
     }
+
+
+    /**
+     * Submission 조회 기능
+     * @param formId
+     * @param questionText
+     * @param answerText
+     * @return
+     */
+    public List<SubmissionResponse> retrieveSubmission(Long formId, String questionText, String answerText) {
+        Forms form = formRepository.findById(formId);
+        Map<Long, Questions> questionMapByFormId = questionRepository.getQuestionMapByFormId(formId, null);
+        List<Submission> submissions = submissionRepository.findByFormId(formId, questionText, answerText);
+
+        return submissions.stream().map(
+                        submission -> SubmissionResponse.fromDomainWithForm(submission, form.findFormVersion(submission.getFormVersion()), questionMapByFormId))
+                .toList();
+    }
+
+
 
     /**
      * AnswerList : CreateRequest -> Domain 변환
@@ -118,8 +143,11 @@ public class SubmissionFactory {
                 .map(AnswerCreateRequest::getQuestionId)
                 .collect(Collectors.toSet());
 
+
+        Set<Long> notDeleteQuestions = questionMap.keySet().stream().filter(questionId -> !questionMap.get(questionId).isDeleted()).collect(Collectors.toSet());
+
         Set<Long> invalidQuestionIds = submissionQuestionIdSet.stream()
-                .filter(questionId -> !questionMap.containsKey(questionId))
+                .filter(questionId -> !notDeleteQuestions.contains(questionId))
                 .collect(Collectors.toSet());
 
         if (!invalidQuestionIds.isEmpty()) {
@@ -261,6 +289,7 @@ public class SubmissionFactory {
 
         Set<Long> requiredQuestionIds = questionMap.values().stream()
                 .filter(Questions::isRequired)
+                .filter(question -> !question.isDeleted())
                 .map(Questions::getId)
                 .collect(Collectors.toSet());
 
