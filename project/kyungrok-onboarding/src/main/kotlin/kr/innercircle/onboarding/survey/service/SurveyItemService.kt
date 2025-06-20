@@ -51,7 +51,7 @@ class SurveyItemService(
     fun updateSurveyItems(updateSurveyItemRequests: List<UpdateSurveyItemRequest>) {
         var orderNumber = 1
         updateSurveyItemRequests.forEach { updateSurveyItemRequest ->
-            val surveyItem = surveyItemRepository.findById(updateSurveyItemRequest.surveyItemId) ?: throw SurveyItemNotFoundException()
+            val surveyItem = getSurveyItemById(updateSurveyItemRequest.surveyItemId)
             surveyItem.hasDeleted()
 
             val newSurveyItem = surveyItemRepository.save(
@@ -59,5 +59,9 @@ class SurveyItemService(
             )
             surveyItemOptionService.createSurveyItemOptions(newSurveyItem, updateSurveyItemRequest.options)
         }
+    }
+
+    fun getSurveyItemById(surveyItemId: Long): SurveyItem {
+        return surveyItemRepository.findById(surveyItemId) ?: throw SurveyItemNotFoundException()
     }
 }

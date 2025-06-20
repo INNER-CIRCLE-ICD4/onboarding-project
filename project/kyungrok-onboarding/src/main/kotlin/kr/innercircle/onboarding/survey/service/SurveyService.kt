@@ -42,9 +42,13 @@ class SurveyService(
 
     @Transactional
     fun updateSurvey(surveyId: Long, updateSurveyRequest: UpdateSurveyRequest) {
-        val survey = surveyRepository.findById(surveyId) ?: throw SurveyNotFoundException()
+        val survey = getSurveyById(surveyId)
         survey.update(updateSurveyRequest)
 
         surveyItemService.updateSurveyItems(updateSurveyRequest.surveyItems)
+    }
+
+    fun getSurveyById(surveyId: Long): Survey {
+        return surveyRepository.findById(surveyId) ?: throw SurveyNotFoundException()
     }
 }
