@@ -27,7 +27,6 @@ public class SubmissionResponse {
                 .build();
     }
 
-
     public static SubmissionResponse fromDomainWithForm(Submission submission, Forms form) {
         return getSubmissionResponseBuilder(submission)
                 .formTitle(form.getTitle())

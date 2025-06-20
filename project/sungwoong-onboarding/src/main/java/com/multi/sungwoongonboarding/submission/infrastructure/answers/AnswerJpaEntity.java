@@ -5,14 +5,17 @@ import com.multi.sungwoongonboarding.options.domain.Options;
 import com.multi.sungwoongonboarding.submission.domain.Answers;
 import com.multi.sungwoongonboarding.submission.infrastructure.submission.SubmissionJpaEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "answers")
-public class AnswerJpaEntity extends BaseEntity {
+public class AnswerJpaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,6 +68,8 @@ public class AnswerJpaEntity extends BaseEntity {
         this.optionId = options.getId();
         this.answerText = options.getOptionText();
     }
+
+
 
     public Answers toDomain() {
         return Answers.builder()

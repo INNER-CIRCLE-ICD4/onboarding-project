@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class SubmissionRepositoryImpl implements SubmissionRepository {
 
     private final SubmissionJpaRepository submissionJpaRepository;
-
+    private final OptionsRepository optionsRepository;
     private final FormRepository formRepository;
 
     @Override
@@ -53,8 +54,9 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
         // 제출지 entity 목록 조회
         List<SubmissionJpaEntity> submissionJpaEntities = submissionJpaRepository.findByFormId(formId);
+        Map<Long, Options> optionMapByFormId = optionsRepository.getOptionMapByFormId(formId);
 
         // 도메인 형태로 반환
-        return submissionJpaEntities.stream().map(SubmissionJpaEntity::toDomain).toList();
+        return submissionJpaEntities.stream().map(submission -> submission.toDomainWithOptionMap(optionMapByFormId)).toList();
     }
 }
