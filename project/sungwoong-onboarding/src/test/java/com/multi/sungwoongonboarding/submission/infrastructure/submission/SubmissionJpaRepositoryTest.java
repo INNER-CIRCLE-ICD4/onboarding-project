@@ -3,31 +3,30 @@ package com.multi.sungwoongonboarding.submission.infrastructure.submission;
 import com.multi.sungwoongonboarding.submission.domain.Answers;
 import com.multi.sungwoongonboarding.submission.domain.SelectedOption;
 import com.multi.sungwoongonboarding.submission.domain.Submission;
-import com.multi.sungwoongonboarding.submission.infrastructure.answers.AnswerJpaEntity;
-import org.assertj.core.api.Assertions;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
 @EnableJpaAuditing
-@Sql(scripts = "/sql/form_insert_data.sql")
+@Sql(scripts = "/sql/submission_insert_data.sql")
 class SubmissionJpaRepositoryTest {
 
     @Autowired
     SubmissionJpaRepository submissionJpaRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
 
     @Test
@@ -49,7 +48,7 @@ class SubmissionJpaRepositoryTest {
                 .build();
         Submission submission = Submission.builder()
                 .formId(1L)
-                .userId("sungwoong")
+                .userId("sungwoong222")
                 .answers(List.of(answers))
                 .build();
 
@@ -58,67 +57,58 @@ class SubmissionJpaRepositoryTest {
 
         //When
         SubmissionJpaEntity save = submissionJpaRepository.save(submissionJpaEntity);
+
+        entityManager.flush();
+        entityManager.clear();
+
         List<SubmissionJpaEntity> byFormId = submissionJpaRepository.findByFormId(save.getId());
 
         //Then
         assertThat(byFormId).isNotNull();
-        assertThat(byFormId).hasSize(1);
+        assertThat(byFormId).hasSize(4);
         assertThat(byFormId.get(0).getAnswers()).hasSize(3);
         assertThat(byFormId.get(0).getAnswers().get(2).getOptionId()).isEqualTo(3L);
     }
 
     @Test
-    @DisplayName("Submission : Jpa 조회 기능")
-    public void jpa_조회() {
-
-        //Given
-        List<Submission> submissions = Arrays.asList(
-                Submission.builder()
-                        .formId(1L)
-                        .userId("sungwoong")
-                        .answers(List.of(
-                                Answers.builder()
-                                        .questionId(1L)
-                                        .selectedOptions(List.of(SelectedOption.builder().optionId(1L).build()))
-                                        .build(),
-                                Answers.builder()
-                                        .questionId(2L)
-                                        .selectedOptions(List.of(
-                                                SelectedOption.builder().optionId(3L).build(),
-                                                SelectedOption.builder().optionId(4L).build(),
-                                                SelectedOption.builder().optionId(5L).build()
-                                        )).build()
-                        )).build(),
-
-                Submission.builder()
-                        .formId(2L)
-                        .userId("sungwoong")
-                        .answers(List.of(
-                                Answers.builder()
-                                        .questionId(1L)
-                                        .selectedOptions(List.of(SelectedOption.builder().optionId(1L).build())).build(),
-                                Answers.builder()
-                                        .questionId(2L)
-                                        .selectedOptions(List.of(
-                                                SelectedOption.builder().optionId(3L).build(),
-                                                SelectedOption.builder().optionId(4L).build(),
-                                                SelectedOption.builder().optionId(5L).build()
-                                        )).build()
-                        )).build()
-        );
+    @DisplayName("Submission : JPA 조회")
+    public void jpa_조회하기() {
 
         //When
-        List<SubmissionJpaEntity> submissionJpaEntities = submissionJpaRepository.saveAll(submissions.stream().map(submission -> SubmissionJpaEntity.fromDomainWithFormVersion(submission, 1)).toList());
-        List<SubmissionJpaEntity> byFormId = submissionJpaRepository.findByFormId(1L);
+        List<SubmissionJpaEntity> all = submissionJpaRepository.findAll();
 
         //Then
-        assertThat(submissionJpaEntities).isNotNull();
-        assertThat(submissionJpaEntities).hasSize(2);
+        assertThat(all).isNotNull();
+        assertThat(all).hasSize(3);
+    }
+
+    @Test
+    @DisplayName("Submission : findById")
+    public void jpa_조회_findById() {
+        //Given
+
+        //When
+
+        //Then
+
+    }
+
+    @Test
+    @DisplayName("Submission : formId로 조회")
+    public void findById() {
+
+        //Given
+        Long formId = 1L;
+
+        //When
+        List<SubmissionJpaEntity> byFormId = submissionJpaRepository.findByFormId(formId);
+
+        //Then
         assertThat(byFormId).isNotNull();
-        assertThat(byFormId).hasSize(1);
-        assertThat(byFormId.get(0).getAnswers()).isNotNull();
-        assertThat(byFormId.get(0).getAnswers()).hasSize(4);
-        assertThat(byFormId.get(0).getAnswers().get(0).getOptionId()).isEqualTo(1L);
+        assertThat(byFormId).hasSize(3);
+        assertThat(byFormId.get(0).getAnswers()).hasSize(1);
+        assertThat(byFormId.get(1).getAnswers()).hasSize(1);
+        assertThat(byFormId.get(2).getAnswers()).hasSize(3);
     }
 
 }
