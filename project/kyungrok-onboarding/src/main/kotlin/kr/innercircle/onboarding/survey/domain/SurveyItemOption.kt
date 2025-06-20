@@ -1,6 +1,8 @@
 package kr.innercircle.onboarding.survey.domain
 
 import jakarta.persistence.*
+import kr.innercircle.onboarding.survey.dto.request.CreateSurveyItemOptionRequest
+import kr.innercircle.onboarding.survey.exception.InvalidSurveyItemTypeException
 
 /**
  * packageName : kr.innercircle.onboarding.survey.domain
@@ -25,4 +27,22 @@ class SurveyItemOption (
 
     @Column(nullable = false)
     var orderNumber: Int
-): BaseTimeEntity()
+): BaseTimeEntity() {
+    companion object {
+        fun of(
+            surveyItem: SurveyItem,
+            createSurveyItemOptionRequest: CreateSurveyItemOptionRequest,
+            orderNumber: Int
+        ): SurveyItemOption {
+            if(surveyItem.inputType != SurveyItemInputType.SINGLE_CHOICE && surveyItem.inputType != SurveyItemInputType.MULTIPLE_CHOICE) {
+                throw InvalidSurveyItemTypeException()
+            }
+
+            return SurveyItemOption(
+                surveyItem = surveyItem,
+                option = createSurveyItemOptionRequest.option,
+                orderNumber = orderNumber
+            )
+        }
+    }
+}
