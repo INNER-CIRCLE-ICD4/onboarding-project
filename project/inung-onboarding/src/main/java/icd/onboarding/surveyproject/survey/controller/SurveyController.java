@@ -5,10 +5,9 @@ import icd.onboarding.surveyproject.survey.controller.consts.ErrorCodes;
 import icd.onboarding.surveyproject.survey.controller.dto.*;
 import icd.onboarding.surveyproject.survey.controller.exception.CommonSurveyHttpException;
 import icd.onboarding.surveyproject.survey.service.SurveyService;
+import icd.onboarding.surveyproject.survey.service.domain.Response;
 import icd.onboarding.surveyproject.survey.service.domain.Survey;
-import icd.onboarding.surveyproject.survey.service.exception.InSufficientOptionException;
-import icd.onboarding.surveyproject.survey.service.exception.SurveyNotFoundException;
-import icd.onboarding.surveyproject.survey.service.exception.UnsupportedOptionException;
+import icd.onboarding.surveyproject.survey.service.exception.*;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -27,19 +26,13 @@ public class SurveyController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/{surveyId}/version/{version}")
-	ApiResponse<SurveyResponse> getSurvey (
-			@PathVariable(name = "surveyId") @NotNull UUID surveyId,
-			@PathVariable(name = "version") int version
-	) {
+	ApiResponse<SurveyResponse> getSurvey (@PathVariable(name = "surveyId") @NotNull UUID surveyId, @PathVariable(name = "version") int version) {
 		try {
 			Survey response = surveyService.findByIdAndVersion(surveyId, version);
 
 			return ApiResponse.just(SurveyResponse.fromDomain(response));
 		} catch (SurveyNotFoundException e) {
-			throw new CommonSurveyHttpException(
-					ErrorCodes.SURVEY_NOT_FOUND,
-					HttpStatus.NOT_FOUND
-			);
+			throw new CommonSurveyHttpException(ErrorCodes.SURVEY_NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -73,18 +66,21 @@ public class SurveyController {
 		}
 	}
 
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping("/{surveyId}/version/{version}/response")
-	ApiResponse<SubmitResponseResponse> submitResponse (
-			@PathVariable(name = "surveyId") @NotNull UUID surveyId,
-			@PathVariable(name = "version") int version,
-			@RequestBody @Valid SubmitResponseRequest request
-	) {
+	ApiResponse<SubmitResponseResponse> submitResponse (@PathVariable(name = "surveyId") @NotNull UUID surveyId, @PathVariable(name = "version") int version, @RequestBody @Valid SubmitResponseRequest request) {
 		try {
-			surveyService.submitResponse(request.toDomain(surveyId, version));
+			Response response = surveyService.submitResponse(request.toDomain(surveyId, version));
+
+			return ApiResponse.just(SubmitResponseResponse.fromDomain(response));
 		} catch (SurveyNotFoundException exception) {
 			throw new CommonSurveyHttpException(ErrorCodes.SURVEY_NOT_FOUND, HttpStatus.NOT_FOUND);
+		} catch (RequiredQuestionNotAnsweredException exception) {
+			throw new CommonSurveyHttpException(ErrorCodes.REQUIRED_ANSWERS, HttpStatus.BAD_REQUEST);
+		} catch (TooManyAnswersException exception) {
+			throw new CommonSurveyHttpException(ErrorCodes.TOO_MANY_ANSWER, HttpStatus.BAD_REQUEST);
+		} catch (DuplicateResponseException exception) {
+			throw new CommonSurveyHttpException(ErrorCodes.DUPLICATE_RESPONSE, HttpStatus.BAD_REQUEST);
 		}
-		return ApiResponse.just(null);
 	}
 }

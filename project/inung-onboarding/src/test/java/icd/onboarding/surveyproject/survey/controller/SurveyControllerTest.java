@@ -10,10 +10,9 @@ import icd.onboarding.surveyproject.survey.controller.exception.CommonSurveyHttp
 import icd.onboarding.surveyproject.survey.fixtures.ResponseFixtures;
 import icd.onboarding.surveyproject.survey.fixtures.SurveyFixtures;
 import icd.onboarding.surveyproject.survey.service.SurveyService;
+import icd.onboarding.surveyproject.survey.service.domain.Response;
 import icd.onboarding.surveyproject.survey.service.domain.Survey;
-import icd.onboarding.surveyproject.survey.service.exception.InSufficientOptionException;
-import icd.onboarding.surveyproject.survey.service.exception.SurveyNotFoundException;
-import icd.onboarding.surveyproject.survey.service.exception.UnsupportedOptionException;
+import icd.onboarding.surveyproject.survey.service.exception.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -440,11 +439,13 @@ class SurveyControllerTest {
 		@Test
 		@DisplayName("설문이 존재하지 않으면 404 status와 error를 반환한다.")
 		void throwExceptionWhenSurveyNotFound () throws Exception {
+			// given
 			SubmitResponseRequest request = ResponseFixtures.validSubmitRequest();
 
 			given(surveyService.submitResponse(any()))
 					.willThrow(new SurveyNotFoundException());
 
+			// when & then
 			mockMvc.perform(post(url + "/{surveyId}/version/{version}/response", surveyId, version)
 						   .content(toJson(request))
 						   .contentType(MediaType.APPLICATION_JSON))
@@ -457,32 +458,102 @@ class SurveyControllerTest {
 
 		@Test
 		@DisplayName("필수 질문에 대한 응답이 없으면 400 status와 error를 반환한다.")
-		void throwExceptionWhenAnswerIsNullForRequiredQuestion () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenAnswerIsNullForRequiredQuestion () throws Exception {
+			// given
+			SubmitResponseRequest request = ResponseFixtures.submitRequestWithoutRequiredAnswer();
+
+			given(surveyService.submitResponse(any()))
+					.willThrow(new RequiredQuestionNotAnsweredException());
+
+			// when & then
+			mockMvc.perform(post(url + "/{surveyId}/version/{version}/response", surveyId, version)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest())
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.REQUIRED_ANSWERS.message))
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.REQUIRED_ANSWERS.name()));
+
+			verify(surveyService, times(1)).submitResponse(any());
 		}
 
 		@Test
 		@DisplayName("설문 조사에 등록된 필수 질문이 누락된 경우 400 status와 error를 반환한다.")
-		void throwExceptionWhenExactlyAnswersForRequiredQuestion () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenExactlyAnswersForRequiredQuestion () throws Exception {
+			// given
+			SubmitResponseRequest request = ResponseFixtures.submitRequestMissingRequiredQuestion();
+
+			given(surveyService.submitResponse(any()))
+					.willThrow(new RequiredQuestionNotAnsweredException());
+
+			// when & then
+			mockMvc.perform(post(url + "/{surveyId}/version/{version}/response", surveyId, version)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest())
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.REQUIRED_ANSWERS.message))
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.REQUIRED_ANSWERS.name()));
+
+			verify(surveyService, times(1)).submitResponse(any());
 		}
 
 		@Test
 		@DisplayName("단일 선택 리스트형 질문에 응답이 2개면 400 status와 error를 반환한다.")
-		void throwExceptionWhenNotMatchedAnswersForSingleSelectQuestion () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenNotMatchedAnswersForSingleSelectQuestion () throws Exception {
+			// given
+			SubmitResponseRequest request = ResponseFixtures.submitRequestWithMultipleAnswersForSingleSelect();
+
+			given(surveyService.submitResponse(any()))
+					.willThrow(new TooManyAnswersException());
+
+			// when & then
+			mockMvc.perform(post(url + "/{surveyId}/version/{version}/response", surveyId, version)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest())
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.TOO_MANY_ANSWER.message))
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.TOO_MANY_ANSWER.name()));
+
+			verify(surveyService, times(1)).submitResponse(any());
 		}
 
 		@Test
 		@DisplayName("중복 응답을 제출한 경우 400 status와 error를 반환한다.")
-		void throwExceptionWhenDuplicateResponse () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenDuplicateResponse () throws Exception {
+			// given
+			SubmitResponseRequest request = ResponseFixtures.validSubmitRequest();
+
+			given(surveyService.submitResponse(any()))
+					.willThrow(new DuplicateResponseException());
+
+			// when & then
+			mockMvc.perform(post(url + "/{surveyId}/version/{version}/response", surveyId, version)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isBadRequest())
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.DUPLICATE_RESPONSE.message))
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.DUPLICATE_RESPONSE.name()));
+
+			verify(surveyService, times(1)).submitResponse(any());
 		}
 
 		@Test
 		@DisplayName("응답 정보가 올바른 경우 200 status와 data를 반환한다.")
-		void shouldSumbitResponse () {
-			throw new NotImplementedTestException();
+		void shouldSumbitResponse () throws Exception {
+			// given
+			SubmitResponseRequest request = ResponseFixtures.validSubmitRequest();
+			Response response = ResponseFixtures.basicResponse();
+
+			given(surveyService.submitResponse(any()))
+					.willReturn(response);
+
+			// when & then
+			mockMvc.perform(post(url + "/{surveyId}/version/{version}/response", surveyId, version)
+						   .content(toJson(request))
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isCreated())
+				   .andExpect(jsonPath("$.data.responseId").value(response.getResponseId().toString()));
+
+			verify(surveyService, times(1)).submitResponse(any());
 		}
 	}
 
