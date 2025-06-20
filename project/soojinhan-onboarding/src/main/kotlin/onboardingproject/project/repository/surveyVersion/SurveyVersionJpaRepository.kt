@@ -1,5 +1,6 @@
-package onboardingproject.project.repository
+package onboardingproject.project.repository.surveyVersion
 
+import onboardingproject.project.domain.Survey
 import onboardingproject.project.domain.SurveyVersion
 import org.springframework.data.jpa.repository.JpaRepository
 
@@ -10,4 +11,6 @@ import org.springframework.data.jpa.repository.JpaRepository
  * date        : 2025. 6. 14.
  * description :
  */
-interface SurveyVersionRepository : JpaRepository<SurveyVersion, String>
+interface SurveyVersionJpaRepository : JpaRepository<SurveyVersion, String> {
+    fun findFirstBySurveyOrderByVersionDesc(survey: Survey): SurveyVersion
+}

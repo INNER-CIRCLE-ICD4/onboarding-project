@@ -1,13 +1,14 @@
-package onboardingproject.project.repository
+package onboardingproject.project.repository.fieldOption
 
 import onboardingproject.project.domain.FieldOption
 import org.springframework.data.jpa.repository.JpaRepository
 
 /**
  * packageName : onboardingproject.project.repository
- * fileName    : FieldOptionRepository
+ * fileName    : FieldOptionJpaRepository
  * author      : hsj
- * date        : 2025. 6. 14.
+ * date        : 2025. 6. 20.
  * description :
  */
-interface FieldOptionRepository : JpaRepository<FieldOption, String>
+interface FieldOptionJpaRepository: JpaRepository<FieldOption, String> {
+}

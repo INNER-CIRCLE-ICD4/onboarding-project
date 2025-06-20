@@ -1,4 +1,4 @@
-package onboardingproject.project.repository
+package onboardingproject.project.repository.surveyField
 
 import onboardingproject.project.domain.SurveyField
 import org.springframework.data.jpa.repository.JpaRepository
@@ -10,4 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository
  * date        : 2025. 6. 14.
  * description :
  */
-interface SurveyFieldRepository : JpaRepository<SurveyField, String>
+interface SurveyFieldJpaRepository : JpaRepository<SurveyField, String> {
+    fun findAllBySurveyVersionId(surveyVersionId: String): List<SurveyField>
+}

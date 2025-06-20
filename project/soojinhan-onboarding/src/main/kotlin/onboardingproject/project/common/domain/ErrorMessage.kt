@@ -10,7 +10,8 @@ package onboardingproject.project.common.domain
 enum class ErrorMessage(
     val message: String
 ) {
-    INTERNAL_SERVER_ERROR("서버 내부 오류가 발생했습니다.")
+    INTERNAL_SERVER_ERROR("서버 내부 오류가 발생했습니다."),
+    OPTION_REQUIRED("선택형 항목일 경우, 선택 리스트를 입력해야 합니다.")
 
     ;
 }

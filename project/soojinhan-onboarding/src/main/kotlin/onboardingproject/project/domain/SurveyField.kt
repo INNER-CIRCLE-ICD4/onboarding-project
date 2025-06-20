@@ -30,7 +30,7 @@ class SurveyField(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var type: FieldType,
+    var fieldType: FieldType,
 
     @Column(nullable = false)
     var isRequired: Boolean,
@@ -39,13 +39,12 @@ class SurveyField(
     var isDeleted: Boolean = false,
 
     @Column(nullable = false)
-    var order: Int,
+    var fieldOrder: Int,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_version_id", nullable = false)
     val surveyVersion: SurveyVersion,
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id")
     val fieldOptions: List<FieldOption>?
 ) : BaseEntity()
