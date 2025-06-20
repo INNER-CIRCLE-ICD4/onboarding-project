@@ -19,4 +19,5 @@ enum class ErrorCode(
     INSUFFICIENT_SURVEY_ITEM_OPTIONS("ERR006", "설문조사 항목 선택 옵션은 최소 2개 이상이어야 합니다."),
     SURVEY_NOT_FOUND("ERR007", "해당 설문조사는 존재하지 않습니다."),
     SURVEY_ITEM_NOT_FOUND("ERR008", "해당 설문조사 항목은 존재하지 않습니다."),
+    INVALID_SURVEY_ITEM_OPTION_ANSWER("ERR009", "설문조사 항목에 대한 유효한 응답이 아닙니다. 선택 가능한 옵션중에서 다시 응답해주세요."),
 }

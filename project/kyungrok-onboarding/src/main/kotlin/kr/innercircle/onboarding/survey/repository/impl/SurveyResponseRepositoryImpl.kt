@@ -1,5 +1,6 @@
 package kr.innercircle.onboarding.survey.repository.impl
 
+import kr.innercircle.onboarding.survey.domain.Survey
 import kr.innercircle.onboarding.survey.domain.SurveyResponse
 import kr.innercircle.onboarding.survey.repository.SurveyResponseJpaRepository
 import kr.innercircle.onboarding.survey.repository.SurveyResponseRepository
@@ -18,4 +19,5 @@ class SurveyResponseRepositoryImpl(
     private val surveyResponseJpaRepository: SurveyResponseJpaRepository
 ): SurveyResponseRepository {
     override fun save(surveyResponse: SurveyResponse): SurveyResponse = surveyResponseJpaRepository.save(surveyResponse)
+    override fun findAllBySurvey(survey: Survey): List<SurveyResponse> = surveyResponseJpaRepository.findAllBySurvey(survey)
 }

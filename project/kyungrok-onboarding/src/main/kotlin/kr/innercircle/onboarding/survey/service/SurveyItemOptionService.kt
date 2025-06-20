@@ -45,4 +45,8 @@ class SurveyItemOptionService(
             GetSurveyItemOptionsResponse(surveyItemOption)
         }
     }
+
+    fun getSurveyItemOptionsBySurveyItem(surveyItem: SurveyItem): List<SurveyItemOption> {
+        return surveyItemOptionRepository.findAllBySurveyItemOrderByOrderNumber(surveyItem)
+    }
 }
