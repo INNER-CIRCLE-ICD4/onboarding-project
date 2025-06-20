@@ -8,6 +8,6 @@ import lombok.Getter;
 @Builder
 public class AnswerDetailOption {
     private Long id;
-    private Long contentId;
+    private Long optionId;
     private String text;
 }

@@ -17,11 +17,10 @@ import java.util.Optional;
 public class AnswerRepositoryImpl implements AnswerRepository {
 
     private final AnswerJpaRepository answerJpaRepository;
-    private final
 
     @Override
     public Answer save(Answer answer) {
-        AnswerJpaEntity entity = AnswerToEntityMapper.toEntity(answer);
+        AnswerJpaEntity entity = AnswerToEntityMapper.toJpaEntity(answer);
         return AnswerToDomainMapper.toDomain(answerJpaRepository.save(entity));
     }
 

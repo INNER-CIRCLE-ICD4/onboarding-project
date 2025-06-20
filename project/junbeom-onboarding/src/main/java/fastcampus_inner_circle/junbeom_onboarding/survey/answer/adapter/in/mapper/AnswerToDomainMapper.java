@@ -33,7 +33,10 @@ public class AnswerToDomainMapper {
     private static AnswerDetail convertDetail(AnswerRequest.AnswerDetail dto) {
         return AnswerDetail.builder()
                 .contentId(dto.getContentId())
-                .answerValue(dto.getValue())
+                .contentName(dto.getContentName())
+                .contentDescribe(dto.getContentDescribe())
+                .type(dto.getType())
+                .value(dto.getValue())
                 .options(convertOptions(dto.getOptions()))
                 .build();
     }
@@ -43,7 +46,7 @@ public class AnswerToDomainMapper {
 
         return details.stream()
                 .map(opt -> AnswerDetailOption.builder()
-                        .contentId(opt.getOptionId())
+                        .optionId(opt.getOptionId())
                         .text(opt.getText())
                         .build())
                 .collect(Collectors.toList());

@@ -103,7 +103,7 @@ class SurveyFormServiceTest {
                 .describe("귀하의 성함을 입력해 주세요.")
                 .type("short_answer")
                 .isRequired(true)
-                .options(Arrays.asList("조준범"))
+                .options(null)
                 .build());
         contents.add(InsertContentRequest.builder()
                 .name("만족도")
