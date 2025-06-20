@@ -14,7 +14,7 @@ data class ResponseCreateRequest(
                 questionName = it.questionName,
                 questionType = it.questionType,
                 answerValue = it.answerValue,
-                selectedOptionIds = it.selectedIds,
+                selectedOptionIds = it.selectedOptionIds,
                 selectedOptionTexts = it.selectedOptionTexts
             )
         })
@@ -26,6 +26,6 @@ data class AnswerRequest(
     val questionName: String,
     val questionType: QuestionType,
     val answerValue: String,
-    val selectedIds: List<Long>,
-    val selectedOptionTexts: List<String>,
+    val selectedOptionIds: List<Long> = emptyList(),
+    val selectedOptionTexts: List<String> = emptyList(),
 )

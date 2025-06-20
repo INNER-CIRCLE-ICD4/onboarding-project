@@ -51,15 +51,19 @@ class Questions(
 
     private fun hasNoDuplicateQuestionNames(): Boolean = values.distinctBy { it.name }.size == values.size
 
+    fun add(question: Question) {
+        this.values.add(question)
+    }
+
     fun values(): List<Question> = values.toList() // 방어적 복사
 
     fun size(): Int = values.size
 
     companion object {
         fun of(values: List<Question>): Questions {
-            val q = Questions(values.toMutableList())
-            q.validate()
-            return q
+            val questions = Questions(values.toMutableList())
+            questions.validate()
+            return questions
         }
     }
 }

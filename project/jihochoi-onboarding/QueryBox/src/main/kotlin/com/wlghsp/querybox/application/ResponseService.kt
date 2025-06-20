@@ -1,6 +1,5 @@
 package com.wlghsp.querybox.application
 
-import com.wlghsp.querybox.domain.response.SnapshotFactory
 import com.wlghsp.querybox.domain.survey.Survey
 import com.wlghsp.querybox.repository.ResponseRepository
 import com.wlghsp.querybox.repository.SurveyRepository
@@ -14,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional
 class ResponseService(
     private val responseRepository: ResponseRepository,
     private val surveyRepository: SurveyRepository,
-    private val snapshotFactory: SnapshotFactory,
     private val responseValidatorService: ResponseValidatorService,
 ) {
     fun submit(surveyId: Long, request: ResponseCreateRequest) {
@@ -23,9 +21,9 @@ class ResponseService(
         responseValidatorService.validateAnswers(survey.questions, request.answers)
 
         val answers = request.getAnswers()
-        val snapshot = snapshotFactory.createSnapshot(survey, answers)
 
-        responseRepository.save(survey.createResponse(answers, snapshot))
+        val response = survey.createResponse(answers)
+        responseRepository.save(response)
     }
 
     private fun findSurvey(surveyId: Long): Survey = (surveyRepository.findSurveyWithQuestionsById(surveyId)

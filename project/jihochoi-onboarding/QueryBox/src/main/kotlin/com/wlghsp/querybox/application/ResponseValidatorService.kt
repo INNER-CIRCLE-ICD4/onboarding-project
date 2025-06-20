@@ -13,12 +13,12 @@ class ResponseValidatorService {
 
         answerRequests.forEach { answer ->
             val question = questionsById[answer.questionId]
-                ?: throw IllegalArgumentException("응답 대상 문항이 설문에 존재하지 않습니다: ${answer.questionId}")
+                ?: throw IllegalArgumentException("응답 대상 항목이 설문에 존재하지 않습니다: ${answer.questionId}")
 
             if (question.required) {
                 val isEmptyText = answer.answerValue.isBlank()
-                val isEmptyChoices = answer.selectedIds.isEmpty()
-                require(!(isEmptyText && isEmptyChoices)) { "필수 문항에는 반드시 응답해야 합니다: ${answer.questionName}" }
+                val isEmptyChoices = answer.selectedOptionIds.isEmpty()
+                require(!(isEmptyText && isEmptyChoices)) { "필수 항목에는 반드시 응답해야 합니다: ${answer.questionName}" }
             }
         }
 

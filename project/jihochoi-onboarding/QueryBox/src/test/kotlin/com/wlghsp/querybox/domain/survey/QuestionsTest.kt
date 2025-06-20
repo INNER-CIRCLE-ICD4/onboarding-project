@@ -61,4 +61,18 @@ class QuestionsTest {
             .hasMessageContaining("항목 이름은 중복될 수 없습니다.")
     }
 
+    @DisplayName("Questions에 Question 추가 - 성공")
+    @Test
+    fun addQuestion_success() {
+        val questions = Questions.of(mutableListOf(
+            Question("Q1", "desc", QuestionType.SHORT_TEXT, true, null)
+        ))
+
+        val newQuestion = Question("Q2", "desc", QuestionType.LONG_TEXT, true, null)
+
+        assertDoesNotThrow {
+            questions.add(newQuestion)
+        }
+    }
+
 }
