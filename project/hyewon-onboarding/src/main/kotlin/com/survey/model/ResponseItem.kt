@@ -14,6 +14,7 @@ data class ResponseItem(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RESPONSE_ID", nullable = false)
+    @JsonBackReference
     val response: Response,
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,7 +31,7 @@ data class ResponseItem(
         joinColumns = [JoinColumn(name = "RESPONSE_ITEM_ID")],
         inverseJoinColumns = [JoinColumn(name = "SURVEY_OPTION_ID"),]
     )
-    val selectedOptions: List<SurveyOption>,
+    val selectedOptions: MutableList<SurveyOption> = mutableListOf(),
 
     @Column(name = "CREATE_DT")
     val createDt: LocalDateTime = LocalDateTime.now(),
@@ -43,7 +44,7 @@ data class ResponseItem(
         response = Response(),
         surveyItem = SurveyItem(),
         answer = "",
-        selectedOptions = listOf(),
+        selectedOptions = mutableListOf(),
         createDt = LocalDateTime.now(),
         updateDt = LocalDateTime.now()
     )

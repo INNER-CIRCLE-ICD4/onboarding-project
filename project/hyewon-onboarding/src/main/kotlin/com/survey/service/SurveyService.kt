@@ -195,10 +195,13 @@ class SurveyService(
 
 //    설문 응답 저장
     fun saveResponse(request: ResponseRequest): Response {
+//        최소 한개 이상의 답변이 있어야 함
         if(request.responseItems.isEmpty()) throw ResponseRequiredFieldMissingException()
 
+//        설문이 존재하는지 확인
         val survey = surveyRepository.findById(request.surveyId).orElseThrow{ ResponseSurveyNotFoundException() }
 
+//        response 생성, 저장
         val response = Response(
             survey = survey,
             respondent = request.respondent
@@ -206,27 +209,38 @@ class SurveyService(
 
         val savedResponse = responseRepository.save(response)
 
+//        답변 항목 검증, 변환
         val responseItems = request.responseItems.map {item ->
             val surveyItem = surveyItemRepository.findById(item.surveyItemId).orElseThrow {ResponseTypeMismatchException()}
 
-//            단일 선택형인데 선택된 옵션이 1개가 아닌 경우
-            if(surveyItem.type == "single_choice" && item.optionIds.size != 1) {
+//            주관식인지 선택형인지 검증
+            if(!item.answer.isNullOrBlank() && item.optionIds.isNotEmpty()) {
                 throw ResponseTypeMismatchException()
             }
 
-//            문항에 허용된 옵션 목록 가져오기
-            val allowedOptionIds = surveyOptionRepository.findAll().filter{it.surveyItem.id == surveyItem.id}.map { it.id }
+            when(surveyItem.type) {
+//                단일 선택형인데 선택된 옵션이 1개가 아닌 경우
+                "single_choice" -> if(item.optionIds.size != 1) throw ResponseTypeMismatchException()
+//                다중 선택형인데 선택된 옵션이 없을 경우
+                "multi_choice" -> if(item.optionIds.isEmpty()) throw ResponseRequiredFieldMissingException()
+//                주관식의 경우 optionIds 무시, answer 필수
+                else -> if(item.answer.isNullOrBlank()) throw ResponseRequiredFieldMissingException()
+            }
+
+//            설문 옵션이 active=true인 옵션만 허용
+            val activeOptionIds = surveyOptionRepository.findAll().filter{it.surveyItem.id == surveyItem.id && it.active}.map{it.id}
 
 //            응답이 허용된 옵션 목록에 포함되어 있는지 확인
-            if(!item.optionIds.all {it in allowedOptionIds}) {
+            if(!item.optionIds.all {it in activeOptionIds}) {
                 throw ResponseOptionNotAllowedException()
             }
 
+//            최종
             val selectedOptions = surveyOptionRepository.findAllById(item.optionIds)
             ResponseItem(
                 response = savedResponse,
                 surveyItem = surveyItem,
-                answer = item.answer,
+                answer = item.answer ?: "",
                 selectedOptions = selectedOptions
             )
         }

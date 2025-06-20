@@ -49,6 +49,6 @@ data class ResponseRequest(
  */
 data class ResponseItemRequest(
     val surveyItemId: UUID,
-    val answer: String,
+    val answer: String? = null,
     val optionIds: List<UUID> = emptyList()
 )

@@ -24,9 +24,9 @@ data class Response(
     @Column(name = "UPDATE_DT")
     val updateDt: LocalDateTime = LocalDateTime.now(),
 
-    @OneToMany(mappedBy = "response", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "response", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference   // Response → ResponseItem 관계의 부모
-    val responseItems: List<ResponseItem> = listOf(),
+    val responseItems: MutableList<ResponseItem> = mutableListOf(),
 
     @Column(name = "CREATE_DT")
     val createDt: LocalDateTime = LocalDateTime.now()
@@ -35,7 +35,7 @@ data class Response(
         id = UUID.randomUUID(),
         survey = Survey(),
         respondent = null,
-        responseItems = listOf(),
+        responseItems = mutableListOf(),
         createDt = LocalDateTime.now(),
         updateDt = LocalDateTime.now()
     )
