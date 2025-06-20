@@ -1,5 +1,6 @@
 package onboarding.survey.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import onboarding.survey.dto.CreateSurveyRequest;
 import onboarding.survey.dto.CreateSurveyResponse;
@@ -19,7 +20,7 @@ public class SurveyController {
     private final SurveyService surveyService;
 
     @PostMapping
-    public ResponseEntity<CreateSurveyResponse> createSurvey(@RequestBody CreateSurveyRequest request) {
+    public ResponseEntity<CreateSurveyResponse> createSurvey(@Valid @RequestBody CreateSurveyRequest request) {
         Long id = surveyService.createSurvey(request);
 
         return ResponseEntity
