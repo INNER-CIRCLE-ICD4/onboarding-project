@@ -1,10 +1,7 @@
 package fastcampus.onboarding.form.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +11,14 @@ import java.util.List;
 @Table(name = "item")
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(of = "itemSeq")
 public class Item {
 
     @Id
-    private Integer itemSeq;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long itemSeq;
+
     // Form 연관관계 설정 메서드
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="form_seq", nullable = false)
     private Form form;
@@ -40,11 +39,11 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Option> options = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-    private List<ItemResponse> responses = new ArrayList<>();
+    // @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+    // private List<ItemResponse> responses = new ArrayList<>();
 
     @Builder
-    public Item(Form form, Integer itemSeq,String itemTitle, String itemContent, ItemType itemType, boolean isRequired) {
+    public Item(Form form, Long itemSeq,String itemTitle, String itemContent, ItemType itemType, boolean isRequired) {
         this.form = form;
         this.itemSeq = itemSeq;
         this.itemTitle = itemTitle;
@@ -66,4 +65,10 @@ public class Item {
         this.itemType = itemType;
         this.isRequired = isRequired;
     }
+
+    // Item 연관관계 설정 메서드
+    public void setForm(Form form) {
+        this.form = form;
+    }
+
 }

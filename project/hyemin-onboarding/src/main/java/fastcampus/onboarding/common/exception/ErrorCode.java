@@ -16,6 +16,12 @@ public enum ErrorCode {
     INVALID_ANSWER(400,"C008","답변 형식이 유효하지 않습니다."),
     INVALID_OPTION(400,"C009","유효하지 않은 선택지가 포함되었습니다."),
 
+    RESPONSE_NOT_FOUND(400,"C010","응답이 존재하지 않습니다."),
+    NO_ANSWER(400,"C011","응답이 해당 설문에 속하지 않습니다."),
+    NO_ITEM_RESPONSE(400,"C012","응답에 문항 답변이 존재하지 않습니다."),
+    INVALID_ITEM_TYPE(400,"C013","알 수 없는 문항 타입입니다"),
+    TOO_MANY_ITEMS(400,"C014","항목은 10개이상 등록할 수 없습니다."),
+
     // 서버 에러 (500번대)
     INTERNAL_SERVER_ERROR(500, "S001", "서버 오류가 발생했습니다");
 

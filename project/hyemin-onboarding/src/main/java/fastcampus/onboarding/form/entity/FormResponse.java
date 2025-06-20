@@ -16,8 +16,7 @@ import java.util.List;
 public class FormResponse {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "form_response_seq_gen")
-    @SequenceGenerator(name = "form_response_seq_gen", sequenceName = "form_response_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long responseSeq;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,11 +1,8 @@
 package fastcampus.onboarding.form.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import jakarta.persistence.Id;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,12 +13,12 @@ import java.util.List;
 @Table(name = "form")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class Form {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "form_seq_gen")
-    @SequenceGenerator(name = "form_seq_gen", sequenceName = "form_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long formSeq;
 
     @Column(name="form_title", nullable = false, length = 200)
@@ -39,7 +36,7 @@ public class Form {
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items = new ArrayList<>();
 
-    @OneToMany(mappedBy = "form", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FormResponse> responses = new ArrayList<>();
 
     @Builder
@@ -55,9 +52,12 @@ public class Form {
         this.formContent = formContent;
         this.updatedAt = LocalDateTime.now();
     }
-
+    // 옵션 추가 메서드
     public void addItem(Item item) {
         this.items.add(item);
         item.setForm(this);
     }
+
+
+
 }

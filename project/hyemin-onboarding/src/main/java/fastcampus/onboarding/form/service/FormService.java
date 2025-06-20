@@ -31,7 +31,7 @@ public class FormService {
         try {
             // 1. 항목 개수 제한 검사
             if (dto.getItems().size() > 10) {
-                throw new IllegalArgumentException("항목은 최대 10개까지만 등록할 수 있습니다.");
+                throw new CustomException(ErrorCode.TOO_MANY_ITEMS);
             }
 
             // 2. 양식 생성
@@ -50,7 +50,6 @@ public class FormService {
                                 .itemContent(itemDto.getItemContent())
                                 .itemType(itemDto.getItemType())
                                 .isRequired(itemDto.getIsRequired())
-                                .itemSeq(i + 1)
                                 .build();
 
                         item.setForm(form);
@@ -63,8 +62,7 @@ public class FormService {
                         });
 
                         return item;
-                    })
-                    .collect(Collectors.toList());
+                    })                    .collect(Collectors.toList());
 
 
             form.setItems(itemList);
@@ -89,7 +87,7 @@ public class FormService {
             form.updateForm(dto.getFormTitle(), dto.getFormContent());
 
             //존재하는 문항 처리
-            Map<Integer, Item> existingItemMap = mapItemsById(form.getItems());
+            Map<Long, Item> existingItemMap = mapItemsById(form.getItems());
 
             //수정문항 처리
             List<Item> updatedItems = dto.getItems().stream()
@@ -107,12 +105,12 @@ public class FormService {
         }
     }
 
-    private Map<Integer, Item> mapItemsById(List<Item> items) {
+    private Map<Long, Item> mapItemsById(List<Item> items) {
         return items.stream()
                 .collect(Collectors.toMap(Item::getItemSeq, item -> item));
     }
 
-    private Item updateItem(ItemUpdateRequestDto itemDto, Map<Integer, Item> existingItemMap, Form form) {
+    private Item updateItem(ItemUpdateRequestDto itemDto, Map<Long, Item> existingItemMap, Form form) {
         Item item;
 
         if (itemDto.getItemSeq() != null && existingItemMap.containsKey(itemDto.getItemSeq())) {
@@ -133,7 +131,7 @@ public class FormService {
     }
 
     private void updateOptions(Item item, ItemUpdateRequestDto itemDto) {
-        Map<Integer, Option> existingOptionMap = item.getOptions().stream()
+        Map<Long, Option> existingOptionMap = item.getOptions().stream()
                 .collect(Collectors.toMap(Option::getOptionSeq, option -> option));
 
         List<Option> updatedOptions = itemDto.getOptions().stream()

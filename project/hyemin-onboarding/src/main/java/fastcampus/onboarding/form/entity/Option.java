@@ -16,8 +16,9 @@ import lombok.Setter;
 public class Option {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="option_seq")
-    private Integer optionSeq;
+    private Long optionSeq;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="item_seq")
@@ -27,7 +28,7 @@ public class Option {
     private String optionContent;
 
     @Builder
-    public Option(Item item, Integer optionSeq, String optionContent) {
+    public Option(Item item, Long optionSeq, String optionContent) {
         this.item = item;
         this.optionSeq = optionSeq;
         this.optionContent = optionContent;
