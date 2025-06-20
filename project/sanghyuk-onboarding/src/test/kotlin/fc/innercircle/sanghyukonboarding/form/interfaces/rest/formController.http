@@ -52,25 +52,47 @@ Content-Type: application/json
   "description": "티셔츠를 신청하려면 이름 및 사이즈를 입력하세요. (수정됨)",
   "questions": [
     {
-      "questionTemplateId": "01JY4AZT4Q1KB5CA766CJZ9TF0",
+      "title": "귀하의 성함은 무엇인가요?",
+      "description": "",
+      "type": "LONG_TEXT",
+      "required": true,
+      "selectableOptions": [
+      ]
+    },
+    {
+      "questionTemplateId": "01JY5CVHVW4MQBWFFV1CZPJV12",
       "title": "티셔츠 사이즈 2 (수정됨)",
       "description": "",
-      "type": "TEXT",
-      "required": false,
-      "selectableOptions": []    }
+      "type": "CHECKBOX",
+      "required": true,
+      "selectableOptions": [
+        {
+          "text": "XL"
+        },
+        {
+          "text": "L"
+        }
+      ]
+    }
   ]
 }
 
 ### Reply to Form
-POST http://localhost:8080/api/v1/forms/{{formId}}/submit
+POST http://localhost:8080/api/v1/forms/{{formId}}/replies
 Content-Type: application/json
 
 [
-    {
-        "questionTemplateId": "01JY3JP6M29X4ZW8KDD268H7GK",
-        "answer": "",
-        "selectableOptionIds": [
-          "01JY3JP6M5QFJ5HCYNY51YAD4V"
-        ]
-    }
+  {
+    "questionTemplateId": "01JY5DA8438FT9AW6JWESF67Z6",
+    "text": "",
+    "selectableOptionIds": [
+      "01JY5DA84CF7B5FEYHF4SDCWM4"
+    ]
+  }
 ]
+
+### Get Form Replies
+GET http://localhost:8080/api/v1/forms/{{formId}}/replies
+Accept: application/json
+
+

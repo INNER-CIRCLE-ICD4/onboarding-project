@@ -2,6 +2,6 @@ package fc.innercircle.sanghyukonboarding.formreply.domain.service.port
 
 import fc.innercircle.sanghyukonboarding.formreply.domain.model.FormReply
 
-interface FormReplyReader {
+interface FormReplyQueryRepository {
     fun getAllByFormId(formId: String): List<FormReply>
 }

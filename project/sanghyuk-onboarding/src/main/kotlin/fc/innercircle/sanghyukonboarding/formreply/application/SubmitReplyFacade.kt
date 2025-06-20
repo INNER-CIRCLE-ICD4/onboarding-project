@@ -1,12 +1,13 @@
 package fc.innercircle.sanghyukonboarding.formreply.application
 
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
-import fc.innercircle.sanghyukonboarding.form.service.port.FormQueryRepository
-import fc.innercircle.sanghyukonboarding.formreply.domain.dto.command.FormReplyCommand
+import fc.innercircle.sanghyukonboarding.form.domain.service.port.FormQueryRepository
+import fc.innercircle.sanghyukonboarding.formreply.domain.service.dto.param.AnswerParam
 import fc.innercircle.sanghyukonboarding.formreply.domain.model.FormReply
-import fc.innercircle.sanghyukonboarding.formreply.domain.service.FormReplyFactory
-import fc.innercircle.sanghyukonboarding.formreply.domain.service.port.FormReplyWriter
+import fc.innercircle.sanghyukonboarding.formreply.domain.service.ReplyService
+import fc.innercircle.sanghyukonboarding.formreply.domain.service.port.FormReplyCommandRepository
 import fc.innercircle.sanghyukonboarding.formreply.interfaces.rest.port.SubmitReplyUseCase
+import fc.innercircle.sanghyukonboarding.formreply.interfaces.rest.port.dto.request.AnswerRequest
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Component
 
@@ -14,16 +15,17 @@ import org.springframework.stereotype.Component
 @Component
 class SubmitReplyFacade(
     private val formQueryRepository: FormQueryRepository,
-    private val formReplyFactory: FormReplyFactory,
-    private val formReplyWriter: FormReplyWriter,
+    private val replyService: ReplyService,
+    private val formReplyCommandRepository: FormReplyCommandRepository,
 ): SubmitReplyUseCase {
 
     override fun submit(
         formId: String,
-        commands: List<FormReplyCommand>,
+        requests: List<AnswerRequest>,
     ): String {
         val form: Form = formQueryRepository.getById(formId)
-        val formReply: FormReply = formReplyFactory.create(form, commands)
-        return formReplyWriter.insertOrUpdate(formReply)
+        val params: List<AnswerParam> = requests.map { it.toParam() }
+        val formReply: FormReply = replyService.reply(form, params)
+        return formReplyCommandRepository.insertOrUpdate(formReply)
     }
 }

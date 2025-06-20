@@ -13,7 +13,7 @@ import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.Sel
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.QuestionSnapshotEntity
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.QuestionTemplateEntity
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.SelectableOptionEntity
-import fc.innercircle.sanghyukonboarding.form.service.port.FormQueryRepository
+import fc.innercircle.sanghyukonboarding.form.domain.service.port.FormQueryRepository
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 

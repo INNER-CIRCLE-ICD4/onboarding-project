@@ -1,6 +1,6 @@
 package fc.innercircle.sanghyukonboarding.common.infrastructure.clock
 
-import fc.innercircle.sanghyukonboarding.common.domain.service.ClockHolder
+import fc.innercircle.sanghyukonboarding.common.domain.service.port.ClockHolder
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 

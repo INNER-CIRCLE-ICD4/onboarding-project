@@ -3,9 +3,9 @@ package fc.innercircle.sanghyukonboarding.form.interfaces.rest
 import fc.innercircle.sanghyukonboarding.form.application.CreateFormFacade
 import fc.innercircle.sanghyukonboarding.form.application.EditFormFacade
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
+import fc.innercircle.sanghyukonboarding.form.domain.service.port.FormQueryRepository
 import fc.innercircle.sanghyukonboarding.form.interfaces.rest.port.dto.request.FormRequest
 import fc.innercircle.sanghyukonboarding.form.interfaces.rest.port.dto.response.FormResponse
-import fc.innercircle.sanghyukonboarding.form.service.port.FormQueryRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

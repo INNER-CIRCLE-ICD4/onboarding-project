@@ -1,6 +1,6 @@
-package fc.innercircle.sanghyukonboarding.formreply.domain.dto.command
+package fc.innercircle.sanghyukonboarding.formreply.domain.service.dto.param
 
-data class FormReplyCommand(
+data class AnswerParam(
     val questionTemplateId: String,
     val text: String = "",
     val selectableOptionIds: List<String> = emptyList()

@@ -9,7 +9,7 @@ import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.ent
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.QuestionSnapshotEntity
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.QuestionTemplateEntity
 import fc.innercircle.sanghyukonboarding.form.infrastructure.persistnece.jpa.entity.SelectableOptionEntity
-import fc.innercircle.sanghyukonboarding.form.service.port.FormCommandRepository
+import fc.innercircle.sanghyukonboarding.form.domain.service.port.FormCommandRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

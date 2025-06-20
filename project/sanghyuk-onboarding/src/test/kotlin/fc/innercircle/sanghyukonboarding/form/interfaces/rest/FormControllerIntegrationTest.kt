@@ -6,8 +6,8 @@ import fc.innercircle.sanghyukonboarding.configuration.MysqlTestContainerConfig
 import fc.innercircle.sanghyukonboarding.form.interfaces.rest.port.dto.request.FormRequest
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 import fc.innercircle.sanghyukonboarding.form.domain.model.vo.InputType
-import fc.innercircle.sanghyukonboarding.form.service.port.FormQueryRepository
-import fc.innercircle.sanghyukonboarding.form.service.port.FormCommandRepository
+import fc.innercircle.sanghyukonboarding.form.domain.service.port.FormQueryRepository
+import fc.innercircle.sanghyukonboarding.form.domain.service.port.FormCommandRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import org.hamcrest.CoreMatchers.endsWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc

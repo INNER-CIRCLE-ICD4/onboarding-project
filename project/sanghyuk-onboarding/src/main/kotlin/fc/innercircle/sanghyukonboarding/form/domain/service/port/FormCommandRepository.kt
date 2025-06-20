@@ -1,4 +1,4 @@
-package fc.innercircle.sanghyukonboarding.form.service.port
+package fc.innercircle.sanghyukonboarding.form.domain.service.port
 
 import fc.innercircle.sanghyukonboarding.form.domain.model.Form
 
