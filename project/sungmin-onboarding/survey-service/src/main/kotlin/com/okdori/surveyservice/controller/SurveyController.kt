@@ -1,6 +1,8 @@
 package com.okdori.surveyservice.controller
 
+import com.okdori.surveyservice.dto.PagedResponse
 import com.okdori.surveyservice.dto.Payload
+import com.okdori.surveyservice.dto.ResponseSearchDto
 import com.okdori.surveyservice.dto.SurveyCreateDto
 import com.okdori.surveyservice.dto.SurveyAnswerCreateDto
 import com.okdori.surveyservice.dto.SurveyAnswerResponseDto
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 /**
@@ -65,6 +68,24 @@ class SurveyController(
             "응답이 제출되었습니다.",
             request.servletPath,
             surveyService.createSurveyResponse(surveyId, surveyAnswerCreateDto)
+        )
+    }
+
+    @GetMapping("/{surveyId}/responses")
+    fun getSurveyResponse(
+        @PathVariable surveyId: String,
+        @RequestParam itemName: String? = null,
+        @RequestParam answerValue: String? = null,
+        @RequestParam responseUser: String? = null,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        request: HttpServletRequest,
+    ): Payload<PagedResponse<ResponseSearchDto>> {
+        return Payload(
+            HttpStatus.OK,
+            "응답 조회가 완료되었습니다.",
+            request.servletPath,
+            surveyService.getSurveyResponse(surveyId, itemName, answerValue, responseUser, page, size)
         )
     }
 }

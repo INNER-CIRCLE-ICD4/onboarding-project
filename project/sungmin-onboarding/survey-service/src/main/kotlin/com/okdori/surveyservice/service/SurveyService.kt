@@ -3,6 +3,8 @@ package com.okdori.surveyservice.service
 import com.okdori.surveyservice.domain.ItemType
 import com.okdori.surveyservice.domain.QSurveyItem.surveyItem
 import com.okdori.surveyservice.domain.QSurveyItemOption.surveyItemOption
+import com.okdori.surveyservice.domain.QSurveyResponse.surveyResponse
+import com.okdori.surveyservice.domain.QSurveyResponseAnswer.surveyResponseAnswer
 import com.okdori.surveyservice.domain.Survey
 import com.okdori.surveyservice.domain.SurveyItem
 import com.okdori.surveyservice.domain.SurveyItemOption
@@ -12,6 +14,8 @@ import com.okdori.surveyservice.dto.AnswerCreateDto
 import com.okdori.surveyservice.dto.AnswerResponseDto
 import com.okdori.surveyservice.dto.ItemResponseDto
 import com.okdori.surveyservice.dto.NormalizedAnswer
+import com.okdori.surveyservice.dto.PagedResponse
+import com.okdori.surveyservice.dto.ResponseSearchDto
 import com.okdori.surveyservice.dto.SurveyCreateDto
 import com.okdori.surveyservice.dto.SurveyAnswerCreateDto
 import com.okdori.surveyservice.dto.SurveyAnswerResponseDto
@@ -21,6 +25,7 @@ import com.okdori.surveyservice.exception.BadRequestException
 import com.okdori.surveyservice.exception.ErrorCode
 import com.okdori.surveyservice.exception.ErrorCode.*
 import com.okdori.surveyservice.exception.NotFoundException
+import com.okdori.surveyservice.repository.SearchCondition
 import com.okdori.surveyservice.repository.SurveyItemOptionRepository
 import com.okdori.surveyservice.repository.SurveyItemRepository
 import com.okdori.surveyservice.repository.SurveyRepository
@@ -30,6 +35,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.collections.List
 
 /**
  * packageName    : com.okdori.surveyservice.service
@@ -43,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class SurveyService(
     private val queryFactory: JPAQueryFactory,
+    private val searchCondition: SearchCondition,
 
     private val surveyRepository: SurveyRepository,
     private val surveyItemRepository: SurveyItemRepository,
@@ -164,7 +171,7 @@ class SurveyService(
                     val surveyItem = surveyItemsMap[itemId]!!.surveyItem
                     SurveyResponseAnswer(surveyResponse, surveyItem).apply {
                         itemName = surveyItem.itemName
-                        answer = values
+                        answer = values.toString()
                     }
                 }
             )
@@ -254,5 +261,84 @@ class SurveyService(
         require(isValidOption || isOtherValue) {
             throw BadRequestException(INVALID_OPTION_NAME)
         }
+    }
+
+    @Transactional(readOnly = true)
+    fun getSurveyResponse(
+        surveyId: String,
+        itemName: String?,
+        answerValue: String?,
+        responseUser: String?,
+        page: Int = 0,
+        size: Int = 20,
+    ): PagedResponse<ResponseSearchDto> {
+        val responseIds = queryFactory
+            .select(surveyResponse.id)
+            .from(surveyResponse)
+            .where(
+                surveyResponse.survey.id.eq(surveyId),
+                searchCondition.responseUser(responseUser),
+                searchCondition.answerCondition(itemName, answerValue)
+            )
+            .orderBy(surveyResponse.id.desc())
+            .offset((page * size).toLong())
+            .limit(size.toLong())
+            .fetch()
+
+        if (responseIds.isEmpty()) return PagedResponse.empty()
+
+        val results = queryFactory
+            .select(
+                surveyResponse.id,
+                surveyResponse.responseUser,
+                surveyResponse.createdDate,
+                surveyResponseAnswer.id,
+                surveyResponseAnswer.itemName,
+                surveyResponseAnswer.answer
+            )
+            .from(surveyResponse)
+            .leftJoin(surveyResponseAnswer).on(surveyResponse.id.eq(surveyResponseAnswer.surveyResponse.id))
+            .where(surveyResponse.id.`in`(responseIds))
+            .orderBy(surveyResponse.id.desc())
+            .fetch()
+
+        val content = results
+            .groupBy { it.get(surveyResponse.id)!! }
+            .map { (responseId, tuples) ->
+                val first = tuples.first()
+                ResponseSearchDto(
+                    responseId = responseId,
+                    responseUser = first.get(surveyResponse.responseUser),
+                    createdDate = first.get(surveyResponse.createdDate)!!,
+                    answers = tuples.mapNotNull { tuple ->
+                        tuple.get(surveyResponseAnswer.id)?.let {
+                            AnswerResponseDto(
+                                answerId = it,
+                                itemName = tuple.get(surveyResponseAnswer.itemName)!!,
+                                answer = tuple.get(surveyResponseAnswer.answer)!!
+                            )
+                        }
+                    }
+                )
+            }
+
+        val totalCount = queryFactory
+            .select(surveyResponse.count())
+            .from(surveyResponse)
+            .where(
+                surveyResponse.survey.id.eq(surveyId),
+                searchCondition.responseUser(responseUser),
+                searchCondition.answerCondition(itemName, answerValue)
+            )
+            .fetchOne() ?: 0L
+
+        return PagedResponse(
+            content = content,
+            page = page,
+            size = size,
+            totalElements = totalCount,
+            totalPages = (totalCount + size - 1) / size,
+            last = page >= (totalCount + size - 1) / size - 1
+        )
     }
 }

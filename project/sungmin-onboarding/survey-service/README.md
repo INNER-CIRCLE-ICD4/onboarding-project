@@ -445,12 +445,7 @@
   "timestamp": "2025-06₩-14T15:00:00",
   "error": null,
   "data": {
-    "survey": {
-      "surveyId": "SUR1234567890",
-      "surveyName": "고객 만족도 조사",
-      "surveyDescription": "서비스 개선을 위한 고객 만족도 조사입니다."
-    },
-    "responses": [
+    "content": [
       {
         "responseId": "RES1234567890",
         "responseUser": null,
@@ -471,14 +466,11 @@
       }
       // ... 다른 응답들
     ],
-    "pagination": {
-      "page": 0,
-      "size": 20,
-      "totalElements": 50,
-      "totalPages": 3,
-      "first": true,
-      "last": false
-    }
+    "page": 0,
+    "size": 0,
+    "totalElements": 0,
+    "totalPages": 0,
+    "last": true
   }
 }
 ```
