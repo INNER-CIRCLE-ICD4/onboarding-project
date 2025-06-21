@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import icd.onboarding.surveyproject.common.NotImplementedTestException;
 import icd.onboarding.surveyproject.survey.common.controller.GlobalExceptionHandler;
 import icd.onboarding.surveyproject.survey.controller.consts.ErrorCodes;
-import icd.onboarding.surveyproject.survey.controller.dto.*;
-import icd.onboarding.surveyproject.survey.controller.exception.CommonSurveyHttpException;
+import icd.onboarding.surveyproject.survey.controller.dto.request.*;
+import icd.onboarding.surveyproject.survey.controller.dto.response.SurveyResponse;
 import icd.onboarding.surveyproject.survey.fixtures.ResponseFixtures;
 import icd.onboarding.surveyproject.survey.fixtures.SurveyFixtures;
 import icd.onboarding.surveyproject.survey.service.SurveyService;
@@ -20,7 +20,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -560,16 +559,40 @@ class SurveyControllerTest {
 	@DisplayName("응답 조회")
 	@Nested
 	class GetResponse {
+		String url = "/api/v1/survey";
+		UUID surveyId = UUID.randomUUID();
+		int version = 1;
+
 		@Test
 		@DisplayName("요청한 설문 조사의 응답이 없으면 404 status와 error를 반환한다.")
-		void throwExceptionWhenResponseNotFoundBySurveyInfo () {
-			throw new NotImplementedTestException();
+		void throwExceptionWhenResponseNotFoundBySurveyInfo () throws Exception {
+			// given
+			given(surveyService.findResponsesBySurvey(surveyId, version))
+					.willThrow(new SurveyResponseNotFoundException());
+
+			// when & then
+			mockMvc.perform(get(url + "/{surveyId}/version/{version}/response", surveyId, version)
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isNotFound())
+				   .andExpect(jsonPath("$.error.message").value(ErrorCodes.RESPONSE_NOT_FOUNT.message))
+				   .andExpect(jsonPath("$.error.code").value(ErrorCodes.RESPONSE_NOT_FOUNT.name()));
+
+			verify(surveyService, times(1)).findResponsesBySurvey(eq(surveyId), eq(version));
 		}
 
 		@Test
 		@DisplayName("설문 조사에 대한 응답이 존재하면 200 status와 data를 반환한다.")
-		void shouldGetResponsesBySurveyInfo () {
-			throw new NotImplementedTestException();
+		void shouldGetResponsesBySurveyInfo () throws Exception {
+			List<Response> responseList = List.of(ResponseFixtures.basicResponse());
+			given(surveyService.findResponsesBySurvey(surveyId, version))
+					.willReturn(responseList);
+
+			// when & then
+			mockMvc.perform(get(url + "/{surveyId}/version/{version}/response", surveyId, version)
+						   .contentType(MediaType.APPLICATION_JSON))
+				   .andExpect(status().isOk());
+
+			verify(surveyService, times(1)).findResponsesBySurvey(eq(surveyId), eq(version));
 		}
 	}
 

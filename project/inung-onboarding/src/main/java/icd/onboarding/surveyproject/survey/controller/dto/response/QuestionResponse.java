@@ -1,4 +1,4 @@
-package icd.onboarding.surveyproject.survey.controller.dto;
+package icd.onboarding.surveyproject.survey.controller.dto.response;
 
 import icd.onboarding.surveyproject.survey.service.domain.Question;
 

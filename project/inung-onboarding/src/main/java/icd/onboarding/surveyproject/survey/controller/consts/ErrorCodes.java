@@ -4,6 +4,7 @@ public enum ErrorCodes {
 
 	/* 404 Not Found */
 	SURVEY_NOT_FOUND("설문 조사를 찾을 수 없습니다."),
+	RESPONSE_NOT_FOUNT("설문 조사에 대한 응답이 없습니다."),
 
 	/* 400 Bad Request */
 	UNSUPPORTED_OPTION("옵션을 지원하지 않는 질문 유형입니다."),

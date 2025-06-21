@@ -1,7 +1,7 @@
 package icd.onboarding.surveyproject.survey.fixtures;
 
-import icd.onboarding.surveyproject.survey.controller.dto.SubmitAnswerRequest;
-import icd.onboarding.surveyproject.survey.controller.dto.SubmitResponseRequest;
+import icd.onboarding.surveyproject.survey.controller.dto.request.SubmitAnswerRequest;
+import icd.onboarding.surveyproject.survey.controller.dto.request.SubmitResponseRequest;
 import icd.onboarding.surveyproject.survey.service.domain.Response;
 
 import java.util.List;
