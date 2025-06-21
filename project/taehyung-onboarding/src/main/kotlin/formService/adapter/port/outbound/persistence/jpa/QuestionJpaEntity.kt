@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "question")
@@ -29,6 +30,8 @@ class QuestionJpaEntity(
     var inputType: Question.QuestionInputType,
     @Column
     var required: Boolean,
+    @Column
+    var deletedAt: LocalDateTime? = null,
 ) {
     @OneToMany(mappedBy = "question", cascade = [CascadeType.PERSIST])
     protected val mutableOptions: MutableList<QuestionOptionJpaEntity> = mutableListOf()

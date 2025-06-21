@@ -21,7 +21,7 @@ class SurveyFormPersistenceAdapterTest(
     @DisplayName("jpa 를 이용해서 단답형 설문지 엔티티를 삽입 할 수 있어야된다.")
     fun jpaSurveyFormSaveTest() {
         // given
-        val fixtureSurveyForm = getFixtureSurveyForm(1, listOf(Question.QuestionInputType.SHORT_TEXT))
+        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SHORT_TEXT))
 
         // when
         persistenceAdapter.save(fixtureSurveyForm)
@@ -41,7 +41,7 @@ class SurveyFormPersistenceAdapterTest(
     @DisplayName("jpa 를 이용해서 단일 리스트 설문지 엔티티를 삽입 할 수 있어야된다.")
     fun jpaQuestionOptionsSaveTest() {
         // given
-        val fixtureSurveyForm = getFixtureSurveyForm(1, listOf(Question.QuestionInputType.SINGLE_CHOICE), true, 1)
+        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SINGLE_CHOICE), true, 1)
 
         // when
         persistenceAdapter.save(fixtureSurveyForm)
@@ -60,6 +60,36 @@ class SurveyFormPersistenceAdapterTest(
                 .options
                 ?.get(0)
                 ?.value!!,
+        )
+    }
+
+    @Test
+    @DisplayName("jpa 를 이용해서 설문지 엔티티를 상태 변경이 이뤄져야된다.")
+    fun jpaQuestionOptionsUpdateTest() {
+        // given
+        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SINGLE_CHOICE), true, 1)
+        persistenceAdapter.save(fixtureSurveyForm)
+
+        val updateSurveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SINGLE_CHOICE), true, 1)
+
+        val entity = surveyFormJpaRepository.findById(fixtureSurveyForm.id).get()
+
+        // when
+        entity.update(updateSurveyForm)
+
+        surveyFormJpaRepository.saveAndFlush(entity)
+
+        // then
+        assertThat(entity.surveyName).isEqualTo(updateSurveyForm.surveyName)
+        assertThat(entity.description).isEqualTo(updateSurveyForm.description)
+        assertThat(entity.questions[0].name).isEqualTo(updateSurveyForm.questions[0].name)
+        assertThat(entity.questions[0].description).isEqualTo(updateSurveyForm.questions[0].description)
+        assertThat(entity.questions[0].required).isEqualTo(updateSurveyForm.questions[0].required)
+        assertThat(entity.questions[0].options[0].option).isEqualTo(
+            updateSurveyForm.questions[0]
+                .options
+                ?.get(0)
+                ?.value,
         )
     }
 }

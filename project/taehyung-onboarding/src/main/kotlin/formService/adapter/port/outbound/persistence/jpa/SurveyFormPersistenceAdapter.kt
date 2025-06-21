@@ -62,6 +62,7 @@ class SurveyFormPersistenceAdapter(
                         description = q.description,
                         required = q.required,
                         inputType = q.inputType,
+                        isRemoved = q.deletedAt?.let { true } ?: false,
                         options =
                             q.options.map { qo ->
                                 QuestionOption(
@@ -72,5 +73,15 @@ class SurveyFormPersistenceAdapter(
                     )
                 },
         )
+    }
+
+    override fun update(survey: SurveyForm) {
+        val entity =
+            surveyFormJpaRepository
+                .findById(
+                    survey.id,
+                ).orElseThrow { throw EntityNotFoundException("surveyForm entity is not found by ${survey.id}") }
+
+        entity.update(survey)
     }
 }

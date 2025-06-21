@@ -1,6 +1,7 @@
 package formService.application
 
 import formService.application.port.inbound.CreateSurveyFormUseCase
+import formService.application.port.inbound.ModifySurveyFormUseCase
 import formService.application.port.outbound.SurveyFormRepository
 import formService.domain.Question
 import formService.domain.SurveyForm
@@ -66,12 +67,10 @@ class SurveyFormServiceTest {
     @DisplayName("사용자는 설문 조사 조회 시 id 기반으로 조회 할 수 있어야된다.")
     fun readOneSurveyFormTest() {
         // given
-        val surveyForm = getFixtureSurveyForm(1, listOf(Question.QuestionInputType.SHORT_TEXT))
+        val surveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SHORT_TEXT))
 
         val surveyFormService = SurveyFormService(repository)
         repository.save(surveyForm)
-
-        println(surveyForm)
 
         // when
         val retrieveSurveyForm = surveyFormService.retrieveSurveyForm(surveyForm.id)
@@ -81,15 +80,54 @@ class SurveyFormServiceTest {
     }
 
     @Test
-    @DisplayName("사용자는 설문 조사 조회 시 id 가 없으면 예외가 발생되어야된다.")
-    fun readOneNotFound() {
+    @DisplayName("사용자는 설문 조사를 수정 할 수 있어야된다. 수정 시 설문 항목 삭제도 포함한다.")
+    fun modifySurveyFormTest() {
         // given
-        val surveyForm = getFixtureSurveyForm(1, listOf(Question.QuestionInputType.SHORT_TEXT))
+        val surveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SHORT_TEXT), true, 1, true)
 
         val surveyFormService = SurveyFormService(repository)
         repository.save(surveyForm)
 
-        println(surveyForm)
+        // when
+        val command =
+            ModifySurveyFormUseCase.ModifySurveyFormCommand(
+                id = surveyForm.id,
+                surveyName = surveyForm.surveyName,
+                description = surveyForm.description,
+                questions =
+                    surveyForm.questions.map {
+                        ModifySurveyFormUseCase.ModifySurveyFormQuestion(
+                            id = it.id!!,
+                            name = it.name,
+                            description = it.description,
+                            inputType = it.inputType,
+                            required = it.required,
+                            isRemoved = it.isRemoved,
+                            options =
+                                it.options?.map { qo ->
+                                    ModifySurveyFormUseCase.ModifySurveyFormQuestionOption(
+                                        id = qo.id!!,
+                                        value = qo.value,
+                                    )
+                                },
+                        )
+                    },
+            )
+        surveyFormService.modifySurveyForm(command)
+
+        // then
+        assertThat(surveyForm.surveyName).isEqualTo(command.surveyName)
+        assertThat(surveyForm.questions[0].isRemoved).isTrue()
+    }
+
+    @Test
+    @DisplayName("사용자는 설문 조사 조회 시 id 가 없으면 예외가 발생되어야된다.")
+    fun readOneNotFound() {
+        // given
+        val surveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SHORT_TEXT))
+
+        val surveyFormService = SurveyFormService(repository)
+        repository.save(surveyForm)
 
         // when
         val retrieveSurveyForm = surveyFormService.retrieveSurveyForm(surveyForm.id)
@@ -106,6 +144,13 @@ class SurveyFormServiceTest {
         }
 
         override fun getOneBy(id: String): SurveyForm = store.find { it.id == id } ?: throw EntityNotFoundException()
+
+        override fun update(survey: SurveyForm) {
+            val oneBy = getOneBy(survey.id)
+
+            oneBy.modify(survey.surveyName, survey.description)
+            oneBy.modifyQuestion(survey.questions)
+        }
 
         fun removeAll() {
             store.removeAll { it.id.isNotEmpty() }

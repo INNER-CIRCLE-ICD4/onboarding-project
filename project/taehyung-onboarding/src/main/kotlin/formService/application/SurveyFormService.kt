@@ -1,6 +1,7 @@
 package formService.application
 
 import formService.application.port.inbound.CreateSurveyFormUseCase
+import formService.application.port.inbound.ModifySurveyFormUseCase
 import formService.application.port.inbound.RetrieveOneSurveyFormUseCase
 import formService.application.port.outbound.SurveyFormRepository
 import formService.domain.Question
@@ -16,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 class SurveyFormService(
     private val repository: SurveyFormRepository,
 ) : CreateSurveyFormUseCase,
-    RetrieveOneSurveyFormUseCase {
+    RetrieveOneSurveyFormUseCase,
+    ModifySurveyFormUseCase {
     @Transactional
     override fun createSurveyForm(command: CreateSurveyFormUseCase.CreateSurveyFormCommand): CreateSurveyFormUseCase.CreateSurveyFormId {
         // command convert to domain
@@ -64,6 +66,7 @@ class SurveyFormService(
                             description = q.description,
                             inputType = q.inputType,
                             required = q.required,
+                            isRemoved = q.isRemoved,
                             options =
                                 q.options?.map { qo ->
                                     RetrieveOneSurveyFormUseCase.RetrieveSurveyFormQuestionOption(
@@ -76,6 +79,21 @@ class SurveyFormService(
             )
         } catch (e: EntityNotFoundException) {
             throw BadRequestException(message = "설문지를 찾지 못햇습니다. id: $id")
+        }
+    }
+
+    @Transactional
+    override fun modifySurveyForm(command: ModifySurveyFormUseCase.ModifySurveyFormCommand): ModifySurveyFormUseCase.ModifySurveyFormId {
+        try {
+            val surveyForm = repository.getOneBy(command.id)
+            surveyForm.modify(surveyName = command.surveyName, description = command.description)
+            surveyForm.modifyQuestion(questions = command.toQuestions())
+
+            repository.update(surveyForm)
+
+            return ModifySurveyFormUseCase.ModifySurveyFormId(surveyForm.id)
+        } catch (e: EntityNotFoundException) {
+            throw BadRequestException(message = "설문지를 찾지 못햇습니다. id: ${command.id}")
         }
     }
 }

@@ -8,10 +8,10 @@ import formService.domain.SurveyForm
 import formService.util.getTsid
 
 fun getFixtureSurveyForm(
-    questionsSize: Int,
     inputTypes: List<Question.QuestionInputType>,
     isOptions: Boolean = false,
     optionSize: Int = 0,
+    isRemoved: Boolean = false,
 ): SurveyForm {
     val fixtureBuilder =
         FixtureMonkey
@@ -20,19 +20,62 @@ fun getFixtureSurveyForm(
             .build()
             .giveMeKotlinBuilder<SurveyForm>()
             .set(SurveyForm::id, getTsid())
-            .size("questions", questionsSize)
+            .size("questions", inputTypes.size)
 
-    (0..<questionsSize).forEach {
-        fixtureBuilder.set("questions[$it].inputType", inputTypes[it % 4])
+    inputTypes.mapIndexed { it, inputType ->
+        fixtureBuilder.set("questions[$it].id", (it + 1).toLong())
+        fixtureBuilder.set("questions[$it].inputType", inputType)
+
+        if (isOptions && optionSize > 0) {
+            fixtureBuilder.size("questions[*].options", optionSize)
+
+            (0..<optionSize).forEach { opIndex ->
+                fixtureBuilder.set("questions[$it].options[$opIndex].id", (opIndex + 1).toLong())
+            }
+        }
     }
 
     if (!isOptions) {
         fixtureBuilder.set("questions[*].options", null)
     }
 
-    if (isOptions && optionSize > 0) {
-        fixtureBuilder.size("questions[*].options", optionSize)
+    val sample = fixtureBuilder.sample()
+
+    sample.questions.forEach {
+        it.isRemoved = isRemoved
     }
 
-    return fixtureBuilder.sample()
+    return sample
+}
+
+fun getFixtureOnlyQuestion(
+    inputTypes: List<Question.QuestionInputType>,
+    isRemoved: Boolean = false,
+    optionSize: Int? = 0,
+): List<Question> {
+    val mapIndexed =
+        inputTypes.mapIndexed { index, inputType ->
+            FixtureMonkey
+                .builder()
+                .plugin(KotlinPlugin())
+                .build()
+                .giveMeKotlinBuilder<Question>()
+                .set("id", (index + 1).toLong())
+                .set("inputType", inputType)
+        }
+
+    if (optionSize != null && optionSize > 0) {
+        mapIndexed.forEach {
+            it.size("options", optionSize)
+
+            (0..<optionSize).forEach { index ->
+                it.set("options[$index].id", (index + 1).toLong())
+            }
+        }
+    }
+
+    return mapIndexed.map { it.sample() }.map {
+        it.isRemoved = isRemoved
+        it
+    }
 }
