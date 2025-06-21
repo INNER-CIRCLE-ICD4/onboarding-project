@@ -13,6 +13,14 @@ configurations {
     }
 }
 
+tasks.bootJar {
+    enabled = false
+}
+
+tasks.jar {
+    enabled = true
+}
+
 allprojects {
     repositories {
         mavenCentral()
