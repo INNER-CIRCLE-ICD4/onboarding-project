@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,23 +16,26 @@ public class Answer {
     @GeneratedValue
     private Long id;
 
+    private String name;
+    private String email;
+
     @ManyToOne
-    @JoinColumn(name = "survey_id")
-    private Survey survey;
+    @JoinColumn(name = "reply_id")
+    private Reply reply;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;
 
-    private String user_name;
-    private String email;
-
     /**
      * 사용자가 선택한 답변
-     * 단답형/장문형: text 저장
-     * 선택형: 선택지 value 저장 (여러개일 경우 JSON으로 처리 가능)
+     * 단답형/장문형: 텍스트 저장
      */
     private String answerText;
 
-    private Date answeredAt;
+    /**
+     * 선택형(단일/다중): 옵션 저장
+     */
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnswerOption> selected_options = new ArrayList<>(); // 단일/다중 선택형일 경우만 사용
 }

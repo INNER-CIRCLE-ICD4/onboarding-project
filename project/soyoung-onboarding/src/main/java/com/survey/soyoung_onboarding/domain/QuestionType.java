@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum QuestionType {
-    SHORT(""),
-    LONG(""),
-    SINGLE(""),
-    MULTIPLE("");
+    SHORT("short"),
+    LONG("long"),
+    SINGLE("single"),
+    MULTIPLE("multiple"),;
 
     private final String key;
 

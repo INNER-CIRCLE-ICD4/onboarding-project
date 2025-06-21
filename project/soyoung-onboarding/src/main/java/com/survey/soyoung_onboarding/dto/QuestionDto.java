@@ -1,6 +1,7 @@
 package com.survey.soyoung_onboarding.dto;
 
 import com.survey.soyoung_onboarding.domain.QuestionType;
+import com.survey.soyoung_onboarding.entity.QuestionOption;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.Errors;
@@ -23,15 +24,16 @@ public class QuestionDto {
     private String survey_id;
     private Long id;
     private String title;
+    private String description;
     private QuestionType type;
     private boolean required = false;
-    private List<String> options;
+    private List<QuestionOption> options;
 
     public void validate_add(Errors errors) {
 
         ValidationUtils.rejectIfEmpty(errors, "title", "question.title.empty");
 
-        if (!VALID_QUESTION_TYPE.contains(this.type)) {
+        if (!VALID_QUESTION_TYPE.contains(type)) {
             errors.rejectValue("type", "question.type.invalid");
         }
 
@@ -41,5 +43,4 @@ public class QuestionDto {
             ValidationUtils.rejectIfEmpty(errors, "options", "question.options.empty");
         }
     }
-
 }

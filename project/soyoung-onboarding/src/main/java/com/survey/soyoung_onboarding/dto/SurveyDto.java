@@ -16,8 +16,15 @@ public class SurveyDto {
     private String description;
     private List<QuestionDto> questions;
 
-    public void validate_add(BindingResult bindingResult) {
+    public void validate(BindingResult bindingResult) {
+
         ValidationUtils.rejectIfEmpty(bindingResult, "title", "survey.title.empty");
+
+        if (questions == null || questions.size() < 1 || questions.size() > 10) {
+            bindingResult.rejectValue("questions", "survey.questions.invalidSize", "설문 항목은 1~10개 사이여야 합니다.");
+            return;
+        }
+
         for (QuestionDto questionDto : questions) {
             questionDto.validate_add(bindingResult);
         }
