@@ -1,0 +1,17 @@
+package com.multi.sungwoongonboarding.submission.application.repository;
+
+import com.multi.sungwoongonboarding.submission.domain.Submission;
+
+import java.util.List;
+
+public interface SubmissionRepository {
+
+    Long save(Submission submission);
+
+    List<Submission> findAll();
+
+    Submission findById(Long id);
+
+
+    List<Submission> findByFormId(Long formId, String questionText, String answerText);
+}

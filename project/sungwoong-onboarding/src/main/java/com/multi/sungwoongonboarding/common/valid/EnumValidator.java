@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 
-public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
+public class EnumValidator implements ConstraintValidator<EnumValid, String> {
 
     private Class<? extends Enum> enumClass;
 
@@ -22,7 +22,7 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
     }
 
     @Override
-    public void initialize(ValidEnum constraintAnnotation) {
+    public void initialize(EnumValid constraintAnnotation) {
         this.enumClass = constraintAnnotation.enumClass();
     }
 }

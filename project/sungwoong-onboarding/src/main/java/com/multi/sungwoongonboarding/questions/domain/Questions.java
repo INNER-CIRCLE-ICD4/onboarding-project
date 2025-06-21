@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Getter
@@ -22,11 +24,9 @@ public class Questions {
         public boolean isSingleChoice() {
             return this == SINGLE_CHOICE;
         }
-
         public boolean isChoiceType() {
             return isSingleChoice() || isMultipleChoice();
         }
-
         public boolean isTextType() {
             return this == SHORT_ANSWER || this == LONG_ANSWER;
         }
@@ -38,7 +38,14 @@ public class Questions {
     private final String questionText;
     private final QuestionType questionType;
     private final boolean isRequired;
-    private final int version;
     private final boolean deleted;
     private final List<Options> options;
+
+    public Set<Long> getUniqueOptionIds() {
+        return this.options.stream().map(Options::getId).collect(Collectors.toSet());
+    }
+
+    public int getMaxSelection() {
+        return this.options.size();
+    }
 }

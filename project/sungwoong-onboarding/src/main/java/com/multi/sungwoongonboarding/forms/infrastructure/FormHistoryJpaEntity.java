@@ -1,6 +1,7 @@
 package com.multi.sungwoongonboarding.forms.infrastructure;
 
 import com.multi.sungwoongonboarding.common.entity.BaseEntity;
+import com.multi.sungwoongonboarding.forms.domain.FormsHistory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +25,6 @@ public class FormHistoryJpaEntity extends BaseEntity {
     @Column(name = "form_version")
     private int version;
 
-
     @Column(name = "title")
     private String title;
 
@@ -46,5 +46,12 @@ public class FormHistoryJpaEntity extends BaseEntity {
 
     }
 
-
+    public FormsHistory toDomain() {
+        return FormsHistory.builder()
+                .title(this.getTitle())
+                .description(this.getDescription())
+                .version(this.getVersion())
+                .questionCount(this.getQuestionCount())
+                .build();
+    }
 }

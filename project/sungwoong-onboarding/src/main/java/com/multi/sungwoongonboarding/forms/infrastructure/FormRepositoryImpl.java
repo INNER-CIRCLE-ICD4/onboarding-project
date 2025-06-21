@@ -19,10 +19,8 @@ public class FormRepositoryImpl implements FormRepository {
     @Override
     @Transactional
     public Forms save(Forms forms) {
-
         FormsJpaEntity formsJpaEntity = FormsJpaEntity.fromDomain(forms);
         formJpaRepository.save(formsJpaEntity);
-
         return formsJpaEntity.toDomain();
     }
 
@@ -30,8 +28,10 @@ public class FormRepositoryImpl implements FormRepository {
     public Forms findById(Long id) {
 
         FormsJpaEntity formsJpaEntity = formJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Form not found with id: " + id));
-
-        return formsJpaEntity.toDomain();
+        List<FormHistoryJpaEntity> formHistoryEntities = formHistoryJpaRepository.findByForm_Id(id);
+        return formsJpaEntity.toDomainWithHistories(
+                formHistoryEntities.stream().map(FormHistoryJpaEntity::toDomain).toList()
+        );
     }
 
     @Override
@@ -45,10 +45,8 @@ public class FormRepositoryImpl implements FormRepository {
 
         FormsJpaEntity existingForm = formJpaRepository.findById(formId)
                 .orElseThrow(() -> new IllegalArgumentException("Form not found with id: " + formId));
-
         formHistoryJpaRepository.save(FormHistoryJpaEntity.createHistory(existingForm));
         existingForm.update(forms);
-
         return existingForm.toDomain();
     }
 }

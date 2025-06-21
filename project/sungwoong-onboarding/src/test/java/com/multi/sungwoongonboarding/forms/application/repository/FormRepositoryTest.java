@@ -5,7 +5,6 @@ import com.multi.sungwoongonboarding.forms.infrastructure.FormHistoryJpaEntity;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormHistoryJpaRepository;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormRepositoryImpl;
 import com.multi.sungwoongonboarding.options.domain.Options;
-import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaRepository;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -228,11 +227,14 @@ public class FormRepositoryTest {
         assertThat(updatedFormInDb.getQuestions().stream().filter(q -> !q.isDeleted()).toList().size()).isEqualTo(2);
 
         // 이력 조회
+        Forms byId = formRepository.findById(savedForm.getId());
         Optional<FormHistoryJpaEntity> history = formHistoryJpaRepository.findById(1L);
         assertThat(history.isPresent()).isTrue();
         assertThat(history.get().getVersion()).isLessThan(result.getVersion());
         assertThat(history.get().getTitle()).isEqualTo("원본 설문 제목");
         assertThat(history.get().getQuestionCount()).isEqualTo(originalForm.getQuestions().size());
-
+        assertThat(byId.getFormsHistories().size()).isEqualTo(1);
     }
+
+
 }

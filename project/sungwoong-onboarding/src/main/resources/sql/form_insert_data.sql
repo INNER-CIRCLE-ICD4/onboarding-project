@@ -10,7 +10,7 @@ insert into options (option_text, question_id)
 values ('치킨', 1);
 
 insert into questions (question_id, question_text, form_id, question_type, created_at, updated_at, deleted, is_required)
-values (2, '브랜드', 1, 'MULTIPLE_CHOICE', now(), now(), 'N', 'Y');
+values (2, '브랜드', 1, 'MULTIPLE_CHOICE', now(), now(), 'N', 'N');
 
 insert into options (option_text, question_id)
 values ('맥도날드', 2);
