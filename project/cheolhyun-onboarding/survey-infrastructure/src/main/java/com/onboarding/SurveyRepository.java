@@ -1,7 +1,7 @@
 package com.onboarding;
 
-import com.onboarding.entity.ServeyEntity;
+import com.onboarding.entity.SurveyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public class ServeyRepository extends JpaRepository<ServeyEntity, String> {
+public interface SurveyRepository extends JpaRepository<SurveyEntity, Integer> {
 }

@@ -18,6 +18,10 @@ public class Questions {
         questions = new ArrayList<>();
     }
 
+    public Questions(List<Question> questions) {
+        this.questions = questions;
+    }
+
     public void add(Question question) {
         questions.add(question);
     }
@@ -51,5 +55,9 @@ public class Questions {
                 .filter(item -> item.isEqualById(id))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException(NO_SUCH_QUESTION));
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
     }
 }
