@@ -68,7 +68,7 @@ public class SurveyService {
         // 3. 새로 들어온 질문 목록 처리
         for (QuestionUpdateDto questionDto : dto.getQuestions()) {
             if (questionDto.getQuestionId() == null) {
-                // 새 질문 추가
+                //새 질문 추가
                 Question newQuestion =Question.builder()
                         .title(questionDto.getTitle())
                         .description(questionDto.getDescription())
@@ -76,9 +76,16 @@ public class SurveyService {
                         .required(questionDto.isRequired())
                         .survey(survey) // 필요 시
                         .build();
+                //옵션 리스트 추가
+                if (questionDto.getOptions() != null) {
+                    for (String option : questionDto.getOptions()) {
+                        QuestionOption qo = new QuestionOption(option, newQuestion);
+                        newQuestion.getOptions().add(qo);
+                    }
+                }
                 survey.addQuestion(newQuestion);
             } else {
-                // 기존 질문 수정
+                //기존 질문 수정
                 Question existing = existingQuestions.remove(questionDto.getQuestionId());
                 if (existing != null) {
                     existing.update(questionDto);

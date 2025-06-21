@@ -1,7 +1,6 @@
 package com.innercircle.survey.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,15 +17,16 @@ public class SurveyResponse {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
-    private UUID surveyId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "survey_id", nullable = false)
+    private Survey survey;
 
     //제출된 응답들(JSON)
     @Lob
     @Column(nullable = false)
     private String answersJson;
 
-    //당시 질문 스냅샷(JSON)
+    //질문 스냅샷(JSON)
     @Lob
     @Column(nullable = false)
     private String snapshotJson;
@@ -39,8 +39,8 @@ public class SurveyResponse {
         this.submittedAt = LocalDateTime.now();
     }
 
-    public SurveyResponse(UUID surveyId, String answersJson, String snapshotJson) {
-        this.surveyId = surveyId;
+    public SurveyResponse(Survey survey, String answersJson, String snapshotJson) {
+        this.survey = survey;
         this.answersJson = answersJson;
         this.snapshotJson = snapshotJson;
     }

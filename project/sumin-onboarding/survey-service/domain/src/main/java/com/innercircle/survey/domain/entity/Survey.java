@@ -64,6 +64,6 @@ public class Survey {
 
     public void removeQuestion(Question q) {
         questions.remove(q);
-        q.setSurvey(null); // 양방향 관계 해제
+        q.setSurvey(null);
     }
 }
