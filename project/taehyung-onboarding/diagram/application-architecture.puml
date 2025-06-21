@@ -1,0 +1,38 @@
+@startuml
+top to bottom direction
+
+package adapter.port.outbound.persistence.jpa {
+    class XXXPersistenceAdapter
+}
+
+package adapter.port.inbound.web {
+    class XXXController
+}
+
+package domain {
+    class Domain1
+    class Domain2
+    class ValueObject1
+    class ValueObject2
+}
+
+package application.port {
+    class XXXService
+
+    package inbound {
+        interface XXXUseCase
+    }
+
+    package outbound {
+        interface XXXRepository
+    }
+
+}
+
+XXXUseCase .right.> domain
+XXXRepository <.. XXXService
+XXXUseCase <|.left. XXXService
+XXXPersistenceAdapter ..|> XXXRepository
+XXXController ..> XXXUseCase
+
+@enduml
