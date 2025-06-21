@@ -72,6 +72,10 @@ public class SurveyRequest {
         public void setOptions(List<String> options) {
             this.options = options;
         }
+
+        public Long getId() {
+            return 0L;
+        }
     }
 
     // getter/setter
