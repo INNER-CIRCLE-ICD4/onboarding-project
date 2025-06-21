@@ -21,4 +21,8 @@ class ResponseRepositoryImpl(
     override fun deleteAll() {
         responseJpaRepository.deleteAll()
     }
+
+    override fun findAllBySurveyFieldIdIn(fieldIds: List<String>): List<Response> {
+        return responseJpaRepository.findAllBySurveyFieldIdIn(fieldIds)
+    }
 }

@@ -49,6 +49,10 @@ class FakeSurveyVersionRepository : SurveyVersionRepository {
     override fun findFirstBySurveyOrderByVersionDesc(survey: Survey): SurveyVersion {
         return saved.filter { it.survey.id == survey.id }.maxBy { it.version }
     }
+
+    override fun findAllBySurveyId(surveyId: String): List<SurveyVersion> {
+        return saved.filter { it.survey.id == surveyId }
+    }
 }
 
 class FakeSurveyFieldRepository : SurveyFieldRepository {
@@ -61,6 +65,14 @@ class FakeSurveyFieldRepository : SurveyFieldRepository {
 
     override fun deleteAll() {
         saved.clear()
+    }
+
+    override fun findByIdOrNull(fieldId: String): SurveyField? {
+        return saved.find { it.id == fieldId }
+    }
+
+    override fun findAllBySurveyVersionId(versionId: String): List<SurveyField> {
+        return saved.filter { it.surveyVersion.id == versionId }
     }
 }
 
@@ -75,6 +87,14 @@ class FakeFieldOptionRepository : FieldOptionRepository {
     override fun deleteAll() {
         saved.clear()
     }
+
+    override fun findByIdIn(optionIds: List<String>): List<FieldOption> {
+        return saved.filter { it.id in optionIds }
+    }
+
+    fun saveAll(options: List<FieldOption>) {
+        saved.addAll(options)
+    }
 }
 
 class FakeResponseRepository : ResponseRepository {
@@ -87,5 +107,9 @@ class FakeResponseRepository : ResponseRepository {
 
     override fun deleteAll() {
         saved.clear()
+    }
+
+    override fun findAllBySurveyFieldIdIn(fieldIds: List<String>): List<Response> {
+        return saved.filter { it.surveyField.id in fieldIds }
     }
 }

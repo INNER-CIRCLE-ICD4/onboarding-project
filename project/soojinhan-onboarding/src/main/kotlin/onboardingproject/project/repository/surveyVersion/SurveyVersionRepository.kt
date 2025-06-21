@@ -14,4 +14,5 @@ interface SurveyVersionRepository {
     fun save(surveyVersion: SurveyVersion): SurveyVersion
     fun deleteAll()
     fun findFirstBySurveyOrderByVersionDesc(survey: Survey): SurveyVersion
+    fun findAllBySurveyId(surveyId: String): List<SurveyVersion>
 }

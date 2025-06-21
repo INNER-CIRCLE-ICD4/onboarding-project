@@ -26,4 +26,8 @@ class SurveyVersionRepositoryImpl(
     override fun findFirstBySurveyOrderByVersionDesc(survey: Survey): SurveyVersion {
         return surveyVersionJpaRepository.findFirstBySurveyOrderByVersionDesc(survey)
     }
+
+    override fun findAllBySurveyId(surveyId: String): List<SurveyVersion> {
+        return surveyVersionJpaRepository.findAllBySurveyId(surveyId)
+    }
 }

@@ -13,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository
  */
 interface SurveyVersionJpaRepository : JpaRepository<SurveyVersion, String> {
     fun findFirstBySurveyOrderByVersionDesc(survey: Survey): SurveyVersion
+    fun findAllBySurveyId(surveyId: String): List<SurveyVersion>
 }

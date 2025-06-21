@@ -12,4 +12,5 @@ import onboardingproject.project.domain.Response
 interface ResponseRepository {
     fun save(response: Response): Response
     fun deleteAll()
+    fun findAllBySurveyFieldIdIn(fieldIds: List<String>): List<Response>
 }

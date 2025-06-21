@@ -11,4 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository
  * description :
  */
 interface FieldOptionJpaRepository: JpaRepository<FieldOption, String> {
+    fun findByIdIn(optionIds: List<String>): List<FieldOption>
 }

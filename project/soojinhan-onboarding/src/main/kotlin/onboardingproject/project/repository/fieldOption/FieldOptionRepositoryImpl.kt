@@ -22,4 +22,8 @@ class FieldOptionRepositoryImpl(
         fieldOptionJpaRepository.deleteAll()
     }
 
+    override fun findByIdIn(optionIds: List<String>): List<FieldOption> {
+        return fieldOptionJpaRepository.findByIdIn(optionIds)
+    }
+
 }

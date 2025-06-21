@@ -17,12 +17,6 @@ class SurveyField(
     val id: String = UUID.randomUUID().toString(),
 
     @Column(nullable = false)
-    val fieldKey: String = UUID.randomUUID().toString(),
-
-    @Column(nullable = false)
-    var version: Int = 1,
-
-    @Column(nullable = false)
     var fieldName: String,
 
     @Column
@@ -34,9 +28,6 @@ class SurveyField(
 
     @Column(nullable = false)
     var isRequired: Boolean,
-
-    @Column(nullable = false)
-    var isDeleted: Boolean = false,
 
     @Column(nullable = false)
     var fieldOrder: Int,

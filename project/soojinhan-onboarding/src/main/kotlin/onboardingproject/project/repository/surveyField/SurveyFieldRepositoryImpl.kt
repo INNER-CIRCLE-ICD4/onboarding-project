@@ -1,6 +1,7 @@
 package onboardingproject.project.repository.surveyField
 
 import onboardingproject.project.domain.SurveyField
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 /**
@@ -20,5 +21,13 @@ class SurveyFieldRepositoryImpl(
 
     override fun deleteAll() {
         surveyFieldJpaRepository.deleteAll()
+    }
+
+    override fun findByIdOrNull(fieldId: String): SurveyField? {
+        return surveyFieldJpaRepository.findByIdOrNull(fieldId)
+    }
+
+    override fun findAllBySurveyVersionId(versionId: String): List<SurveyField> {
+        return surveyFieldJpaRepository.findAllBySurveyVersionId(versionId)
     }
 }

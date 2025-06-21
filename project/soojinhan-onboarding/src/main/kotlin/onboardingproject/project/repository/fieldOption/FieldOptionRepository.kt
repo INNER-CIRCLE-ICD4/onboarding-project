@@ -12,4 +12,5 @@ import onboardingproject.project.domain.FieldOption
 interface FieldOptionRepository {
     fun save(fieldOption: FieldOption): FieldOption
     fun deleteAll()
+    fun findByIdIn(optionIds: List<String>): List<FieldOption>
 }

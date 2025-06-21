@@ -10,5 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository
  * date        : 2025. 6. 20.
  * description :
  */
-interface ResponseJpaRepository: JpaRepository<Response, String> {
+interface ResponseJpaRepository : JpaRepository<Response, String> {
+    fun findAllBySurveyFieldIdIn(fieldIds: List<String>): List<Response>
 }

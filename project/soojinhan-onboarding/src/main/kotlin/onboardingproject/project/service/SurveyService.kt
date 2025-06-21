@@ -55,7 +55,7 @@ class SurveyService(
     @Transactional
     fun updateSurvey(surveyId: String, surveyRequest: SaveSurveyRequest) {
         // 설문조사 조회
-        val survey = surveyRepository.findByIdOrNull(surveyId) ?: throw NotFoundException(ErrorMessage.SURVEY_ID_NOT_FOUND.message)
+        val survey = findSurveyById(surveyId)
         val lastSurveyVersion = surveyVersionRepository.findFirstBySurveyOrderByVersionDesc(survey).version
 
         // 업데이트
@@ -101,5 +101,26 @@ class SurveyService(
                 )
             )
         }
+    }
+
+    fun findSurveyById(surveyId: String): Survey {
+        return surveyRepository.findByIdOrNull(surveyId) ?: throw NotFoundException(ErrorMessage.SURVEY_ID_NOT_FOUND.message)
+    }
+
+    fun findSurveyFieldById(fieldId: String): SurveyField {
+        return surveyFieldRepository.findByIdOrNull(fieldId) ?: throw NotFoundException(ErrorMessage.SURVEY_FIELD_ID_NOT_FOUND.message)
+    }
+
+    fun findSurveyFieldBySurveyVersionId(versionId: String): List<SurveyField> {
+        return surveyFieldRepository.findAllBySurveyVersionId(versionId)
+    }
+
+    fun findFieldOptionsByIds(optionIds: List<String>): List<FieldOption> {
+        return fieldOptionRepository.findByIdIn(optionIds)
+
+    }
+
+    fun findSurveyVersionBySurveyId(surveyId: String): List<SurveyVersion> {
+        return surveyVersionRepository.findAllBySurveyId(surveyId)
     }
 }

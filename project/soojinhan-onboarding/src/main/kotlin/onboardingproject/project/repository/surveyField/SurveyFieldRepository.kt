@@ -13,4 +13,6 @@ import onboardingproject.project.domain.SurveyField
 interface SurveyFieldRepository {
     fun save(surveyField: SurveyField): SurveyField
     fun deleteAll()
+    fun findByIdOrNull(fieldId: String): SurveyField?
+    fun findAllBySurveyVersionId(versionId: String): List<SurveyField>
 }
