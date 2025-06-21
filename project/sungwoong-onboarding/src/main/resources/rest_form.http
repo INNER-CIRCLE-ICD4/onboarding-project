@@ -51,6 +51,10 @@ Content-Type: application/json
           "optionText": "KFC"
         }
       ]
+    },
+    {
+      "questionText": "자세히 입력해주세요",
+      "questionType": "SHORT_ANSWER"
     }
   ]
 }
@@ -195,25 +199,25 @@ Content-Type: application/json
   "userId": "sungwoong_test",
   "answerCreateRequests": [
     {
+      "questionId": 1,
+      "optionIds": [1]
+    },
+    {
+      "questionId": 2,
+      "optionIds": [4]
+    },
+    {
+      "questionId": 3,
+      "optionIds": [6, 7]
+    },
+    {
       "questionId": 4,
-      "optionIds": [10]
-    },
-    {
-      "questionId": 5,
-      "optionIds": [13]
-    },
-    {
-      "questionId": 6,
-      "optionIds": [17, 18]
-    },
-    {
-      "questionId": 7,
-      "answerText": "dflkajslfkjsdlkfjsdlkf"
+      "answerText": "버버버버버버버버버"
     }
   ]
 }
 
 
 ### GET 응답지 조회
-GET localhost:8080/api/v1/submission/1
+GET localhost:8080/api/v1/submission/1?answerText=버버
 Content-Type: application/json

@@ -83,21 +83,131 @@ class SubmissionJpaRepositoryTest {
     }
 
     @Test
-    @DisplayName("Submission : formId로 조회")
-    public void findById() {
+    @DisplayName("jpql_test")
+    public void jpql_test() {
 
-        //Given
-        Long formId = 1L;
 
-        //When
-        List<SubmissionJpaEntity> byFormId = submissionJpaRepository.findByFormId(formId, null, null);
+        String query = """
+                select count(q)
+                from QuestionJpaEntity q
+                where q.formsJpaEntity.id = 1
+                and q.questionText like concat('%', '비', '%')
+                """;
 
-        //Then
-        assertThat(byFormId).isNotNull();
-        assertThat(byFormId).hasSize(3);
-        assertThat(byFormId.get(0).getAnswers()).hasSize(1);
-        assertThat(byFormId.get(1).getAnswers()).hasSize(1);
-        assertThat(byFormId.get(2).getAnswers()).hasSize(3);
+        List<Long> resultList = entityManager.createQuery(query, Long.class).getResultList();
+
+        assertThat(resultList).isNotNull();
+        assertThat(resultList).hasSize(1);
+
     }
 
+    @Test
+    @DisplayName("jpql_test2")
+    public void jpql_test2() {
+
+
+        String query = """
+                select a.submissionJpaEntity.id 
+                from AnswerJpaEntity a 
+                left join OptionsJpaEntity o on o.id = a.optionId
+                where a.submissionJpaEntity.id = 12  
+                and (:answerText is null or a.answerText like CONCAT('%', :answerText, '%')) 
+                """;
+
+        List<Long> resultList = entityManager.createQuery(query, Long.class).setParameter("answerText", "마").getResultList();
+
+        assertThat(resultList).isNotNull();
+        assertThat(resultList).hasSize(1);
+
+    }
+
+    @Test
+    @DisplayName("jpql_test3")
+    public void jpql_test3() {
+
+        String query = """
+                select s
+                from SubmissionJpaEntity s
+                left join FormsJpaEntity f on s.formId = f.id
+                where s.formId = 1
+                and :questionText is null or exists (
+                        select q
+                        from AnswerJpaEntity a 
+                        left join QuestionJpaEntity q on a.questionId = q.id 
+                        where a.submissionJpaEntity.id = s.id 
+                        and q.questionText like concat('%', :questionText, '%')
+                )
+                """;
+
+        List<SubmissionJpaEntity> resultList = entityManager.createQuery(query, SubmissionJpaEntity.class)
+                .setParameter("questionText", "이유")
+                .getResultList();
+
+        assertThat(resultList).isNotNull();
+        assertThat(resultList).hasSize(2);
+    }
+
+
+    @Test
+    @DisplayName("jpql_test4")
+    public void jpql_test4() {
+
+        String query = """
+                select s
+                from SubmissionJpaEntity s
+                left join FormsJpaEntity f on s.formId = f.id
+                where s.formId = 1
+                and :answerText is null or exists (
+                        select a.id
+                        from AnswerJpaEntity a 
+                        left join OptionsJpaEntity o on a.optionId = o.id
+                        where a.submissionJpaEntity.id = s.id
+                        and (a.answerText like concat('%', :answerText, '%') or o.optionText like concat('%', :answerText, '%'))
+                )
+                """;
+
+        List<SubmissionJpaEntity> resultList = entityManager.createQuery(query, SubmissionJpaEntity.class)
+                .setParameter("answerText", "마마")
+                .getResultList();
+
+        assertThat(resultList).isNotNull();
+        assertThat(resultList).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("jpql_test5")
+    public void jpql_test6() {
+
+        String query = """
+                select s
+                from SubmissionJpaEntity s
+                left join FormsJpaEntity f on s.formId = f.id
+                where s.formId = :formId
+                and (:questionText is null or 
+                            exists (
+                                select sub_a.id 
+                                from AnswerJpaEntity sub_a 
+                                left join QuestionJpaEntity q on sub_a.questionId = q.id 
+                                where sub_a.submissionJpaEntity.id = s.id 
+                                and q.questionText like concat('%', :questionText, '%')
+                )) 
+                and (:answerText is null or 
+                            exists (
+                                select sub_a.id
+                                from AnswerJpaEntity sub_a 
+                                left join OptionsJpaEntity o on sub_a.optionId = o.id
+                                where sub_a.submissionJpaEntity.id = s.id
+                                and (sub_a.answerText like concat('%', :answerText, '%') or o.optionText like concat('%', :answerText, '%'))
+                )) 
+            """;
+
+        List<SubmissionJpaEntity> resultList = entityManager.createQuery(query, SubmissionJpaEntity.class)
+                .setParameter("formId", "1")
+                .setParameter("questionText", null)
+                .setParameter("answerText", "마마")
+                .getResultList();
+
+        assertThat(resultList).isNotNull();
+        assertThat(resultList).hasSize(1);
+    }
 }

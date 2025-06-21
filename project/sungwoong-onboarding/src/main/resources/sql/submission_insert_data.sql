@@ -28,6 +28,9 @@ values (10, 1, 'sungwoong', 1, now(), now());
 insert into answers (answer_id, submission_id, question_id, option_id, answer_text)
 values (10, 10, 1, 1, null);
 
+insert into answers (answer_id, submission_id, question_id, option_id, answer_text)
+values (16, 10, 3, null, 'ㅁㅁㅁㅁ');
+
 insert into submissions (submission_id, form_id, user_id, form_version, created_at, updated_at)
 values (11, 1, 'sungwoong', 1, now(), now());
 
@@ -45,3 +48,6 @@ values (13, 12, 2, 3, null);
 
 insert into answers (answer_id, submission_id, question_id, option_id, answer_text)
 values (14, 12, 2, 4, null);
+
+insert into answers (answer_id, submission_id, question_id, option_id, answer_text)
+values (15, 12, 3, null, '마마마마마');

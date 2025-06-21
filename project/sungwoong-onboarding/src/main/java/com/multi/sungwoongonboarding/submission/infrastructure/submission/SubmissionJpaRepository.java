@@ -17,10 +17,23 @@ public interface SubmissionJpaRepository extends JpaRepository<SubmissionJpaEnti
                 from SubmissionJpaEntity s
                 left join FormsJpaEntity f on s.formId = f.id
                 where s.formId = :formId
-                and (:questionText is null 
-                    or f.id in (select q.formsJpaEntity.id from QuestionJpaEntity q where q.formsJpaEntity.id = f.id and q.questionText like  %:questionText%))
-                and (:answerText is null 
-                    or s.id in (select s.id from AnswerJpaEntity a left join a.submissionJpaEntity s left join OptionsJpaEntity o on o.id = a.optionId where (a.answerText like %:answerText% or o.optionText like %:answerText%)))
+                and (:questionText is null or 
+                            exists (
+                                select sub_a.id 
+                                from AnswerJpaEntity sub_a 
+                                left join QuestionJpaEntity q 
+                                on sub_a.questionId = q.id 
+                                where sub_a.submissionJpaEntity.id = s.id 
+                                and q.questionText like concat('%', :questionText, '%'))
+                ) 
+                and (:answerText is null or 
+                            exists (
+                                select sub_a.id
+                                from AnswerJpaEntity sub_a 
+                                left join OptionsJpaEntity o on sub_a.optionId = o.id
+                                where sub_a.submissionJpaEntity.id = s.id
+                                and (sub_a.answerText like concat('%', :answerText, '%') or o.optionText like concat('%', :answerText, '%')))
+                ) 
             """)
     List<SubmissionJpaEntity> findByFormId(@Param("formId") Long formId, @Param("questionText") String questionText, @Param("answerText") String answerText);
 }
