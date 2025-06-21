@@ -401,23 +401,18 @@ CREATE TABLE answer
 - 404 NOT FOUND
     - `SURVEY_NOT_FOUND`: "수정할 대상 설문 조사를 찾을 수 없습니다."
 - 400 BAD REQUEST
-    - `EMPTY_TITLE`: "설문 조사의 제목은 필수입니다."
-    - `EMPTY_QUESTIONS`: "설문 조사는 최소 1개의 질문이 필요합니다."
-    - `OVER_MAX_QUESTIONS`: "설문 조사는 최대 10개의 질문까지만 허용됩니다."
-    - `INVALID_INPUT_TYPE`: "잘못된 입력 형태입니다. SINGLE_SELECT, MULTI_SELECT, SHORT_TEXT, LONG_TEXT 중 하나여야 합니다."
-    - `EMPTY_OPTION`: "선택형 질문에는 최소 1개의 옵션이 필요합니다."
-    - `OVER_MAX_OPTIONS`: "선택형 질문에 대한 옵션은 최대 10개까지만 허용됩니다."
+    - `INSUFFICIENT_OPTION`: "선택형 질문에는 최소 1개의 옵션이 필요합니다."
+    - `UNSUPPORTED_OPTION`: "옵션을 지원하지 않는 질문 유형입니다."
 
 **설문 조사 응답 제출**
 
 - 404 NOT FOUND
     - `SURVEY_NOT_FOUND`: "해당 설문 조사이 이미 삭제되었거나 존재하지 않습니다."
-    - `QUESTION_NOT_FOUND`: "해당 질문이 존재하지 않습니다."
 - 400 BAD REQUEST
-    - `MISSING_REQUIRED_ANSWER` : "필수 질문에 대한 응답이 누락되었습니다."
-    - `INVALID_QUESTION_TYPE` : "일치하지 않는 질문이 존재합니다."
-    - `INVALID_OPTION` : "선택형 질문에 대한 잘못된 옵션이 포함되어 있습니다."
+    - `REQUIRED_ANSWERS` : "필수 질문에는 응답이 존재해야 합니다."
+    - `DUPLICATE_RESPONSE` : "중복 응답은 불가능 합니다."
+    - `TOO_MANY_ANSWER` : "단일 선택형 질문에는 복수 답변이 불가능 합니다."
 
 **설문 조사 응답 결과 조회**
 - 404 NOT FOUND
-    - `SURVEY_NOT_FOUND`: "해당 설문 조사가 존재하지 않습니다."
+    - `RESPONSE_NOT_FOUNT`: "해당 설문 조사에 대한 응답이 존재하지 않습니다."
