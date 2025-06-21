@@ -1,0 +1,223 @@
+### POST 설문지 등록 api - 성공
+POST http://localhost:8080/api/v1/forms
+Content-Type: application/json
+
+{
+  "title": "햄버거 설문조사",
+  "description": "햄버거를 다들 좋아하는지 조사한다",
+  "questionCreateRequests": [
+    {
+      "questionText": "나는 햄버거를 좋아한다.",
+      "questionType": "SINGLE_CHOICE",
+      "isRequired": true,
+      "optionCreateRequests": [
+        {
+          "optionText": "좋아한다"
+        },
+        {
+          "optionText": "가끔 땡긴다"
+        },
+        {
+          "optionText": "안좋아한다."
+        }
+      ]
+    },
+    {
+      "questionText": "치킨버거 vs 비프버거",
+      "questionType": "SINGLE_CHOICE",
+      "optionCreateRequests": [
+        {
+          "optionText": "치킨버거"
+        },
+        {
+          "optionText": "비프버거"
+        }
+      ]
+    },
+    {
+      "questionText": "브랜드",
+      "questionType": "MULTIPLE_CHOICE",
+      "optionCreateRequests": [
+        {
+          "optionText": "맥도날드"
+        },
+        {
+          "optionText": "롯데리아"
+        },
+        {
+          "optionText": "버거킹"
+        },
+        {
+          "optionText": "KFC"
+        }
+      ]
+    },
+    {
+      "questionText": "자세히 입력해주세요",
+      "questionType": "SHORT_ANSWER"
+    }
+  ]
+}
+
+### POST 설문지 등록 오류
+POST http://localhost:8080/api/v1/forms
+Content-Type: application/json
+
+{
+  "title": "햄버거 설문조사",
+  "description": "햄버거를 다들 좋아하는지 조사한다",
+  "questionCreateRequests": [
+    {
+      "questionText": "나는 햄버거를 좋아한다.",
+      "questionType": "SINGLE_CHOICE",
+      "isRequired": true,
+      "optionCreateRequests": [
+        {
+          "optionText": "좋아한다"
+        },
+        {
+          "optionText": "가끔 땡긴다"
+        },
+        {
+          "optionText": "안좋아한다."
+        }
+      ]
+    },
+    {
+      "questionText": "치킨버거 vs 비프버거",
+      "questionType": "SINGLE_CHOICE",
+      "optionCreateRequests": [
+        {
+          "optionText": "치킨버거"
+        },
+        {
+          "optionText": "비프버거"
+        }
+      ]
+    },
+    {
+      "questionText": "브랜드",
+      "questionType": "SHORT_ANSWER",
+      "optionCreateRequests": [{
+        "optionText": ""
+      }]
+    }
+  ]
+}
+
+
+### PATCH 설문지 수정
+PATCH http://localhost:8080/api/v1/forms/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "title": "햄버거 설문조사",
+  "description": "햄버거를 다들 좋아하는지 조사한다22222",
+  "questions": [
+    {
+      "id": 1,
+      "questionText": "나는 햄버거를 좋아한다22222.2222222",
+      "questionType": "SINGLE_CHOICE",
+      "isRequired": false,
+      "deleted": false,
+      "options": [
+        {
+          "id": 1,
+          "optionText": "좋아한다"
+        },
+        {
+          "id": 2,
+          "optionText": "가끔 땡긴다"
+        },
+        {
+          "id": 3,
+          "optionText": "안좋아한다."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "questionText": "치킨버거 vs 비프버거",
+      "questionType": "MULTIPLE_CHOICE",
+      "isRequired": false,
+      "deleted": false,
+      "options": [
+        {
+          "id": 4,
+          "optionText": "치킨버거"
+        },
+        {
+          "id": 5,
+          "optionText": "비프버거"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "questionText": "브랜드",
+      "questionType": "MULTIPLE_CHOICE",
+      "isRequired": false,
+      "deleted": false,
+      "options": [
+        {
+          "id": 6,
+          "optionText": "맥도날드"
+        },
+        {
+          "id": 7,
+          "optionText": "롯데리아"
+        },
+        {
+          "id": 8,
+          "optionText": "버거킹"
+        },
+        {
+          "id": 9,
+          "optionText": "KFC"
+        }
+      ]
+    },
+    {
+      "questionText": "자세히 알려주세요",
+      "questionType": "SHORT_ANSWER",
+      "isRequired": true,
+      "deleted": false,
+      "options": []
+    }
+  ]
+}
+
+
+
+### POST 응답지 제출
+POST localhost:8080/api/v1/submission
+Content-Type: application/json
+
+{
+  "formId": 1,
+  "userId": "sungwoong_test",
+  "answerCreateRequests": [
+    {
+      "questionId": 1,
+      "optionIds": [1]
+    },
+    {
+      "questionId": 2,
+      "optionIds": [4]
+    },
+    {
+      "questionId": 3,
+      "optionIds": [6, 7]
+    },
+    {
+      "questionId": 4,
+      "answerText": "버버버버버버버버버"
+    }
+  ]
+}
+
+
+### GET 응답지 조회
+GET localhost:8080/api/v1/submission/1?answerText=버버
+Content-Type: application/json

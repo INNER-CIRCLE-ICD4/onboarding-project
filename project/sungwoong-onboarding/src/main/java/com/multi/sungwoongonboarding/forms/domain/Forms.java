@@ -1,32 +1,41 @@
 package com.multi.sungwoongonboarding.forms.domain;
 
-import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
-import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Builder
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Forms {
-    private final Long id;
-    private final String title;
-    private final String description;
-    private final List<Questions> questions;
+    private Long id;
+    private String title;
+    private String description;
+    private int version;
+    private List<Questions> questions;
+    private List<FormsHistory> formsHistories;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String userId;
 
-    public static Forms form(FormCreateRequest formCreateRequest) {
-        FormsBuilder formBuilder = Forms.builder()
-                .title(formCreateRequest.getTitle())
-                .description(formCreateRequest.getDescription());
+    public void versionUp() {
+        this.version++;
+    }
 
-        if (formCreateRequest.getQuestionCreateRequests() != null) {
-            formBuilder.questions(formCreateRequest.getQuestionCreateRequests().stream().map(Questions::from).toList());
+    public Forms findFormVersion(int version) {
+        if (version < 1  || this.formsHistories == null || this.formsHistories.isEmpty()) {
+            return this;
         }
 
-        return formBuilder.build();
+        Optional<FormsHistory> findVersion = this.formsHistories.stream().filter(history -> version == history.getVersion())
+                .findFirst();
+
+        // 이력은 있지만 맞는 버전이 없을 시 null을 반환한다.
+        return findVersion.map(FormsHistory::getFormFromHistory).orElse(null);
     }
 }

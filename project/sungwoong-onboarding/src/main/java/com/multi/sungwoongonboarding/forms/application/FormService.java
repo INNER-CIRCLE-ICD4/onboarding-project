@@ -3,6 +3,8 @@ package com.multi.sungwoongonboarding.forms.application;
 import com.multi.sungwoongonboarding.forms.application.repository.FormRepository;
 import com.multi.sungwoongonboarding.forms.domain.Forms;
 import com.multi.sungwoongonboarding.forms.dto.FormCreateRequest;
+import com.multi.sungwoongonboarding.forms.dto.FormResponse;
+import com.multi.sungwoongonboarding.forms.dto.FormUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +16,23 @@ public class FormService {
     private final FormRepository formRepository;
 
     @Transactional
-    public void createForms(FormCreateRequest formCreateRequest) {
-        Forms form = Forms.form(formCreateRequest);
-        formRepository.save(form);
+    public FormResponse createForms(FormCreateRequest formCreateRequest) {
+
+        Forms createRequestDomain = formCreateRequest.toDomain();
+
+        return FormResponse.fromDomain(
+                formRepository.save(createRequestDomain)
+        );
+    }
+
+    public FormResponse updateForms(Long formId, FormUpdateRequest formUpdateRequest) {
+
+        Forms updateRequestDomain = formUpdateRequest.toDomain();
+        updateRequestDomain.versionUp();
+
+        return FormResponse.fromDomain(
+                formRepository.update(formId, updateRequestDomain)
+        );
 
     }
 }

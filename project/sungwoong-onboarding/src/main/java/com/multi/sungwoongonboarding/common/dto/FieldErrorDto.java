@@ -1,4 +1,4 @@
-package com.multi.sungwoongonboarding.common.exception.dto;
+package com.multi.sungwoongonboarding.common.dto;
 
 import lombok.Builder;
 import lombok.Getter;

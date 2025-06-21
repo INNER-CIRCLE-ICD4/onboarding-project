@@ -1,42 +1,51 @@
 package com.multi.sungwoongonboarding.questions.domain;
 
 import com.multi.sungwoongonboarding.options.domain.Options;
-import com.multi.sungwoongonboarding.questions.dto.QuestionCreateRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Getter
 @Builder
 @RequiredArgsConstructor
 public class Questions {
-     public enum QuestionType {
+    public enum QuestionType {
         //단문, 장문, 단일 선택, 복수 선택
-        SHORT_ANSWER, LONG_ANSWER, SINGLE_CHOICE, MULTIPLE_CHOICE
+        SHORT_ANSWER, LONG_ANSWER, SINGLE_CHOICE, MULTIPLE_CHOICE;
+
+        public boolean isMultipleChoice() {
+            return this == MULTIPLE_CHOICE;
+        }
+        public boolean isSingleChoice() {
+            return this == SINGLE_CHOICE;
+        }
+        public boolean isChoiceType() {
+            return isSingleChoice() || isMultipleChoice();
+        }
+        public boolean isTextType() {
+            return this == SHORT_ANSWER || this == LONG_ANSWER;
+        }
+
+
     }
 
     private final Long id;
     private final String questionText;
     private final QuestionType questionType;
-    private final int order;
     private final boolean isRequired;
+    private final boolean deleted;
     private final List<Options> options;
 
-    public static Questions from(QuestionCreateRequest questionCreateRequest) {
+    public Set<Long> getUniqueOptionIds() {
+        return this.options.stream().map(Options::getId).collect(Collectors.toSet());
+    }
 
-        QuestionsBuilder questionBuilder = Questions.builder()
-                .questionText(questionCreateRequest.getQuestionText())
-                .questionType(QuestionType.valueOf(questionCreateRequest.getQuestionType().toUpperCase()))
-                .order(questionCreateRequest.getOrder())
-                .isRequired(questionCreateRequest.isRequired());
-
-        if (questionCreateRequest.getOptionCreateRequests() != null) {
-            questionBuilder.options(questionCreateRequest.getOptionCreateRequests().stream().map(Options::from).collect(Collectors.toList()));
-        }
-
-        return questionBuilder.build();
+    public int getMaxSelection() {
+        return this.options.size();
     }
 }

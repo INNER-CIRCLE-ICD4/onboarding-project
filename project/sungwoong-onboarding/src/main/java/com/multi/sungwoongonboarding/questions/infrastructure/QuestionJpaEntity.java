@@ -4,15 +4,21 @@ import com.multi.sungwoongonboarding.common.entity.BaseEntity;
 import com.multi.sungwoongonboarding.forms.infrastructure.FormsJpaEntity;
 import com.multi.sungwoongonboarding.options.infrastructure.OptionsJpaEntity;
 import com.multi.sungwoongonboarding.questions.domain.Questions;
+import com.multi.sungwoongonboarding.questions.dto.QuestionUpdateRequest;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Entity
 @Table(name = "questions")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuestionJpaEntity extends BaseEntity {
 
     @Id
@@ -24,10 +30,8 @@ public class QuestionJpaEntity extends BaseEntity {
     private String questionText;
 
     @Column(name = "question_type", nullable = false)
-    private String questionType;
-
-    @Column(name = "question_order", nullable = false)
-    private int order;
+    @Enumerated(EnumType.STRING)
+    private Questions.QuestionType questionType;
 
     @Column(name = "is_required", nullable = false)
     private boolean isRequired;
@@ -36,29 +40,60 @@ public class QuestionJpaEntity extends BaseEntity {
     @JoinColumn(name = "form_id")
     private FormsJpaEntity formsJpaEntity;
 
-    @OneToMany(mappedBy = "questionJpaEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @OneToMany(mappedBy = "questionJpaEntity", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<OptionsJpaEntity> options = new ArrayList<>();
 
 
-    public static QuestionJpaEntity fromDomain(Questions questions) {
+    public static QuestionJpaEntity fromDomain(Questions question) {
 
         QuestionJpaEntity questionJpaEntity = new QuestionJpaEntity();
-        questionJpaEntity.id = questions.getId();
-        questionJpaEntity.questionText = questions.getQuestionText();
-        questionJpaEntity.questionType = questions.getQuestionType().name();
-        questionJpaEntity.order = questions.getOrder();
-        questionJpaEntity.isRequired = questions.isRequired();
+        questionJpaEntity.id = question.getId();
+        questionJpaEntity.questionText = question.getQuestionText();
+        questionJpaEntity.questionType = question.getQuestionType();
+        questionJpaEntity.isRequired = question.isRequired();
+
+        if (question.getQuestionType().isChoiceType() && question.getOptions() != null && !question.getOptions().isEmpty()) {
+            question.getOptions().forEach(options -> {
+                OptionsJpaEntity optionJpaEntity = OptionsJpaEntity.fromDomain(options);
+                optionJpaEntity.mappingQuestionJpaEntity(questionJpaEntity);
+            });
+        }
         return questionJpaEntity;
     }
 
-    public static Questions toDomain(QuestionJpaEntity questionJpaEntity) {
+    public Questions toDomain() {
         return Questions.builder()
-                .id(questionJpaEntity.getId())
-                .questionText(questionJpaEntity.getQuestionText())
-                .questionType(Questions.QuestionType.valueOf(questionJpaEntity.getQuestionType()))
-                .order(questionJpaEntity.getOrder())
-                .isRequired(questionJpaEntity.isRequired())
+                .id(this.id)
+                .questionText(this.questionText)
+                .questionType(this.questionType)
+                .isRequired(this.isRequired)
+                .deleted(this.deleted)
+                .options(this.options.stream().map(OptionsJpaEntity::toDomain).toList())
                 .build();
+    }
+
+    public void update(Questions question) {
+
+        this.questionText = question.getQuestionText();
+        this.questionType = question.getQuestionType();
+        this.isRequired = question.isRequired();
+
+        if (question.getQuestionType().isChoiceType() && question.getOptions() != null && !question.getOptions().isEmpty()) {
+
+            question.getOptions().forEach(option -> {
+
+                Optional<OptionsJpaEntity> hasOption = this.options.stream().filter(optionsJpaEntity -> optionsJpaEntity.getId().equals(option.getId())).findFirst();
+                hasOption.ifPresentOrElse(options -> options.update(option), () -> {
+
+                    OptionsJpaEntity optionsJpaEntity = OptionsJpaEntity.fromDomain(option);
+                    optionsJpaEntity.mappingQuestionJpaEntity(this);
+
+                });
+            });
+        }
     }
 
     public void mappingFormJpaEntity(FormsJpaEntity formsJpaEntity) {
@@ -66,5 +101,9 @@ public class QuestionJpaEntity extends BaseEntity {
         if (!formsJpaEntity.getQuestions().contains(this)) {
             formsJpaEntity.getQuestions().add(this);
         }
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }
