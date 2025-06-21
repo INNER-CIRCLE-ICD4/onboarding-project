@@ -112,4 +112,9 @@ public class SurveyService {
         }
         surveyRepository.deleteById(id);
     }
+
+    public List<SurveyCreateResponse> getAllSurveys() {
+        List<Survey> surveys = surveyRepository.findAll();
+        return surveys.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
 }

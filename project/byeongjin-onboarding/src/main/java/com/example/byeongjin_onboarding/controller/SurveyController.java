@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -35,5 +36,13 @@ public class SurveyController {
             model.addAttribute("pageTitle", "새 설문조사 생성");
         }
         return "survey-editor";
+    }
+
+    @GetMapping("/list")
+    public String listSurveys(Model model) {
+        List<SurveyCreateResponse> surveys = surveyService.getAllSurveys();
+        model.addAttribute("surveys", surveys);
+        model.addAttribute("pageTitle", "설문조사 목록");
+        return "survey-list"; // templates/survey-list.html 렌더링
     }
 }
