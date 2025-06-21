@@ -7,12 +7,14 @@ import com.okdori.surveyservice.dto.SurveyCreateDto
 import com.okdori.surveyservice.dto.SurveyAnswerCreateDto
 import com.okdori.surveyservice.dto.SurveyAnswerResponseDto
 import com.okdori.surveyservice.dto.SurveyResponseDto
+import com.okdori.surveyservice.dto.SurveyUpdateDto
 import com.okdori.surveyservice.service.SurveyService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -54,6 +56,20 @@ class SurveyController(
             "설문조사 항목 조회가 완료되었습니다.",
             request.servletPath,
             surveyService.getSurvey(surveyId)
+        )
+    }
+
+    @PutMapping("/{surveyId}")
+    fun updateSurvey(
+        @PathVariable surveyId: String,
+        @RequestBody surveyUpdateDto: SurveyUpdateDto,
+        request: HttpServletRequest,
+    ): Payload<SurveyResponseDto> {
+        return Payload(
+            HttpStatus.OK,
+            "설문조사가 수정되었습니다.",
+            request.servletPath,
+            surveyService.updateSurvey(surveyId, surveyUpdateDto)
         )
     }
 

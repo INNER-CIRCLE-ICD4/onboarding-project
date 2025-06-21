@@ -12,6 +12,7 @@ import com.okdori.surveyservice.domain.SurveyResponse
 import com.okdori.surveyservice.domain.SurveyResponseAnswer
 import com.okdori.surveyservice.dto.AnswerCreateDto
 import com.okdori.surveyservice.dto.AnswerResponseDto
+import com.okdori.surveyservice.dto.ItemCreateDto
 import com.okdori.surveyservice.dto.ItemResponseDto
 import com.okdori.surveyservice.dto.NormalizedAnswer
 import com.okdori.surveyservice.dto.PagedResponse
@@ -21,6 +22,7 @@ import com.okdori.surveyservice.dto.SurveyAnswerCreateDto
 import com.okdori.surveyservice.dto.SurveyAnswerResponseDto
 import com.okdori.surveyservice.dto.SurveyItemWithOptions
 import com.okdori.surveyservice.dto.SurveyResponseDto
+import com.okdori.surveyservice.dto.SurveyUpdateDto
 import com.okdori.surveyservice.exception.BadRequestException
 import com.okdori.surveyservice.exception.ErrorCode
 import com.okdori.surveyservice.exception.ErrorCode.*
@@ -81,9 +83,9 @@ class SurveyService(
     }
 
     fun createSurvey(surveyCreateDto: SurveyCreateDto): SurveyResponseDto {
-        if (existSurveyName(surveyCreateDto.surveyName)) {
-            throw BadRequestException(SURVEY_NAME_DUPLICATED)
-        }
+//        if (existSurveyName(surveyCreateDto.surveyName)) {
+//            throw BadRequestException(SURVEY_NAME_DUPLICATED)
+//        }
 
         val survey = surveyRepository.save(
             Survey().apply {
@@ -92,7 +94,13 @@ class SurveyService(
             }
         )
 
-        val surveyItems = surveyCreateDto.items.map { item ->
+        createItemWithOptions(surveyCreateDto.items, survey)
+
+        return getSurvey(survey.id!!)
+    }
+
+    private fun createItemWithOptions(itemCreateDtos: List<ItemCreateDto>, survey: Survey) {
+        val surveyItems = itemCreateDtos.map { item ->
             SurveyItem(survey).apply {
                 itemName = item.itemName
                 itemDescription = item.itemDescription
@@ -105,7 +113,7 @@ class SurveyService(
         val savedItems = surveyItemRepository.saveAll(surveyItems)
 
         val allOptions = savedItems.flatMapIndexed { index, savedItem ->
-            surveyCreateDto.items[index].options.map { option ->
+            itemCreateDtos[index].options.map { option ->
                 SurveyItemOption(savedItem).apply {
                     optionName = option.optionName
                 }
@@ -115,8 +123,6 @@ class SurveyService(
         if (allOptions.isNotEmpty()) {
             surveyItemOptionRepository.saveAll(allOptions)
         }
-
-        return getSurvey(survey.id!!)
     }
 
     @Transactional(readOnly = true)
@@ -340,5 +346,16 @@ class SurveyService(
             totalPages = (totalCount + size - 1) / size,
             last = page >= (totalCount + size - 1) / size - 1
         )
+    }
+
+    fun updateSurvey(surveyId: String, surveyUpdateDto: SurveyUpdateDto): SurveyResponseDto {
+        findSurveyById(surveyId).let { survey ->
+            survey.updateSurvey(surveyUpdateDto.surveyName, surveyUpdateDto.surveyDescription)
+
+            surveyItemRepository.softDeletedBySurvey(survey)
+            createItemWithOptions(surveyUpdateDto.items, survey)
+
+            return getSurvey(surveyId)
+        }
     }
 }

@@ -27,4 +27,9 @@ class Survey: BaseTimeEntity() {
 
     @Column(columnDefinition = "VARCHAR(2000)")
     var surveyDescription: String? = null
+
+    fun updateSurvey(surveyName: String?, surveyDescription: String?) {
+        surveyName?.let { this.surveyName = surveyName }
+        surveyDescription?.let { this.surveyDescription = surveyDescription }
+    }
 }

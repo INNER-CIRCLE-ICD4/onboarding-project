@@ -3,7 +3,6 @@ package com.okdori.surveyservice.repository
 import com.okdori.surveyservice.domain.QSurveyResponse.surveyResponse
 import com.okdori.surveyservice.domain.QSurveyResponseAnswer.surveyResponseAnswer
 import com.querydsl.core.types.dsl.BooleanExpression
-import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.JPAExpressions
 import org.springframework.stereotype.Component
 
