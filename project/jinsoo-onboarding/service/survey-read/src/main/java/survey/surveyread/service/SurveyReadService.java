@@ -26,6 +26,7 @@ public class SurveyReadService {
             String jsonResponse = objectMapper.writeValueAsString(responseDto);
 
             SurveyResponseQueryModel model = SurveyResponseQueryModel.create(
+                    responseDto.surveyId(),
                     responseDto.surveyFormId(),
                     responseDto.surveySubmitId(),
                     jsonResponse
