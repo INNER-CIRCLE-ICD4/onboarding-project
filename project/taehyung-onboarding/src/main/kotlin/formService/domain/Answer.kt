@@ -12,7 +12,7 @@ class Answer(
     fun validateAnswer(questions: List<Question>) {
         val map = HashMap<Long, QuestionAnswer>()
 
-        values.forEach { map[it.questionId] = it }
+        values.forEach { map[it.questionId!!] = it }
 
         questions.forEach {
             // required 인데 answers 에서 누락되었다면 예외 처리

@@ -88,6 +88,7 @@
 | 설문지 단건 조회 | GET    | /api/v1/survey/{id}        | application/json |
 | 설문지 수정    | PUT    | /api/v1/survey/{id}        | application/json |
 | 설문지 응답    | POST   | /api/v1/survey/{id}/submit | application/json |
+| 설문지 응답 조회 | GET    | /api/v1/answers/{id}       | application/json |
 
 
 ### 설문지 생성
@@ -176,5 +177,25 @@
       "answerType": "SHORT_TEXT" // LONG_TEXT, SINGLE_CHOICE, MULTIPL_CHOICE 
     }
   ]
+}
+```
+
+### 설문지 응답 조회
+
+**Response**
+```json
+{
+  "message": "success",
+  "status": "OK",
+  "data": {
+    "answerId": "0M33X03B7QVRG",
+    "userId": "d10c228d-d386-4944-9afb-a286b26dffff",
+    "submittedAt": "2025-06-21T11:39:27.065106",
+    "values": [
+      {
+        "answerValue": "test"
+      }
+    ]
+  }
 }
 ```
