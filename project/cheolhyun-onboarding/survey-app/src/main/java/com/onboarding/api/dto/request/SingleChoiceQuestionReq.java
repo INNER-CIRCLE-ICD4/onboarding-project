@@ -1,4 +1,4 @@
-package com.onboarding.api.dto;
+package com.onboarding.api.dto.request;
 
 import com.onboarding.model.QuestionType;
 import com.onboarding.model.survey.Options;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class MultiChoiceQuestionReq extends QuestionReq {
+public class SingleChoiceQuestionReq extends QuestionReq {
     private List<OptionsReq> options;
 
     @Override
@@ -20,6 +20,6 @@ public class MultiChoiceQuestionReq extends QuestionReq {
                 .map(OptionsReq::getLabel)
                 .collect(Collectors.toList());
 
-        return Question.of(null, title, description, QuestionType.MULTI_CHOICE, new Options(optionList), required);
+        return Question.of(null, title, description, QuestionType.SINGLE_CHOICE, new Options(optionList), required);
     }
 }

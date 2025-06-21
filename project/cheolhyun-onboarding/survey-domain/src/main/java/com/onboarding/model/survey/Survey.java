@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Survey {
     private static final String INVALID_TITLE = "설문조사 명이 유효하지 않습니다.";
 
-    private UUID id;
+    private String id;
 
     private String title;
     private String description;
@@ -32,7 +32,7 @@ public class Survey {
         this(null, title, description, questions);
     }
 
-    public Survey(UUID id, String title, String description, Questions questions) {
+    public Survey(String id, String title, String description, Questions questions) {
         validTitle(title);
 
         this.id = id;

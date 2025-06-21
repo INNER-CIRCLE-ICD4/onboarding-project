@@ -1,4 +1,4 @@
-package com.onboarding.api.dto;
+package com.onboarding.api.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

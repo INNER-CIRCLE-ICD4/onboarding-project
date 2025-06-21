@@ -4,6 +4,10 @@ import com.onboarding.model.QuestionType;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 @Entity
 @Getter
 @Table(name = "questions")
@@ -11,7 +15,7 @@ public class QuestionEntity {
     @Id
     @GeneratedValue(generator = "uuid2")
     @Column(name="question_id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
-    private Long id;
+    private UUID id;
 
     @Column(nullable = false)
     private String title;
@@ -22,6 +26,9 @@ public class QuestionEntity {
     @Column(name = "question_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private QuestionType type;
+
+    @OneToMany(mappedBy = "questionEntity", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<OptionEntity> options = new ArrayList<>();
 
     @Column(name = "is_required", nullable = false)
     private boolean isRequired;
@@ -43,5 +50,9 @@ public class QuestionEntity {
 
     public QuestionEntity() {
 
+    }
+
+    public void setOptions(List<OptionEntity> options) {
+        this.options = options;
     }
 }

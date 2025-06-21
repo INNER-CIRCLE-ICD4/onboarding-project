@@ -1,7 +1,6 @@
-package com.onboarding.api.dto;
+package com.onboarding.api.dto.request;
 
 import com.onboarding.model.QuestionType;
-import com.onboarding.model.survey.Option;
 import com.onboarding.model.survey.Options;
 import com.onboarding.model.survey.Question;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SingleChoiceQuestionReq extends QuestionReq {
+public class MultiChoiceQuestionReq extends QuestionReq {
     private List<OptionsReq> options;
 
     @Override
@@ -21,6 +20,6 @@ public class SingleChoiceQuestionReq extends QuestionReq {
                 .map(OptionsReq::getLabel)
                 .collect(Collectors.toList());
 
-        return Question.of(null, title, description, QuestionType.SINGLE_CHOICE, new Options(optionList), required);
+        return Question.of(null, title, description, QuestionType.MULTI_CHOICE, new Options(optionList), required);
     }
 }

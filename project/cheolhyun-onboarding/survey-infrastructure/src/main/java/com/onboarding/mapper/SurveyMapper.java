@@ -2,6 +2,8 @@ package com.onboarding.mapper;
 
 import com.onboarding.entity.QuestionEntity;
 import com.onboarding.entity.SurveyEntity;
+import com.onboarding.model.survey.Question;
+import com.onboarding.model.survey.Questions;
 import com.onboarding.model.survey.Survey;
 
 import java.util.List;
@@ -19,7 +21,16 @@ public class SurveyMapper {
         return surveyEntity;
     }
 
-    public static Survey toDomain(SurveyEntity entity) {
-        return new Survey(entity.getTitle(), entity.getDescription());
+    public static Survey from(SurveyEntity entity) {
+        List<Question> questions = entity.getQuestions().stream()
+                .map(QuestionMapper::from)
+                .toList();
+
+        return new Survey(
+                entity.getId().toString(),
+                entity.getTitle(),
+                entity.getDescription(),
+                new Questions(questions)
+        );
     }
 }

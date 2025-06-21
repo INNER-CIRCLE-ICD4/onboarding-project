@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @ToString
 @EqualsAndHashCode
@@ -91,5 +93,13 @@ public class Question {
 
     public boolean isDeleted() {
         return isDeleted;
+    }
+
+    public List<Option> getOptionList() {
+        if(options == null) {
+            return null;
+        }
+
+        return options.getOptionList();
     }
 }

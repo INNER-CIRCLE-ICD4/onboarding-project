@@ -1,4 +1,4 @@
-package com.onboarding.api.dto;
+package com.onboarding.api.dto.request;
 
 import com.onboarding.model.survey.Question;
 import com.onboarding.model.survey.Questions;
