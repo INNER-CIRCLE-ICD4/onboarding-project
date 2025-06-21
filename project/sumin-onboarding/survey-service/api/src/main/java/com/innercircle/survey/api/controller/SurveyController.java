@@ -2,14 +2,12 @@ package com.innercircle.survey.api.controller;
 
 import com.innercircle.survey.application.service.SurveyService;
 import com.innercircle.survey.common.dto.SurveyCreateDto;
+import com.innercircle.survey.common.dto.SurveyUpdateDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.UUID;
@@ -26,5 +24,12 @@ public class SurveyController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(Map.of("surveyId", surveyId, "message", "설문조사 생성 성공"));
+    }
+
+    @PutMapping("/{surveyId}")
+    public ResponseEntity<?> updateSurvey(@PathVariable UUID surveyId,
+                                          @Valid @RequestBody SurveyUpdateDto request) {
+        surveyService.updateSurvey(surveyId, request);
+        return ResponseEntity.ok().body(Map.of("message","설문조사 수정 성공"));
     }
 }

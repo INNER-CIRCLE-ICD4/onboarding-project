@@ -45,4 +45,25 @@ public class Survey {
 
     //설문조사 수정시간
     private LocalDateTime updatedAt;
+
+    public void updateTitle(String title) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("설문 제목은 비어 있을 수 없습니다.");
+        }
+        this.title = title;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void addQuestion(Question newQuestion) {
+        this.questions.add(newQuestion);       // 설문 → 질문 추가
+        newQuestion.setSurvey(this);           // 질문 → 설문 설정 (양방향 연관관계 유지)
+    }
+
+    public void removeQuestion(Question q) {
+        questions.remove(q);
+        q.setSurvey(null);
+    }
 }

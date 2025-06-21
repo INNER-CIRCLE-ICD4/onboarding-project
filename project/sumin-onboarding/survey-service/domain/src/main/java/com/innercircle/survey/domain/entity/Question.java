@@ -1,15 +1,13 @@
 package com.innercircle.survey.domain.entity;
 
+import com.innercircle.survey.common.dto.QuestionUpdateDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -20,7 +18,7 @@ public class Question {
     //질문 ID(PK)
     @Id
     @GeneratedValue
-    private Long id;
+    private UUID id;
 
     //질문 제목
     private String title;
@@ -35,6 +33,7 @@ public class Question {
     private boolean required;
 
     //설문조사와 N:1
+    @Setter
     @ManyToOne
     @JoinColumn(name = "survey_id")
     private Survey survey;
@@ -42,7 +41,7 @@ public class Question {
     //선택 리스트와 1:N
     @Builder.Default
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionOption> options = new ArrayList<QuestionOption>();
+    private List<QuestionOption> options = new ArrayList<>();
 
     //질문 생성자
     private String createdBy;
@@ -56,4 +55,10 @@ public class Question {
     //질문 수정시간
     private LocalDateTime updatedAt;
 
+    public void update(QuestionUpdateDto questionDto) {
+        this.title = questionDto.getTitle();
+        this.description = questionDto.getDescription();
+        this.type = questionDto.getType();
+        this.required = questionDto.isRequired();
+    }
 }
