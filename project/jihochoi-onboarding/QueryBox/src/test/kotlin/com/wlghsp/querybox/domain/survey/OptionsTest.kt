@@ -10,12 +10,10 @@ class OptionsTest {
     @DisplayName("Options 생성 - 유효한 값일 경우 성공")
     @Test
     fun createOptions_success() {
-        val options = Options.of(
-            listOf(Option("A"), Option("B"))
-        )
+        val options = Options.of(listOf(Option("A"), Option("B")))
 
-        assertThat(options.values).hasSize(2)
-        assertThat(options.values).containsOnly(Option("A"), Option("B"))
+        assertThat(options.options).hasSize(2)
+        assertThat(options.options).containsOnly(Option("A"), Option("B"))
     }
 
     @DisplayName("Options.isEmpty, isNotEmpty 동작 확인")

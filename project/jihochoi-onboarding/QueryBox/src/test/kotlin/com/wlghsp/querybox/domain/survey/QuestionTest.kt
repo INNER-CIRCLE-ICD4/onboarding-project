@@ -1,5 +1,6 @@
 package com.wlghsp.querybox.domain.survey
 
+import com.wlghsp.querybox.ui.dto.QuestionUpdateRequest
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -60,11 +61,11 @@ class QuestionTest {
 
         assertThat(singleChoiceQuestion.name).isEqualTo("당신의 성별은?")
         assertThat(singleChoiceQuestion.type).isEqualTo(QuestionType.SINGLE_CHOICE)
-        assertThat(singleChoiceQuestion.options?.values).hasSize(2)
+        assertThat(singleChoiceQuestion.options?.options).hasSize(2)
 
         assertThat(multipleChoiceQuestion.name).isEqualTo("좋아하는 언어를 모두 선택하세요")
         assertThat(multipleChoiceQuestion.type).isEqualTo(QuestionType.MULTIPLE_CHOICE)
-        assertThat(multipleChoiceQuestion.options?.values).hasSize(2)
+        assertThat(multipleChoiceQuestion.options?.options).hasSize(2)
     }
 
     @DisplayName("주관식 항목은 옵션이 있으면 예외 발생")
@@ -76,13 +77,7 @@ class QuestionTest {
                 description = "자유롭게 작성해주세요.",
                 type = QuestionType.LONG_TEXT,
                 required = true,
-                options = Options(
-                    listOf(
-                        Option(
-                            "A"
-                        )
-                    )
-                ),
+                options = Options(listOf(Option("A"))),
             ) }
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("항목 이름은 비어 있을 수 없습니다.")
@@ -102,4 +97,35 @@ class QuestionTest {
         }.isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("항목 이름은 비어 있을 수 없습니다.")
     }
+
+    @DisplayName("updateFrom 호출 시 필드가 정상적으로 수정")
+    @Test
+    fun questionUpdateFromSuccess() {
+        val original = Question(
+            name = "원래 이름",
+            description = "원래 설명",
+            type = QuestionType.SHORT_TEXT,
+            required = false,
+            options = null
+        )
+
+        val updateRequest = QuestionUpdateRequest(
+            id = original.id,
+            name = "변경된 이름",
+            description = "변경된 설명",
+            type = QuestionType.LONG_TEXT,
+            required = true,
+            options = null
+        )
+
+        // when
+        original.updateFrom(updateRequest)
+
+        // then
+        assertThat(original.name).isEqualTo("변경된 이름")
+        assertThat(original.description).isEqualTo("변경된 설명")
+        assertThat(original.type).isEqualTo(QuestionType.LONG_TEXT)
+        assertThat(original.required).isTrue()
+    }
+
 }

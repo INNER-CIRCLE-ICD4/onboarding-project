@@ -7,20 +7,34 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
 
 @Embeddable
-class Questions (
+class Questions(
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "survey_id")
     private val values: MutableList<Question> = mutableListOf()
 ) {
 
     fun validate() {
-        require(values.size in 1..10) { "항목 수는 1~10개 사이여야 합니다." }
-        require(values.distinctBy { it.name }.size == values.size) {
-            "항목 이름은 중복될 수 없습니다."
-        }
+        require(isQuestionCountValid()) { "항목 수는 1~10개 사이여야 합니다." }
+        require(hasNoDuplicateQuestionNames()) { "항목 이름은 중복될 수 없습니다." }
     }
 
-    fun values(): List<Question> = values.toList() // 방어적 복사
+    fun update(questions: List<QuestionUpdateRequest>) {
+        val currentQuestions = this.groupById()
+        val newQuestions = questions.map { request ->
+            val existing = request.id?.let { currentQuestions[it] }
+
+            if (existing != null) { // 존재하면 기존 데이터 수정
+                existing.updateFrom(request)
+                existing
+            } else { // 존재하지 않으면 항목 신규 생성
+                Question.from(request)
+            }
+        }
+
+        val retainedIds = questions.mapNotNull { it.id }.toSet()
+        this.removeIfExists(currentQuestions.keys - retainedIds)
+        this.addAllIfNew(newQuestions)
+    }
 
     fun groupById(): Map<Long, Question> =
         values.associateBy { it.id }
@@ -29,43 +43,27 @@ class Questions (
         values.removeIf { it.id in removedIds }
     }
 
-    fun addAllIfNew(newQuestions: MutableList<Question>) {
+    fun addAllIfNew(newQuestions: List<Question>) {
         values.addAll(newQuestions.filter { it.id == 0L })
     }
 
-    fun update(questions: List<QuestionUpdateRequest>) {
-        val currentQuestions = this.groupById()
-        val newQuestions = mutableListOf<Question>()
+    private fun isQuestionCountValid(): Boolean = values.size in 1..10
 
-        for (question in questions) {
-            val existingQuestion = question.id?.let { currentQuestions[it] }
+    private fun hasNoDuplicateQuestionNames(): Boolean = values.distinctBy { it.name }.size == values.size
 
-            if (existingQuestion != null) {
-                existingQuestion.updateFrom(question)
-                newQuestions.add(existingQuestion)
-            } else {
-                // id가 없으면 새로 생성
-                val created = Question(
-                    name = question.name,
-                    description = question.description,
-                    type = question.type,
-                    required = question.required,
-                    options = question.options?.let { Options(it.map(::Option)) }
-                )
-                newQuestions.add(created)
-            }
-        }
-
-        val removed = currentQuestions.keys - questions.mapNotNull { it.id }.toSet()
-        this.removeIfExists(removed)
-        this.addAllIfNew(newQuestions)
+    fun add(question: Question) {
+        this.values.add(question)
     }
+
+    fun values(): List<Question> = values.toList() // 방어적 복사
+
+    fun size(): Int = values.size
 
     companion object {
         fun of(values: List<Question>): Questions {
-            val q = Questions(values.toMutableList())
-            q.validate()
-            return q
+            val questions = Questions(values.toMutableList())
+            questions.validate()
+            return questions
         }
     }
 }
