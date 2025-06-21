@@ -34,7 +34,8 @@ enum class ErrorCode(
     ),
     INVALID_QUESTION_INPUT_TYPE(
         HttpStatus.BAD_REQUEST,
-        "질문 입력 타입이 유효하지 않습니다. 입력 타입은 빈 문자열이 아니어야 하며, 정의된 입력 타입 " + InputType.entries.toString() + " 중 하나여야 합니다. (현재 입력값: {0})"
+        "질문 입력 타입이 유효하지 않습니다. 입력 타입은 빈 문자열이 아니어야 하며, 정의된 입력 타입 " +
+            InputType.entries.toString() + " 중 하나여야 합니다. (현재 입력값: {0})"
     ),
 
     // 질문 입력 옵션 유효성 검사 에러코드
@@ -71,7 +72,8 @@ enum class ErrorCode(
     ),
 
     // 서버 에러 코드 (500)
-    SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 알 수 없는 오류가 발생했습니다.")
+    SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 알 수 없는 오류가 발생했습니다."),
+
     ;
 
     fun withArgs(vararg args: Any?): FormattedErrorCode = FormattedErrorCode(this, args.map { it ?: "" }.toTypedArray())

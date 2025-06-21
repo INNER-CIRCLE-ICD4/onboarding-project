@@ -15,7 +15,7 @@ class FormCommandRepositoryImpl(
     private val formJpaRepository: FormJpaRepository,
     private val questionJpaRepository: QuestionJpaRepository,
 
-    ): FormCommandRepository {
+) : FormCommandRepository {
 
     override fun insertOrUpdate(form: Form): String {
         val formEntity = formJpaRepository.save(FormEntity.fromDomain(form))

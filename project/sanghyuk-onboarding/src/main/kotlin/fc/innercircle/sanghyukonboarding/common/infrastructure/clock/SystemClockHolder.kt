@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
-class SystemClockHolder(): ClockHolder {
+class SystemClockHolder() : ClockHolder {
     override fun localDateTime(): LocalDateTime {
         return LocalDateTime.now()
     }

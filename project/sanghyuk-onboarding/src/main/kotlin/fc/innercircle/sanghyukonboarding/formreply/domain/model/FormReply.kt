@@ -8,7 +8,7 @@ class FormReply(
     val id: String = "",
     val formId: String,
     val submittedAt: LocalDateTime,
-    answers: List<Answer>
+    answers: List<Answer>,
 ) {
     val answers: Answers
 

@@ -15,4 +15,3 @@ class ListToJsonConverter : AttributeConverter<List<String>?, String?> {
     override fun convertToEntityAttribute(dbData: String?): List<String>? =
         dbData?.let { mapper.readValue(it) }
 }
-

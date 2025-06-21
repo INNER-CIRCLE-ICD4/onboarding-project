@@ -16,9 +16,11 @@ import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import org.springframework.data.domain.Persistable
 
-@Table(name = "answer",
+@Table(
+    name = "answer",
     indexes = [],
-    uniqueConstraints = [])
+    uniqueConstraints = []
+)
 @Entity(name = "answer")
 open class AnswerEntity(
     @Id
@@ -51,7 +53,7 @@ open class AnswerEntity(
         columnDefinition = "char(26) not null comment '설문 응답 ID'"
     )
     val formReplyEntity: FormReplyEntity,
-): Persistable<String> {
+) : Persistable<String> {
     override fun getId(): String {
         return id
     }

@@ -18,9 +18,11 @@ import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import org.springframework.data.domain.Persistable
 
-@Table(name = "question",
+@Table(
+    name = "question",
     indexes = [],
-    uniqueConstraints = [])
+    uniqueConstraints = []
+)
 @Entity(name = "question")
 open class QuestionEntity(
     @Id
@@ -74,7 +76,7 @@ open class QuestionEntity(
         foreignKey = ForeignKey(name = "fk_question_template_form", value = ConstraintMode.NO_CONSTRAINT)
     )
     val formEntity: FormEntity,
-): Persistable<String> {
+) : Persistable<String> {
 
     init {
         validateRequiredFields()
@@ -96,7 +98,7 @@ open class QuestionEntity(
             description = description,
             deleted = deleted,
             options = options.toList(),
-            formId = formEntity.id,
+            formId = formEntity.id
         )
     }
 

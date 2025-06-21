@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 class FormQueryRepositoryImpl(
     private val formJpaRepository: FormJpaRepository,
     private val questionJpaRepository: QuestionJpaRepository,
-): FormQueryRepository {
+) : FormQueryRepository {
 
     override fun getById(id: String): Form {
         val formEntity = formJpaRepository.findById(id)

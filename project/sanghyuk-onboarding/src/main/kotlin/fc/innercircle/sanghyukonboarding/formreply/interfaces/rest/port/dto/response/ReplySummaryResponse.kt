@@ -15,7 +15,7 @@ data class ReplySummaryResponse(
         val questionId: String,
         val title: String,
         val description: String,
-        val allAnswers: List<String>
+        val allAnswers: List<String>,
     )
 
     companion object {

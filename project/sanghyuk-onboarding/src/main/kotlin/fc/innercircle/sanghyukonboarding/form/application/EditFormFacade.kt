@@ -14,7 +14,7 @@ class EditFormFacade(
     private val formQueryRepository: FormQueryRepository,
     private val formCommandRepository: FormCommandRepository,
     private val editor: FormEditor,
-): EditFormUseCase {
+) : EditFormUseCase {
 
     override fun edit(formId: String, request: FormRequest) {
         val form = formQueryRepository.getById(formId)

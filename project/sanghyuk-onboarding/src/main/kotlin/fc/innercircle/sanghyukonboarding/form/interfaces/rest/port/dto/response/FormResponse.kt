@@ -7,7 +7,7 @@ data class FormResponse(
     val formId: String,
     val title: String,
     val description: String,
-    val questions: List<QuestionResponse>
+    val questions: List<QuestionResponse>,
 ) {
     data class QuestionResponse(
         val questionId: String,
@@ -16,7 +16,7 @@ data class FormResponse(
         val type: String,
         val required: Boolean,
         val version: Long,
-        val options: List<String>
+        val options: List<String>,
     ) {
 
         companion object {
@@ -28,7 +28,7 @@ data class FormResponse(
                     type = question.type.name,
                     required = question.required,
                     version = question.version,
-                    options =  question.options
+                    options = question.options
                 )
             }
         }

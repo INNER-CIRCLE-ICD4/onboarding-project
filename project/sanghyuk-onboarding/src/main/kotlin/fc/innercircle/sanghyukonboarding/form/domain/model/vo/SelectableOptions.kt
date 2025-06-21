@@ -3,7 +3,7 @@ package fc.innercircle.sanghyukonboarding.form.domain.model.vo
 import fc.innercircle.sanghyukonboarding.form.domain.model.SelectableOption
 
 class SelectableOptions(
-    values: List<SelectableOption> = emptyList()
+    values: List<SelectableOption> = emptyList(),
 ) {
 
     private val values: List<SelectableOption> = values.sortedBy { it.displayOrder }

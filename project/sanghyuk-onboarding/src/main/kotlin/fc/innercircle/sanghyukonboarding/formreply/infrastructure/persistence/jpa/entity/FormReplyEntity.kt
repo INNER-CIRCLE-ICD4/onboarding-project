@@ -11,9 +11,11 @@ import jakarta.persistence.Table
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
 
-@Table(name = "form_reply",
+@Table(
+    name = "form_reply",
     indexes = [],
-    uniqueConstraints = [])
+    uniqueConstraints = []
+)
 @Entity(name = "form_reply")
 open class FormReplyEntity(
     @Id
@@ -28,8 +30,8 @@ open class FormReplyEntity(
     @Column(nullable = false, columnDefinition = "char(26) not null comment '설문 ID'")
     val formId: String = "",
     @Column(nullable = false, columnDefinition = "datetime not null comment '설문 응답일자'")
-    val submittedAt: LocalDateTime
-): Persistable<String> {
+    val submittedAt: LocalDateTime,
+) : Persistable<String> {
     override fun getId(): String {
         return id
     }
@@ -59,7 +61,7 @@ open class FormReplyEntity(
             return FormReplyEntity(
                 id = formReply.id,
                 formId = formReply.formId,
-                submittedAt = formReply.submittedAt,
+                submittedAt = formReply.submittedAt
             )
         }
     }

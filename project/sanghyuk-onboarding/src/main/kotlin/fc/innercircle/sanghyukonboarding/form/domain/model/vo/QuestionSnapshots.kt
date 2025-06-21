@@ -5,7 +5,7 @@ import fc.innercircle.sanghyukonboarding.common.domain.exception.ErrorCode
 import fc.innercircle.sanghyukonboarding.form.domain.model.QuestionSnapshot
 
 class QuestionSnapshots(
-    values: List<QuestionSnapshot> = emptyList()
+    values: List<QuestionSnapshot> = emptyList(),
 ) {
 
     private val values: List<QuestionSnapshot> = values.sortedByDescending { it.version }

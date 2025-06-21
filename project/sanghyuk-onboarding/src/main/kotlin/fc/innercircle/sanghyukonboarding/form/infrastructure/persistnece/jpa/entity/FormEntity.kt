@@ -11,9 +11,11 @@ import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
 import org.springframework.data.domain.Persistable
 
-@Table(name = "form",
+@Table(
+    name = "form",
     indexes = [],
-    uniqueConstraints = [])
+    uniqueConstraints = []
+)
 @Entity(name = "form")
 open class FormEntity(
     @Id
@@ -29,7 +31,7 @@ open class FormEntity(
     val title: String,
     @Column(nullable = false, length = 1000, columnDefinition = "varchar(1000) comment '설문 설명'")
     val description: String,
-): Persistable<String> {
+) : Persistable<String> {
 
     /** 생성자에서 필수 입력값 검증 **/
     init {
@@ -72,7 +74,7 @@ open class FormEntity(
             return FormEntity(
                 id = domain.id,
                 title = domain.title,
-                description = domain.description,
+                description = domain.description
             )
         }
     }

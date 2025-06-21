@@ -22,7 +22,7 @@ import java.net.URI
 class FormController(
     private val createFormFacade: CreateFormFacade,
     private val editFormFacade: EditFormFacade,
-    private val formQueryRepository: FormQueryRepository
+    private val formQueryRepository: FormQueryRepository,
 ) {
 
     @PostMapping(consumes = ["application/json"], produces = ["application/json"])
@@ -45,7 +45,7 @@ class FormController(
     @PutMapping("/{formId}", consumes = ["application/json"], produces = ["application/json"])
     fun editForm(
         @PathVariable formId: String,
-        @RequestBody command: FormRequest
+        @RequestBody command: FormRequest,
     ): ResponseEntity<Unit> {
         editFormFacade.edit(formId, command)
         return ResponseEntity.noContent().build()

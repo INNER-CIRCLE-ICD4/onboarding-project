@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component
 @Component
 class SummarizeFormRepliesFacade(
     private val formQueryRepository: FormQueryRepository,
-    private val formReplyQueryRepository: FormReplyQueryRepository
-): SummarizeFormRepliesUseCase {
+    private val formReplyQueryRepository: FormReplyQueryRepository,
+) : SummarizeFormRepliesUseCase {
     override fun summarize(formId: String): ReplySummaryResponse {
         val form: Form = formQueryRepository.getById(formId)
         val formReplies: List<FormReply> = formReplyQueryRepository.getAllByForm(form.id)

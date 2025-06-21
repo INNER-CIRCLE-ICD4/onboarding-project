@@ -45,7 +45,7 @@ class Form(
         id: String = this.id,
         title: String = this.title,
         description: String = this.description,
-        questions: List<Question> = this.questions.list()
+        questions: List<Question> = this.questions.list(),
     ): Form {
         return Form(
             id = id,
@@ -60,7 +60,6 @@ class Form(
         description: String,
         newQuestions: List<Question>,
     ): Form {
-
         // 기존 질문 중 새로 추가된 질문에 없는 질문은 삭제 처리
         val deletedQuestions: List<Question> = this.questions.list()
             .filter { question ->

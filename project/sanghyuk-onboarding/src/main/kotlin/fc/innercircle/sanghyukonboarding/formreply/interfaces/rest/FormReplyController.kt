@@ -17,10 +17,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RestController
 class FormReplyController(
     private val submitReplyUseCase: SubmitReplyUseCase,
-    private val summarizeFormRepliesUseCase: SummarizeFormRepliesUseCase
+    private val summarizeFormRepliesUseCase: SummarizeFormRepliesUseCase,
 ) {
 
-    @PostMapping("/replies",consumes = ["application/json"], produces = ["application/json"])
+    @PostMapping("/replies", consumes = ["application/json"], produces = ["application/json"])
     fun submitReply(
         @PathVariable formId: String,
         @RequestBody commands: List<AnswerRequest>,
@@ -41,5 +41,4 @@ class FormReplyController(
         val response: ReplySummaryResponse = summarizeFormRepliesUseCase.summarize(formId)
         return ResponseEntity.ok(response)
     }
-
 }

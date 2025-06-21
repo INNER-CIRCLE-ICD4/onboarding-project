@@ -13,7 +13,7 @@ open class QuestionSnapshot(
     val type: InputType,
     val version: Long,
     selectableOptions: List<SelectableOption>,
-    val questionTemplateId: String
+    val questionTemplateId: String,
 ) {
 
     val selectableOptions: SelectableOptions
@@ -25,7 +25,8 @@ open class QuestionSnapshot(
         validateRequiredFields()
     }
 
-    private fun filteringNewOrSelectableOptionsOfThis(selectableOptions: List<SelectableOption>): List<SelectableOption> {
+    private fun filteringNewOrSelectableOptionsOfThis(selectableOptions: List<SelectableOption>):
+        List<SelectableOption> {
         val selectableOptionsOfThis: List<SelectableOption> = selectableOptions.filter { it ->
             it.isNew() || it.isSelectableOptionOf(this)
         }
@@ -65,7 +66,6 @@ open class QuestionSnapshot(
         QuestionSnapshotValidator.validateDescription(description)
         QuestionSnapshotValidator.validateVersion(version)
     }
-
 
     fun isModified(questionSnapshot: QuestionSnapshot): Boolean {
         return this != questionSnapshot

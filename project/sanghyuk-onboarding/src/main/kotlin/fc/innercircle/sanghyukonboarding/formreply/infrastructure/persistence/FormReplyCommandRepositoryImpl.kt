@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component
 @Component
 class FormReplyCommandRepositoryImpl(
     private val formReplyJpaRepository: FormReplyJpaRepository,
-    private val answerJpaRepository: AnswerJpaRepository
-): FormReplyCommandRepository {
+    private val answerJpaRepository: AnswerJpaRepository,
+) : FormReplyCommandRepository {
     override fun insertOrUpdate(formReply: FormReply): String {
         val formReplyEntity = FormReplyEntity.fromDomain(formReply)
         formReplyJpaRepository.save(formReplyEntity)
 
-        val answerEntities = mutableListOf<AnswerEntity>();
+        val answerEntities = mutableListOf<AnswerEntity>()
 
         formReply.answers.list().forEach { answer ->
             answerEntities.add(AnswerEntity.fromDomain(answer, formReplyEntity))

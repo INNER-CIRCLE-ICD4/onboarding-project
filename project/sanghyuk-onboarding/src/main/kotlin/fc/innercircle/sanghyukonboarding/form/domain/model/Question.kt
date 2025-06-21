@@ -15,7 +15,7 @@ class Question(
     val description: String = "",
     val deleted: Boolean = false,
     val options: List<String> = emptyList(),
-    val formId: String = ""
+    val formId: String = "",
 ) {
 
     init {
@@ -55,7 +55,7 @@ class Question(
             type = InputType.valueOrThrows(type),
             title = title,
             description = description,
-            options = options,
+            options = options
         )
 
         if (isModified(copyQuestion)) {
@@ -88,7 +88,7 @@ class Question(
         title: String = this.title,
         description: String = this.description,
         options: List<String> = this.options,
-        deleted: Boolean = this.deleted
+        deleted: Boolean = this.deleted,
     ): Question {
         return Question(
             id = this.id,

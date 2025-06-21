@@ -35,7 +35,7 @@ class ReplyService(private val clockHolder: ClockHolder) {
             validateAnswer(question, param)
             val answer = Answer(
                 values = param.values,
-                questionId = question.id,
+                questionId = question.id
             )
             validateRequiredAnswer(question, answer)
             answer
