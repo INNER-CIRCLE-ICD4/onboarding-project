@@ -26,6 +26,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class SurveyServiceTest {
@@ -69,7 +70,9 @@ class SurveyServiceTest {
 			Survey updatedSurvey = SurveyFixtures.updatedSurvey(existingSurvey.getId(), existingSurvey.getVersion());
 
 			// when
-			Mockito.when(surveyRepository.save(updatedSurvey)).thenReturn(updatedSurvey);
+			Mockito.when(surveyRepository.findByIdAndVersion(existingSurvey.getId(), existingSurvey.getVersion()))
+				   .thenReturn(Optional.of(existingSurvey));
+			Mockito.when(surveyRepository.save(any())).thenReturn(updatedSurvey);
 			Survey updated = sut.updateSurvey(existingSurvey);
 
 			// then
@@ -77,7 +80,7 @@ class SurveyServiceTest {
 			assertEquals(existingSurvey.getVersion() + 1, updated.getVersion());
 			assertFalse(updated.getQuestions().isEmpty());
 
-			Mockito.verify(surveyRepository, Mockito.times(1)).save(Mockito.any());
+			Mockito.verify(surveyRepository, Mockito.times(1)).save(updatedSurvey);
 		}
 	}
 
