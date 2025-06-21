@@ -11,14 +11,14 @@ public class InputTypeValidator implements ConstraintValidator<ValidInputType, S
 		return contains(value);
 	}
 
-	public static boolean contains (String name) {
-		if (name == null) return false;
+	public static boolean contains (String inputType) {
+		if (inputType == null) return false;
 
-		for (InputType type : InputType.values()) {
-			if (type.name().equalsIgnoreCase(name)) {
-				return true;
-			}
+		try {
+			InputType.valueOf(inputType);
+			return true;
+		} catch (IllegalArgumentException ex) {
+			return false;
 		}
-		return false;
 	}
 }

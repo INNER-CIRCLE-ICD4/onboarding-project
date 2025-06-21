@@ -13,7 +13,12 @@ public record ApiResponse<T>(
 	}
 
 	public static <T> ApiResponse<T> fromErrorCodes (ErrorCodes errorCodes) {
-		final ApiErrorResponse apiErrorResponse = new ApiErrorResponse(errorCodes.message, errorCodes.code);
+		final ApiErrorResponse apiErrorResponse = new ApiErrorResponse(errorCodes.message, errorCodes.name());
+		return new ApiResponse<>(null, apiErrorResponse);
+	}
+
+	public static <T> ApiResponse<T> fromMessageAndCode (String message, String code) {
+		final ApiErrorResponse apiErrorResponse = new ApiErrorResponse(message, code);
 		return new ApiResponse<>(null, apiErrorResponse);
 	}
 }

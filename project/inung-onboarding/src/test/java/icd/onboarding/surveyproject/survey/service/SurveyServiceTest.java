@@ -8,6 +8,7 @@ import icd.onboarding.surveyproject.survey.service.domain.Question;
 import icd.onboarding.surveyproject.survey.service.domain.Response;
 import icd.onboarding.surveyproject.survey.service.domain.Survey;
 import icd.onboarding.surveyproject.survey.service.enums.InputType;
+import icd.onboarding.surveyproject.survey.service.exception.DuplicateResponseException;
 import icd.onboarding.surveyproject.survey.service.exception.SurveyNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -82,16 +83,18 @@ class SurveyServiceTest {
 
 	@Nested
 	class SubmitResponse {
+		final UUID surveyId = UUID.randomUUID();
+		final int version = 1;
+		final String repondentId = "test-id";
+
 		@Test
 		@DisplayName("응답으로 제출한 설문이 존재하지 않으면 예외를 발생 시킨다.")
 		void throwExceptionWhenSurveyNotFound () {
 			// given
-			UUID surveyId = UUID.randomUUID();
-			int version = 1;
-
 			Response response = Response.create(
 					surveyId,
 					version,
+					repondentId,
 					List.of(Answer.create("응답 1", UUID.randomUUID()))
 			);
 
@@ -105,6 +108,27 @@ class SurveyServiceTest {
 			);
 		}
 
+		@Test
+		@DisplayName("중복 응답을 제출하면 예외를 발생 시킨다.")
+		void throwExceptionWhenDuplicateResponse () {
+			// given
+			Response response = Response.create(
+					surveyId,
+					version,
+					repondentId,
+					List.of()
+			);
+
+			// when
+			Mockito.when(responseRepository.existsBySurveyIdAndVersionAndRespondentId(surveyId, version, repondentId)).thenReturn(true);
+
+			// then
+			assertThrows(
+					DuplicateResponseException.class,
+					() -> sut.submitResponse(response)
+			);
+		}
+
 
 		@Test
 		@DisplayName("응답을 제출하고, 저장소에 저장되어야 한다.")
@@ -114,7 +138,12 @@ class SurveyServiceTest {
 			Answer answer1 = Answer.create("답변 1", survey.getQuestions().get(0).getId());
 			Answer answer2 = Answer.create("답변 2", survey.getQuestions().get(1).getId());
 
-			Response response = Response.create(survey.getId(), survey.getVersion(), List.of(answer1, answer2));
+			Response response = Response.create(
+					survey.getId(),
+					survey.getVersion(),
+					repondentId,
+					List.of(answer1, answer2)
+			);
 
 			// when
 			Mockito.when(surveyRepository.findByIdAndVersion(survey.getId(), survey.getVersion())).thenReturn(Optional.of(survey));
@@ -139,14 +168,19 @@ class SurveyServiceTest {
 			// given
 			UUID surveyId = UUID.randomUUID();
 			int version = 1;
+			String respondentid = "test-id";
 
 			Question q1 = Question.create("질문 1", "설명", InputType.SHORT_TEXT, true, 1, List.of());
 			Question q2 = Question.create("질문 2", "설명", InputType.SHORT_TEXT, false, 2, List.of());
 
-			Response response = Response.create(surveyId, version, List.of(
-					Answer.create("응답 1", q1.getId()),
-					Answer.create("응답 2", q2.getId())
-			));
+			Response response = Response.create(
+					surveyId,
+					version,
+					respondentid,
+					List.of(
+							Answer.create("응답 1", q1.getId()),
+							Answer.create("응답 2", q2.getId())
+					));
 			Mockito.when(responseRepository.findBySurveyIdAndSurveyVersion(surveyId, version))
 				   .thenReturn(Optional.of(List.of(response)));
 
