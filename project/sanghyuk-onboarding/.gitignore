@@ -39,3 +39,4 @@ out/
 ### Kotlin ###
 .kotlin
 ../taeyang-onboarding
+infra/mysql-data
