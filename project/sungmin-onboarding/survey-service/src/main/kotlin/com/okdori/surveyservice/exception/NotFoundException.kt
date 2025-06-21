@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus
 class NotFoundException : BootException {
     constructor() : super(HttpStatus.NOT_FOUND)
     constructor(code: HttpStatus) : super(code)
+    constructor(errorCode: ErrorCode) : super(HttpStatus.NOT_FOUND, errorCode.message)
     constructor(message: String?) : super(HttpStatus.NOT_FOUND, message)
     constructor(className: Class<*>?) : super(HttpStatus.NOT_FOUND, className)
     constructor(className: Class<*>?, message: String?) : super(HttpStatus.NOT_FOUND, className, message)
