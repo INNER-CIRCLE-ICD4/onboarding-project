@@ -123,5 +123,3 @@ Content-Type: application/json
 ### Get Form Reply Summary
 GET http://localhost:8080/api/v1/forms/{{formId}}/replies/summary
 Accept: application/json
-
-
