@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  devtools:
+    restart:
+      enabled: false
+  profiles:
+    active:
+      - local
+      - local-db-h2
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
