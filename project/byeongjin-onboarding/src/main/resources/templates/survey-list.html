@@ -85,7 +85,19 @@
             text-decoration: none;
             font-size: 1em;
         }
-        .bottom-actions a:hover { background-color: #5a6268; }
+
+        .bottom-actions a:hover {
+            background-color: #5a6268;
+        }
+
+        .actions a.results-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .actions a.results-btn:hover {
+            background-color: #117a8b;
+        }
     </style>
 </head>
 <body>
@@ -108,10 +120,11 @@
             <div class="actions">
                 <a th:href="@{/survey/editor(id=${survey.id})}" class="edit-btn">수정</a>
                 <a th:href="@{/survey/respond(id=${survey.id})}" class="respond-btn">응답하기</a>
-                <form th:action="@{/api/surveys/{id}(id=${survey.id})}" method="post" style="display:inline;">
+                <form th:action="@{/survey/surveys/{id}(id=${survey.id})}" method="post" style="display:inline;">
                     <input type="hidden" name="_method" value="DELETE" />
                     <button type="submit" onclick="return confirm('이 설문조사를 삭제하시겠습니까?)');" class="delete-btn">삭제</button>
                 </form>
+                <a th:href="@{/survey/answers/results(id=${survey.id})}" class="results-btn">응답 결과</a>
             </div>
         </li>
     </ul>
