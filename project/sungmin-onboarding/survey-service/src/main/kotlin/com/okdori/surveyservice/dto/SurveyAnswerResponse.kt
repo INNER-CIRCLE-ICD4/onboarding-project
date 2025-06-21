@@ -27,7 +27,7 @@ data class SurveyAnswerResponseDto(
 data class AnswerResponseDto(
     var answerId: String,
     var itemName: String,
-    var answer: List<String>,
+    var answer: String,
 ) {
     constructor(answer: SurveyResponseAnswer) : this(
         answerId = answer.id!!,
@@ -35,3 +35,10 @@ data class AnswerResponseDto(
         answer = answer.answer,
     )
 }
+
+data class ResponseSearchDto(
+    var responseId: String,
+    var responseUser: String?,
+    var createdDate: LocalDateTime,
+    var answers: List<AnswerResponseDto>,
+)

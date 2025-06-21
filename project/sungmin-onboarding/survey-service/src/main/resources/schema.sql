@@ -49,7 +49,7 @@ create table t_survey_response_answer (
     item_id CHAR(13),
     created_date timestamp(6),
     last_modified_date timestamp(6),
-    answer JSON,
+    answer TEXT,
     item_name VARCHAR(200) not null,
     primary key (answer_id),
     foreign key (response_id) references t_survey_response,
