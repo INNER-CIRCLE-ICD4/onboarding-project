@@ -1,1 +1,1 @@
-rootProject.name = "survey"
+rootProject.name = "onboarding"
