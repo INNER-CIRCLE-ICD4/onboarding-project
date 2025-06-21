@@ -1,7 +1,8 @@
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.5.0"
-    id("io.spring.dependency-management") version "1.1.7"
+    id("java-library")
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
 }
 
 group = "com.onboarding"
@@ -18,8 +19,9 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation(project(":survey-domain"))
+
+    api("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.flywaydb:flyway-core")
 
     compileOnly("org.projectlombok:lombok:1.18.38")

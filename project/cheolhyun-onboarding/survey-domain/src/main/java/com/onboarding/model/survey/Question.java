@@ -2,8 +2,10 @@ package com.onboarding.model.survey;
 
 import com.onboarding.model.QuestionType;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 
+@Getter
 @ToString
 @EqualsAndHashCode
 public class Question {
@@ -53,6 +55,10 @@ public class Question {
 
     public static Question of(String id, String title, String description, QuestionType type) {
         return new Question(id, title, description, type);
+    }
+
+    public static Question of(String id, String title, String description, QuestionType type, Options options, boolean required) {
+        return new Question(id, title, description, type, options, required);
     }
 
     private void validId(String id) {

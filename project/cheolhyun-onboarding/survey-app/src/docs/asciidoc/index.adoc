@@ -3,6 +3,6 @@
 
 == [GET] /api/survey
 
-include::{snippets}/index/http-request.adoc[]
-include::{snippets}/index/http-response.adoc[]
-include::{snippets}/index/response-body.adoc[]
+include::{snippets}/survey/http-request.adoc[]
+include::{snippets}/survey/http-response.adoc[]
+include::{snippets}/survey/response-body.adoc[]
