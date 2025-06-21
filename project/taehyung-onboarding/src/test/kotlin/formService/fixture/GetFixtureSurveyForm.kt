@@ -3,12 +3,13 @@ package formService.fixture
 import com.navercorp.fixturemonkey.FixtureMonkey
 import com.navercorp.fixturemonkey.kotlin.KotlinPlugin
 import com.navercorp.fixturemonkey.kotlin.giveMeKotlinBuilder
+import formService.domain.InputType
 import formService.domain.Question
 import formService.domain.SurveyForm
 import formService.util.getTsid
 
 fun getFixtureSurveyForm(
-    inputTypes: List<Question.InputType>,
+    inputTypes: List<InputType>,
     isOptions: Boolean = false,
     optionSize: Int = 0,
     isRemoved: Boolean = false,
@@ -49,7 +50,7 @@ fun getFixtureSurveyForm(
 }
 
 fun getFixtureOnlyQuestion(
-    inputTypes: List<Question.InputType>,
+    inputTypes: List<InputType>,
     isRemoved: Boolean = false,
     optionSize: Int? = 0,
 ): List<Question> {

@@ -3,7 +3,7 @@ package formService.application
 import formService.application.port.inbound.CreateSurveyFormUseCase
 import formService.application.port.inbound.ModifySurveyFormUseCase
 import formService.application.port.outbound.SurveyFormRepository
-import formService.domain.Question
+import formService.domain.InputType
 import formService.domain.SurveyForm
 import formService.fixture.getFixtureSurveyForm
 import jakarta.persistence.EntityNotFoundException
@@ -39,7 +39,7 @@ class SurveyFormServiceTest {
                             name = questionName,
                             description = questionDescription,
                             required = true,
-                            inputType = Question.InputType.SHORT_TEXT,
+                            inputType = InputType.SHORT_TEXT,
                             options = listOf(),
                         ),
                     ),
@@ -59,7 +59,7 @@ class SurveyFormServiceTest {
         assertThat(surveyForm.questions[0].name).isEqualTo(questionName)
         assertThat(surveyForm.questions[0].description).isEqualTo(questionDescription)
         assertThat(surveyForm.questions[0].required).isTrue()
-        assertThat(surveyForm.questions[0].inputType).isEqualTo(Question.InputType.SHORT_TEXT)
+        assertThat(surveyForm.questions[0].inputType).isEqualTo(InputType.SHORT_TEXT)
         assertThat(surveyForm.questions[0].options).hasSize(0)
     }
 
@@ -67,7 +67,7 @@ class SurveyFormServiceTest {
     @DisplayName("사용자는 설문 조사 조회 시 id 기반으로 조회 할 수 있어야된다.")
     fun readOneSurveyFormTest() {
         // given
-        val surveyForm = getFixtureSurveyForm(listOf(Question.InputType.SHORT_TEXT))
+        val surveyForm = getFixtureSurveyForm(listOf(InputType.SHORT_TEXT))
 
         val surveyFormService = SurveyFormService(repository)
         repository.save(surveyForm)
@@ -83,7 +83,7 @@ class SurveyFormServiceTest {
     @DisplayName("사용자는 설문 조사를 수정 할 수 있어야된다. 수정 시 설문 항목 삭제도 포함한다.")
     fun modifySurveyFormTest() {
         // given
-        val surveyForm = getFixtureSurveyForm(listOf(Question.InputType.SHORT_TEXT), true, 1, true)
+        val surveyForm = getFixtureSurveyForm(listOf(InputType.SHORT_TEXT), true, 1, true)
 
         val surveyFormService = SurveyFormService(repository)
         repository.save(surveyForm)
@@ -124,7 +124,7 @@ class SurveyFormServiceTest {
     @DisplayName("사용자는 설문 조사 조회 시 id 가 없으면 예외가 발생되어야된다.")
     fun readOneNotFound() {
         // given
-        val surveyForm = getFixtureSurveyForm(listOf(Question.InputType.SHORT_TEXT))
+        val surveyForm = getFixtureSurveyForm(listOf(InputType.SHORT_TEXT))
 
         val surveyFormService = SurveyFormService(repository)
         repository.save(surveyForm)
