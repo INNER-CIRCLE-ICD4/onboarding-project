@@ -24,6 +24,5 @@ class Response(
     val surveyField: SurveyField,
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id")
     val fieldOptions: List<FieldOption>?
 ) : BaseEntity()
