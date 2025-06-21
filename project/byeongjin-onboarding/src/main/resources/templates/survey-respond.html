@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: '설문 응답'">설문 응답</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 25px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .survey-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .survey-header h2 {
+            color: #0056b3;
+            margin-bottom: 5px;
+        }
+
+        .survey-header p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .form-question {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #fcfcfc;
+        }
+
+        .form-question label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-question p.description {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+
+        .form-question span.required-indicator {
+            color: red;
+            margin-left: 5px;
+        }
+
+        .form-question input[type="text"],
+        .form-question textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .form-question textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-question .option-group {
+            margin-top: 10px;
+        }
+
+        .form-question .option-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: normal;
+            cursor: pointer;
+            color: #444;
+        }
+
+        .form-question .option-group input[type="radio"],
+        .form-question .option-group input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2); /* 라디오/체크박스 크기 키우기 */
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .button-group button {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin: 0 10px;
+        }
+
+        .button-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .button-group a {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.1em;
+            margin: 0 10px;
+        }
+
+        .button-group a:hover {
+            background-color: #5a6268;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .success-message {
+            color: green;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${pageTitle} ?: '설문 응답'">설문 응답</h1>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <div id="statusMessage" class="success-message" style="display:none;"></div>
+
+    <div th:if="${survey?.id}">
+        <div class="survey-header">
+            <h2 th:text="${survey.name}"></h2>
+            <p th:text="${survey.description}"></p>
+        </div>
+
+        <form id="surveyResponseForm">
+            <input type="hidden" id="surveyId" th:value="${survey.id}" />
+
+            <div th:each="item : ${survey.formItems}" class="form-question" th:data-item-id="${item.id}" th:data-item-type="${item.itemType}" th:data-required="${item.required}">
+                <label th:for="${'item_' + item.id}">
+                    <span th:text="${item.name}"></span>
+                    <span th:if="${item.required}" class="required-indicator">*</span>
+                </label>
+                <p class="description" th:text="${item.description}"></p>
+
+                <div th:switch="${item.itemType}">
+                    <div th:case="'SHORT_ANSWER'"> <input type="text" th:id="${'item_' + item.id}" th:name="${'item_' + item.id}" placeholder="단답형 답변을 입력하세요">
+                    </div>
+                    <div th:case="'LONG_ANSWER'"> <textarea th:id="${'item_' + item.id}" th:name="${'item_' + item.id}" placeholder="장문형 답변을 입력하세요"></textarea>
+                    </div>
+                    <div th:case="'SINGLE_CHOICE'" class="option-group"> <div th:each="option : ${item.options}">
+                        <label>
+                            <input type="radio" th:name="${'item_' + item.id}" th:value="${option}">
+                            <span th:text="${option}"></span>
+                        </label>
+                    </div>
+                    </div>
+                    <div th:case="'MULTI_CHOICE'" class="option-group"> <div th:each="option : ${item.options}">
+                        <label>
+                            <input type="checkbox" th:name="${'item_' + item.id}" th:value="${option}">
+                            <span th:text="${option}"></span>
+                        </label>
+                    </div>
+                    </div>
+                    <div th:case="*"> <p style="color: red;">알 수 없는 질문 유형: <span th:text="${item.itemType}"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit">응답 제출</button>
+                <a th:href="@{/survey/list}">목록으로</a>
+            </div>
+        </form>
+    </div>
+    <div th:unless="${survey?.id}" style="text-align: center;">
+        <p>설문조사를 로드할 수 없습니다.</p>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    document.getElementById('surveyResponseForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        if (!confirm("설문 응답을 제출하시겠습니까?")) {
+            return;
+        }
+
+        const surveyId = document.getElementById('surveyId').value;
+        const responses = {};
+        let isValid = true;
+        const statusMessageDiv = document.getElementById('statusMessage');
+        statusMessageDiv.style.display = 'none';
+
+        document.querySelectorAll('.form-question').forEach(qSection => {
+            const itemId = parseInt(qSection.dataset.itemId);
+            const itemType = qSection.dataset.itemType;
+            const required = qSection.dataset.required === 'true';
+
+            let answer = null;
+
+            if (itemType === 'SHORT_ANSWER' || itemType === 'LONG_ANSWER') {
+                const inputField = qSection.querySelector('input[type="text"], textarea');
+                if (inputField) {
+                    answer = inputField.value.trim();
+                }
+            } else if (itemType === 'SINGLE_CHOICE') {
+                const selectedRadio = qSection.querySelector('input[type="radio"]:checked');
+                if (selectedRadio) {
+                    answer = selectedRadio.value;
+                }
+            } else if (itemType === 'MULTI_CHOICE') {
+                const selectedCheckboxes = qSection.querySelectorAll('input[type="checkbox"]:checked');
+                const selectedOptions = Array.from(selectedCheckboxes).map(cb => cb.value);
+                if (selectedOptions.length > 0) {
+                    answer = selectedOptions;
+                }
+            }
+
+            // 필수 항목 유효성 검사
+            if (required && (answer === null || answer === '' || (Array.isArray(answer) && answer.length === 0))) {
+                isValid = false;
+                statusMessageDiv.textContent = `필수 항목 "${qSection.querySelector('label span:first-child').textContent}"에 응답해주세요.`;
+                statusMessageDiv.style.color = 'red';
+                statusMessageDiv.style.display = 'block';
+                return;
+            }
+
+            if (answer !== null && answer !== '') {
+                responses[itemId] = answer;
+            }
+        });
+
+        if (!isValid) {
+            return;
+        }
+
+        const submitData = {
+            surveyId: parseInt(surveyId),
+            responses: responses
+        };
+
+        fetch('/api/surveys/submit-answer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(submitData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.text();
+            })
+            .then(data => {
+                alert("제출 완료되었습니다!");
+                document.getElementById('surveyResponseForm').reset();
+                window.location.href = "/survey/list";
+            })
+            .catch(error => {
+                alert('응답 제출 실패: ' + error.message);
+            });
+    });
+</script>
+</body>
+</html>

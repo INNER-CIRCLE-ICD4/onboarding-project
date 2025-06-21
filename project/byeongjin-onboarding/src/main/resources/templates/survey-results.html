@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: '설문 응답 결과'">설문 응답 결과</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 25px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+        }
+
+        .survey-info {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .survey-info h2 {
+            color: #0056b3;
+            margin-bottom: 5px;
+            font-size: 2em;
+        }
+        .survey-info p {
+            color: #666;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+        .total-submissions {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .question-summary {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fcfcfc;
+        }
+        .question-summary h3 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 10px;
+        }
+        .question-summary p.description {
+            font-size: 0.95em;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .answer-type-label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 1.05em;
+        }
+
+        .option-stats {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+        .option-stats li {
+            background-color: #e9f7ff;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border-left: 5px solid #007bff;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1em;
+            color: #333;
+        }
+        .option-stats li strong {
+            color: #0056b3;
+        }
+        .option-stats li span {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .text-answers {
+            list-style: decimal;
+            padding-left: 25px;
+            margin-top: 10px;
+        }
+        .text-answers li {
+            background-color: #f0f0f0;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border-left: 3px solid #6c757d;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #444;
+            line-height: 1.4;
+        }
+        .text-answers li:last-child {
+            margin-bottom: 0;
+        }
+
+        .no-answers {
+            color: #999;
+            text-align: center;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .button-group a {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .button-group a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${pageTitle} ?: '설문 응답 결과'">설문 응답 결과</h1>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <div th:if="${surveySummary?.surveyId}">
+        <div class="survey-info">
+            <h2 th:text="${surveySummary.surveyName}">설문 제목</h2>
+            <p th:text="${surveySummary.surveyDescription}">설문 설명</p>
+            <p class="total-submissions">총 응답 수: <span th:text="${surveySummary.totalSubmissions}">0</span>개</p>
+        </div>
+
+        <div th:if="${surveySummary.formItemSummaries.isEmpty()}" class="no-answers">
+            <p>아직 이 설문에 대한 응답이 없습니다.</p>
+        </div>
+
+        <div th:each="itemSummary : ${surveySummary.formItemSummaries}" class="question-summary">
+            <h3 th:text="${itemSummary.formItemName}">질문 제목</h3>
+            <p class="description" th:text="${itemSummary.formItemDescription}"></p>
+
+            <div th:switch="${itemSummary.itemType.name()}">
+                <div th:case="'SINGLE_CHOICE'">
+                    <span class="answer-type-label">단일 선택 답변 통계:</span>
+                    <ul class="option-stats">
+                        <li th:each="entry : ${itemSummary.optionCounts}">
+                            <strong th:text="${entry.key}">옵션</strong>:
+                            <span th:text="${entry.value}">0</span>회 선택
+                        </li>
+                        <li th:if="${itemSummary.optionCounts.isEmpty()}" style="font-style: italic; color: #888;">
+                            아직 이 질문에 대한 선택형 답변이 없습니다.
+                        </li>
+                    </ul>
+                </div>
+                <div th:case="'MULTI_CHOICE'">
+                    <span class="answer-type-label">다중 선택 답변 통계:</span>
+                    <ul class="option-stats">
+                        <li th:each="entry : ${itemSummary.optionCounts}">
+                            <strong th:text="${entry.key}">옵션</strong>:
+                            <span th:text="${entry.value}">0</span>회 선택
+                        </li>
+                        <li th:if="${itemSummary.optionCounts.isEmpty()}" style="font-style: italic; color: #888;">
+                            아직 이 질문에 대한 선택형 답변이 없습니다.
+                        </li>
+                    </ul>
+                </div>
+                <div th:case="'SHORT_ANSWER'">
+                    <span class="answer-type-label">단답형 답변 목록:</span>
+                    <ul class="text-answers">
+                        <li th:each="answer : ${itemSummary.textAnswers}" th:text="${answer}">단답형 답변 내용</li>
+                        <li th:if="${itemSummary.textAnswers.isEmpty()}" style="font-style: italic; color: #888;">
+                            아직 이 질문에 대한 단답형 답변이 없습니다.
+                        </li>
+                    </ul>
+                </div>
+                <div th:case="'LONG_ANSWER'">
+                    <span class="answer-type-label">장문형 답변 목록:</span>
+                    <ul class="text-answers">
+                        <li th:each="answer : ${itemSummary.textAnswers}" th:text="${answer}">장문형 답변 내용</li>
+                        <li th:if="${itemSummary.textAnswers.isEmpty()}" style="font-style: italic; color: #888;">
+                            아직 이 질문에 대한 장문형 답변이 없습니다.
+                        </li>
+                    </ul>
+                </div>
+                <div th:case="*">
+                    <p style="color: red;">알 수 없는 질문 유형: <span th:text="${itemSummary.itemType.name()}"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:unless="${surveySummary?.surveyId != null || error != null}" style="text-align: center;">
+        <p>설문 응답 결과를 로드할 수 없습니다. 설문 ID가 올바른지 확인해주세요.</p>
+    </div>
+
+    <div class="button-group">
+        <a th:href="@{/survey/list}">설문 목록으로 돌아가기</a>
+    </div>
+</div>
+</body>
+</html>

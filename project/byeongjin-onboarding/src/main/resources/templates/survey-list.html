@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">설문조사 목록</title>
+    <style>
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 25px;
+            border: 1px solid #ddd;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        ul {
+            padding: 0;
+        }
+
+        li {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #eee;
+        }
+
+        li p {
+            margin: 5px 0;
+        }
+
+        .actions a, .actions button {
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .actions a.edit-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .actions a.edit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .actions a.respond-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        /* 응답 버튼 색상 */
+        .actions a.respond-btn:hover {
+            background-color: #218838;
+        }
+
+        .actions button.delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .actions button.delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .bottom-actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .bottom-actions a {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            text-decoration: none;
+            font-size: 1em;
+        }
+
+        .bottom-actions a:hover {
+            background-color: #5a6268;
+        }
+
+        .actions a.results-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .actions a.results-btn:hover {
+            background-color: #117a8b;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${pageTitle}">설문조사 목록</h1>
+
+    <div th:if="${message}" style="color: green; margin-bottom: 10px;" th:text="${message}"></div>
+    <div th:if="${error}" style="color: red; margin-bottom: 10px;" th:text="${error}"></div>
+
+    <div th:if="${surveys.isEmpty()}">
+        <p style="text-align: center; color: #777;">저장된 설문조사가 없습니다.</p>
+    </div>
+    <ul th:unless="${surveys.isEmpty()}">
+        <li th:each="survey : ${surveys}">
+            <div>
+                <strong><span th:text="${survey.name}"></span></strong>
+                <p>ID: <span th:text="${survey.id}"></span></p>
+                <p th:text="${survey.description}"></p>
+            </div>
+            <div class="actions">
+                <a th:href="@{/survey/editor(id=${survey.id})}" class="edit-btn">수정</a>
+                <a th:href="@{/survey/respond(id=${survey.id})}" class="respond-btn">응답하기</a>
+                <form th:action="@{/survey/surveys/{id}(id=${survey.id})}" method="post" style="display:inline;">
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <button type="submit" onclick="return confirm('이 설문조사를 삭제하시겠습니까?)');" class="delete-btn">삭제</button>
+                </form>
+                <a th:href="@{/survey/answers/results(id=${survey.id})}" class="results-btn">응답 결과</a>
+            </div>
+        </li>
+    </ul>
+
+    <div class="bottom-actions">
+        <a th:href="@{/survey/editor}">+ 새 설문조사 생성</a>
+    </div>
+</div>
+</body>
+</html>
