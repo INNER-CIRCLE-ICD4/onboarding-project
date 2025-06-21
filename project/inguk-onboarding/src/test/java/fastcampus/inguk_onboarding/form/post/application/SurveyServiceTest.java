@@ -34,7 +34,7 @@ class SurveyServiceTest {
 
     @Test
     @DisplayName("설문조사 생성 성공 - 단답형과 선택형 혼합")
-    void createSurvey_success_MutiSurvey() {
+    void createSurvey_successMutiSurvey() {
         // given
         CreateSurveyItemRequestDto item1 = new CreateSurveyItemRequestDto(
                 "이름",
