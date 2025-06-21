@@ -36,13 +36,6 @@ public class Survey {
         items.forEach(this::addItem);
     }
 
-    // 편의메서드: 연관관계 세팅
-    public void addItem(SurveyItem item) {
-        item.setSurvey(this);
-        this.items.add(item);
-    }
-
-
     public void update(String title, String description, List<SurveyItem> newItems) {
         validateTitle(title);
         validateItems(newItems);
@@ -50,6 +43,11 @@ public class Survey {
         this.description = description;
         this.items.clear();
         newItems.forEach(this::addItem);
+    }
+
+    public void addItem(SurveyItem item) {
+        item.setSurvey(this);
+        this.items.add(item);
     }
 
     private void validateTitle(String title) {
