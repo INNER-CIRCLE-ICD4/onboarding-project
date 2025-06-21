@@ -1,7 +1,5 @@
 package formService.adapter.port.outbound.persistence.jpa
 
-import formService.adapter.port.outbound.persistence.jpa.SurveyFormJpaRepository
-import formService.adapter.port.outbound.persistence.jpa.SurveyFormPersistenceAdapter
 import formService.domain.Question
 import formService.fixture.getFixtureSurveyForm
 import org.assertj.core.api.Assertions.assertThat
@@ -21,7 +19,7 @@ class SurveyFormPersistenceAdapterTest(
     @DisplayName("jpa 를 이용해서 단답형 설문지 엔티티를 삽입 할 수 있어야된다.")
     fun jpaSurveyFormSaveTest() {
         // given
-        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SHORT_TEXT))
+        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.InputType.SHORT_TEXT))
 
         // when
         persistenceAdapter.save(fixtureSurveyForm)
@@ -33,7 +31,7 @@ class SurveyFormPersistenceAdapterTest(
         assertThat(entity.surveyName).isEqualTo(fixtureSurveyForm.surveyName)
         assertThat(entity.description).isEqualTo(fixtureSurveyForm.description)
         assertThat(entity.questions).hasSize(1)
-        assertThat(entity.questions[0].inputType).isEqualTo(Question.QuestionInputType.SHORT_TEXT)
+        assertThat(entity.questions[0].inputType).isEqualTo(Question.InputType.SHORT_TEXT)
         assertThat(entity.questions[0].options).hasSize(0)
     }
 
@@ -41,7 +39,7 @@ class SurveyFormPersistenceAdapterTest(
     @DisplayName("jpa 를 이용해서 단일 리스트 설문지 엔티티를 삽입 할 수 있어야된다.")
     fun jpaQuestionOptionsSaveTest() {
         // given
-        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SINGLE_CHOICE), true, 1)
+        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.InputType.SINGLE_CHOICE), true, 1)
 
         // when
         persistenceAdapter.save(fixtureSurveyForm)
@@ -53,7 +51,7 @@ class SurveyFormPersistenceAdapterTest(
         assertThat(entity.surveyName).isEqualTo(fixtureSurveyForm.surveyName)
         assertThat(entity.description).isEqualTo(fixtureSurveyForm.description)
         assertThat(entity.questions).hasSize(1)
-        assertThat(entity.questions[0].inputType).isEqualTo(Question.QuestionInputType.SINGLE_CHOICE)
+        assertThat(entity.questions[0].inputType).isEqualTo(Question.InputType.SINGLE_CHOICE)
         assertThat(entity.questions[0].options).hasSize(1)
         assertThat(entity.questions[0].options[0].option).isEqualTo(
             fixtureSurveyForm.questions[0]
@@ -67,10 +65,10 @@ class SurveyFormPersistenceAdapterTest(
     @DisplayName("jpa 를 이용해서 설문지 엔티티를 상태 변경이 이뤄져야된다.")
     fun jpaQuestionOptionsUpdateTest() {
         // given
-        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SINGLE_CHOICE), true, 1)
+        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.InputType.SINGLE_CHOICE), true, 1)
         persistenceAdapter.save(fixtureSurveyForm)
 
-        val updateSurveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SINGLE_CHOICE), true, 1)
+        val updateSurveyForm = getFixtureSurveyForm(listOf(Question.InputType.SINGLE_CHOICE), true, 1)
 
         val entity = surveyFormJpaRepository.findById(fixtureSurveyForm.id).get()
 

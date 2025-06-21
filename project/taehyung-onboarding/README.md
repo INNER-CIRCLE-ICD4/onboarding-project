@@ -82,11 +82,12 @@
 
 ### API List
 
-| API명      | method | url                 | content-type     | 
-|-----------|--------|---------------------|------------------| 
-| 설문지 생성    | POST   | /api/v1/survey      | application/json |
-| 설문지 단건 조회 | GET    | /api/v1/survey/{id} | application/json |
-| 설문지 수정    | PUT    | /api/v1/survey/{id} | application/json |
+| API명      | method | url                        | content-type     | 
+|-----------|--------|----------------------------|------------------| 
+| 설문지 생성    | POST   | /api/v1/survey             | application/json |
+| 설문지 단건 조회 | GET    | /api/v1/survey/{id}        | application/json |
+| 설문지 수정    | PUT    | /api/v1/survey/{id}        | application/json |
+| 설문지 응답    | POST   | /api/v1/survey/{id}/submit | application/json |
 
 
 ### 설문지 생성
@@ -162,4 +163,18 @@
   }
 }
 
+```
+
+### 설문지 응답
+**Request Body**
+```json
+{
+  "answers": [
+    {
+      "questionId": 1,
+      "answerValue": "test",
+      "answerType": "SHORT_TEXT" // LONG_TEXT, SINGLE_CHOICE, MULTIPL_CHOICE 
+    }
+  ]
+}
 ```

@@ -2,7 +2,7 @@ package formService.adapter.port.inbound.web.dto
 
 import formService.adapter.port.inbound.web.validator.IsEnum
 import formService.application.port.inbound.ModifySurveyFormUseCase
-import formService.domain.Question
+import formService.domain.InputType
 import formService.exception.BadRequestException
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -71,7 +71,7 @@ data class RequestModifySurveyFormDto(
                         id = it.id,
                         name = it.name,
                         description = it.description,
-                        inputType = Question.QuestionInputType.entries.find { qt -> qt.name == it.inputType }!!,
+                        inputType = InputType.entries.find { t -> t.name == it.inputType }!!,
                         required = it.required,
                         isRemoved = it.isRemoved,
                         options =
