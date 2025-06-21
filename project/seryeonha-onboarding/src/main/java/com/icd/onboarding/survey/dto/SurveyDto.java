@@ -21,7 +21,6 @@ public class SurveyDto {
             return Survey.builder()
                     .name(name)
                     .description(description)
-//                    .version(1)
                     .build();
         }
     }
@@ -45,7 +44,6 @@ public class SurveyDto {
         private String name;
         private String description;
         private Integer version;
-        private List<QuestionDto.Read> questions;
 
         public static Read of(Survey survey) {
             return Read.builder()
@@ -53,7 +51,6 @@ public class SurveyDto {
                     .name(survey.getName())
                     .description(survey.getDescription())
                     .version(survey.getVersion())
-                    .questions(survey.getQuestions().stream().map(QuestionDto.Read::of).toList())
                     .build();
         }
     }

@@ -1,9 +1,12 @@
 package com.icd.onboarding.survey.controller;
 
+import com.icd.onboarding.survey.dto.AnswerDto;
 import com.icd.onboarding.survey.dto.SurveyDto;
 import com.icd.onboarding.survey.service.SurveyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/surveys")
@@ -21,8 +24,14 @@ public class SurveyController {
         surveyService.updateSurvey(id, req);
     }
 
-    @GetMapping("/{id}")
-    public SurveyDto.Read getSurvey(@PathVariable Long id) {
-        return surveyService.getSurvey(id);
+    @PostMapping("/{id}/answers")
+    public void answer(@PathVariable Long id, @RequestBody AnswerDto.Create req) {
+        surveyService.createAnswer(id, req);
+    }
+
+    // todo 작업완료해야함
+    @GetMapping("/{id}/answers")
+    public List<AnswerDto.Read> getAnswers(@PathVariable Long id) {
+        return surveyService.getAnswers(id);
     }
 }

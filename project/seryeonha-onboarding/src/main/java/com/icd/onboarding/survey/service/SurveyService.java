@@ -1,14 +1,8 @@
 package com.icd.onboarding.survey.service;
 
-import com.icd.onboarding.survey.domain.Option;
-import com.icd.onboarding.survey.domain.Question;
-import com.icd.onboarding.survey.domain.Survey;
-import com.icd.onboarding.survey.dto.OptionDto;
-import com.icd.onboarding.survey.dto.QuestionDto;
-import com.icd.onboarding.survey.dto.SurveyDto;
-import com.icd.onboarding.survey.repository.OptionRepository;
-import com.icd.onboarding.survey.repository.QuestionRepository;
-import com.icd.onboarding.survey.repository.SurveyRepository;
+import com.icd.onboarding.survey.domain.*;
+import com.icd.onboarding.survey.dto.*;
+import com.icd.onboarding.survey.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.OptimisticLockException;
@@ -28,6 +22,8 @@ public class SurveyService {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final OptionRepository optionRepository;
+    private final AnswerRepository answerRepository;
+    private final AnswerDetailRepository answerDetailRepository;
     private final EntityManager entityManager;
 
     @Transactional
@@ -63,10 +59,6 @@ public class SurveyService {
         optionRepository.saveAll(options);
     }
 
-    public SurveyDto.Read getSurvey(Long id) {
-        Survey survey = surveyRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Survey not found"));
-        return SurveyDto.Read.of(survey);
-    }
 
     @Transactional
     public void updateSurvey(Long id, SurveyDto.Update req) {
@@ -138,5 +130,26 @@ public class SurveyService {
 
         log.info("# questions not changed");
         return false;
+    }
+
+    @Transactional
+    public void createAnswer(Long id, AnswerDto.Create req) {
+        if (!surveyRepository.existsById(id)) throw new IllegalArgumentException("Survey not found");
+
+        Answer savedAnswer = answerRepository.save(req.toEntity());
+        entityManager.flush();
+
+        List<AnswerDetail> answerDetails = req.getDetails().stream().map(d->d.toEntity(savedAnswer)).toList();
+        answerDetailRepository.saveAll(answerDetails);
+    }
+
+    // todo 작업완료해야함
+    public List<AnswerDto.Read> getAnswers(Long surveyId) {
+        Survey savedSurvey = surveyRepository.findById(surveyId).orElseThrow(() -> new IllegalArgumentException("Survey not found"));
+
+        List<Answer> answers = answerRepository.findBySurveyId(surveyId);
+
+
+        return null;
     }
 }
