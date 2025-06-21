@@ -50,9 +50,32 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
                 .collect(Collectors.toList());
         responseAnswerRepository.saveAll(answers);
 
+        // SubmitSurveyResponseResponse의 실제 필드만 세팅합니다.
+        // answers는 ResponseAnswer 리스트를 AnswerResponse 리스트로 변환합니다.
+        List<SubmitSurveyResponseResponse.AnswerResponse> answerResponses = answers.stream().map(answer ->
+                SubmitSurveyResponseResponse.AnswerResponse.builder()
+                        .questionId(answer.getQuestionId())
+                        .questionName(null) // 필요시 채워주세요
+                        .answerText(answer.getAnswerText())
+                        .selectedOptions(null) // 필요시 변환 로직 추가
+                        .build()
+        ).collect(Collectors.toList());
+
+        // surveyVersionId(String)를 Integer로 변환하여 세팅합니다. 변환 실패 시 null 처리
+        Integer surveyVersion = null;
+        try {
+            surveyVersion = savedSurveyResponse.getSurveyVersionId() != null ? Integer.parseInt(savedSurveyResponse.getSurveyVersionId()) : null;
+        } catch (NumberFormatException e) {
+            // 변환 실패 시 null 반환, 필요시 로깅 또는 예외 처리 추가 가능
+        }
+
         return SubmitSurveyResponseResponse.builder()
                 .responseId(savedSurveyResponse.getId())
-                .message("설문 응답이 정상적으로 저장되었습니다.")
+                .surveyId(savedSurveyResponse.getSurveyId())
+                .surveyVersion(surveyVersion)
+                .respondentEmail(savedSurveyResponse.getRespondentEmail())
+                .submittedAt(savedSurveyResponse.getSubmittedAt())
+                .answers(answerResponses)
                 .build();
     }
 }
