@@ -40,17 +40,6 @@ public class QuestionDto {
     @NoArgsConstructor
     @Getter
     @Setter
-    public static class Update {
-        private String name;
-        private String description;
-        private QuestionType type;
-        private boolean required;
-        private List<OptionDto.Update> options;
-    }
-
-    @NoArgsConstructor
-    @Getter
-    @Setter
     @AllArgsConstructor
     @Builder
     public static class Read {
@@ -61,14 +50,14 @@ public class QuestionDto {
         private boolean required;
         private List<OptionDto.Read> options;
 
-        public static Read of(Question question, List<OptionDto.Read> options) {
+        public static Read of(Question question) {
             return Read.builder()
                     .id(question.getId())
                     .name(question.getName())
                     .description(question.getDescription())
                     .type(question.getType())
                     .required(question.isRequired())
-                    .options(options)
+                    .options(question.getOptions().stream().map(OptionDto.Read::of).toList())
                     .build();
         }
     }

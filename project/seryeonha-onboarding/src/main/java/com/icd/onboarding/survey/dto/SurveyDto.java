@@ -21,7 +21,7 @@ public class SurveyDto {
             return Survey.builder()
                     .name(name)
                     .description(description)
-                    .version(1)
+//                    .version(1)
                     .build();
         }
     }
@@ -32,7 +32,7 @@ public class SurveyDto {
     public static class Update {
         private String name;
         private String description;
-        private List<QuestionDto.Update> questions;
+        private List<QuestionDto.Create> questions;
     }
 
     @NoArgsConstructor
@@ -44,14 +44,16 @@ public class SurveyDto {
         private Long id;
         private String name;
         private String description;
+        private Integer version;
         private List<QuestionDto.Read> questions;
 
-        public static Read of(Survey survey, List<QuestionDto.Read> questions) {
+        public static Read of(Survey survey) {
             return Read.builder()
                     .id(survey.getId())
                     .name(survey.getName())
                     .description(survey.getDescription())
-                    .questions(questions)
+                    .version(survey.getVersion())
+                    .questions(survey.getQuestions().stream().map(QuestionDto.Read::of).toList())
                     .build();
         }
     }

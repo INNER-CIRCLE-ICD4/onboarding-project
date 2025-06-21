@@ -27,14 +27,6 @@ public class OptionDto {
     @NoArgsConstructor
     @Getter
     @Setter
-    public static class Update {
-        private Long id;
-        private String content;
-    }
-
-    @NoArgsConstructor
-    @Getter
-    @Setter
     @AllArgsConstructor
     @Builder
     public static class Read {
@@ -44,7 +36,7 @@ public class OptionDto {
         private String content;
         private boolean active;
 
-        public static Read fromEntity(Option option) {
+        public static Read of(Option option) {
             return Read.builder()
                     .id(option.getId())
                     .questionId(option.getQuestionId())
