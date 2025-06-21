@@ -40,9 +40,5 @@ class SurveyResponseAnswer(
 
     @Type(JsonType::class)
     @Column(columnDefinition = "JSON")
-    var answer: Answer? = null
+    var answer: List<String> = emptyList()
 }
-
-data class Answer(
-    val option: String,
-)

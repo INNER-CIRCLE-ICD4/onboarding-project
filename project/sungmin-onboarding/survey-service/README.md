@@ -52,7 +52,9 @@
 | 400 | SELECT_OPTIONS_REQUIRED     | 선택형 문항에는 선택지가 필요합니다          | SINGLE_SELECT, MULTIPLE_SELECT 타입에 options 누락 |
 | 400 | INVALID_ITEM_TYPE           | 유효하지 않은 설문 항목 타입입니다          | 지원하지 않는 설문 항목 타입                              |
 | **응답 제출 관련** |
+| 400 | INVALID_OPTION_NAME           | 유효하지 않은 옵션 이름입니다             | 없는 옵션 선택                                      |
 | 400 | REQUIRED_RESPONSE_MISSING   | 필수 항목이 누락되었습니다               | 필수 응답 항목 미입력                                  |
+| 400 | RESPONSE_DUPLICATED   | 응답 항목이 중복되었습니다               | 응답 항목 중복 입력                                   |
 | 400 | INVALID_RESPONSE_FORMAT     | 응답 형식이 올바르지 않습니다             | 응답이 문자열 배열이 아님                                |
 | 400 | SHORT_TEXT_TOO_LONG         | 단답형 응답은 200자를 초과할 수 없습니다     | SHORT_TEXT 길이 초과                              |
 | 400 | LONG_TEXT_TOO_LONG          | 장문형 응답은 2000자를 초과할 수 없습니다    | LONG_TEXT 길이 초과                               |
@@ -231,7 +233,6 @@
         "itemDescription": "귀하의 성함을 입력해주세요",
         "itemType": "SHORT_TEXT",
         "isRequired": true,
-        "isDeleted": false,
         "hasOtherOption": false,
         "options": []
       },
@@ -241,7 +242,6 @@
         "itemDescription": "귀하의 연령대를 선택해주세요",
         "itemType": "SINGLE_SELECT",
         "isRequired": true,
-        "isDeleted": false,
         "hasOtherOption": false,
         "options": [
           {
@@ -360,12 +360,11 @@
     },
     {
       "itemId": "ITM1234567891",
-      "options": ["OPT1234567892"]
+      "options": ["30대"]
     },
     {
       "itemId": "ITM1234567893",
-      "options": ["OPT1234567123", "OPT1234567456"],
-      "selectOtherOption": true,
+      "options": ["속도", "가격"],
       "otherValue": "모바일 UI"
     },
     {
@@ -377,15 +376,14 @@
 ```
 
 #### Request Body 필드 설명
-| 필드                            | 타입      | 필수 | 설명                 |
-|-------------------------------|---------|----|--------------------|
-| `responseUser`                | string  | X  | 응답자 식별자 (최대 100자)  |
-| `answers`                     | array   | O  | 응답 배열              |
+| 필드                            | 타입      | 필수 | 설명       |
+|-------------------------------|---------|----|----------|
+| `responseUser`                | string  | X  | 응답자 식별자 (최대 100자) |
+| `answers`                     | array   | O  | 응답 배열    |
 | `answers[].itemId`            | string  | O  | 설문 항목 ID (CHAR(13)) |
-| `answers[].answer`            | string  | △  | 단답, 장문 응답 값        |
-| `answers[].options`           | 문자열 배열  | △  | 옵션 ID (CHAR(13))   |
-| `answers[].selectOtherOption` | boolean | X  | 기타 옵션 선택 여부 (기본값: false) |
-| `answers[].otherValue`        | string  | X  | 기타 값               |
+| `answers[].answer`            | string  | △  | 단답, 장문 응답 값 |
+| `answers[].options`           | 문자열 배열  | △  | 옵션 이름    |
+| `answers[].otherValue`        | string  | X  | 기타 값     |
 
 #### Response (성공)
 ```json
@@ -397,19 +395,16 @@
   "error": null,
   "data": {
     "responseId": "RES1234567890",
-    "surveyId": "SUR1234567890",
     "responseUser": "user123",
     "createdDate": "2025-06-14T14:30:00",
     "answers": [
       {
         "answerId": "ANS1234567890",
-        "itemId": "ITM1234567890",
         "itemName": "이름",
         "answer": ["홍길동"]
       },
       {
         "answerId": "ANS1234567891",
-        "itemId": "ITM1234567891",
         "itemName": "연령대",
         "answer": ["30대"]
       }
@@ -447,7 +442,7 @@
   "status": 200,
   "message": "응답 조회가 완료되었습니다.",
   "path": "/api/surveys/SUR1234567890/responses",
-  "timestamp": "2025-06-14T15:00:00",
+  "timestamp": "2025-06₩-14T15:00:00",
   "error": null,
   "data": {
     "survey": {
@@ -463,13 +458,11 @@
         "answers": [
           {
             "answerId": "ANS1234567890",
-            "itemId": "ITM1234567890",
             "itemName": "이름",
             "answer": ["홍길동"]
           },
           {
             "answerId": "ANS1234567891",
-            "itemId": "ITM1234567891",
             "itemName": "연령대",
             "answer": ["30대"]
           }
