@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/answer")
@@ -45,7 +47,7 @@ public class SurveyResponseController {
     }
 
     /**
-     * 설문 응답 조회
+     * 개별 설문 응답 조회
      */
     @GetMapping("/response/{responseId}")
     public ApiResponse<Response> getResponse(@PathVariable Long responseId) {
@@ -56,5 +58,39 @@ public class SurveyResponseController {
         log.info("설문 응답 조회 성공 - responseId: {}", responseId);
         
         return ApiResponse.success("설문 응답 조회 성공", response);
+    }
+    
+    /**
+     * 설문조사 전체 응답 조회
+     */
+    @GetMapping("/survey/{surveyId}/responses")
+    public ApiResponse<List<Response>> getSurveyResponses(@PathVariable Long surveyId) {
+        log.info("설문조사 전체 응답 조회 요청 - surveyId: {}", surveyId);
+        
+        List<Response> responses = surveyResponseService.getSurveyResponses(surveyId);
+        
+        log.info("설문조사 전체 응답 조회 성공 - surveyId: {}, 응답 수: {}", surveyId, responses.size());
+        
+        return ApiResponse.success("설문조사 전체 응답 조회 성공", responses);
+    }
+    
+    /**
+     *
+     * 설문 응답 항목의 이름과 응답 값을 기반으로 검색
+     */
+    @GetMapping("/survey/{surveyId}/responses/search")
+    public ApiResponse<List<Response>> searchSurveyResponses(
+            @PathVariable Long surveyId,
+            @RequestParam(required = false) String itemTitle,
+            @RequestParam(required = false) String answerValue) {
+        
+        log.info("설문조사 응답 검색 요청 - surveyId: {}, itemTitle: {}, answerValue: {}", 
+                surveyId, itemTitle, answerValue);
+        
+        List<Response> responses = surveyResponseService.searchSurveyResponses(surveyId, itemTitle, answerValue);
+        
+        log.info("설문조사 응답 검색 성공 - surveyId: {}, 검색 결과: {}개", surveyId, responses.size());
+        
+        return ApiResponse.success("설문조사 응답 검색 성공", responses);
     }
 }

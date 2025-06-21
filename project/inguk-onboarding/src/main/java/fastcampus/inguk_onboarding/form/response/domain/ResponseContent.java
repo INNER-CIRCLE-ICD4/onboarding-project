@@ -8,6 +8,7 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -93,7 +94,50 @@ public class ResponseContent extends Content {
     protected boolean validateBusinessRules() {
         return !hasDuplicateOrder() && 
                hasValidOrder() && 
-               hasAllRequiredAnswers();
+               hasAllRequiredAnswers() &&
+               hasExactMatchWithSurveyItems(); // 완전 일치 검증 추가
+    }
+
+    /**
+     * 설문 항목과 응답이 완전히 일치하는지 검증
+     * - 모든 설문 항목에 대응하는 응답이 있어야 함
+     * - 존재하지 않는 설문 항목에 대한 응답이 없어야 함
+     */
+    private boolean hasExactMatchWithSurveyItems() {
+        if (responseItems == null || surveyItems == null) {
+            return false;
+        }
+        
+        // 설문 항목의 순서들
+        Set<Integer> surveyOrders = surveyItems.stream()
+                .map(SurveyItemEntity::getOrder)
+                .collect(Collectors.toSet());
+        
+        // 응답 항목의 순서들
+        Set<Integer> responseOrders = responseItems.stream()
+                .map(ResponseItem::getItemOrder)
+                .collect(Collectors.toSet());
+        
+        // 필수 설문 항목의 순서들
+        Set<Integer> requiredOrders = surveyItems.stream()
+                .filter(SurveyItemEntity::getRequired)
+                .map(SurveyItemEntity::getOrder)
+                .collect(Collectors.toSet());
+        
+        // 1. 모든 필수 설문 항목에 대한 응답이 있어야 함
+        if (!responseOrders.containsAll(requiredOrders)) {
+            return false;
+        }
+        
+        // 2. 모든 응답이 실제 존재하는 설문 항목에 대한 것이어야 함
+        if (!surveyOrders.containsAll(responseOrders)) {
+            return false;
+        }
+        
+        // 3. 선택 항목에 대한 응답은 있어도 되고 없어도 됨
+        // (이미 위의 조건들로 검증됨)
+        
+        return true;
     }
 
     /**

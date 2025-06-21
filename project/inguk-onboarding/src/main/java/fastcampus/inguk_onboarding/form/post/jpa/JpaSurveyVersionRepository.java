@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface JpaSurveyVersionRepository extends JpaRepository<SurveyVersionEntity, Long> {
@@ -20,4 +21,10 @@ public interface JpaSurveyVersionRepository extends JpaRepository<SurveyVersionE
            "LEFT JOIN FETCH sv.items " +
            "WHERE sv.id = :id")
     Optional<SurveyVersionEntity> findByIdWithSurveyAndItems(@Param("id") Long id);
+    
+    @Query("SELECT sv FROM SurveyVersionEntity sv " +
+           "JOIN FETCH sv.survey " +
+           "LEFT JOIN FETCH sv.items " +
+           "WHERE sv.survey.id = :surveyId")
+    List<SurveyVersionEntity> findBySurveyIdWithItems(@Param("surveyId") Long surveyId);
 } 

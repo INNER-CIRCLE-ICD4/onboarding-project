@@ -29,4 +29,9 @@ public class Response {
                 .responseItems(responseItems)
                 .build();
     }
+    
+    //응답 ID를 반환합니다 (기존 응답 유지를 위한 메서드)
+    public Long getResponseId() {
+        return this.id;
+    }
 }

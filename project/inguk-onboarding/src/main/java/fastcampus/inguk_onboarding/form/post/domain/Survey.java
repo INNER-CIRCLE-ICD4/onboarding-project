@@ -9,7 +9,7 @@ import fastcampus.inguk_onboarding.form.post.repository.entity.post.SurveyItemEn
 import java.util.List;
 
 public class Survey {
-    
+
     private final SurveyContent surveyContent;
     
     public Survey(SurveyContent surveyContent) {
@@ -78,7 +78,7 @@ public class Survey {
     private void updateBasicInfo(SurveyEntity existingSurvey) {
         existingSurvey.setTitle(surveyContent.getName());
         existingSurvey.setDescription(surveyContent.getDescription());
-    }
+            }
     
     /**
      * 새 버전 생성
@@ -92,7 +92,7 @@ public class Survey {
         for (SurveyItem item : surveyContent.getItems()) {
             SurveyItemEntity itemEntity = createSurveyItemEntity(item);
             newVersion.addItem(itemEntity);
-        }
+    }
     }
 
 
@@ -102,7 +102,7 @@ public class Survey {
         int nextVersionNumber = surveyEntity.getVersions().size() + 1;
         return "v" + nextVersionNumber;
     }
-    
+
     private SurveyItemEntity createSurveyItemEntity(SurveyItem item) {
         SurveyItemEntity itemEntity = new SurveyItemEntity(
                 item.getName(),

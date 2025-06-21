@@ -8,21 +8,28 @@ import fastcampus.inguk_onboarding.form.post.domain.content.SurveyContent;
 import fastcampus.inguk_onboarding.form.post.jpa.JpaSurveyRepository;
 import fastcampus.inguk_onboarding.form.post.jpa.JpaSurveyVersionRepository;
 import fastcampus.inguk_onboarding.form.post.repository.entity.post.SurveyEntity;
+import fastcampus.inguk_onboarding.form.response.application.interfaces.ResponseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class SurveyService {
 
     private final JpaSurveyRepository surveyRepository;
     private final JpaSurveyVersionRepository surveyVersionRepository;
+    private final ResponseRepository responseRepository;
 
-    public SurveyService(JpaSurveyRepository surveyRepository, JpaSurveyVersionRepository surveyVersionRepository) {
+    public SurveyService(JpaSurveyRepository surveyRepository, 
+                        JpaSurveyVersionRepository surveyVersionRepository,
+                        ResponseRepository responseRepository) {
         this.surveyRepository = surveyRepository;
         this.surveyVersionRepository = surveyVersionRepository;
+        this.responseRepository = responseRepository;
     }
 
     @Transactional
@@ -63,14 +70,50 @@ public class SurveyService {
         // 3. DTO → Domain 변환
         SurveyContent surveyContent = convertToSurveyContent(dto);
         
-        // 4. Survey 도메인을 통한 업데이트 로직 실행
+        // 4. 기존 응답 영향도 확인 및 로깅
+        checkExistingResponseImpact(surveyId, existingSurvey, surveyContent);
+        
+        // 5. Survey 도메인을 통한 업데이트 로직 실행
         Survey survey = new Survey(surveyContent);
         SurveyEntity updatedSurvey = survey.updateSurvey(existingSurvey);
         
-        // 5. 영속화 및 응답
+        // 6. 영속화 및 응답
         SurveyEntity savedSurvey = surveyRepository.save(updatedSurvey);
         
         return new SurveyResponseDto(savedSurvey);
+    }
+
+    /**
+     * 설문 항목 변경이 기존 응답에 미치는 영향을 확인하고 로깅
+     */
+    private void checkExistingResponseImpact(Long surveyId, SurveyEntity existingSurvey, SurveyContent newContent) {
+        try {
+            // 기존 응답 수 조회
+            int existingResponseCount = responseRepository.findBySurveyId(surveyId).size();
+            
+            if (existingResponseCount > 0) {
+                // 항목 변경 여부 확인
+                boolean itemsChanged = newContent.hasItemsChangedFrom(existingSurvey);
+                
+                if (itemsChanged) {
+                    log.warn("⚠️ 설문 항목 변경으로 인한 기존 응답 영향 알림");
+                    log.warn("설문조사 ID: {}", surveyId);
+                    log.warn("영향받는 기존 응답 수: {}개", existingResponseCount);
+                    log.warn("기존 응답은 유지되며, 새로운 버전이 생성됩니다.");
+                    
+                    // 현재 최신 버전 정보
+                    int currentVersionCount = existingSurvey.getVersions().size();
+                    log.info("현재 버전 수: {}개, 새 버전: v{}", currentVersionCount, currentVersionCount + 1);
+                } else {
+                    log.info("기본 정보만 변경되어 기존 응답에는 영향이 없습니다. 응답 수: {}개", existingResponseCount);
+                }
+            } else {
+                log.info("기존 응답이 없으므로 자유롭게 수정할 수 있습니다.");
+            }
+        } catch (Exception e) {
+            log.error("기존 응답 영향도 확인 중 오류 발생: {}", e.getMessage());
+            // 오류가 발생해도 설문 수정은 계속 진행
+        }
     }
 
     /**
@@ -95,11 +138,4 @@ public class SurveyService {
                 itemDto.options()
         );
     }
-
-
-
-
-
-
-
 }

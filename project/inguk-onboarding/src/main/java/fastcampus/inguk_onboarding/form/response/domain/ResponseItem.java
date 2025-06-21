@@ -38,13 +38,13 @@ public class ResponseItem {
         };
     }
     
-    // 단답형 검증 (1~100자)
+    // 단답형 검증
     private boolean isValidShortAnswer() {
         String trimmedAnswer = answer.trim();
         return trimmedAnswer.length() >= 1 && trimmedAnswer.length() <= 100;
     }
     
-    // 장문형 검증 (1~1000자)
+    // 장문형 검증
     private boolean isValidLongAnswer() {
         String trimmedAnswer = answer.trim();
         return trimmedAnswer.length() >= 1 && trimmedAnswer.length() <= 1000;

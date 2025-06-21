@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface JpaSurveyResponseRepository extends JpaRepository<SurveyResponseEntity, Long> {
 
-    @Query("SELECT r FROM SurveyResponseEntity r WHERE r.surveyId = :surveyId")
+    @Query("SELECT sr FROM SurveyResponseEntity sr LEFT JOIN FETCH sr.answers WHERE sr.surveyId = :surveyId ORDER BY sr.createdAt DESC")
     List<SurveyResponseEntity> findBySurveyId(@Param("surveyId") Long surveyId);
     
     @Query("SELECT r FROM SurveyResponseEntity r WHERE r.surveyVersionId = :surveyVersionId")

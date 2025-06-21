@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -63,6 +65,28 @@ public class ResponseRepositoryImpl implements ResponseRepository {
         }
     }
     
+    @Override
+    public List<Response> findBySurveyId(Long surveyId) {
+        try {
+            log.info("설문조사 전체 응답 조회 시작 - surveyId: {}", surveyId);
+            
+            List<SurveyResponseEntity> responseEntities = jpaSurveyResponseRepository.findBySurveyId(surveyId);
+            
+            log.info("설문조사 전체 응답 엔티티 조회 성공 - surveyId: {}, 응답 수: {}", surveyId, responseEntities.size());
+            
+            List<Response> responses = responseEntities.stream()
+                    .map(this::toResponse)
+                    .toList();
+            
+            log.info("설문조사 전체 응답 변환 성공 - surveyId: {}, 응답 수: {}", surveyId, responses.size());
+            
+            return responses;
+        } catch (Exception e) {
+            log.error("설문조사 전체 응답 조회 실패 - surveyId: {}", surveyId, e);
+            throw new RuntimeException("설문조사 응답 조회 중 오류가 발생했습니다: " + e.getMessage(), e);
+        }
+    }
+    
     private Response toResponse(SurveyResponseEntity entity) {
         try {
             log.debug("응답 변환 시작 - entityId: {}", entity.getId());
@@ -72,10 +96,24 @@ public class ResponseRepositoryImpl implements ResponseRepository {
                     .surveyId(entity.getSurveyId())
                     .surveyVersionId(entity.getSurveyVersionId())
                     .responseItems(entity.getAnswers().stream()
-                            .map(answer -> fastcampus.inguk_onboarding.form.response.domain.ResponseItem.builder()
-                                    .itemOrder(answer.getItemOrder())
-                                    .answer(answer.getAnswer())
-                                    .build())
+                            .map(answer -> {
+                                try {
+                                    return fastcampus.inguk_onboarding.form.response.domain.ResponseItem.builder()
+                                            .itemOrder(answer.getItemOrder())
+                                            .answer(answer.getAnswer())
+                                            .build();
+                                } catch (Exception e) {
+                                    // 삭제된 항목에 대한 응답 처리
+                                    log.warn("삭제된 항목에 대한 응답 발견. 응답 ID: {}, 답변: {}", 
+                                            entity.getId(), answer.getAnswer());
+                                    
+                                    // 삭제된 항목의 경우 순서를 -1로 설정하여 구분
+                                    return fastcampus.inguk_onboarding.form.response.domain.ResponseItem.builder()
+                                            .itemOrder(-1) // 삭제된 항목 표시
+                                            .answer(answer.getAnswer() + " [삭제된 항목]")
+                                            .build();
+                                }
+                            })
                             .toList())
                     .build();
                     
