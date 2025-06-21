@@ -1,8 +1,10 @@
 package com.example.byeongjin_onboarding.controller;
 
 import com.example.byeongjin_onboarding.dto.FormItemDto;
+import com.example.byeongjin_onboarding.dto.SubmitAnswerRequest;
 import com.example.byeongjin_onboarding.dto.SurveyCreateRequest;
 import com.example.byeongjin_onboarding.dto.SurveyCreateResponse;
+import com.example.byeongjin_onboarding.service.SurveyAnswerService;
 import com.example.byeongjin_onboarding.service.SurveyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,8 @@ public class SurveyApiController {
 
     @Autowired
     private SurveyService surveyService;
+    @Autowired
+    private SurveyAnswerService surveyAnswerService;
 
     // 설문조사 생성 (API)
     @PostMapping("/createSurvey")
@@ -92,4 +96,19 @@ public class SurveyApiController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found
         }
     }
+
+    // 설문 응답 제출 (API)
+    @PostMapping("/submit-answer")
+    public ResponseEntity<String> submitAnswer(@RequestBody SubmitAnswerRequest request) {
+        try {
+            String responseMessage = surveyAnswerService.submitAnswer(request);
+            return ResponseEntity.ok(responseMessage);
+        } catch (NoSuchElementException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("응답 제출 중 오류 발생: " + e.getMessage());
+        }
+    }
+
+
 }

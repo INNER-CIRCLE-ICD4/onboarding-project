@@ -386,6 +386,7 @@
                 dataType: 'json',
                 success: function(data) {
                     alert('저장 완료되었습니다. 설문 ID: ' + data.id + '\n제목: ' + data.name);
+                    window.location.href = "/survey/list";
                 },
                 error: function(xhr, status, error) {
                     console.error('API 호출 중 오류 발생:', xhr.responseText, status, error);

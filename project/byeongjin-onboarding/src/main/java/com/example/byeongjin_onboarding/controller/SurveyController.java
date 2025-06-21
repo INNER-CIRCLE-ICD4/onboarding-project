@@ -28,11 +28,11 @@ public class SurveyController {
                 model.addAttribute("pageTitle", survey.getName() + " 편집");
             } catch (NoSuchElementException e) {
                 model.addAttribute("error", "해당 설문조사를 찾을 수 없습니다.");
-                model.addAttribute("surveyData", new SurveyCreateResponse()); // 빈 객체라도 넣어 널포인트 방지
+                model.addAttribute("surveyData", new SurveyCreateResponse());
                 model.addAttribute("pageTitle", "설문조사 없음");
             }
         } else {
-            model.addAttribute("surveyData", new SurveyCreateResponse()); // 새 설문조사 생성 시 빈 DTO 전달
+            model.addAttribute("surveyData", new SurveyCreateResponse());
             model.addAttribute("pageTitle", "새 설문조사 생성");
         }
         return "survey-editor";
@@ -43,6 +43,19 @@ public class SurveyController {
         List<SurveyCreateResponse> surveys = surveyService.getAllSurveys();
         model.addAttribute("surveys", surveys);
         model.addAttribute("pageTitle", "설문조사 목록");
-        return "survey-list"; // templates/survey-list.html 렌더링
+        return "survey-list";
+    }
+
+    @GetMapping("/respond")
+    public String showSurveyResponseForm(@RequestParam("id") Long surveyId, Model model) {
+        try {
+            SurveyCreateResponse survey = surveyService.getSurveyById(surveyId);
+            model.addAttribute("survey", survey);
+            model.addAttribute("pageTitle", survey.getName() + " 응답하기");
+        } catch (NoSuchElementException e) {
+            model.addAttribute("error", "응답할 설문조사를 찾을 수 없습니다.");
+            model.addAttribute("pageTitle", "설문조사 없음");
+        }
+        return "survey-respond";
     }
 }
