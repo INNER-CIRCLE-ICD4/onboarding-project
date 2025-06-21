@@ -1,20 +1,17 @@
-package com.innercircle.onboarding.answer;
+package com.innercircle.onboarding.answer.domain;
 
+import com.innercircle.onboarding.common.jpa.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @Table(name = "answer")
-public class Answer {
-
+public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,14 +31,12 @@ public class Answer {
     @Column(name = "content", nullable = false, length = 100)
     private String content;
 
-    @Comment("생성일시")
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, columnDefinition = "DATETIME(3)")
-    private LocalDateTime createdAt;
-
-    @Comment("수정일시")
-    @UpdateTimestamp
-    @Column(name = "modified_at", nullable = false, columnDefinition = "DATETIME(3)")
-    private LocalDateTime modifiedAt;
+    @Builder
+    public Answer(Long seq, Long questionSeq, String originQuestion, String content) {
+        this.seq = seq;
+        this.questionSeq = questionSeq;
+        this.originQuestion = originQuestion;
+        this.content = content;
+    }
 
 }

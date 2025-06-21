@@ -5,17 +5,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.UUID;
 
 public class FormDto {
 
-    @ToString
     @Getter
     @NoArgsConstructor
     public static class Create {
@@ -45,6 +42,44 @@ public class FormDto {
                     .build();
         }
 
+    }
+
+    @ToString
+    @Getter
+    @NoArgsConstructor
+    public static class SearchQuestionsDto {
+        private UUID uuid;
+        private String title;
+        private String formDescription;
+        private Long questionSeq;
+        private String questionContent;
+        private String questionDescription;
+        private String answerType;
+        private String answerOption;
+        private boolean isDeleted;
+        private boolean isRequired;
+        private List<String> answerList = List.of();
+
+        public void setAnswerList(List<String> answerList) {
+            if (!ObjectUtils.isEmpty(answerList)) {
+                this.answerList = answerList;
+            }
+        }
+
+    }
+
+    @ToString
+    @Getter
+    @NoArgsConstructor
+    public static class SearchAnswerDto {
+        private Long questionSeq;
+        private String questionContent;
+        private String answerContent;
+        private String questionDescription;
+        private String answerType;
+        private String answerOption;
+        private boolean isDeleted;
+        private boolean isRequired;
     }
 
 }

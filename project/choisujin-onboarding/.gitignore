@@ -35,5 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/data/
+/src/main/resources/data/survey.mv.db
 /logs/

@@ -2,10 +2,14 @@ package com.innercircle.onboarding.form;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.innercircle.onboarding.common.response.ApiResponse;
+import com.innercircle.onboarding.form.domain.Form;
 import com.innercircle.onboarding.form.domain.FormDto;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -19,13 +23,13 @@ public class FormController {
     }
 
     @GetMapping("/list")
-    public ApiResponse.Base<JsonNode> getFormList() {
-        return ApiResponse.Base.success();
+    public ApiResponse.Base<List<Form>> getFormList() {
+        return ApiResponse.Base.success(formService.getFormList());
     }
 
     @GetMapping("/{uuid}")
-    public ApiResponse.Base<JsonNode> get(@PathVariable String uuid) {
-        return ApiResponse.Base.success();
+    public ApiResponse.Base<List<FormDto.SearchQuestionsDto>> get(@PathVariable UUID uuid, @RequestParam(required = false) String keyword) {
+        return ApiResponse.Base.success(formService.getForm(uuid, keyword));
     }
 
     @PostMapping

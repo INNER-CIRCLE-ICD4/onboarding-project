@@ -23,8 +23,12 @@ public enum ResponseStatus {
     , NOT_FOUND_URL(HttpStatus.BAD_REQUEST.value(), "FAIL_0004", "URL Not Found.")
 
     // NotFoundDataException - No Data Found
-    , NOT_FOUND_DATA(HttpStatus.BAD_REQUEST.value(), "FAIL_0005", "No Data Found.");
+    , NOT_FOUND_DATA(HttpStatus.BAD_REQUEST.value(), "FAIL_0005", "No Data Found.")
 
+    // NotMatchQuestionAnswerCountException - Question and Answer Count Mismatch
+    , NOT_MATCH_QUESTION_ANSWER_COUNT(HttpStatus.BAD_REQUEST.value(), "FAIL_0006", "The number of answers does not match the number of questions.")
+    , ANSWER_COUNT_MISMATCH(HttpStatus.BAD_REQUEST.value(), "FAIL_0007", "Please check the number of answers.")
+    , REQUIRED_QUESTION_NOT_ANSWERED(HttpStatus.BAD_REQUEST.value(), "FAIL_0008", "Required question was not answered.");
     private int httpsStatus;
     private String code;
     private String message;

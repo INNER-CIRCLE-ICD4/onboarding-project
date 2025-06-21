@@ -21,6 +21,7 @@ public class CommonException extends RuntimeException {
 
     public CommonException(ResponseStatus response, String description) {
         this.response = response;
+        this.description = description;
     }
 
     @Builder

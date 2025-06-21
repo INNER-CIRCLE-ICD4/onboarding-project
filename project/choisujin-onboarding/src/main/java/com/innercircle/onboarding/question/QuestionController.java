@@ -23,4 +23,5 @@ public class QuestionController {
         questionService.update(seq, updateParam);
         return ApiResponse.Base.success();
     }
+
 }
