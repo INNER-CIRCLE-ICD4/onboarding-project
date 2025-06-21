@@ -41,6 +41,10 @@ class QuestionJpaEntity(
     fun addOptions(options: List<QuestionOptionJpaEntity>?) {
         options?.forEach {
             mutableOptions.add(it)
+            it.question = this
         }
     }
+
+    override fun toString(): String =
+        "QuestionJpaEntity(id=$id, name='$name', description='$description', inputType=$inputType, required=$required, mutableOptions=$mutableOptions, options=$options)"
 }

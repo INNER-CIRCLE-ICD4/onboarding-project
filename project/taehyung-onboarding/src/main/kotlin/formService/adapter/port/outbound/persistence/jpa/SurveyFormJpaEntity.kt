@@ -51,6 +51,10 @@ class SurveyFormJpaEntity(
     fun addQuestions(question: List<QuestionJpaEntity>) {
         question.forEach {
             mutableQuestions.add(it)
+            it.surveyForm = this
         }
     }
+
+    override fun toString(): String =
+        "SurveyFormJpaEntity(surveyName='$surveyName', description='$description', id='$id', mutableQuestions=$mutableQuestions, questions=$questions, createdAt=$createdAt, updatedAt=$updatedAt, isNew=$isNew)"
 }

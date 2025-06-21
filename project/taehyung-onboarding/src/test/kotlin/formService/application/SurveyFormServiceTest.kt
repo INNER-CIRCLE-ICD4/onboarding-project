@@ -4,6 +4,8 @@ import formService.application.port.inbound.CreateSurveyFormUseCase
 import formService.application.port.outbound.SurveyFormRepository
 import formService.domain.Question
 import formService.domain.SurveyForm
+import formService.fixture.getFixtureSurveyForm
+import jakarta.persistence.EntityNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
@@ -60,12 +62,50 @@ class SurveyFormServiceTest {
         assertThat(surveyForm.questions[0].options).hasSize(0)
     }
 
+    @Test
+    @DisplayName("사용자는 설문 조사 조회 시 id 기반으로 조회 할 수 있어야된다.")
+    fun readOneSurveyFormTest() {
+        // given
+        val surveyForm = getFixtureSurveyForm(1, listOf(Question.QuestionInputType.SHORT_TEXT))
+
+        val surveyFormService = SurveyFormService(repository)
+        repository.save(surveyForm)
+
+        println(surveyForm)
+
+        // when
+        val retrieveSurveyForm = surveyFormService.retrieveSurveyForm(surveyForm.id)
+
+        // then
+        assertThat(retrieveSurveyForm.id).isEqualTo(surveyForm.id)
+    }
+
+    @Test
+    @DisplayName("사용자는 설문 조사 조회 시 id 가 없으면 예외가 발생되어야된다.")
+    fun readOneNotFound() {
+        // given
+        val surveyForm = getFixtureSurveyForm(1, listOf(Question.QuestionInputType.SHORT_TEXT))
+
+        val surveyFormService = SurveyFormService(repository)
+        repository.save(surveyForm)
+
+        println(surveyForm)
+
+        // when
+        val retrieveSurveyForm = surveyFormService.retrieveSurveyForm(surveyForm.id)
+
+        // then
+        assertThat(retrieveSurveyForm.id).isEqualTo(surveyForm.id)
+    }
+
     class SurveyFormInMemoryRepository : SurveyFormRepository {
         val store = arrayListOf<SurveyForm>()
 
         override fun save(survey: SurveyForm) {
             store.add(survey)
         }
+
+        override fun getOneBy(id: String): SurveyForm = store.find { it.id == id } ?: throw EntityNotFoundException()
 
         fun removeAll() {
             store.removeAll { it.id.isNotEmpty() }
