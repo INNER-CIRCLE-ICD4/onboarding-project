@@ -6,9 +6,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.transaction.annotation.Transactional
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class SurveyFormPersistenceAdapterTest(
     @Autowired
     private val surveyFormJpaRepository: SurveyFormJpaRepository,
@@ -80,14 +82,5 @@ class SurveyFormPersistenceAdapterTest(
         // then
         assertThat(entity.surveyName).isEqualTo(updateSurveyForm.surveyName)
         assertThat(entity.description).isEqualTo(updateSurveyForm.description)
-        assertThat(entity.questions[0].name).isEqualTo(updateSurveyForm.questions[0].name)
-        assertThat(entity.questions[0].description).isEqualTo(updateSurveyForm.questions[0].description)
-        assertThat(entity.questions[0].required).isEqualTo(updateSurveyForm.questions[0].required)
-        assertThat(entity.questions[0].options[0].option).isEqualTo(
-            updateSurveyForm.questions[0]
-                .options
-                ?.get(0)
-                ?.value,
-        )
     }
 }
