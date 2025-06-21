@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @RestController
@@ -56,6 +57,39 @@ public class SurveyApiController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdSurvey);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("설문 저장 중 서버 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    // 특정 설문조사 ID로 조회 (API)
+    @GetMapping("/createSurvey/{id}")
+    public ResponseEntity<SurveyCreateResponse> getSurveyById(@PathVariable Long id) {
+        try {
+            SurveyCreateResponse survey = surveyService.getSurveyById(id);
+            return ResponseEntity.ok(survey);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // 설문조사 수정 (API)
+    @PutMapping("/createSurvey/{id}")
+    public ResponseEntity<SurveyCreateResponse> updateSurvey(@PathVariable Long id, @RequestBody SurveyCreateRequest request) {
+        try {
+            SurveyCreateResponse updatedSurvey = surveyService.updateSurvey(id, request);
+            return ResponseEntity.ok(updatedSurvey);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // 설문조사 삭제 (API)
+    @DeleteMapping("/createSurvey/{id}")
+    public ResponseEntity<Void> deleteSurvey(@PathVariable Long id) {
+        try {
+            surveyService.deleteSurvey(id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found
         }
     }
 }

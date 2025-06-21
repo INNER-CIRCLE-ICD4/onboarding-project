@@ -139,14 +139,45 @@
 </head>
 <body>
 <div class="container">
+    <input type="hidden" id="surveyId" th:value="${surveyData?.id ?: ''}" />
     <div class="survey-info">
-        <input contenteditable="true" id="surveyTitle" class="editable" placeholder="설문조사 제목을 입력하세요"/>
+        <input contenteditable="true" id="surveyTitle" class="editable" placeholder="설문조사 제목을 입력하세요" th:value="${surveyData?.name}"/>
         <br>
-        <input contenteditable="true" id="surveyDescription" class="editable" placeholder="설문조사에 대한 설명을 입력하세요"/>
+        <input contenteditable="true" id="surveyDescription" class="editable" placeholder="설문조사에 대한 설명을 입력하세요" th:value="${surveyData?.description}"/>
     </div>
 
     <div id="questionsContainer">
+        <div th:each="question, i : ${surveyData?.formItems}" class="question-section" th:data-item-id="${question.id}" th:data-display-order="${question.displayOrder}">
+            <div class="question-header">
+                <span class="drag-handle">☰</span>
+                <input contenteditable="true" class="question-title editable" placeholder="질문 내용을 입력하세요" th:value="${question.name}"/>
+                <div class="question-actions">
+                    <button type="button" onclick="removeQuestion(this)">-</button>
+                </div>
+            </div>
 
+            <div class="item-config">
+                <label for="itemType">입력 형태:</label>
+                <select class="item-type-select" id="itemType">
+                    <option value="SHORT_ANSWER" th:selected="${question.itemType == 'SHORT_ANSWER'}">단답형</option>
+                    <option value="LONG_ANSWER" th:selected="${question.itemType == 'LONG_ANSWER'}">장문형</option>
+                    <option value="SINGLE_CHOICE" th:selected="${question.itemType == 'SINGLE_CHOICE'}">라디오박스 (단일 선택)</option>
+                    <option value="MULTI_CHOICE" th:selected="${question.itemType == 'MULTI_CHOICE'}">체크박스 (다중 선택)</option>
+                </select>
+                <label>필수:</label>
+                <input type="checkbox" class="item-required-checkbox" th:checked="${question.required}">
+            </div>
+
+            <div class="form-item-options" th:style="${(question.itemType == 'SINGLE_CHOICE' or question.itemType == 'MULTI_CHOICE') ? 'display: block;' : 'display: none;'}">
+                <h4>선택 후보:</h4>
+                <div th:each="option, j : ${question.options}" class="option-item">
+                    <span class="drag-handle">☰</span>
+                    <div contenteditable="true" class="option-text editable" placeholder="옵션 내용을 입력하세요" th:text="${option}">옵션 [[${j.index + 1}]]</div>
+                    <button type="button" onclick="removeOption(this)">-</button>
+                </div>
+                <button type="button" class="add-option-btn" onclick="addOption(this)">+ 옵션 추가</button>
+            </div>
+        </div>
     </div>
 
     <div class="button-group">
@@ -159,6 +190,39 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.question-section').forEach(qSection => {
+            const itemTypeSelect = qSection.querySelector('.item-type-select');
+            toggleOptionsVisibility(itemTypeSelect);
+        });
+
+        document.querySelectorAll('.item-type-select').forEach(select => {
+            select.addEventListener('change', function() {
+                toggleOptionsVisibility(this);
+            });
+        });
+
+        // 질문 순서 변경
+        new Sortable(document.getElementById('questionsContainer'), {
+            animation: 150,
+            handle: '.drag-handle',
+            onEnd: function (evt) {
+                updateDisplayOrders();
+            }
+        });
+
+        // 옵션 순서 변경
+        document.querySelectorAll('.form-item-options').forEach(optionsContainer => {
+            new Sortable(optionsContainer, {
+                animation: 150,
+                handle: '.drag-handle',
+                onEnd: function (evt) {
+                    updateOptionDisplayOrders(evt.to);
+                }
+            });
+        });
+        updateDisplayOrders();
+    });
 
     function toggleOptionsVisibility(selectElement) {
         const questionSection = selectElement.closest('.question-section');
@@ -241,7 +305,7 @@
         const newOptionHtml = `
                 <div class="option-item">
                     <span class="drag-handle">☰</span>
-                    <div contenteditable="true" class="option-text editable" placeholder="옵션 내용을 입력하세요">새로운 옵션</div>
+                    <div contenteditable="true" class="option-text editable" placeholder="옵션 내용을 입력하세요"></div>
                     <button type="button" onclick="removeOption(this)">-</button>
                 </div>
             `;
@@ -274,6 +338,7 @@
         const confirmSave = confirm('모든 내용을 저장하시겠까요?');
 
         if (confirmSave) {
+            const surveyId = document.getElementById('surveyId').value;
             const surveyData = {
                 name: document.getElementById('surveyTitle').value.trim(),
                 description: document.getElementById('surveyDescription').value.trim(),
@@ -305,9 +370,17 @@
                 });
             });
 
+            let method = 'POST';
+            let url = '/api/surveys/createSurvey';
+
+            if (surveyId && surveyId !== '') {
+                method = 'PUT';
+                url = `/api/surveys/createSurvey/${surveyId}`;
+            }
+
             $.ajax({
-                url: '/api/surveys/createSurvey',
-                type: 'POST',
+                url: url,
+                type: method,
                 contentType: 'application/json',
                 data: JSON.stringify(surveyData),
                 dataType: 'json',
