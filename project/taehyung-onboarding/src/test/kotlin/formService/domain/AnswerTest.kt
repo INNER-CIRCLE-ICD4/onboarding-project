@@ -6,20 +6,21 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 class AnswerTest {
     @Test
     @DisplayName("설문 받을 응답 생성 시 유저 이메일, 제출 일자, 응답 값이 필수여야된다.")
     fun answerCreateTest() {
         // given
-        val userEmail = "test@gmail.com"
+        val userToken = UUID.randomUUID().toString()
         val submittedAt = "2025-01-01T16:00:00"
 
         // when
         val answer =
             Answer(
                 id = getTsid(),
-                userEmail = userEmail,
+                userToken = userToken,
                 submittedAt = LocalDateTime.of(2025, 1, 1, 16, 0, 0),
                 values =
                     listOf(
@@ -35,7 +36,7 @@ class AnswerTest {
             )
 
         // then
-        assertThat(answer.userEmail).isEqualTo(userEmail)
+        assertThat(answer.userToken).isEqualTo(userToken)
         assertThat(answer.submittedAt.format(DateTimeFormatter.ISO_DATE_TIME)).isEqualTo(submittedAt)
         assertThat(answer.values).hasSize(2)
         assertThat(answer.values[0].answerValue).isEqualTo("value1")

@@ -8,7 +8,7 @@ import formService.domain.SurveyForm
 import formService.util.getTsid
 
 fun getFixtureSurveyForm(
-    inputTypes: List<Question.QuestionInputType>,
+    inputTypes: List<Question.InputType>,
     isOptions: Boolean = false,
     optionSize: Int = 0,
     isRemoved: Boolean = false,
@@ -49,7 +49,7 @@ fun getFixtureSurveyForm(
 }
 
 fun getFixtureOnlyQuestion(
-    inputTypes: List<Question.QuestionInputType>,
+    inputTypes: List<Question.InputType>,
     isRemoved: Boolean = false,
     optionSize: Int? = 0,
 ): List<Question> {

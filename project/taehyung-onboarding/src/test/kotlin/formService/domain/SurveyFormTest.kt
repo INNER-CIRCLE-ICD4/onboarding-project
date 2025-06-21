@@ -17,7 +17,7 @@ class SurveyFormTest {
         val surveyName = "surveyName"
         val description = "description"
         val questionDescription = "description0"
-        val questions = getSurveyFormQuestions(1, listOf(Question.QuestionInputType.SHORT_TEXT))
+        val questions = getSurveyFormQuestions(1, listOf(Question.InputType.SHORT_TEXT))
         val questionName = "question0"
 
         // when
@@ -34,7 +34,7 @@ class SurveyFormTest {
         assertThat(surveyForm.description).isEqualTo(description)
         assertThat(surveyForm.questions).hasSize(1)
         assertThat(surveyForm.questions[0].description).isEqualTo(questionDescription)
-        assertThat(surveyForm.questions[0].inputType).isEqualTo(Question.QuestionInputType.SHORT_TEXT)
+        assertThat(surveyForm.questions[0].inputType).isEqualTo(Question.InputType.SHORT_TEXT)
         assertThat(surveyForm.questions[0].required).isTrue()
         assertThat(surveyForm.questions[0].name).isEqualTo(questionName)
     }
@@ -49,9 +49,9 @@ class SurveyFormTest {
             getSurveyFormQuestions(
                 3,
                 listOf(
-                    Question.QuestionInputType.SHORT_TEXT,
-                    Question.QuestionInputType.LONG_TEXT,
-                    Question.QuestionInputType.SINGLE_CHOICE,
+                    Question.InputType.SHORT_TEXT,
+                    Question.InputType.LONG_TEXT,
+                    Question.InputType.SINGLE_CHOICE,
                 ),
                 listOf(
                     QuestionOption(value = "option1"),
@@ -102,7 +102,7 @@ class SurveyFormTest {
         // given
         val surveyName = FixtureMonkey.create().giveMeOne(String::class.java)
         val description = FixtureMonkey.create().giveMeOne(String::class.java)
-        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SHORT_TEXT))
+        val fixtureSurveyForm = getFixtureSurveyForm(listOf(Question.InputType.SHORT_TEXT))
 
         // when
         fixtureSurveyForm.modify(surveyName = surveyName, description = description)
@@ -116,8 +116,8 @@ class SurveyFormTest {
     @DisplayName("설문 받은 항목 (이름, 설명, 필수여부, 삭제여부, 설문 유형)은 수정 할 수 있어야된다.")
     fun modifySurveyFormQuestionTest() {
         // given
-        val surveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SHORT_TEXT))
-        val questions = getFixtureOnlyQuestion(listOf(Question.QuestionInputType.SHORT_TEXT))
+        val surveyForm = getFixtureSurveyForm(listOf(Question.InputType.SHORT_TEXT))
+        val questions = getFixtureOnlyQuestion(listOf(Question.InputType.SHORT_TEXT))
 
         // when
         surveyForm.modifyQuestion(questions = questions)
@@ -135,9 +135,9 @@ class SurveyFormTest {
     @DisplayName("삭제된 설문 항목이 있다면 기존 설문 항목 목록에서 삭제되어야된다.")
     fun modifySurveyFormQuestionRemoveTest() {
         // given
-        val surveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SHORT_TEXT, Question.QuestionInputType.LONG_TEXT))
+        val surveyForm = getFixtureSurveyForm(listOf(Question.InputType.SHORT_TEXT, Question.InputType.LONG_TEXT))
         val questions =
-            getFixtureOnlyQuestion(listOf(Question.QuestionInputType.SHORT_TEXT, Question.QuestionInputType.LONG_TEXT), isRemoved = true)
+            getFixtureOnlyQuestion(listOf(Question.InputType.SHORT_TEXT, Question.InputType.LONG_TEXT), isRemoved = true)
 
         // when
         surveyForm.modifyQuestion(questions = questions)
@@ -155,16 +155,16 @@ class SurveyFormTest {
     @DisplayName("기존 설문 항목 유형이 바뀔수 있어야된다. ")
     fun modifySurveyFormQuestionInputTypeTest() {
         // given
-        val surveyForm = getFixtureSurveyForm(listOf(Question.QuestionInputType.SHORT_TEXT, Question.QuestionInputType.LONG_TEXT))
-        val questions = getFixtureOnlyQuestion(listOf(Question.QuestionInputType.LONG_TEXT, Question.QuestionInputType.SHORT_TEXT))
+        val surveyForm = getFixtureSurveyForm(listOf(Question.InputType.SHORT_TEXT, Question.InputType.LONG_TEXT))
+        val questions = getFixtureOnlyQuestion(listOf(Question.InputType.LONG_TEXT, Question.InputType.SHORT_TEXT))
 
         // when
         surveyForm.modifyQuestion(questions = questions)
 
         // then
         assertThat(surveyForm.questions.size).isEqualTo(questions.size)
-        assertThat(surveyForm.questions[0].inputType).isEqualTo(Question.QuestionInputType.LONG_TEXT)
-        assertThat(surveyForm.questions[1].inputType).isEqualTo(Question.QuestionInputType.SHORT_TEXT)
+        assertThat(surveyForm.questions[0].inputType).isEqualTo(Question.InputType.LONG_TEXT)
+        assertThat(surveyForm.questions[1].inputType).isEqualTo(Question.InputType.SHORT_TEXT)
     }
 
     @Test
@@ -173,12 +173,12 @@ class SurveyFormTest {
         // given
         val surveyForm =
             getFixtureSurveyForm(
-                listOf(Question.QuestionInputType.SINGLE_CHOICE),
+                listOf(Question.InputType.SINGLE_CHOICE),
                 isOptions = true,
                 optionSize = 3,
             )
 
-        val questions = getFixtureOnlyQuestion(listOf(Question.QuestionInputType.SINGLE_CHOICE), isRemoved = false, optionSize = 3)
+        val questions = getFixtureOnlyQuestion(listOf(Question.InputType.SINGLE_CHOICE), isRemoved = false, optionSize = 3)
 
         // when
         surveyForm.modifyQuestion(questions)
@@ -206,21 +206,21 @@ class SurveyFormTest {
 
     private fun getSurveyFormQuestions(
         size: Int,
-        inputType: List<Question.QuestionInputType>? = null,
+        inputType: List<Question.InputType>? = null,
         options: List<QuestionOption>? = null,
     ): List<Question> =
         (0..<size).toList().map {
             val question =
                 Question(
                     description = "description$it",
-                    inputType = if (inputType == null) Question.QuestionInputType.entries[it % 4] else inputType[it],
+                    inputType = if (inputType == null) Question.InputType.entries[it % 4] else inputType[it],
                     required = true,
                     name = "question$it",
                     options =
                         if (inputType != null &&
                             (
-                                inputType[it] == Question.QuestionInputType.SINGLE_CHOICE ||
-                                    inputType[it] == Question.QuestionInputType.MULTI_CHOICE
+                                inputType[it] == Question.InputType.SINGLE_CHOICE ||
+                                    inputType[it] == Question.InputType.MULTI_CHOICE
                             )
                         ) {
                             options

@@ -1,6 +1,6 @@
 package formService.application.port.inbound
 
-import formService.domain.Question
+import formService.domain.InputType
 
 interface CreateSurveyFormUseCase {
     fun createSurveyForm(command: CreateSurveyFormCommand): CreateSurveyFormId
@@ -14,7 +14,7 @@ interface CreateSurveyFormUseCase {
     data class CreateSurveyFormQuestion(
         var name: String,
         var description: String,
-        var inputType: Question.QuestionInputType,
+        var inputType: InputType,
         var required: Boolean,
         val options: List<CreateSurveyFormQuestionOption>?,
     )

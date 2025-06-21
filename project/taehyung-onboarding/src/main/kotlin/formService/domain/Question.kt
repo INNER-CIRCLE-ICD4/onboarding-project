@@ -4,7 +4,7 @@ class Question(
     var id: Long? = null,
     var name: String,
     var description: String,
-    var inputType: QuestionInputType,
+    var inputType: InputType,
     var required: Boolean,
     options: List<QuestionOption>? = null,
 ) {
@@ -13,7 +13,7 @@ class Question(
     private val mutableOptions = options?.toMutableList()
     val options get() = mutableOptions?.toList()
 
-    constructor(id: Long?, name: String, description: String, inputType: QuestionInputType, required: Boolean, isRemoved: Boolean) : this(
+    constructor(id: Long?, name: String, description: String, inputType: InputType, required: Boolean, isRemoved: Boolean) : this(
         id,
         name,
         description,
@@ -26,7 +26,7 @@ class Question(
         id: Long?,
         name: String,
         description: String,
-        inputType: QuestionInputType,
+        inputType: InputType,
         required: Boolean,
         options: List<QuestionOption>?,
         isRemoved: Boolean,
@@ -41,7 +41,7 @@ class Question(
     fun modify(
         name: String,
         description: String,
-        inputType: QuestionInputType,
+        inputType: InputType,
         required: Boolean,
         isRemoved: Boolean,
     ) {
@@ -52,11 +52,7 @@ class Question(
         this.isRemoved = isRemoved
     }
 
-    enum class QuestionInputType {
-        SHORT_TEXT,
-        LONG_TEXT,
-        SINGLE_CHOICE,
-        MULTI_CHOICE,
+    fun checkRequired() {
     }
 
     override fun toString(): String =

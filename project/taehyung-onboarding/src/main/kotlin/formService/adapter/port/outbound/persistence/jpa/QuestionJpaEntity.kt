@@ -1,6 +1,6 @@
 package formService.adapter.port.outbound.persistence.jpa
 
-import formService.domain.Question
+import formService.domain.InputType
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -27,7 +27,7 @@ class QuestionJpaEntity(
     @Column
     var description: String,
     @Enumerated(value = EnumType.STRING)
-    var inputType: Question.QuestionInputType,
+    var inputType: InputType,
     @Column
     var required: Boolean,
     @Column

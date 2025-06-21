@@ -2,7 +2,7 @@ package formService.adapter.port.inbound.web.dto
 
 import formService.adapter.port.inbound.web.validator.IsEnum
 import formService.application.port.inbound.CreateSurveyFormUseCase
-import formService.domain.Question
+import formService.domain.InputType
 import formService.exception.BadRequestException
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -61,9 +61,9 @@ data class RequestCreateSurveyFormDto(
             questions =
                 questions.map {
                     CreateSurveyFormUseCase.CreateSurveyFormQuestion(
-                        it.name ?: "",
-                        it.description ?: "",
-                        inputType = Question.QuestionInputType.entries.find { qt -> qt.name == it.inputType }!!,
+                        it.name,
+                        it.description,
+                        inputType = InputType.entries.find { t -> t.name == it.inputType }!!,
                         options =
                             it.options?.map { o ->
                                 CreateSurveyFormUseCase.CreateSurveyFormQuestionOption(o.value)

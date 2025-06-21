@@ -1,6 +1,6 @@
 package formService.application.port.inbound
 
-import formService.domain.Question
+import formService.domain.InputType
 
 interface RetrieveOneSurveyFormUseCase {
     fun retrieveSurveyForm(id: String): RetrieveSurveyFormRead
@@ -16,7 +16,7 @@ interface RetrieveOneSurveyFormUseCase {
         val id: Long,
         val name: String,
         val description: String,
-        val inputType: Question.QuestionInputType,
+        val inputType: InputType,
         val required: Boolean,
         val isRemoved: Boolean,
         val options: List<RetrieveSurveyFormQuestionOption>,
