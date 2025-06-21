@@ -1,0 +1,89 @@
+### 1. 관리자 로그인 (토큰 획득)
+POST http://localhost:8080/login
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=1234
+
+### 2. 설문 생성 (관리자 권한 필요)
+POST http://localhost:8080/api/surveys
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "title": "만족도 조사",
+  "description": "서비스에 얼마나 만족하셨나요?",
+  "questions": [
+    {
+      "name": "이름",
+      "description": "이름을 입력해주세요.",
+      "type": "SHORT_TEXT",
+      "required": true
+    },
+    {
+      "name": "만족도",
+      "description": "1~5 중 선택",
+      "type": "SINGLE_CHOICE",
+      "required": true,
+      "options": ["1", "2", "3", "4", "5"]
+    }
+  ]
+}
+
+### 3. 설문 목록 전체 조회
+GET http://localhost:8080/api/surveys
+
+### 4. 설문 단건 조회
+GET http://localhost:8080/api/surveys/1
+
+### 5. 설문 수정 (관리자만)
+PUT http://localhost:8080/api/surveys/1
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "title": "수정된 설문 제목",
+  "description": "수정된 설명입니다.",
+  "questions": [
+    {
+      "id": 1,
+      "name": "이름 (수정)",
+      "description": "이름을 입력해 주세요.",
+      "type": "SHORT_TEXT",
+      "required": true
+    },
+    {
+      "name": "추가 질문",
+      "description": "새로운 질문입니다.",
+      "type": "LONG_TEXT",
+      "required": false
+    }
+  ]
+}
+
+### 6. 설문 삭제 (관리자만)
+DELETE http://localhost:8080/api/surveys/1
+Authorization: Bearer {{admin_token}}
+
+### 7. 설문 응답 제출 (일반 사용자도 가능)
+POST http://localhost:8080/api/answers
+Content-Type: application/json
+
+{
+  "surveyId": 1,
+  "answers": [
+    {
+      "questionId": 1,
+      "questionName": "이름",
+      "answerValue": "홍길동"
+    },
+    {
+      "questionId": 2,
+      "questionName": "만족도",
+      "answerValue": "5"
+    }
+  ]
+}
+
+### 8. 설문 응답 검색 (questionName, answerValue 필터링 가능)
+GET http://localhost:8080/api/answers/1/answers?questionName=이름&answerValue=홍길동
+이제 이걸 .http 파일로 만들어 IntelliJ나 VSCode에서 바로 테스트하시면
