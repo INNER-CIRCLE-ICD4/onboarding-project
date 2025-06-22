@@ -2,6 +2,7 @@ plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("java")
+    id("application")
 }
 
 dependencies {
@@ -19,7 +20,11 @@ dependencies {
 
     runtimeOnly("com.h2database:h2")
 
-    tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-        mainClass.set("com.innercircle.survey.SurveyServiceApplication")
-    }
+}
+application {
+    mainClass.set("com.innercircle.survey.SurveyServiceApplication")
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    mainClass.set("com.innercircle.survey.SurveyServiceApplication")
 }
