@@ -2,12 +2,12 @@
 
 ## 📁 프로젝트 구조 (멀티모듈)
 
+```plaintext
 survey
 ├── api              # API 레이어 (Controller)
 ├── application      # 비즈니스 로직 (Service, DTO 등)
 ├── domain           # 엔티티 및 리포지토리
 ├── common           # 공통 유틸, 예외 처리, 공통 응답
-
 
 ## 📌 구현 기능
 
