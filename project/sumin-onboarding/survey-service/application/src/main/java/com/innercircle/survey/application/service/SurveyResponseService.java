@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innercircle.survey.common.dto.AnswerDto;
 import com.innercircle.survey.common.dto.QuestionSnapshotDto;
+import com.innercircle.survey.common.dto.SurveyResponseDetailDto;
 import com.innercircle.survey.common.dto.SurveyResponseDto;
 import com.innercircle.survey.domain.entity.Question;
 import com.innercircle.survey.domain.entity.Survey;
@@ -14,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -27,7 +29,9 @@ public class SurveyResponseService {
     private final SurveyRepository surveyRepository;
     private final SurveyResponseRepository surveyResponseRepository;
     private final ObjectMapper objectMapper;
+    private final SurveyResponseRepository responseRepository;
 
+    //응답 제출
     public void submitResponse(SurveyResponseDto request) {
         try {
             //1.설문 존재 여부 확인
@@ -80,6 +84,34 @@ public class SurveyResponseService {
             return objectMapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON 변환 실패", e);
+        }
+    }
+    
+    //응답 조회
+    public SurveyResponseDetailDto getSurveyResponse(UUID responseId) {
+        SurveyResponse response = responseRepository.findById(responseId)
+                .orElseThrow(() -> new RuntimeException("응답이 존재하지 않습니다."));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            List<QuestionSnapshotDto> snapshot = Arrays.asList(
+                    objectMapper.readValue(response.getSnapshotJson(), QuestionSnapshotDto[].class)
+            );
+
+            List<AnswerDto> answers = Arrays.asList(
+                    objectMapper.readValue(response.getAnswersJson(), AnswerDto[].class)
+            );
+
+            return new SurveyResponseDetailDto(
+                    response.getId(),
+                    response.getSubmittedAt(),
+                    snapshot,
+                    answers
+            );
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("응답 JSON 파싱 실패", e);
         }
     }
 }
