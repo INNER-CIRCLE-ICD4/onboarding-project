@@ -18,4 +18,8 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
 
     runtimeOnly("com.h2database:h2")
+
+    tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+        mainClass.set("com.innercircle.survey.SurveyServiceApplication")
+    }
 }
