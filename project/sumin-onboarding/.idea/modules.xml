@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/sumin-onboarding.iml" filepath="$PROJECT_DIR$/.idea/sumin-onboarding.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/survey-service.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/survey-service.common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/domain/survey-service.domain.main.iml" filepath="$PROJECT_DIR$/.idea/modules/domain/survey-service.domain.main.iml" />
     </modules>
   </component>
