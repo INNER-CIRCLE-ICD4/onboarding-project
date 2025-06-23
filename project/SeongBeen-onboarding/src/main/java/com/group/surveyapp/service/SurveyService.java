@@ -1,10 +1,10 @@
 package com.group.surveyapp.service;
 
-import com.group.surveyapp.dto.SurveyCreateRequestDto;
-import com.group.surveyapp.dto.SurveyUpdateRequestDto;
-import com.group.surveyapp.dto.SurveyAnswerRequestDto;
-import com.group.surveyapp.dto.SurveyAnswerResponseDto;
-import com.group.surveyapp.dto.SurveyResponseDto;
+import com.group.surveyapp.dto.request.SurveyCreateRequestDto;
+import com.group.surveyapp.dto.request.SurveyUpdateRequestDto;
+import com.group.surveyapp.dto.request.SurveyAnswerRequestDto;
+import com.group.surveyapp.dto.response.SurveyAnswerResponseDto;
+import com.group.surveyapp.dto.response.SurveyResponseDto;
 
 import java.util.List;
 
