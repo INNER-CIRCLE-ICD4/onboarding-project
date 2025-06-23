@@ -1,6 +1,8 @@
 package com.innercircle.survey.survey.domain
 
 import com.innercircle.survey.common.domain.BaseEntity
+import com.innercircle.survey.survey.domain.exception.MissingChoicesException
+import com.innercircle.survey.survey.domain.exception.SurveyChoiceLimitExceededException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -95,8 +97,9 @@ class Question private constructor(
         require(type.isChoiceType()) {
             "${type.description} 타입은 선택지를 가질 수 없습니다."
         }
-        require(canAddMoreChoices()) {
-            "선택지는 최대 ${MAX_CHOICES}개까지만 추가할 수 있습니다."
+
+        if (!canAddMoreChoices()) {
+            throw SurveyChoiceLimitExceededException(_choices.size + 1, MAX_CHOICES)
         }
     }
 
@@ -120,11 +123,11 @@ class Question private constructor(
             val question = Question(title, description, type, required)
 
             if (type.isChoiceType()) {
-                require(choices.isNotEmpty()) {
-                    "${type.description} 타입은 최소 1개 이상의 선택지가 필요합니다."
+                if (choices.isEmpty()) {
+                    throw MissingChoicesException(title)
                 }
-                require(choices.size <= MAX_CHOICES) {
-                    "선택지는 최대 ${MAX_CHOICES}개까지만 추가할 수 있습니다."
+                if (choices.size > MAX_CHOICES) {
+                    throw SurveyChoiceLimitExceededException(choices.size, MAX_CHOICES)
                 }
                 choices.forEach { choiceText ->
                     question.addChoice(Choice.create(choiceText))

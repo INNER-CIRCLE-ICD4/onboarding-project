@@ -32,7 +32,10 @@ interface ResponseJpaRepository : JpaRepository<Response, UUID> {
 
     @Query(
         """
-        SELECT r FROM Response r 
+        SELECT DISTINCT r FROM Response r 
+        LEFT JOIN FETCH r._answers a
+        LEFT JOIN FETCH a.selectedChoiceIds
+        LEFT JOIN FETCH a.selectedChoiceTexts
         WHERE r.survey.id = :surveyId 
         ORDER BY r.createdAt DESC
     """,
@@ -44,7 +47,9 @@ interface ResponseJpaRepository : JpaRepository<Response, UUID> {
     @Query(
         value = """
         SELECT DISTINCT r FROM Response r 
-        LEFT JOIN FETCH r._answers 
+        LEFT JOIN FETCH r._answers a
+        LEFT JOIN FETCH a.selectedChoiceIds
+        LEFT JOIN FETCH a.selectedChoiceTexts
         WHERE r.survey.id = :surveyId
         ORDER BY r.createdAt DESC
     """,
@@ -72,4 +77,35 @@ interface ResponseJpaRepository : JpaRepository<Response, UUID> {
         @Param("surveyId") surveyId: UUID,
         pageable: Pageable,
     ): Page<ResponseSummaryProjection>
+
+    @Query(
+        value = """
+        SELECT DISTINCT r FROM Response r 
+        LEFT JOIN FETCH r._answers a
+        LEFT JOIN FETCH a.selectedChoiceIds
+        LEFT JOIN FETCH a.selectedChoiceTexts ct
+        WHERE r.survey.id = :surveyId
+        AND (:questionTitle IS NULL OR LOWER(a.questionTitle) LIKE LOWER(CONCAT('%', :questionTitle, '%')))
+        AND (:answerValue IS NULL OR 
+            (LOWER(a.textValue) LIKE LOWER(CONCAT('%', :answerValue, '%')) OR 
+             EXISTS (SELECT 1 FROM a.selectedChoiceTexts sct WHERE LOWER(sct) LIKE LOWER(CONCAT('%', :answerValue, '%')))))
+        ORDER BY r.createdAt DESC
+    """,
+        countQuery = """
+        SELECT COUNT(DISTINCT r) FROM Response r 
+        LEFT JOIN r._answers a
+        LEFT JOIN a.selectedChoiceTexts ct
+        WHERE r.survey.id = :surveyId
+        AND (:questionTitle IS NULL OR LOWER(a.questionTitle) LIKE LOWER(CONCAT('%', :questionTitle, '%')))
+        AND (:answerValue IS NULL OR 
+            (LOWER(a.textValue) LIKE LOWER(CONCAT('%', :answerValue, '%')) OR 
+             EXISTS (SELECT 1 FROM a.selectedChoiceTexts sct WHERE LOWER(sct) LIKE LOWER(CONCAT('%', :answerValue, '%')))))
+    """,
+    )
+    fun searchResponsesByCriteria(
+        @Param("surveyId") surveyId: UUID,
+        @Param("questionTitle") questionTitle: String?,
+        @Param("answerValue") answerValue: String?,
+        pageable: Pageable,
+    ): Page<Response>
 }

@@ -1,19 +1,25 @@
 package com.innercircle.survey.response.application.service
 
+import com.innercircle.survey.response.adapter.out.persistence.dto.ResponseSummaryProjection
 import com.innercircle.survey.response.application.port.`in`.ResponseUseCase
+import com.innercircle.survey.response.application.port.`in`.ResponseUseCase.ResponseSearchCriteria
 import com.innercircle.survey.response.application.port.`in`.ResponseUseCase.SubmitResponseCommand
 import com.innercircle.survey.response.application.port.out.ResponseRepository
 import com.innercircle.survey.response.domain.Answer
 import com.innercircle.survey.response.domain.Response
 import com.innercircle.survey.response.domain.exception.InvalidAnswerException
 import com.innercircle.survey.response.domain.exception.InvalidChoiceException
+import com.innercircle.survey.response.domain.exception.ResponseNotFoundException
 import com.innercircle.survey.response.domain.exception.SurveyMismatchException
 import com.innercircle.survey.survey.application.port.out.SurveyRepository
 import com.innercircle.survey.survey.domain.Question
 import com.innercircle.survey.survey.domain.exception.SurveyNotFoundException
 import mu.KotlinLogging
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 private val logger = KotlinLogging.logger {}
 
@@ -52,6 +58,67 @@ class ResponseService(
         logger.info { "Response submitted successfully with id: ${savedResponse.id}" }
 
         return savedResponse
+    }
+
+    @Transactional(readOnly = true)
+    override fun getResponseById(responseId: UUID): Response {
+        logger.debug { "Loading response with id: $responseId" }
+
+        return responseRepository.findById(responseId)
+            ?: throw ResponseNotFoundException(responseId)
+    }
+
+    @Transactional(readOnly = true)
+    override fun getResponsesBySurveyId(
+        surveyId: UUID,
+        pageable: Pageable,
+    ): Page<Response> {
+        logger.debug {
+            "Loading responses for survey: $surveyId, page=${pageable.pageNumber}, size=${pageable.pageSize}"
+        }
+
+        // 설문조사 존재 여부 확인
+        surveyRepository.findById(surveyId)
+            ?: throw SurveyNotFoundException(surveyId)
+
+        // 답변을 포함한 응답 조회 (N+1 문제 방지)
+        return responseRepository.findBySurveyIdWithAnswers(surveyId, pageable)
+    }
+
+    @Transactional(readOnly = true)
+    override fun getResponseSummariesBySurveyId(
+        surveyId: UUID,
+        pageable: Pageable,
+    ): Page<ResponseSummaryProjection> {
+        logger.debug {
+            "Loading response summaries for survey: $surveyId, page=${pageable.pageNumber}, size=${pageable.pageSize}"
+        }
+
+        // 설문조사 존재 여부 확인
+        surveyRepository.findById(surveyId)
+            ?: throw SurveyNotFoundException(surveyId)
+
+        // 프로젝션을 사용한 최적화된 요약 조회
+        return responseRepository.findResponseSummariesBySurveyId(surveyId, pageable)
+    }
+
+    @Transactional(readOnly = true)
+    override fun searchResponses(
+        criteria: ResponseSearchCriteria,
+        pageable: Pageable,
+    ): Page<Response> {
+        logger.debug {
+            "Searching responses for survey: ${criteria.surveyId}, " +
+                "questionTitle=${criteria.questionTitle}, answerValue=${criteria.answerValue}, " +
+                "page=${pageable.pageNumber}, size=${pageable.pageSize}"
+        }
+
+        // 설문조사 존재 여부 확인
+        surveyRepository.findById(criteria.surveyId)
+            ?: throw SurveyNotFoundException(criteria.surveyId)
+
+        // 쿼리 레벨에서 필터링하여 조회
+        return responseRepository.searchResponsesByCriteria(criteria, pageable)
     }
 
     private fun validateAnswersAgainstSurvey(
@@ -114,11 +181,19 @@ class ResponseService(
                     throw InvalidChoiceException(invalidChoiceIds)
                 }
 
+                // 선택된 선택지의 텍스트 수집
+                val selectedChoiceTexts =
+                    question.choices
+                        .filter { it.id in selectedChoiceIds }
+                        .map { it.text }
+                        .toSet()
+
                 Answer.createChoiceAnswer(
                     questionId = question.id,
                     questionTitle = question.title,
                     questionType = question.type,
                     selectedChoiceIds = selectedChoiceIds,
+                    selectedChoiceTexts = selectedChoiceTexts,
                 )
             }
             else -> throw InvalidAnswerException("알 수 없는 질문 타입: ${question.type}")

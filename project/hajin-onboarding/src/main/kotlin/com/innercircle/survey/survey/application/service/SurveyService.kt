@@ -84,7 +84,9 @@ class SurveyService(
 
     @Transactional(readOnly = true)
     override fun getSurveySummaries(pageable: Pageable): Page<SurveySummaryProjection> {
-        logger.debug { "Loading survey summaries with pagination: page=${pageable.pageNumber}, size=${pageable.pageSize}" }
+        logger.debug {
+            "Loading survey summaries with pagination: page=${pageable.pageNumber}, size=${pageable.pageSize}"
+        }
 
         return surveyRepository.findAllSummaries(pageable)
     }

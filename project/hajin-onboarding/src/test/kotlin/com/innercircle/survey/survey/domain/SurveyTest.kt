@@ -1,5 +1,6 @@
 package com.innercircle.survey.survey.domain
 
+import com.innercircle.survey.survey.domain.exception.SurveyItemLimitExceededException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -74,26 +75,26 @@ class SurveyTest : DescribeSpec({
                             )
                         }
 
-                    shouldThrow<IllegalArgumentException> {
+                    shouldThrow<SurveyItemLimitExceededException> {
                         Survey.create(
                             title = "설문조사",
                             description = "설명",
                             questions = questions,
                         )
-                    }.message shouldBe "설문조사는 최대 10개의 항목만 가질 수 있습니다."
+                    }.message shouldBe "설문 항목 수가 제한을 초과했습니다. (현재: 11, 최대: 10)"
                 }
             }
         }
 
         describe("addQuestion") {
-            val survey =
-                Survey.create(
-                    title = "설문조사",
-                    description = "설명",
-                )
-
             context("질문 추가") {
                 it("질문이 성공적으로 추가되어야 한다") {
+                    val survey =
+                        Survey.create(
+                            title = "설문조사",
+                            description = "설명",
+                        )
+
                     val question =
                         Question.create(
                             title = "질문",
@@ -109,7 +110,13 @@ class SurveyTest : DescribeSpec({
                 }
 
                 it("10개 초과 추가 시 예외가 발생해야 한다") {
-                    repeat(9) {
+                    val survey =
+                        Survey.create(
+                            title = "설문조사",
+                            description = "설명",
+                        )
+
+                    repeat(10) {
                         survey.addQuestion(
                             Question.create(
                                 title = "질문 $it",
@@ -119,7 +126,7 @@ class SurveyTest : DescribeSpec({
                         )
                     }
 
-                    shouldThrow<IllegalArgumentException> {
+                    shouldThrow<SurveyItemLimitExceededException> {
                         survey.addQuestion(
                             Question.create(
                                 title = "11번째 질문",
@@ -127,7 +134,7 @@ class SurveyTest : DescribeSpec({
                                 type = QuestionType.SHORT_TEXT,
                             ),
                         )
-                    }.message shouldBe "설문조사는 최대 10개의 항목만 가질 수 있습니다."
+                    }.message shouldBe "설문 항목 수가 제한을 초과했습니다. (현재: 11, 최대: 10)"
                 }
             }
         }
@@ -281,9 +288,9 @@ class SurveyTest : DescribeSpec({
                         )
                     }
 
-                shouldThrow<IllegalArgumentException> {
+                shouldThrow<SurveyItemLimitExceededException> {
                     survey.updateQuestions(tooManyQuestions)
-                }.message shouldBe "설문조사는 최대 10개의 항목만 가질 수 있습니다."
+                }.message shouldBe "설문 항목 수가 제한을 초과했습니다. (현재: 11, 최대: 10)"
             }
         }
     }

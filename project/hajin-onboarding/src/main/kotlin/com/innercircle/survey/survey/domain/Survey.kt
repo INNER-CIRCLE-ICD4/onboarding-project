@@ -1,6 +1,7 @@
 package com.innercircle.survey.survey.domain
 
 import com.innercircle.survey.common.domain.BaseEntity
+import com.innercircle.survey.survey.domain.exception.SurveyItemLimitExceededException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -37,8 +38,8 @@ class Survey private constructor(
         get() = _questions.toList()
 
     fun addQuestion(question: Question) {
-        require(canAddMoreQuestions()) {
-            "설문조사는 최대 ${MAX_QUESTIONS}개의 항목만 가질 수 있습니다."
+        if (!canAddMoreQuestions()) {
+            throw SurveyItemLimitExceededException(questions.size + 1, MAX_QUESTIONS)
         }
         _questions.add(question)
         question.survey = this
@@ -59,8 +60,8 @@ class Survey private constructor(
     }
 
     fun updateQuestions(newQuestions: List<Question>) {
-        require(newQuestions.size <= MAX_QUESTIONS) {
-            "설문조사는 최대 ${MAX_QUESTIONS}개의 항목만 가질 수 있습니다."
+        if (newQuestions.size > MAX_QUESTIONS) {
+            throw SurveyItemLimitExceededException(newQuestions.size, MAX_QUESTIONS)
         }
 
         // 기존 질문들을 비활성화 처리 (응답 보존을 위해)
@@ -89,8 +90,9 @@ class Survey private constructor(
             require(description.isNotBlank()) {
                 "설문조사 설명은 필수입니다."
             }
-            require(questions.size <= MAX_QUESTIONS) {
-                "설문조사는 최대 ${MAX_QUESTIONS}개의 항목만 가질 수 있습니다."
+
+            if (questions.size > MAX_QUESTIONS) {
+                throw SurveyItemLimitExceededException(questions.size, MAX_QUESTIONS)
             }
 
             val survey = Survey(title, description)
