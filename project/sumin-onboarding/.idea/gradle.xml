@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/survey-service" />
+        <option name="gradleJvm" value="temurin-17" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/survey-service" />
+            <option value="$PROJECT_DIR$/survey-service/api" />
+            <option value="$PROJECT_DIR$/survey-service/application" />
+            <option value="$PROJECT_DIR$/survey-service/common" />
+            <option value="$PROJECT_DIR$/survey-service/domain" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
