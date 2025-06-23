@@ -1,0 +1,31 @@
+package fastcampus.onboarding.common.exception;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum ErrorCode {
+    // 클라이언트 에러 (400번대)
+    INVALID_INPUT_VALUE(400, "C001", "잘못된 입력값입니다"),
+    FORM_NOT_FOUND(400, "C003", "설문지를 찾을 수 없습니다"),
+    ITEM_NOT_FOUND(400, "C004", "설문항목을 찾을 수 없습니다"),
+    OPTION_NOT_FOUND(400, "C005", "항목옵션을 찾을 수 없습니다"),
+    DUPLICATE_ENTITY(400, "C006", "이미 존재하는 데이터입니다"),
+    REQUIRED_ITEM_MISSING(400,"C007","필수 항목에 대한 답변이 누락되었습니다."),
+    INVALID_ANSWER(400,"C008","답변 형식이 유효하지 않습니다."),
+    INVALID_OPTION(400,"C009","유효하지 않은 선택지가 포함되었습니다."),
+
+    RESPONSE_NOT_FOUND(400,"C010","응답이 존재하지 않습니다."),
+    NO_ANSWER(400,"C011","응답이 해당 설문에 속하지 않습니다."),
+    NO_ITEM_RESPONSE(400,"C012","응답에 문항 답변이 존재하지 않습니다."),
+    INVALID_ITEM_TYPE(400,"C013","알 수 없는 문항 타입입니다"),
+    TOO_MANY_ITEMS(400,"C014","항목은 10개이상 등록할 수 없습니다."),
+
+    // 서버 에러 (500번대)
+    INTERNAL_SERVER_ERROR(500, "S001", "서버 오류가 발생했습니다");
+
+    private final int status;
+    private final String code;
+    private final String message;
+}
