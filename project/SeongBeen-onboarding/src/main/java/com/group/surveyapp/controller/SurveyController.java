@@ -46,8 +46,8 @@ public class SurveyController {
     /**
      * 2. 설문조사 수정 API
      * <p>
-     * - 설문 ID를 통해 기존 설문을 수정
-     * - 질문 항목 추가/삭제/변경 가능 (기존 응답은 보존)
+     * - 설문 ID를 통해 기존 설문 제목, 설명, 질문 항목을 수정
+     * - 존재하지 않는 질문은 새로 추가되고, requestDto에 없는 기존 질문은 삭제됨
      * </p>
      * HTTP Method : PUT
      * HTTP Path : /api/surveys/{surveyId}
@@ -59,7 +59,8 @@ public class SurveyController {
      */
     @PutMapping("/{surveyId}")
     public ResponseEntity<SurveyResponseDto> updateSurvey(@PathVariable Long surveyId, @RequestBody SurveyUpdateRequestDto requestDto) {
-        return ResponseEntity.ok(surveyService.updateSurvey(surveyId, requestDto));
+        SurveyResponseDto updatedSurvey = surveyService.updateSurvey(surveyId, requestDto);
+        return ResponseEntity.ok(updatedSurvey);
     }
 
     /**
@@ -88,22 +89,14 @@ public class SurveyController {
      * - Advanced: 항목 이름 및 응답 값 기반 검색은 서비스단에서 확장 가능
      * </p>
      * HTTP Method : GET
-     * HTTP Path : /api/surveys/{surveyId}/answers
+     * HTTP Path : /api/surveys/{surveyId}/responses
      * @param surveyId 응답 조회 대상 설문 ID
      * @return 응답 리스트
      * @status 200 OK
      */
-    @GetMapping("/{surveyId}/answers")
+    @GetMapping("/{surveyId}/responses")
     public ResponseEntity<List<SurveyAnswerResponseDto>> getAnswers(@PathVariable Long surveyId) {
-        return ResponseEntity.ok(surveyService.getAnswers(surveyId));
-    }
-
-    /**
-     * 예외 테스트용 엔드포인트
-     * - IllegalArgumentException 발생 테스트
-     */
-    @GetMapping("/answers/error-test")
-    public void errorTest() {
-        throw new IllegalArgumentException("테스트 에외");
+        List<SurveyAnswerResponseDto> responses = surveyService.getAnswers(surveyId);
+        return ResponseEntity.ok(responses);
     }
 }

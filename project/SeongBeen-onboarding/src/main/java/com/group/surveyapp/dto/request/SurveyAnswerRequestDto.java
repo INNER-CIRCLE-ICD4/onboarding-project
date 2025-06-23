@@ -1,7 +1,10 @@
 package com.group.surveyapp.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 /**
@@ -11,6 +14,8 @@ import java.util.List;
  * - 각 설문 항목에 대한 사용자의 응답 값을 포함.
  * </p>
  */
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class SurveyAnswerRequestDto {
     @NotEmpty
@@ -22,3 +27,4 @@ public class SurveyAnswerRequestDto {
         private Object answer;   // 문자열(단답/장문) 또는 리스트(선택형)
     }
 }
+

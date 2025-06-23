@@ -1,13 +1,13 @@
 package com.group.surveyapp.dto.request;
 
 import com.group.surveyapp.domain.entity.QuestionType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -20,6 +20,7 @@ import java.util.List;
  */
 @Data
 public class SurveyUpdateRequestDto {
+
     @NotBlank
     private String title; // 설문조사 이름
 
@@ -30,14 +31,19 @@ public class SurveyUpdateRequestDto {
     private List<QuestionDto> questions; // 설문 받을 항목
 
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class QuestionDto {
+
+        private Long questionId; // 기존 질문 수정용 ID 필드
+
         @NotBlank
         private String name; // 항목 이름
 
         private String description; // 항목 설명
 
         @NotNull
-        private QuestionType type;
+        private QuestionType type; // 항목 타입
 
         private boolean required; // 필수 여부
 

@@ -1,25 +1,49 @@
 package com.group.surveyapp.dto.response;
 
+import com.group.surveyapp.domain.entity.Question;
 import com.group.surveyapp.domain.entity.QuestionType;
-import lombok.Data;
-import java.util.List;
+import com.group.surveyapp.domain.entity.Survey;
+import lombok.*;
 
-/**
- * 설문조사 생성/수정 응답 DTO
- * <p>
- * - 설문조사 생성 및 수정 API의 응답값으로 사용.
- * - 설문조사 기본 정보와 문항 정보를 포함.
- * </p>
- */
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SurveyResponseDto {
-    private Long surveyId; // 설문 고유 ID
-    private String title; // 설문 제목
-    private String description; // 설문 설명
-    private String createdAt; // 설문 생성 시각
-    private List<QuestionDto> questions; // 설문 문항 리스트
+
+    private Long surveyId;
+    private String title;
+    private String description;
+    private String createdAt; // 또는 LocalDateTime
+
+    private List<QuestionDto> questions;
+
+    public static SurveyResponseDto from(Survey survey) {
+        if (survey == null) return null;
+
+        return SurveyResponseDto.builder()
+                .surveyId(survey.getId())
+                .title(survey.getTitle())
+                .description(survey.getDescription())
+                .createdAt(survey.getCreatedAt() != null ? survey.getCreatedAt().toString() : null)
+                .questions(
+                        survey.getQuestions() != null ?
+                                survey.getQuestions().stream()
+                                        .map(QuestionDto::from)
+                                        .collect(Collectors.toList())
+                                : List.of()
+                )
+                .build();
+    }
 
     @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class QuestionDto {
         private Long questionId;
         private String name;
@@ -27,5 +51,18 @@ public class SurveyResponseDto {
         private QuestionType type;
         private boolean required;
         private List<String> candidates;
+
+        public static QuestionDto from(Question question) {
+            if (question == null) return null;
+
+            return QuestionDto.builder()
+                    .questionId(question.getId())
+                    .name(question.getName())
+                    .description(question.getDescription())
+                    .type(question.getType())
+                    .required(question.isRequired())
+                    .candidates(question.getCandidates())
+                    .build();
+        }
     }
 }

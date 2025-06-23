@@ -1,4 +1,9 @@
 spring:
+  jackson:
+    default-property-inclusion: non_null
+    deserialization:
+      fail-on-unknown-properties: false
+
   datasource:
     url: jdbc:h2:mem:survey;MODE=MYSQL;NON_KEYWORDS=USER;DB_CLOSE_DELAY=-1
     username: sa

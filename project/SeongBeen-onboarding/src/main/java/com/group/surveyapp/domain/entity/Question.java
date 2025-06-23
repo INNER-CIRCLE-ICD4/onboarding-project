@@ -35,7 +35,4 @@ public class Question {
     @Column(name = "candidate")
     private List<String> candidates;
 
-    // (Optional) 이 문항에 대한 답변 리스트
-    // @OneToMany(mappedBy = "question")
-    // private List<Answer> answers;
 }

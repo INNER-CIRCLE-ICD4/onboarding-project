@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class SurveyCreateRequestDto {
     private List<QuestionDto> questions;
 
     @Data
+    @AllArgsConstructor
     public static class QuestionDto {
         @NotBlank
         private String name;

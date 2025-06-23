@@ -1,7 +1,10 @@
 package com.group.surveyapp.dto.response;
 
 import com.group.surveyapp.domain.entity.QuestionType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 /**
@@ -12,6 +15,8 @@ import java.util.List;
  * </p>
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SurveyAnswerResponseDto {
     private Long id; // 설문 ID
     private String title; // 설문 제목
@@ -19,6 +24,8 @@ public class SurveyAnswerResponseDto {
     private List<QuestionAnswerDto> questions;// 질문 및 응답 정보
 
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class QuestionAnswerDto {
         private Long questionId;
         private String name;            // 질문 이름
