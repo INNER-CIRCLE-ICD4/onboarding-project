@@ -19,6 +19,15 @@
       <module name="survey-service.api" options="-parameters" />
       <module name="survey-service.api.main" options="-parameters" />
       <module name="survey-service.api.test" options="-parameters" />
+      <module name="survey-service.application" options="-parameters" />
+      <module name="survey-service.application.main" options="-parameters" />
+      <module name="survey-service.application.test" options="-parameters" />
+      <module name="survey-service.common" options="-parameters" />
+      <module name="survey-service.common.main" options="-parameters" />
+      <module name="survey-service.common.test" options="-parameters" />
+      <module name="survey-service.domain" options="-parameters" />
+      <module name="survey-service.domain.main" options="-parameters" />
+      <module name="survey-service.domain.test" options="-parameters" />
     </option>
   </component>
 </project>
