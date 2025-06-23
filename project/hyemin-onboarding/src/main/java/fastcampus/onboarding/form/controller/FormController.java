@@ -20,15 +20,28 @@ public class FormController {
 
     @PostMapping("/form")
     public ResponseEntity<ApiResponse<Void>> createForm(@Valid @RequestBody FormCreateRequestDto formCreateRequestDto) {
-        formService.createForm(formCreateRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(HttpStatus.CREATED, "설문조사 생성을 성공하였습니다."));
+        try {
+
+            formService.createForm(formCreateRequestDto);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.success(HttpStatus.CREATED, "설문조사 생성을 성공하였습니다."));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류"));
+        }
     }
 
     @PutMapping("/form/{formSeq}")
     public ResponseEntity<ApiResponse<Void>> updateForm(@PathVariable Long formSeq, @RequestBody FormUpdateRequestDto formUpdateRequestDto) {
-        formService.updateForm(formSeq, formUpdateRequestDto);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.success(HttpStatus.OK, "설문조사를 수정하였습니다."));
+        try {
+            formService.updateForm(formSeq, formUpdateRequestDto);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(ApiResponse.success(HttpStatus.OK, "설문조사를 수정하였습니다."));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류"));
+        }
     }
 }

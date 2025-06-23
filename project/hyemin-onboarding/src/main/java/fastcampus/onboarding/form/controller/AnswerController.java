@@ -22,11 +22,11 @@ public class AnswerController {
     public ResponseEntity<ApiResponse<Void>> createdAnswer(@PathVariable Long formSeq, @RequestBody AnswerRequestDto answer) {
         try{
             answerService.createdAnswer(formSeq, answer);
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(HttpStatus.CREATED, "응답이 성공적으로 입력되었습니다."));
         }catch (Exception e){
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류"));        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(HttpStatus.CREATED, "응답이 성공적으로 입력되었습니다."));
     }
 
     @GetMapping("form/answer/{formSeq}")

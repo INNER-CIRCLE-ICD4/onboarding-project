@@ -62,7 +62,7 @@ public class FormService {
                         });
 
                         return item;
-                    })                    .collect(Collectors.toList());
+                    }).collect(Collectors.toList());
 
 
             form.setItems(itemList);
@@ -78,31 +78,28 @@ public class FormService {
 
     @Transactional
     public void updateForm(Long formSeq, FormUpdateRequestDto dto) {
-        try {
-            //양식 조회
-            Form form = formRepository.findById(formSeq)
-                    .orElseThrow(() -> new CustomException(ErrorCode.FORM_NOT_FOUND));
+        //양식 조회
+        Form form = formRepository.findById(formSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.FORM_NOT_FOUND));
 
-            //양식 수정사항 빌더
-            form.updateForm(dto.getFormTitle(), dto.getFormContent());
+        //양식 수정사항 빌더
+        form.updateForm(dto.getFormTitle(), dto.getFormContent());
 
-            //존재하는 문항 처리
-            Map<Long, Item> existingItemMap = mapItemsById(form.getItems());
+        //존재하는 문항 처리
+        Map<Long, Item> existingItemMap = mapItemsById(form.getItems());
 
-            //수정문항 처리
-            List<Item> updatedItems = dto.getItems().stream()
-                    .map(itemDto -> updateItem(itemDto, existingItemMap, form))
-                    .toList();
+        //수정문항 처리
+        List<Item> updatedItems = dto.getItems().stream()
+                .map(itemDto -> updateItem(itemDto, existingItemMap, form))
+                .toList();
 
-            //사라진 문항 삭제
-            removeDeletedItems(form, updatedItems);
-            //새로운 문항 추가
-            addNewItemsToForm(form, updatedItems);
+        //사라진 문항 삭제
+        removeDeletedItems(form, updatedItems);
+        //새로운 문항 추가
+        addNewItemsToForm(form, updatedItems);
 
-            formRepository.save(form);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        formRepository.save(form);
+
     }
 
     private Map<Long, Item> mapItemsById(List<Item> items) {
