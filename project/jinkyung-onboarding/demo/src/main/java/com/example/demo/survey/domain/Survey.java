@@ -1,20 +1,17 @@
-package com.example.demo.survey;
+package com.example.demo.survey.domain;
 
-import com.example.demo.item.Item;
-import com.example.demo.survey.Dto.UpdateSurveyDTO;
+import com.example.demo.answer.domain.Answer;
+import com.example.demo.item.domain.Item;
+import com.example.demo.survey.domain.dto.UpdateSurveyDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -38,7 +35,10 @@ public class Survey {
     private String description;
 
     @OneToMany(mappedBy = "survey")
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
+
+    @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "create_at")

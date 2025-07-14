@@ -1,8 +1,8 @@
-package com.example.demo.item.dto;
+package com.example.demo.item.domain.dto;
 
-import com.example.demo.itemQuestion.ItemQuestion;
+import com.example.demo.item.domain.Item;
+import com.example.demo.item.domain.ItemQuestion;
 import com.example.demo.utill.ItemType;
-import com.example.demo.item.Item;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,13 +1,12 @@
-package com.example.demo.survey.Dto;
+package com.example.demo.survey.domain.dto;
 
-import com.example.demo.item.Item;
-import com.example.demo.survey.Survey;
+import com.example.demo.item.domain.Item;
+import com.example.demo.survey.domain.Survey;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.util.List;
 
 

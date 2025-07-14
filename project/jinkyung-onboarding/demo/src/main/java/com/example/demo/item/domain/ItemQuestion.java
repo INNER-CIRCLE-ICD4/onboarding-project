@@ -1,18 +1,15 @@
-package com.example.demo.itemQuestion;
+package com.example.demo.item.domain;
 
-import com.example.demo.item.Item;
-import com.example.demo.item.dto.UpdateItemQuestionDto;
+import com.example.demo.item.domain.dto.UpdateItemQuestionDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Entity
@@ -38,13 +35,6 @@ public class ItemQuestion{
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @CreationTimestamp
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-
-    private LocalDateTime updateAt;
-
-
 
     public static ItemQuestion toEntity(String itemOption) {
         return ItemQuestion.builder()
@@ -59,7 +49,6 @@ public class ItemQuestion{
     public void updateItemQuestion(UpdateItemQuestionDto questionDto) {
             if (this.questionNo == questionDto.getQuestionNo()) {
                 this.question = questionDto.getQuestion();
-                this.updateAt = LocalDateTime.now();
             }
     }
 }
