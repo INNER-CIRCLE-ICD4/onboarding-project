@@ -1,13 +1,14 @@
-package com.example.demo.survey.Dto;
+package com.example.demo.survey.domain.dto;
 
-import com.example.demo.item.Item;
-import com.example.demo.item.dto.CreateItemDto;
-import com.example.demo.survey.Survey;
+import com.example.demo.item.domain.Item;
+import com.example.demo.item.domain.dto.CreateItemDto;
+import com.example.demo.survey.domain.Survey;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,7 +24,7 @@ public class CreateSurveyDTO {
     private String description;
 
     @NotNull
-    private List<CreateItemDto> items;
+    private List<CreateItemDto> items = new ArrayList<>();
 
     public Survey toEntity(List<Item> items){
         return Survey.builder()

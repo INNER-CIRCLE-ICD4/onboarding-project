@@ -4,5 +4,5 @@ public enum ItemType {
     LongAnswerType,
     ShortAnswerType,
     SingleChoice,
-    MultipleChoice;
+    MultipleChoice,;
 }

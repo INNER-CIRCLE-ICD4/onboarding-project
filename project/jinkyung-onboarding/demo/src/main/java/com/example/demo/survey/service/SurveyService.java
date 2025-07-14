@@ -1,15 +1,14 @@
 package com.example.demo.survey.service;
 
-import com.example.demo.item.Item;
+import com.example.demo.item.domain.Item;
 import com.example.demo.item.Repository.ItemRepository;
 import com.example.demo.item.Repository.ItemaQuestionRepository;
-import com.example.demo.item.dto.UpdateItemDto;
-import com.example.demo.itemQuestion.ItemQuestion;
-import com.example.demo.survey.Dto.CreateSurveyDTO;
-import com.example.demo.survey.Dto.SurveyDto;
-import com.example.demo.survey.Dto.UpdateSurveyDTO;
-import com.example.demo.survey.Repository.SurveyRepository;
-import com.example.demo.survey.Survey;
+import com.example.demo.item.domain.ItemQuestion;
+import com.example.demo.survey.domain.dto.CreateSurveyDTO;
+import com.example.demo.survey.domain.dto.SurveyDto;
+import com.example.demo.survey.domain.dto.UpdateSurveyDTO;
+import com.example.demo.survey.repository.SurveyRepository;
+import com.example.demo.survey.domain.Survey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -86,9 +85,9 @@ public class SurveyService {
                 .orElseThrow(() -> new RuntimeException("NOT FOUND SURVEY"));
     }
 
-    public SurveyDto update(UpdateSurveyDTO updateSurveyDTO){
+    public SurveyDto update(Long surveyId,UpdateSurveyDTO updateSurveyDTO){
         // 설문지 찾기
-        Survey updateSurvey = findSurvey(updateSurveyDTO.getSurveyId());
+        Survey updateSurvey = findSurvey(surveyId);
         List<Item> item2= updateSurvey.getItems();
 
         if(updateSurveyDTO.getItems() != null){

@@ -1,15 +1,13 @@
-package com.example.demo.item;
+package com.example.demo.item.domain;
 
-import com.example.demo.item.dto.UpdateItemDto;
-import com.example.demo.itemQuestion.ItemQuestion;
+import com.example.demo.item.domain.dto.UpdateItemDto;
 import com.example.demo.utill.ItemType;
-import com.example.demo.survey.Survey;
+import com.example.demo.survey.domain.Survey;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

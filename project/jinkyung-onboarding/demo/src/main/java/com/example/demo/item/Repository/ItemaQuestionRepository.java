@@ -1,7 +1,6 @@
 package com.example.demo.item.Repository;
 
-import com.example.demo.item.Item;
-import com.example.demo.itemQuestion.ItemQuestion;
+import com.example.demo.item.domain.ItemQuestion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
