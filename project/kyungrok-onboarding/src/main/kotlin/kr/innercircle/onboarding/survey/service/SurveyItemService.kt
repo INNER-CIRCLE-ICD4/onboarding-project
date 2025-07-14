@@ -34,7 +34,9 @@ class SurveyItemService(
                 SurveyItem.from(survey, createSurveyItemRequest, orderNumber++)
             )
 
-            surveyItemOptionService.createSurveyItemOptions(surveyItem, createSurveyItemRequest.options)
+            createSurveyItemRequest.options?.let {
+                surveyItemOptionService.createSurveyItemOptions(surveyItem, it)
+            }
             surveyItem
         }
     }
