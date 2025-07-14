@@ -10,7 +10,6 @@ import kr.innercircle.onboarding.survey.dto.request.UpdateSurveyRequest
 import kr.innercircle.onboarding.survey.dto.response.ApiResponse
 import kr.innercircle.onboarding.survey.dto.response.GetSurveysAnswerResponse
 import kr.innercircle.onboarding.survey.service.SurveyItemService
-import kr.innercircle.onboarding.survey.service.SurveyResponseAnswerService
 import kr.innercircle.onboarding.survey.service.SurveyResponseService
 import kr.innercircle.onboarding.survey.service.SurveyService
 import org.springframework.http.HttpStatus
@@ -31,7 +30,6 @@ class SurveyController(
     private val surveyService: SurveyService,
     private val surveyResponseService: SurveyResponseService,
     private val surveyItemService: SurveyItemService,
-    private val surveyResponseAnswerService: SurveyResponseAnswerService
 ) {
     @PostMapping
     fun postSurvey(
