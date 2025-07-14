@@ -76,7 +76,7 @@ class SurveyController(
     ): ApiResponse {
         val survey = surveyService.getSurveyById(surveyId)
         surveyResponseService.createSurveyResponses(survey, createSurveyResponseRequest)
-        response.status = HttpStatus.OK.value()
+        response.status = HttpStatus.CREATED.value()
         return ApiResponse(message = "설문조사 항목에 대한 응답이 생성되었습니다.")
     }
 
